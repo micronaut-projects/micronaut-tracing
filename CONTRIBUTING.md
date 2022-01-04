@@ -1,6 +1,6 @@
 # Contributing Code or Documentation to Micronaut
 
-Sign the [Contributor License Agreement (CLA)](https://cla-assistant.io/micronaut-projects/micronaut-project-template). This is required before any of your code or pull-requests are accepted.
+Sign the [Contributor License Agreement (CLA)](https://cla-assistant.io/micronaut-projects/micronaut-tracing). This is required before any of your code or pull-requests are accepted.
 
 ## Finding Issues to Work on
 
@@ -8,15 +8,15 @@ If you are interested in contributing to Micronaut and are looking for issues to
 
 ## JDK Setup
 
-Micronaut project-template currently requires JDK 8.
+Micronaut tracing currently requires JDK 8.
 
 ## IDE Setup
 
-Micronaut project-template can be imported into IntelliJ IDEA by opening the `build.gradle` file.
+Micronaut tracing can be imported into IntelliJ IDEA by opening the `build.gradle` file.
 
 ## Docker Setup
 
-Micronaut project-template tests currently require Docker to be installed.
+Micronaut tracing tests currently require Docker to be installed.
 
 ## Running Tests
 

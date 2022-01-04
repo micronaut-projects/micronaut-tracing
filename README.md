@@ -1,19 +1,15 @@
-# Micronaut tracing
+# Micronaut Tracing
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.micronaut.tracing/micronaut-project-template.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.micronaut.project-template%22%20AND%20a:%22micronaut-project-template%22)
-[![Build Status](https://github.com/micronaut-projects/micronaut-tracing/workflows/Java%20CI/badge.svg)](https://github.com/micronaut-projects/micronaut-project-template/actions)
+[![Maven Central](https://img.shields.io/maven-central/v/io.micronaut.tracing/micronaut-tracing.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.micronaut.tracing%22%20AND%20a:%22micronaut-tracing%22)
+[![Build Status](https://github.com/micronaut-projects/micronaut-tracing/workflows/Java%20CI/badge.svg)](https://github.com/micronaut-projects/micronaut-tracing/actions)
 
-Micronaut tracing
+Micronaut Tracing Adds Distributed Tracing Support
 
 ## Documentation
 
-See the [Documentation](https://micronaut-projects.github.io/micronaut-tracing/latest/guide/) for more information. 
+See the [Documentation](https://micronaut-projects.github.io/micronaut-tracing/latest/guide/) for more information.
 
 See the [Snapshot Documentation](https://micronaut-projects.github.io/micronaut-tracing/snapshot/guide/) for the current development docs.
-
-<!-- ## Examples
-
-Examples can be found in the [examples](https://github.com/micronaut-projects/micronaut-tracing/tree/master/examples) directory. -->
 
 ## Snapshots and Releases
 

@@ -9,7 +9,23 @@ plugins {
     id 'io.micronaut.build.shared.settings' version '5.1.0'
 }
 
-rootProject.name = 'project-template-parent'
+rootProject.name = 'micronaut-tracing'
 
-include 'project-template'
-include 'project-template-bom'
+include 'tracing-core'
+include 'tracing-hystrix'
+include 'tracing-jaeger'
+include 'tracing-zipkin'
+
+enableFeaturePreview 'TYPESAFE_PROJECT_ACCESSORS'
+enableFeaturePreview 'VERSION_CATALOGS'
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+    versionCatalogs {
+        mn {
+            from "io.micronaut:micronaut-bom:${providers.gradleProperty('micronautVersion').get()}"
+        }
+    }
+}

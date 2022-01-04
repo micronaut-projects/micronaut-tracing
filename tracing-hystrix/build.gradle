@@ -1,0 +1,8 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api projects.tracingCore
+    api libs.hystrix
+}

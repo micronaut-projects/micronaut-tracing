@@ -187,11 +187,10 @@ public class HttpServerTracingPublisher implements Publishers.MicronautPublisher
                         statusCode = ((HttpStatusException) error).getStatus().getCode();
                     }
                     serverHandler.handleSend(mapResponse(request, statusCode, error), span);
-                    actual.onError(error);
                 } else {
                     serverHandler.handleSend(mapResponse(request, response), span);
-                    actual.onNext(response);
                 }
+                actual.onNext(response);
             }
         }
 

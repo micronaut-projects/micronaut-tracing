@@ -1,0 +1,11 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api projects.tracingCore
+    api mn.reactor
+    api libs.zipkin.brave.instrumentation
+    api libs.zipkin.reporter
+    api libs.brave.opentracing
+}

@@ -4,19 +4,19 @@ Sign the [Contributor License Agreement (CLA)](https://cla-assistant.io/micronau
 
 ## Finding Issues to Work on
 
-If you are interested in contributing to Micronaut and are looking for issues to work on, take a look at the issues tagged with [help wanted](https://github.com/micronaut-projects/micronaut-xxx/issues?q=is%3Aopen+is%3Aissue+label%3A%22status%3A+help+wanted%22).
+If you are interested in contributing to Micronaut and are looking for issues to work on, take a look at the issues tagged with [help wanted](https://github.com/micronaut-projects/micronaut-tracing/issues?q=is%3Aopen+is%3Aissue+label%3A%22status%3A+help+wanted%22).
 
 ## JDK Setup
 
-Micronaut tracing currently requires JDK 8.
+Micronaut Tracing currently requires JDK 8.
 
 ## IDE Setup
 
-Micronaut tracing can be imported into IntelliJ IDEA by opening the `build.gradle` file.
+Micronaut Tracing can be imported into IntelliJ IDEA by opening the `build.gradle` file.
 
 ## Docker Setup
 
-Micronaut tracing tests currently require Docker to be installed.
+Micronaut Tracing tests currently require Docker to be installed.
 
 ## Running Tests
 
@@ -34,7 +34,7 @@ To also build the Javadocs, run `./gradlew docs`.
 
 If you use IntelliJ IDEA, you can import the project using the Intellij Gradle Tooling ("File / Import Project" and selecting the "settings.gradle" file).
 
-To get a local development version of Micronaut XXX working, first run the `publishToMavenLocal` task.
+To get a local development version of Micronaut Tracing working, first run the `publishToMavenLocal` task.
 
 ```
 ./gradlew pTML
@@ -61,7 +61,7 @@ Once you are satisfied with your changes:
 
 We want to keep the code clean, following good practices about organization, Javadoc, and style as much as possible.
 
-Micronaut XXX uses [Checkstyle](https://checkstyle.sourceforge.io/) to make sure that the code follows those standards. The configuration is defined in `config/checkstyle/checkstyle.xml`. To execute Checkstyle, run:
+Micronaut Tracing uses [Checkstyle](https://checkstyle.sourceforge.io/) to make sure that the code follows those standards. The configuration is defined in `config/checkstyle/checkstyle.xml`. To execute Checkstyle, run:
 
 ```
 ./gradlew <module-name>:checkstyleMain

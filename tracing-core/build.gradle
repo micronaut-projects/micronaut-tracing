@@ -1,0 +1,16 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+    alias libs.plugins.kotlin
+}
+
+dependencies {
+    api mn.micronaut.runtime
+    api mn.micronaut.http.client
+    api libs.opentracing
+    api libs.opentracing.util
+
+    compileOnly libs.kotlinx.coroutines.core
+    compileOnly libs.kotlinx.coroutines.reactor
+
+    testImplementation mn.reactor
+}

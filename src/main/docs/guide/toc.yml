@@ -1,7 +1,6 @@
 introduction:
   title: Introduction
 releaseHistory: Release History
-quickStart:
-  title: Quick Start
+jaeger: Tracing with Jaeger
+zipkin: Tracing with Zipkin
 repository: Repository
-

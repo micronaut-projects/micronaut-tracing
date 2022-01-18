@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.instrument.http;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -25,6 +26,7 @@ import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static io.micronaut.http.HttpAttributes.ERROR;
 import static io.micronaut.http.HttpAttributes.URI_TEMPLATE;
@@ -50,13 +52,27 @@ public abstract class AbstractOpenTracingFilter implements HttpFilter {
 
     protected final Tracer tracer;
 
+    @Nullable
+    private final Predicate<String> pathExclusionTest;
+
     /**
      * Configure tracer in the filter for span creation and propagation across arbitrary transports.
      *
      * @param tracer the tracer
      */
     public AbstractOpenTracingFilter(Tracer tracer) {
+        this(tracer, null);
+    }
+
+    /**
+     * Configure tracer in the filter for span creation and propagation across arbitrary transports.
+     *
+     * @param tracer           the tracer
+     * @param pathExclusionTest the predicate for excluding URI paths from tracing.
+     */
+    public AbstractOpenTracingFilter(Tracer tracer, @Nullable Predicate<String> pathExclusionTest) {
         this.tracer = tracer;
+        this.pathExclusionTest = pathExclusionTest;
     }
 
     /**
@@ -126,5 +142,15 @@ public abstract class AbstractOpenTracingFilter implements HttpFilter {
         spanBuilder.withTag(TAG_PATH, path);
 
         return spanBuilder;
+    }
+
+    /**
+     * Tests if the defined path should be excluded from tracing.
+     *
+     * @param path the path to test.
+     * @return {@code true} if the path should be excluded, {@code false} otherwise.
+     */
+    protected boolean shouldExclude(@Nullable String path) {
+        return pathExclusionTest != null && path != null && pathExclusionTest.test(path);
     }
 }

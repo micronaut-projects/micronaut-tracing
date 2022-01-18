@@ -5,40 +5,21 @@ import io.jaegertracing.internal.JaegerTracer
 import io.jaegertracing.internal.metrics.InMemoryMetricsFactory
 import io.jaegertracing.internal.reporters.InMemoryReporter
 import io.micronaut.context.ApplicationContext
-import io.micronaut.core.async.annotation.SingleResult
-import io.micronaut.core.async.publisher.Publishers
 import io.micronaut.http.HttpResponse
-import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Error
-import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.HttpClient
-import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
-import io.micronaut.scheduling.annotation.ExecuteOn
-import io.micronaut.tracing.annotation.ContinueSpan
-import io.opentracing.Tracer
-import jakarta.inject.Inject
-import org.reactivestreams.Publisher
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
-import java.time.Duration
 import java.util.concurrent.TimeUnit
-
-import static io.micronaut.http.HttpStatus.TOO_MANY_REQUESTS
-import static io.micronaut.scheduling.TaskExecutors.IO
-import static java.time.temporal.ChronoUnit.MILLIS
 
 /**
  * @author graemerocher
  * @since 1.0
  */
-class HttpTracingSpec extends Specification {
+class HttpTracingExclusionSpec extends Specification {
 
     @AutoCleanup
     private ApplicationContext context
@@ -51,7 +32,8 @@ class HttpTracingSpec extends Specification {
     void setup() {
         context = ApplicationContext
                 .builder('tracing.jaeger.enabled': true,
-                         'tracing.jaeger.sampler.probability': 1)
+                         'tracing.jaeger.sampler.probability': 1,
+                         'tracing.exclusions[0]': '.*hello.*')
                 .singletons(
                         new InMemoryReporter(),
                         new InMemoryMetricsFactory())
@@ -71,17 +53,7 @@ class HttpTracingSpec extends Specification {
 
         then:
         response
-        conditions.eventually {
-            reporter.spans.size() == 2
-
-            JaegerSpan span = reporter.spans.find { it.operationName == 'GET /traced/hello/{name}' }
-            span != null
-            span.tags['foo'] == 'bar'
-            span.tags['http.path'] == '/traced/hello/John'
-
-            nrOfStartedSpans > 0
-            nrOfFinishedSpans == nrOfStartedSpans
-        }
+        reporter.spans.empty
     }
 
     void 'test basic HTTP tracing - blocking controller method'() {
@@ -93,17 +65,7 @@ class HttpTracingSpec extends Specification {
 
         then:
         response
-        conditions.eventually {
-            reporter.spans.size() == 2
-
-            JaegerSpan span = reporter.spans.find { it.operationName == 'GET /traced/blocking/hello/{name}' }
-            span != null
-            span.tags['foo'] == 'bar'
-            span.tags['http.path'] == '/traced/blocking/hello/John'
-
-            nrOfStartedSpans > 0
-            nrOfFinishedSpans == nrOfStartedSpans
-        }
+        reporter.spans.empty
     }
 
     void 'test basic response reactive HTTP tracing'() {
@@ -311,21 +273,7 @@ class HttpTracingSpec extends Specification {
         response
 
         conditions.eventually {
-            reporter.spans.size() == 4
-
-            reporter.spans.find {
-                it.operationName == 'GET /traced/hello/{name}' &&
-                        it.tags['foo'] == 'bar' &&
-                        it.tags['http.path'] == '/traced/hello/John' &&
-                        it.tags['http.server']
-            } != null
-
-            reporter.spans.find {
-                it.operationName == 'GET /traced/hello/{name}' &&
-                        !it.tags['foo'] &&
-                        it.tags['http.path'] == '/traced/hello/John' &&
-                        it.tags['http.client']
-            } != null
+            reporter.spans.size() == 2
 
             reporter.spans.find {
                 it.operationName == 'GET /traced/continued/{name}' &&
@@ -354,21 +302,7 @@ class HttpTracingSpec extends Specification {
         response
 
         conditions.eventually {
-            reporter.spans.size() == 4
-
-            reporter.spans.find {
-                it.operationName == 'GET /traced/blocking/hello/{name}' &&
-                        it.tags['foo'] == 'bar' &&
-                        it.tags['http.path'] == '/traced/blocking/hello/John' &&
-                        it.tags['http.server']
-            } != null
-
-            reporter.spans.find {
-                it.operationName == 'GET /traced/blocking/hello/{name}' &&
-                        !it.tags['foo'] &&
-                        it.tags['http.path'] == '/traced/blocking/hello/John' &&
-                        it.tags['http.client']
-            } != null
+            reporter.spans.size() == 2
 
             reporter.spans.find {
                 it.operationName == 'GET /traced/blocking/continued/{name}' &&
@@ -397,21 +331,7 @@ class HttpTracingSpec extends Specification {
         response
 
         conditions.eventually {
-            reporter.spans.size() == 4
-
-            reporter.spans.find {
-                it.operationName == 'GET /traced/hello/{name}' &&
-                        it.tags['foo'] == 'bar' &&
-                        it.tags['http.path'] == '/traced/hello/John' &&
-                        it.tags['http.server']
-            } != null
-
-            reporter.spans.find {
-                it.operationName == 'GET /traced/hello/{name}' &&
-                        !it.tags['foo'] &&
-                        it.tags['http.path'] == '/traced/hello/John' &&
-                        it.tags['http.client']
-            } != null
+            reporter.spans.size() == 2
 
             reporter.spans.find {
                 it.operationName == 'GET /traced/continueRx/{name}' &&
@@ -440,21 +360,7 @@ class HttpTracingSpec extends Specification {
         response
 
         conditions.eventually {
-            reporter.spans.size() == 4
-
-            reporter.spans.find {
-                it.operationName == 'GET /traced/hello/{name}' &&
-                        it.tags['foo'] == 'bar' &&
-                        it.tags['http.path'] == '/traced/hello/John' &&
-                        it.tags['http.server']
-            } != null
-
-            reporter.spans.find {
-                it.operationName == 'GET /traced/hello/{name}' &&
-                        !it.tags['foo'] &&
-                        it.tags['http.path'] == '/traced/hello/John' &&
-                        it.tags['http.client']
-            } != null
+            reporter.spans.size() == 2
 
             reporter.spans.find {
                 it.operationName == 'GET /traced/nested/{name}' &&
@@ -483,21 +389,7 @@ class HttpTracingSpec extends Specification {
         response
 
         conditions.eventually {
-            reporter.spans.size() == 4
-
-            reporter.spans.find {
-                it.operationName == 'GET /traced/blocking/hello/{name}' &&
-                        it.tags['foo'] == 'bar' &&
-                        it.tags['http.path'] == '/traced/blocking/hello/John' &&
-                        it.tags['http.server']
-            } != null
-
-            reporter.spans.find {
-                it.operationName == 'GET /traced/blocking/hello/{name}' &&
-                        !it.tags['foo'] &&
-                        it.tags['http.path'] == '/traced/blocking/hello/John' &&
-                        it.tags['http.client']
-            } != null
+            reporter.spans.size() == 2
 
             reporter.spans.find {
                 it.operationName == 'GET /traced/blocking/nested/{name}' &&
@@ -664,188 +556,5 @@ class HttpTracingSpec extends Specification {
 
     private long getNrOfStartedSpans() {
         getJaegerMetric('started_spans', ['sampled': 'y'])
-    }
-
-    @Controller('/traced')
-    static class TracedController {
-
-        @Inject
-        Tracer spanCustomizer
-
-        @Inject
-        TracedClient tracedClient
-
-        @Get('/hello/{name}')
-        String hello(String name) {
-            spanCustomizer.activeSpan()?.setTag('foo', 'bar')
-            return name
-        }
-
-        @Get('/blocking/hello/{name}')
-        @ExecuteOn(IO)
-        String blockingHello(String name) {
-            spanCustomizer.activeSpan()?.setTag('foo', 'bar')
-            return name
-        }
-
-        @Get('/response-reactive/{name}')
-        HttpResponse<Publisher<String>> responseRx(String name) {
-            return HttpResponse.ok(Publishers.map(Mono.fromCallable({ ->
-                spanCustomizer.activeSpan()?.setTag('foo', 'bar')
-                return name
-            }), { String n -> n }))
-        }
-
-        @Get('/reactive/{name}')
-        @SingleResult
-        Publisher<String> reactive(String name) {
-            Mono.fromCallable({ ->
-                spanCustomizer.activeSpan()?.setTag('foo', 'bar')
-                return name
-            }).subscribeOn(Schedulers.boundedElastic())
-        }
-
-        @Get('/error/{name}')
-        String error(String name) {
-            throw new RuntimeException('bad')
-        }
-
-        @Get('/blocking/error/{name}')
-        @ExecuteOn(IO)
-        String blockingError(String name) {
-            throw new RuntimeException('bad')
-        }
-
-        @Get('/reactiveError/{name}')
-        @SingleResult
-        Publisher<String> reactiveError(String name) {
-            Mono.defer { Mono.just(error(name)) }
-        }
-
-        @Get('/nested/{name}')
-        String nested(String name) {
-            tracedClient.hello(name)
-        }
-
-        @Get('/blocking/nested/{name}')
-        @ExecuteOn(IO)
-        String blockingNested(String name) {
-            tracedClient.blockingHello(name)
-        }
-
-        @ContinueSpan
-        @Get('/continued/{name}')
-        String continued(String name) {
-            tracedClient.continued(name)
-        }
-
-        @ContinueSpan
-        @Get('/blocking/continued/{name}')
-        @ExecuteOn(IO)
-        String blockingContinued(String name) {
-            tracedClient.blockingContinued(name)
-        }
-
-        @ContinueSpan
-        @Get('/continueRx/{name}')
-        Publisher<String> continuedRx(String name) {
-            tracedClient.continuedRx(name)
-        }
-
-        @Get('/nestedError/{name}')
-        String nestedError(String name) {
-            tracedClient.error(name)
-        }
-
-        @Get('/blocking/nestedError/{name}')
-        @ExecuteOn(IO)
-        String blockingNestedError(String name) {
-            tracedClient.blockingError(name)
-        }
-
-        @Get('/customised/name')
-        String customisedName() {
-            spanCustomizer.activeSpan()?.operationName = 'custom name'
-            'response'
-        }
-
-        @Get('/blocking/customised/name')
-        @ExecuteOn(IO)
-        String blockingCustomisedName() {
-            spanCustomizer.activeSpan()?.operationName = 'custom name'
-            'response'
-        }
-
-        @Get('/nestedReactive/{name}')
-        @SingleResult
-        Publisher<String> nestedReactive(String name) {
-            spanCustomizer.activeSpan()?.setBaggageItem('foo', 'bar')
-            Flux.from(tracedClient.continuedRx(name))
-                    .flatMap({ String res ->
-                        assert spanCustomizer.activeSpan()?.getBaggageItem('foo') == 'bar'
-                        return tracedClient.nestedReactive2(res)
-                    })
-        }
-
-        @Get('/nestedReactive2/{name}')
-        @SingleResult
-        Publisher<Integer> nestedReactive2(String name) {
-            assert spanCustomizer.activeSpan()?.getBaggageItem('foo') == 'bar'
-            Mono.just(10)
-        }
-
-        @Get('/quota-error')
-        @SingleResult
-        Publisher<String> quotaError() {
-            Mono.error(new QuotaException('retry later'))
-        }
-
-        @Get('/delayed-error/{duration}')
-        @SingleResult
-        Publisher<Object> delayedError(Duration duration) {
-            Mono.error(new RuntimeException('delayed error'))
-                    .delaySubscription(Duration.of(duration.toMillis(), MILLIS))
-        }
-
-        @Error(QuotaException)
-        HttpResponse<?> handleQuotaError(QuotaException e) {
-            HttpResponse.status(TOO_MANY_REQUESTS, e.message)
-        }
-    }
-
-    static class QuotaException extends RuntimeException {
-        QuotaException(String message) {
-            super(message)
-        }
-    }
-
-    @Client('/traced')
-    static interface TracedClient {
-
-        @Get('/hello/{name}')
-        String hello(String name)
-
-        @Get('/blocking/hello/{name}')
-        String blockingHello(String name)
-
-        @Get('/error/{name}')
-        String error(String name)
-
-        @Get('/blocking/error/{name}')
-        String blockingError(String name)
-
-        @Get('/hello/{name}')
-        String continued(String name)
-
-        @Get('/blocking/hello/{name}')
-        String blockingContinued(String name)
-
-        @Get('/hello/{name}')
-        @SingleResult
-        Publisher<String> continuedRx(String name)
-
-        @Get('/nestedReactive2/{name}')
-        @SingleResult
-        Publisher<String> nestedReactive2(String name)
     }
 }

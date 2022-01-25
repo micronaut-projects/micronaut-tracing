@@ -59,12 +59,13 @@ public class OpenTracingClientFilter extends AbstractOpenTracingFilter implement
     /**
      * Initialize the open tracing client filter with tracer and exclusion configuration.
      *
-     * @param tracer the tracer for span creation and configuring across arbitrary transports
-     * @param exclusionsConfiguration The {@link TracingExclusionsConfiguration}
+     * @param tracer           the tracer for span creation and configuring across arbitrary transports
+     * @param exclusionsConfig The {@link TracingExclusionsConfiguration}
      */
     @Inject
-    public OpenTracingClientFilter(Tracer tracer, @Nullable TracingExclusionsConfiguration exclusionsConfiguration) {
-        super(tracer, exclusionsConfiguration == null ? null : exclusionsConfiguration.exclusionTest());
+    public OpenTracingClientFilter(Tracer tracer,
+                                   @Nullable TracingExclusionsConfiguration exclusionsConfig) {
+        super(tracer, exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
     }
 
     @SuppressWarnings("unchecked")

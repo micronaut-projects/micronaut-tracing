@@ -20,7 +20,7 @@ class TracingExclusionsConfigurationSpec extends Specification {
     Predicate<String> pathPredicate = configuration.exclusionTest()
 
     @Unroll
-    def "path #path is #desc by predicate"() {
+    void 'path #path is #desc by predicate'() {
         expect:
         pathPredicate.test(path) == excluded
 

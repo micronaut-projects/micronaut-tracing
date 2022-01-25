@@ -65,12 +65,13 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
     /**
      * Creates an HTTP server instrumentation filter.
      *
-     * @param tracer for span creation and propagation across transport
-     * @param exclusionsConfiguration The {@link TracingExclusionsConfiguration}
+     * @param tracer           for span creation and propagation across transport
+     * @param exclusionsConfig The {@link TracingExclusionsConfiguration}
      */
     @Inject
-    public OpenTracingServerFilter(Tracer tracer, @Nullable TracingExclusionsConfiguration exclusionsConfiguration) {
-        super(tracer, exclusionsConfiguration == null ? null : exclusionsConfiguration.exclusionTest());
+    public OpenTracingServerFilter(Tracer tracer,
+                                   @Nullable TracingExclusionsConfiguration exclusionsConfig) {
+        super(tracer, exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
     }
 
     @SuppressWarnings("unchecked")

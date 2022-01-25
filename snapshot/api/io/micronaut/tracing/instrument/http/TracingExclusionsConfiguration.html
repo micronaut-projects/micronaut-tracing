@@ -112,7 +112,7 @@ public class <span class="typeNameLabel">TracingExclusionsConfiguration</span>
 extends java.lang.Object</pre>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
-<dd>3.3.0</dd>
+<dd>4.0</dd>
 </dl>
 </li>
 </ul>
@@ -252,7 +252,7 @@ extends java.lang.Object</pre>
 public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getExclusions()</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>The URI patterns to exclude from the tracing.</dd>
+<dd>the URI patterns to exclude from the tracing</dd>
 </dl>
 </li>
 </ul>
@@ -267,7 +267,8 @@ public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getExclusions()</pre>
 <div class="block">Sets the URI patterns to be excluded from tracing.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>exclusions</code> - A list of regular expression patterns to be excluded from tracing if the request URI matches.</dd>
+<dd><code>exclusions</code> - regular expression patterns to be excluded from
+                   tracing if the request URI matches</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><code>Pattern.compile(String)</code></dd>
 </dl>
@@ -283,8 +284,9 @@ public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getExclusions()</pre>
 public&nbsp;java.util.function.Predicate&lt;java.lang.String&gt;&nbsp;exclusionTest()</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>Either null (implying everything should be included), or a Predicate which when given a URL path returns
-         whether that path should be excluded from tracing.</dd>
+<dd>null (implying everything should be included), or a Predicate
+         which, when given a URL path, returns whether that path should
+         be excluded from tracing.</dd>
 </dl>
 </li>
 </ul>

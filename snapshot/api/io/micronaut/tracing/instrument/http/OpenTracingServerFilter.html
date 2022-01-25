@@ -174,7 +174,7 @@ implements io.micronaut.http.filter.HttpServerFilter</pre>
 </tr>
 <tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../io/micronaut/tracing/instrument/http/OpenTracingServerFilter.html#OpenTracingServerFilter-io.opentracing.Tracer-io.micronaut.tracing.instrument.http.TracingExclusionsConfiguration-">OpenTracingServerFilter</a></span>(io.opentracing.Tracer&nbsp;tracer,
-                       <a href="../../../../../io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http">TracingExclusionsConfiguration</a>&nbsp;exclusionsConfiguration)</code>
+                       <a href="../../../../../io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http">TracingExclusionsConfiguration</a>&nbsp;exclusionsConfig)</code>
 <div class="block">Creates an HTTP server instrumentation filter.</div>
 </td>
 </tr>
@@ -261,12 +261,12 @@ implements io.micronaut.http.filter.HttpServerFilter</pre>
 <pre>@Inject
 public&nbsp;OpenTracingServerFilter(io.opentracing.Tracer&nbsp;tracer,
                                        @Nullable
-                                       <a href="../../../../../io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http">TracingExclusionsConfiguration</a>&nbsp;exclusionsConfiguration)</pre>
+                                       <a href="../../../../../io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http">TracingExclusionsConfiguration</a>&nbsp;exclusionsConfig)</pre>
 <div class="block">Creates an HTTP server instrumentation filter.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>tracer</code> - for span creation and propagation across transport</dd>
-<dd><code>exclusionsConfiguration</code> - The <a href="../../../../../io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http"><code>TracingExclusionsConfiguration</code></a></dd>
+<dd><code>exclusionsConfig</code> - The <a href="../../../../../io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http"><code>TracingExclusionsConfiguration</code></a></dd>
 </dl>
 </li>
 </ul>

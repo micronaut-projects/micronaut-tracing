@@ -88,12 +88,12 @@ tracing:
 
 You can also optionally dependency-inject common configuration classes into api:tracing.brave.BraveTracerConfiguration[] such as `brave.sampler.Sampler` just by defining them as beans. See the API for api:tracing.brave.BraveTracerConfiguration[] for available injection points.
 
-== Filtering http spans
+== Filtering HTTP spans
 
-It may be useful to exclude health-checks and other http requests to your service.
+It may be useful to exclude health-checks and other HTTP requests to your service.
 This can be achieved by adding a list of regular expression patterns to your configuration:
 
-.Filtering http request spans
+.Filtering HTTP request spans
 [source,yaml]
 ----
 tracing:

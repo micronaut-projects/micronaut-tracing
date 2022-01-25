@@ -25,25 +25,28 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * @since 3.3.0
+ * @since 4.0
  */
 @ConfigurationProperties(TracingExclusionsConfiguration.PREFIX)
 public class TracingExclusionsConfiguration {
 
     public static final String PREFIX = "tracing";
+
     private List<String> exclusions;
 
     /**
-     * @return The URI patterns to exclude from the tracing.
+     * @return the URI patterns to exclude from the tracing
      */
-    @Nullable public List<String> getExclusions() {
+    @Nullable
+    public List<String> getExclusions() {
         return exclusions;
     }
 
     /**
      * Sets the URI patterns to be excluded from tracing.
      *
-     * @param exclusions A list of regular expression patterns to be excluded from tracing if the request URI matches.
+     * @param exclusions regular expression patterns to be excluded from
+     *                   tracing if the request URI matches
      *
      * @see Pattern#compile(String)
      */
@@ -52,15 +55,19 @@ public class TracingExclusionsConfiguration {
     }
 
     /**
-     * @return Either null (implying everything should be included), or a Predicate which when given a URL path returns
-     *         whether that path should be excluded from tracing.
+     * @return null (implying everything should be included), or a Predicate
+     *         which, when given a URL path, returns whether that path should
+     *         be excluded from tracing.
      */
-    @Nullable public Predicate<String> exclusionTest() {
+    @Nullable
+    public Predicate<String> exclusionTest() {
         if (CollectionUtils.isEmpty(exclusions)) {
             return null;
-        } else {
-            List<Pattern> patterns = exclusions.stream().map(Pattern::compile).collect(Collectors.toList());
-            return uri -> patterns.stream().anyMatch(pattern -> pattern.matcher(uri).matches());
         }
+
+        List<Pattern> patterns = exclusions.stream()
+            .map(Pattern::compile)
+            .collect(Collectors.toList());
+        return uri -> patterns.stream().anyMatch(pattern -> pattern.matcher(uri).matches());
     }
 }

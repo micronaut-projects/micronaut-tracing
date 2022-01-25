@@ -100,7 +100,7 @@
         <h1>Micronaut Tracing</h1>
         <p></p>
         <p>Adds Distributed Tracing Support</p>
-        <p><strong>Version:</strong> <select style='max-width: 200px' onChange='window.document.location.href=this.options[this.selectedIndex].value;'><option value='https://micronaut-projects.github.io/micronaut-tracing/snapshot/guide/index.html'>SNAPSHOT</option><option selected='selected' value='https://micronaut-projects.github.io/micronaut-tracing/4.0.0/guide/index.html'>4.0.0</option></select> </p>
+        <p><strong>Version:</strong> <select style='max-width: 200px' onChange='window.document.location.href=this.options[this.selectedIndex].value;'><option value='https://micronaut-projects.github.io/micronaut-tracing/snapshot/guide/index.html'>SNAPSHOT</option><option selected='selected' value='https://micronaut-projects.github.io/micronaut-tracing/4.0.1/guide/index.html'>4.0.1</option><option value='https://micronaut-projects.github.io/micronaut-tracing/4.0.0/guide/index.html'>4.0.0</option></select> </p>
     </div>
     
 <h1 id="introduction"><a class="anchor" href="#introduction"></a>1 Introduction</h1>
@@ -349,6 +349,26 @@ class HelloService {
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_filtering_http_spans">Filtering HTTP spans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It may be useful to exclude health-checks and other HTTP requests to your service.
+This can be achieved by adding a list of regular expression patterns to your configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">Filtering HTTP request spans</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">tracing:
+  jaeger:
+    enabled: true
+  exclusions:
+    - /health
+    - /env/.*</code></pre>
+</div>
+</div>
+</div>
+</div>
 
 <h1 id="zipkin"><a class="anchor" href="#zipkin"></a>4 Tracing with Zipkin</h1>
 
@@ -505,6 +525,26 @@ In production, setting <code>TRACING_ZIPKIN_HTTP_URLS</code> environment variabl
 </div>
 <div class="paragraph">
 <p>You can also optionally dependency-inject common configuration classes into <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.html">BraveTracerConfiguration</a> such as <code>brave.sampler.Sampler</code> just by defining them as beans. See the API for <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.html">BraveTracerConfiguration</a> for available injection points.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_filtering_http_spans">Filtering HTTP spans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It may be useful to exclude health-checks and other HTTP requests to your service.
+This can be achieved by adding a list of regular expression patterns to your configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">Filtering HTTP request spans</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">tracing:
+  zipkin:
+    enabled: true
+  exclusions:
+    - /health
+    - /env/.*</code></pre>
+</div>
 </div>
 </div>
 </div>

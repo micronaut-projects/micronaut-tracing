@@ -50,6 +50,16 @@ class HttpTracingSpec extends Specification {
         reporter.spans[0].name() == 'get /traced/hello/{name}'
     }
 
+    void 'test basic HTTP trace filtering'() {
+        when:
+        buildContext('tracing.exclusions[0]': '/traced/h.*')
+        HttpResponse<String> response = client.toBlocking().exchange('/traced/hello/John', String)
+
+        then:
+        response
+        reporter.spans.empty
+    }
+
     void 'test RxJava HTTP tracing'() {
         when:
         buildContext()
@@ -74,6 +84,32 @@ class HttpTracingSpec extends Specification {
 
         then: 'The response is correct'
         response.body() == 'hello'
+    }
+
+    void 'test RxJava HTTP tracing with exclusions'() {
+        when:
+        buildContext('tracing.exclusions[0]': '/traced/rxjava/John')
+        HttpResponse<String> response = client.toBlocking().exchange('/traced/rxjava/John', String)
+
+        then:
+        response
+        reporter.spans.empty
+
+        when: 'An publishOn call is used'
+        response = client.toBlocking().exchange('/traced/rxjava/observe', String)
+
+        then: 'The response is correct'
+        response.body() == 'hello'
+        reporter.spans.size() == 2
+
+        reporter.spans[0].tags()['http.path'] == '/traced/rxjava/observe'
+        reporter.spans[0].name() == 'get /traced/rxjava/observe'
+        reporter.spans[0].id() == reporter.spans[1].id()
+        reporter.spans[0].kind() == SERVER
+
+        reporter.spans[1].tags()['http.path'] == '/traced/rxjava/observe'
+        reporter.spans[1].name() == 'get'
+        reporter.spans[1].kind() == CLIENT
     }
 
     void 'test basic HTTP trace error'() {
@@ -173,6 +209,47 @@ class HttpTracingSpec extends Specification {
         appWithoutTracing.close()
     }
 
+    void 'test nested HTTP tracing with server without tracing and uri exclusions'() {
+        given:
+        ApplicationContext appWithoutTracing = ApplicationContext.builder().start()
+        EmbeddedServer embeddedServerWithoutTracing = appWithoutTracing.getBean(EmbeddedServer).start()
+
+        ApplicationContext context = ApplicationContext.builder(
+                'tracing.zipkin.enabled': true,
+                'tracing.zipkin.sampler.probability': 1,
+                'tracing.exclusions[0]': '.*hello.*',
+                'micronaut.http.services.not-traced-client.urls[0]': "http://localhost:${embeddedServerWithoutTracing.port}",
+        )
+                .singletons(new StrictCurrentTraceContext(), new TestReporter())
+                .start()
+
+        TestReporter reporter = context.getBean(TestReporter)
+        EmbeddedServer embeddedServer = context.getBean(EmbeddedServer).start()
+        HttpClient client = context.createBean(HttpClient, embeddedServer.URL)
+
+        when:
+        HttpResponse<String> response = client.toBlocking().exchange('/traced/nested-not-traced/John', String)
+
+        then:
+        response
+        reporter.spans.size() == 2
+
+        reporter.spans[0].name() == 'get /traced/nested-not-traced/{name}'
+        reporter.spans[0].kind() == SERVER
+        reporter.spans[0].tags()['http.method'] == 'GET'
+        reporter.spans[0].tags()['http.path'] == '/traced/nested-not-traced/John'
+
+        reporter.spans[1].tags()['foo'] == null
+        reporter.spans[1].tags()['http.path'] == '/traced/nested-not-traced/John'
+        reporter.spans[1].name() == 'get'
+        reporter.spans[1].kind() == CLIENT
+
+        cleanup:
+        client.close()
+        context.close()
+        appWithoutTracing.close()
+    }
+
     void 'test nested HTTP error tracing'() {
         when:
         buildContext()
@@ -214,10 +291,12 @@ class HttpTracingSpec extends Specification {
                 span.kind() == kind
     }
 
-    private void buildContext() {
+    private void buildContext(Map<String, ?> extraConfig = [:]) {
         context = ApplicationContext
-                .builder('tracing.zipkin.enabled': true,
-                         'tracing.zipkin.sampler.probability': 1)
+                .builder([
+                        'tracing.zipkin.enabled'            : true,
+                        'tracing.zipkin.sampler.probability': 1
+                ] + extraConfig)
                 .singletons(new StrictCurrentTraceContext(), new TestReporter())
                 .start()
         reporter = context.getBean(TestReporter)

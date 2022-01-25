@@ -17,6 +17,7 @@ package io.micronaut.tracing.instrument.http;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.annotation.Filter;
@@ -29,6 +30,7 @@ import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
 import io.opentracing.noop.NoopTracer;
+import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
 
 import static io.micronaut.tracing.instrument.http.AbstractOpenTracingFilter.CLIENT_PATH;
@@ -51,7 +53,18 @@ public class OpenTracingClientFilter extends AbstractOpenTracingFilter implement
      * @param tracer the tracer for span creation and configuring across arbitrary transports
      */
     public OpenTracingClientFilter(Tracer tracer) {
-        super(tracer);
+        this(tracer, null);
+    }
+
+    /**
+     * Initialize the open tracing client filter with tracer and exclusion configuration.
+     *
+     * @param tracer the tracer for span creation and configuring across arbitrary transports
+     * @param exclusionsConfiguration The {@link TracingExclusionsConfiguration}
+     */
+    @Inject
+    public OpenTracingClientFilter(Tracer tracer, @Nullable TracingExclusionsConfiguration exclusionsConfiguration) {
+        super(tracer, exclusionsConfiguration == null ? null : exclusionsConfiguration.exclusionTest());
     }
 
     @SuppressWarnings("unchecked")
@@ -60,6 +73,9 @@ public class OpenTracingClientFilter extends AbstractOpenTracingFilter implement
                                                          ClientFilterChain chain) {
 
         Publisher<? extends HttpResponse<?>> requestPublisher = chain.proceed(request);
+        if (shouldExclude(request.getPath())) {
+            return requestPublisher;
+        }
 
         Span activeSpan = tracer.activeSpan();
         SpanContext activeContext = activeSpan == null ? null : activeSpan.context();

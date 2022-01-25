@@ -17,6 +17,7 @@ package io.micronaut.tracing.instrument.http;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
@@ -29,6 +30,7 @@ import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
 import io.opentracing.noop.NoopTracer;
+import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
 
 import static io.micronaut.http.filter.ServerFilterPhase.TRACING;
@@ -57,7 +59,18 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
      * @param tracer for span creation and propagation across transport
      */
     public OpenTracingServerFilter(Tracer tracer) {
-        super(tracer);
+        this(tracer, null);
+    }
+
+    /**
+     * Creates an HTTP server instrumentation filter.
+     *
+     * @param tracer for span creation and propagation across transport
+     * @param exclusionsConfiguration The {@link TracingExclusionsConfiguration}
+     */
+    @Inject
+    public OpenTracingServerFilter(Tracer tracer, @Nullable TracingExclusionsConfiguration exclusionsConfiguration) {
+        super(tracer, exclusionsConfiguration == null ? null : exclusionsConfiguration.exclusionTest());
     }
 
     @SuppressWarnings("unchecked")
@@ -65,7 +78,7 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
         boolean applied = request.getAttribute(APPLIED, Boolean.class).orElse(false);
         boolean continued = request.getAttribute(CONTINUE, Boolean.class).orElse(false);
-        if (applied && !continued) {
+        if ((applied && !continued) || shouldExclude(request.getPath())) {
             return chain.proceed(request);
         }
 

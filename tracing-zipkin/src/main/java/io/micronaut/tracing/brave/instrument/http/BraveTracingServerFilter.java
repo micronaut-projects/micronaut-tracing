@@ -22,14 +22,19 @@ import brave.http.HttpServerResponse;
 import brave.http.HttpTracing;
 import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
 import io.micronaut.tracing.instrument.http.OpenTracingServerFilter;
+import io.micronaut.tracing.instrument.http.TracingExclusionsConfiguration;
 import io.opentracing.Tracer;
+import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
+
+import java.util.function.Predicate;
 
 import static io.micronaut.http.filter.ServerFilterPhase.TRACING;
 import static io.micronaut.tracing.instrument.http.AbstractOpenTracingFilter.SERVER_PATH;
@@ -48,6 +53,8 @@ public class BraveTracingServerFilter implements HttpServerFilter {
     private final HttpTracing httpTracing;
     private final Tracer openTracer;
     private final HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler;
+    @Nullable
+    private final Predicate<String> pathExclusionTest;
 
     /**
      * @param httpTracing   the <code>HttpTracing</code> instance
@@ -57,14 +64,32 @@ public class BraveTracingServerFilter implements HttpServerFilter {
     public BraveTracingServerFilter(HttpTracing httpTracing,
                                     Tracer openTracer,
                                     HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler) {
+        this(httpTracing, openTracer, serverHandler, null);
+    }
+
+    /**
+     * @param httpTracing             the <code>HttpTracing</code> instance
+     * @param openTracer              the Open Tracing instance
+     * @param serverHandler           the <code>HttpServerHandler</code> instance
+     * @param exclusionsConfiguration the {@link TracingExclusionsConfiguration}
+     */
+    @Inject
+    public BraveTracingServerFilter(HttpTracing httpTracing,
+                                    io.opentracing.Tracer openTracer,
+                                    HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler,
+                                    @Nullable TracingExclusionsConfiguration exclusionsConfiguration) {
         this.httpTracing = httpTracing;
         this.openTracer = openTracer;
         this.serverHandler = serverHandler;
+        this.pathExclusionTest = exclusionsConfiguration == null ? null : exclusionsConfiguration.exclusionTest();
     }
 
     @Override
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request,
                                                       ServerFilterChain chain) {
+        if (shouldExclude(request.getPath())) {
+            return chain.proceed(request);
+        }
         HttpServerRequest httpServerRequest = mapRequest(request);
         Span span = serverHandler.handleReceive(httpServerRequest);
         return new HttpServerTracingPublisher(
@@ -79,6 +104,10 @@ public class BraveTracingServerFilter implements HttpServerFilter {
     @Override
     public int getOrder() {
         return TRACING.order();
+    }
+
+    private boolean shouldExclude(@Nullable String path) {
+        return pathExclusionTest != null && path != null && pathExclusionTest.test(path);
     }
 
     private HttpServerRequest mapRequest(HttpRequest<?> request) {

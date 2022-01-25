@@ -21,13 +21,18 @@ import brave.http.HttpClientResponse;
 import brave.http.HttpTracing;
 import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
 import io.micronaut.tracing.instrument.http.OpenTracingClientFilter;
+import io.micronaut.tracing.instrument.http.TracingExclusionsConfiguration;
+import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
+
+import java.util.function.Predicate;
 
 import static io.micronaut.tracing.instrument.http.AbstractOpenTracingFilter.CLIENT_PATH;
 
@@ -44,6 +49,8 @@ public class BraveTracingClientFilter implements HttpClientFilter {
 
     private final HttpClientHandler<HttpClientRequest, HttpClientResponse> clientHandler;
     private final HttpTracing httpTracing;
+    @Nullable
+    private final Predicate<String> pathExclusionTest;
 
     /**
      * @param clientHandler the standard way to instrument HTTP client
@@ -51,14 +58,36 @@ public class BraveTracingClientFilter implements HttpClientFilter {
      */
     public BraveTracingClientFilter(HttpClientHandler<HttpClientRequest, HttpClientResponse> clientHandler,
                                     HttpTracing httpTracing) {
+        this(clientHandler, httpTracing, null);
+    }
+
+    /**
+     * Initialize tracing filter with clientHandler and httpTracing.
+     *
+     * @param clientHandler the standard way to instrument HTTP client
+     * @param httpTracing   the tracer for creation of span
+     * @param exclusionsConfiguration the {@link TracingExclusionsConfiguration}
+     */
+    @Inject
+    public BraveTracingClientFilter(HttpClientHandler<HttpClientRequest, HttpClientResponse> clientHandler,
+                                    HttpTracing httpTracing,
+                                    @Nullable TracingExclusionsConfiguration exclusionsConfiguration) {
         this.clientHandler = clientHandler;
         this.httpTracing = httpTracing;
+        this.pathExclusionTest = exclusionsConfiguration == null ? null : exclusionsConfiguration.exclusionTest();
     }
 
     @Override
     public Publisher<? extends HttpResponse<?>> doFilter(MutableHttpRequest<?> request,
                                                          ClientFilterChain chain) {
         Publisher<? extends HttpResponse<?>> requestPublisher = chain.proceed(request);
+        if (shouldExclude(request.getPath())) {
+            return requestPublisher;
+        }
         return new HttpClientTracingPublisher(requestPublisher, request, clientHandler, httpTracing);
+    }
+
+    private boolean shouldExclude(@Nullable String path) {
+        return pathExclusionTest != null && path != null && pathExclusionTest.test(path);
     }
 }

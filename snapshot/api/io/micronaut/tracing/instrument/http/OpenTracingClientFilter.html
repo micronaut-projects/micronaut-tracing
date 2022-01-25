@@ -170,6 +170,12 @@ implements io.micronaut.http.filter.HttpClientFilter</pre>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../io/micronaut/tracing/instrument/http/OpenTracingClientFilter.html#OpenTracingClientFilter-io.opentracing.Tracer-">OpenTracingClientFilter</a></span>(io.opentracing.Tracer&nbsp;tracer)</code>&nbsp;</td>
 </tr>
+<tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../io/micronaut/tracing/instrument/http/OpenTracingClientFilter.html#OpenTracingClientFilter-io.opentracing.Tracer-io.micronaut.tracing.instrument.http.TracingExclusionsConfiguration-">OpenTracingClientFilter</a></span>(io.opentracing.Tracer&nbsp;tracer,
+                       <a href="../../../../../io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http">TracingExclusionsConfiguration</a>&nbsp;exclusionsConfiguration)</code>
+<div class="block">Initialize the open tracing client filter with tracer and exclusion configuration.</div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -196,7 +202,7 @@ implements io.micronaut.http.filter.HttpClientFilter</pre>
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;io.micronaut.tracing.instrument.http.<a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.instrument.http">AbstractOpenTracingFilter</a></h3>
-<code><a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#newSpan-io.micronaut.http.HttpRequest-io.opentracing.SpanContext-">newSpan</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#resolveSpanName-io.micronaut.http.HttpRequest-">resolveSpanName</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#setErrorTags-io.opentracing.Span-java.lang.Throwable-">setErrorTags</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#setResponseTags-io.micronaut.http.HttpRequest-io.micronaut.http.HttpResponse-io.opentracing.Span-">setResponseTags</a></code></li>
+<code><a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#newSpan-io.micronaut.http.HttpRequest-io.opentracing.SpanContext-">newSpan</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#resolveSpanName-io.micronaut.http.HttpRequest-">resolveSpanName</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#setErrorTags-io.opentracing.Span-java.lang.Throwable-">setErrorTags</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#setResponseTags-io.micronaut.http.HttpRequest-io.micronaut.http.HttpResponse-io.opentracing.Span-">setResponseTags</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#shouldExclude-java.lang.String-">shouldExclude</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -236,13 +242,31 @@ implements io.micronaut.http.filter.HttpClientFilter</pre>
 <a name="OpenTracingClientFilter-io.opentracing.Tracer-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>OpenTracingClientFilter</h4>
 <pre>public&nbsp;OpenTracingClientFilter(io.opentracing.Tracer&nbsp;tracer)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>tracer</code> - the tracer for span creation and configuring across arbitrary transports</dd>
+</dl>
+</li>
+</ul>
+<a name="OpenTracingClientFilter-io.opentracing.Tracer-io.micronaut.tracing.instrument.http.TracingExclusionsConfiguration-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>OpenTracingClientFilter</h4>
+<pre>@Inject
+public&nbsp;OpenTracingClientFilter(io.opentracing.Tracer&nbsp;tracer,
+                                       @Nullable
+                                       <a href="../../../../../io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http">TracingExclusionsConfiguration</a>&nbsp;exclusionsConfiguration)</pre>
+<div class="block">Initialize the open tracing client filter with tracer and exclusion configuration.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>tracer</code> - the tracer for span creation and configuring across arbitrary transports</dd>
+<dd><code>exclusionsConfiguration</code> - The <a href="../../../../../io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http"><code>TracingExclusionsConfiguration</code></a></dd>
 </dl>
 </li>
 </ul>

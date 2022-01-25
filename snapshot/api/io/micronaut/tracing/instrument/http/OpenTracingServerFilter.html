@@ -172,6 +172,12 @@ implements io.micronaut.http.filter.HttpServerFilter</pre>
 <div class="block">Creates an HTTP server instrumentation filter.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../io/micronaut/tracing/instrument/http/OpenTracingServerFilter.html#OpenTracingServerFilter-io.opentracing.Tracer-io.micronaut.tracing.instrument.http.TracingExclusionsConfiguration-">OpenTracingServerFilter</a></span>(io.opentracing.Tracer&nbsp;tracer,
+                       <a href="../../../../../io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http">TracingExclusionsConfiguration</a>&nbsp;exclusionsConfiguration)</code>
+<div class="block">Creates an HTTP server instrumentation filter.</div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -202,7 +208,7 @@ implements io.micronaut.http.filter.HttpServerFilter</pre>
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;io.micronaut.tracing.instrument.http.<a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.instrument.http">AbstractOpenTracingFilter</a></h3>
-<code><a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#newSpan-io.micronaut.http.HttpRequest-io.opentracing.SpanContext-">newSpan</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#resolveSpanName-io.micronaut.http.HttpRequest-">resolveSpanName</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#setErrorTags-io.opentracing.Span-java.lang.Throwable-">setErrorTags</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#setResponseTags-io.micronaut.http.HttpRequest-io.micronaut.http.HttpResponse-io.opentracing.Span-">setResponseTags</a></code></li>
+<code><a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#newSpan-io.micronaut.http.HttpRequest-io.opentracing.SpanContext-">newSpan</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#resolveSpanName-io.micronaut.http.HttpRequest-">resolveSpanName</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#setErrorTags-io.opentracing.Span-java.lang.Throwable-">setErrorTags</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#setResponseTags-io.micronaut.http.HttpRequest-io.micronaut.http.HttpResponse-io.opentracing.Span-">setResponseTags</a>, <a href="../../../../../io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#shouldExclude-java.lang.String-">shouldExclude</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -235,7 +241,7 @@ implements io.micronaut.http.filter.HttpServerFilter</pre>
 <a name="OpenTracingServerFilter-io.opentracing.Tracer-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>OpenTracingServerFilter</h4>
 <pre>public&nbsp;OpenTracingServerFilter(io.opentracing.Tracer&nbsp;tracer)</pre>
@@ -243,6 +249,24 @@ implements io.micronaut.http.filter.HttpServerFilter</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>tracer</code> - for span creation and propagation across transport</dd>
+</dl>
+</li>
+</ul>
+<a name="OpenTracingServerFilter-io.opentracing.Tracer-io.micronaut.tracing.instrument.http.TracingExclusionsConfiguration-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>OpenTracingServerFilter</h4>
+<pre>@Inject
+public&nbsp;OpenTracingServerFilter(io.opentracing.Tracer&nbsp;tracer,
+                                       @Nullable
+                                       <a href="../../../../../io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http">TracingExclusionsConfiguration</a>&nbsp;exclusionsConfiguration)</pre>
+<div class="block">Creates an HTTP server instrumentation filter.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>tracer</code> - for span creation and propagation across transport</dd>
+<dd><code>exclusionsConfiguration</code> - The <a href="../../../../../io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http"><code>TracingExclusionsConfiguration</code></a></dd>
 </dl>
 </li>
 </ul>

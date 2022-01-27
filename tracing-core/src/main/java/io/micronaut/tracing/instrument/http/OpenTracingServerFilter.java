@@ -24,7 +24,8 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
-import io.micronaut.tracing.instrument.util.TracingPublisher;
+import io.micronaut.tracing.instrument.util.TracingObserver;
+import io.micronaut.tracing.instrument.util.TracingPublisherUtils;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
@@ -84,16 +85,16 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
         }
 
         SpanBuilder spanBuilder = continued ? null : newSpan(request, initSpanContext(request));
-        return new TracingPublisher(chain.proceed(request), tracer, spanBuilder) {
+        return TracingPublisherUtils.createTracingPublisher(chain.proceed(request), tracer, spanBuilder, new TracingObserver() {
 
             @Override
-            protected void doOnSubscribe(@NonNull Span span) {
+            public void doOnSubscribe(@NonNull Span span) {
                 span.setTag(TAG_HTTP_SERVER, true);
                 request.setAttribute(CURRENT_SPAN, span);
             }
 
             @Override
-            protected void doOnNext(@NonNull Object object, @NonNull Span span) {
+            public void doOnNext(@NonNull Object object, @NonNull Span span) {
                 if (!(object instanceof HttpResponse)) {
                     return;
                 }
@@ -104,21 +105,22 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
             }
 
             @Override
-            protected void doOnError(@NonNull Throwable throwable, @NonNull Span span) {
+            public void doOnError(@NonNull Throwable throwable, @NonNull Span span) {
                 request.setAttribute(CONTINUE, true);
                 setErrorTags(span, throwable);
             }
 
             @Override
-            protected boolean isContinued() {
+            public boolean isContinued() {
                 return continued;
             }
 
             @Override
-            protected boolean isFinishOnError() {
+            public boolean isFinishOnError() {
                 return false;
             }
-        };
+
+        });
     }
 
     @Override

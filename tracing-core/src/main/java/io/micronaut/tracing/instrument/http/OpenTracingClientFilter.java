@@ -24,7 +24,8 @@ import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
-import io.micronaut.tracing.instrument.util.TracingPublisher;
+import io.micronaut.tracing.instrument.util.TracingObserver;
+import io.micronaut.tracing.instrument.util.TracingPublisherUtils;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
@@ -82,30 +83,30 @@ public class OpenTracingClientFilter extends AbstractOpenTracingFilter implement
         SpanContext activeContext = activeSpan == null ? null : activeSpan.context();
         SpanBuilder spanBuilder = newSpan(request, activeContext);
 
-        return new TracingPublisher(requestPublisher, tracer, spanBuilder, true) {
+        return TracingPublisherUtils.createTracingPublisher(requestPublisher, tracer, spanBuilder, true, new TracingObserver() {
 
             @Override
-            protected void doOnSubscribe(@NonNull Span span) {
+            public void doOnSubscribe(@NonNull Span span) {
                 span.setTag(TAG_HTTP_CLIENT, true);
                 SpanContext spanContext = span.context();
                 tracer.inject(
-                        spanContext,
-                        HTTP_HEADERS,
-                        new HttpHeadersTextMap(request.getHeaders())
+                    spanContext,
+                    HTTP_HEADERS,
+                    new HttpHeadersTextMap(request.getHeaders())
                 );
                 request.setAttribute(CURRENT_SPAN_CONTEXT, spanContext);
                 request.setAttribute(CURRENT_SPAN, span);
             }
 
             @Override
-            protected void doOnNext(@NonNull Object object, @NonNull Span span) {
+            public void doOnNext(@NonNull Object object, @NonNull Span span) {
                 if (object instanceof HttpResponse) {
                     setResponseTags(request, (HttpResponse<?>) object, span);
                 }
             }
 
             @Override
-            protected void doOnError(@NonNull Throwable error, @NonNull Span span) {
+            public void doOnError(@NonNull Throwable error, @NonNull Span span) {
                 if (error instanceof HttpClientResponseException) {
                     HttpClientResponseException e = (HttpClientResponseException) error;
                     HttpResponse<?> response = e.getResponse();
@@ -113,6 +114,7 @@ public class OpenTracingClientFilter extends AbstractOpenTracingFilter implement
                 }
                 setErrorTags(span, error);
             }
-        };
+
+        });
     }
 }

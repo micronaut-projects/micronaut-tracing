@@ -25,11 +25,10 @@ import reactor.core.CoreSubscriber;
 import reactor.util.context.Context;
 
 /**
- * A reactive streams publisher that traces.
+ * The tracing publisher that supports Reactor's context.
  *
  * @param <T> the type of element signaled
- * @author graemerocher
- * @since 1.0
+ * @author Denis Stepanov
  */
 @SuppressWarnings("PublisherImplementation")
 public class TracingCorePublisher<T>  extends TracingPublisher<T> implements CorePublisher<T> {

@@ -18,4 +18,5 @@ zipkin-brave-instrumentation = { module = 'io.zipkin.brave:brave-instrumentation
 zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter', version.ref = 'zipkin-reporter' }
 
 [plugins]
-kotlin = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }
+kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }
+kotlinkapt = { id = 'org.jetbrains.kotlin.kapt', version.ref = 'kotlin' }

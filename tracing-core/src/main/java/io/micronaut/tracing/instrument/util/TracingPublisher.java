@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.instrument.util;
 
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.http.MutableHttpResponse;
@@ -41,69 +42,130 @@ import java.util.Optional;
 @SuppressWarnings("PublisherImplementation")
 public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
 
-    private final Publisher<T> publisher;
+    protected final Publisher<T> publisher;
     private final Tracer tracer;
     private final SpanBuilder spanBuilder;
     private final Span parentSpan;
     private final boolean isSingle;
+    private final TracingObserver tracingObserver;
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher     the target publisher
-     * @param tracer        the tracer
-     * @param operationName the operation name that should be started
+     * @param publisher       the target publisher
+     * @param tracer          the tracer
+     * @param operationName   the operation name that should be started
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
                             String operationName) {
-        this(publisher, tracer, tracer.buildSpan(operationName));
+        this(publisher, tracer, tracer.buildSpan(operationName), TracingObserver.NO_OP);
+    }
+
+    /**
+     * Creates a new tracing publisher for the given arguments.
+     *
+     * @param publisher       the target publisher
+     * @param tracer          the tracer
+     * @param operationName   the operation name that should be started
+     * @param tracingObserver the tracing observer
+     */
+    public TracingPublisher(Publisher<T> publisher,
+                            Tracer tracer,
+                            String operationName,
+                            @NonNull TracingObserver tracingObserver) {
+        this(publisher, tracer, tracer.buildSpan(operationName), tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments. This constructor
      * will just add tracing of the existing span if it is present.
      *
-     * @param publisher the target publisher
-     * @param tracer    the tracer
+     * @param publisher       the target publisher
+     * @param tracer          the tracer
+     */
+    public TracingPublisher(Publisher<T> publisher, Tracer tracer) {
+        this(publisher, tracer, (SpanBuilder) null, TracingObserver.NO_OP);
+    }
+
+    /**
+     * Creates a new tracing publisher for the given arguments. This constructor
+     * will just add tracing of the existing span if it is present.
+     *
+     * @param publisher       the target publisher
+     * @param tracer          the tracer
+     * @param tracingObserver the tracing observer
      */
     public TracingPublisher(Publisher<T> publisher,
-                            Tracer tracer) {
-        this(publisher, tracer, (SpanBuilder) null);
+                            Tracer tracer,
+                            @NonNull TracingObserver tracingObserver) {
+        this(publisher, tracer, (SpanBuilder) null, tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher   the target publisher
-     * @param tracer      the tracer
-     * @param spanBuilder the span builder that represents the span that will be
-     *                    created when the publisher is subscribed to
+     * @param publisher       the target publisher
+     * @param tracer          the tracer
+     * @param spanBuilder     the span builder that represents the span that will be
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
                             SpanBuilder spanBuilder) {
-        this(publisher, tracer, spanBuilder, Publishers.isSingle(publisher.getClass()));
+        this(publisher, tracer, spanBuilder, Publishers.isSingle(publisher.getClass()), TracingObserver.NO_OP);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher   the target publisher
-     * @param tracer      the tracer
-     * @param spanBuilder the span builder that represents the span that will
-     *                    be created when the publisher is subscribed to
-     * @param isSingle    true if the publisher emits a single item
+     * @param publisher       the target publisher
+     * @param tracer          the tracer
+     * @param spanBuilder     the span builder that represents the span that will be
+     * @param tracingObserver the tracing observer
+     */
+    public TracingPublisher(Publisher<T> publisher,
+                            Tracer tracer,
+                            SpanBuilder spanBuilder,
+                            @NonNull TracingObserver tracingObserver) {
+        this(publisher, tracer, spanBuilder, Publishers.isSingle(publisher.getClass()), tracingObserver);
+    }
+
+    /**
+     * Creates a new tracing publisher for the given arguments.
+     *
+     * @param publisher       the target publisher
+     * @param tracer          the tracer
+     * @param spanBuilder     the span builder that represents the span that will
+     *                        be created when the publisher is subscribed to
+     * @param isSingle        true if the publisher emits a single item
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
                             SpanBuilder spanBuilder,
                             boolean isSingle) {
+        this(publisher, tracer, spanBuilder, isSingle, TracingObserver.NO_OP);
+    }
+
+    /**
+     * Creates a new tracing publisher for the given arguments.
+     *
+     * @param publisher       the target publisher
+     * @param tracer          the tracer
+     * @param spanBuilder     the span builder that represents the span that will
+     *                        be created when the publisher is subscribed to
+     * @param isSingle        true if the publisher emits a single item
+     * @param tracingObserver the tracing observer
+     */
+    public TracingPublisher(Publisher<T> publisher,
+                            Tracer tracer,
+                            SpanBuilder spanBuilder,
+                            boolean isSingle, @NonNull TracingObserver tracingObserver) {
         this.publisher = publisher;
         this.tracer = tracer;
         this.spanBuilder = spanBuilder;
         this.parentSpan = tracer.activeSpan();
         this.isSingle = isSingle;
+        this.tracingObserver = tracingObserver;
         if (parentSpan != null && spanBuilder != null) {
             spanBuilder.asChildOf(parentSpan);
         }
@@ -128,80 +190,21 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
 
         final ScopeManager scopeManager = tracer.scopeManager();
         try (Scope ignored = scopeManager.activeSpan() != span ? scopeManager.activate(span) : NoopScope.INSTANCE) {
-            //noinspection SubscriberImplementation
-            publisher.subscribe(new Subscriber<T>() {
-                boolean finished = false;
-
-                @Override
-                public void onSubscribe(Subscription s) {
-                    if (scopeManager.activeSpan() != span) {
-                        try (Scope ignored = scopeManager.activate(span)) {
-                            TracingPublisher.this.doOnSubscribe(span);
-                            actual.onSubscribe(s);
-                        }
-                    } else {
-                        TracingPublisher.this.doOnSubscribe(span);
-                        actual.onSubscribe(s);
-                    }
-                }
-
-                @Override
-                public void onNext(T object) {
-                    boolean finishAfterNext = isSingle && finishOnClose;
-                    try (Scope ignored = scopeManager.activeSpan() != span ? scopeManager.activate(span) : NoopScope.INSTANCE) {
-                        if (object instanceof MutableHttpResponse) {
-                            MutableHttpResponse<?> response = (MutableHttpResponse<?>) object;
-                            Optional<?> body = response.getBody();
-                            if (body.isPresent()) {
-                                Object o = body.get();
-                                if (Publishers.isConvertibleToPublisher(o)) {
-                                    Class<?> type = o.getClass();
-                                    Publisher<?> resultPublisher = Publishers.convertPublisher(o, Publisher.class);
-                                    Publisher<?> scopedPublisher = new ScopePropagationPublisher(resultPublisher, tracer, span);
-                                    response.body(Publishers.convertPublisher(scopedPublisher, type));
-                                }
-                            }
-
-                        }
-                        TracingPublisher.this.doOnNext(object, span);
-                        actual.onNext(object);
-                        if (isSingle) {
-                            finished = true;
-                            TracingPublisher.this.doOnFinish(span);
-                        }
-                    } finally {
-                        if (finishAfterNext) {
-                            span.finish();
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable t) {
-                    try (Scope ignored = scopeManager.activeSpan() != span ? scopeManager.activate(span) : NoopScope.INSTANCE) {
-                        TracingPublisher.this.onError(t, span);
-                        actual.onError(t);
-                        finished = true;
-                    } finally {
-                        if (finishOnClose && isFinishOnError()) {
-                            span.finish();
-                        }
-                    }
-                }
-
-                @Override
-                public void onComplete() {
-                    try (Scope ignored = scopeManager.activeSpan() != span ? scopeManager.activate(span) : NoopScope.INSTANCE) {
-                        actual.onComplete();
-                        TracingPublisher.this.doOnFinish(span);
-                    } finally {
-                        if (!finished && finishOnClose) {
-                            span.finish();
-                        }
-                    }
-                }
-            });
+            doSubscribe(actual, scopeManager, span, finishOnClose);
         }
+    }
+
+    /**
+     * Do subscribe to the publisher.
+     *
+     * @param actual        The actual subscriber
+     * @param scopeManager  The scope manager
+     * @param span          The span
+     * @param finishOnClose Should finish on close?
+     */
+    @Internal
+    protected void doSubscribe(Subscriber<? super T> actual, ScopeManager scopeManager, Span span, boolean finishOnClose) {
+        publisher.subscribe(new TracingSubscriber(scopeManager, span, actual, finishOnClose));
     }
 
     /**
@@ -212,7 +215,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      * @since 2.0.3
      */
     protected boolean isContinued() {
-        return false;
+        return tracingObserver.isContinued();
     }
 
     /**
@@ -222,7 +225,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      * @since 2.0.3
      */
     protected boolean isFinishOnError() {
-        return true;
+        return tracingObserver.isFinishOnError();
     }
 
     /**
@@ -232,7 +235,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      * @param span   The span
      */
     protected void doOnNext(@NonNull T object, @NonNull Span span) {
-        // no-op
+        tracingObserver.doOnNext(object, span);
     }
 
     /**
@@ -241,7 +244,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      * @param span The span
      */
     protected void doOnSubscribe(@NonNull Span span) {
-        // no-op
+        tracingObserver.doOnSubscribe(span);
     }
 
     /**
@@ -252,7 +255,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      */
     @SuppressWarnings("WeakerAccess")
     protected void doOnFinish(@NonNull Span span) {
-        // no-op
+        tracingObserver.doOnFinish(span);
     }
 
     /**
@@ -262,11 +265,100 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      * @param span      The span
      */
     protected void doOnError(@NonNull Throwable throwable, @NonNull Span span) {
-        // no-op
+        tracingObserver.doOnError(throwable, span);
     }
 
     private void onError(Throwable t, Span span) {
         TraceInterceptor.logError(span, t);
         doOnError(t, span);
+    }
+
+    /**
+     * The tracing subscriber.
+     */
+    @Internal
+    protected class TracingSubscriber implements Subscriber<T> {
+        private final ScopeManager scopeManager;
+        private final Span span;
+        private final Subscriber<? super T> actual;
+        private final boolean finishOnClose;
+        private boolean finished;
+
+        public TracingSubscriber(ScopeManager scopeManager, Span span, Subscriber<? super T> actual, boolean finishOnClose) {
+            this.scopeManager = scopeManager;
+            this.span = span;
+            this.actual = actual;
+            this.finishOnClose = finishOnClose;
+            finished = false;
+        }
+
+        @Override
+        public void onSubscribe(Subscription s) {
+            if (scopeManager.activeSpan() != span) {
+                try (Scope ignored = scopeManager.activate(span)) {
+                    TracingPublisher.this.doOnSubscribe(span);
+                    actual.onSubscribe(s);
+                }
+            } else {
+                TracingPublisher.this.doOnSubscribe(span);
+                actual.onSubscribe(s);
+            }
+        }
+
+        @Override
+        public void onNext(T object) {
+            boolean finishAfterNext = isSingle && finishOnClose;
+            try (Scope ignored = scopeManager.activeSpan() != span ? scopeManager.activate(span) : NoopScope.INSTANCE) {
+                if (object instanceof MutableHttpResponse) {
+                    MutableHttpResponse<?> response = (MutableHttpResponse<?>) object;
+                    Optional<?> body = response.getBody();
+                    if (body.isPresent()) {
+                        Object o = body.get();
+                        if (Publishers.isConvertibleToPublisher(o)) {
+                            Class<?> type = o.getClass();
+                            Publisher<?> resultPublisher = Publishers.convertPublisher(o, Publisher.class);
+                            Publisher<?> scopedPublisher = new ScopePropagationPublisher(resultPublisher, tracer, span);
+                            response.body(Publishers.convertPublisher(scopedPublisher, type));
+                        }
+                    }
+
+                }
+                TracingPublisher.this.doOnNext(object, span);
+                actual.onNext(object);
+                if (isSingle) {
+                    finished = true;
+                    TracingPublisher.this.doOnFinish(span);
+                }
+            } finally {
+                if (finishAfterNext) {
+                    span.finish();
+                }
+            }
+        }
+
+        @Override
+        public void onError(Throwable t) {
+            try (Scope ignored = scopeManager.activeSpan() != span ? scopeManager.activate(span) : NoopScope.INSTANCE) {
+                TracingPublisher.this.onError(t, span);
+                actual.onError(t);
+                finished = true;
+            } finally {
+                if (finishOnClose && isFinishOnError()) {
+                    span.finish();
+                }
+            }
+        }
+
+        @Override
+        public void onComplete() {
+            try (Scope ignored = scopeManager.activeSpan() != span ? scopeManager.activate(span) : NoopScope.INSTANCE) {
+                actual.onComplete();
+                TracingPublisher.this.doOnFinish(span);
+            } finally {
+                if (!finished && finishOnClose) {
+                    span.finish();
+                }
+            }
+        }
     }
 }

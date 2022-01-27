@@ -29,7 +29,9 @@ import io.micronaut.core.util.StringUtils;
 import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
+import io.micronaut.tracing.instrument.util.TracingObserver;
 import io.micronaut.tracing.instrument.util.TracingPublisher;
+import io.micronaut.tracing.instrument.util.TracingPublisherUtils;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
@@ -104,12 +106,14 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                             return publisher;
                         }
                         return interceptedMethod.handleResult(
-                                new TracingPublisher(publisher, tracer) {
+                                TracingPublisherUtils.createTracingPublisher(publisher, tracer, new TracingObserver() {
+
                                     @Override
-                                    protected void doOnSubscribe(@NonNull Span span) {
+                                    public void doOnSubscribe(@NonNull Span span) {
                                         tagArguments(span, context);
                                     }
-                                }
+
+                                })
                         );
                     case COMPLETION_STAGE:
                     case SYNCHRONOUS:
@@ -148,12 +152,14 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                             return publisher;
                         }
                         return interceptedMethod.handleResult(
-                                new TracingPublisher(publisher, tracer, builder) {
+                            TracingPublisherUtils.createTracingPublisher(publisher, tracer, builder, new TracingObserver() {
+
                                     @Override
-                                    protected void doOnSubscribe(@NonNull Span span) {
+                                    public void doOnSubscribe(@NonNull Span span) {
                                         populateTags(context, hystrixCommand, span);
                                     }
-                                }
+
+                                })
                         );
                     case COMPLETION_STAGE:
                         Span span = builder.start();

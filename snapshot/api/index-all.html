@@ -189,6 +189,18 @@
 <dd>
 <div class="block">Indicates that the current span should be continued.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisherUtils.html#createTracingPublisher-org.reactivestreams.Publisher-io.opentracing.Tracer-io.micronaut.tracing.instrument.util.TracingObserver-">createTracingPublisher(Publisher&lt;T&gt;, Tracer, TracingObserver&lt;T&gt;)</a></span> - Static method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisherUtils.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisherUtils</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisherUtils.html#createTracingPublisher-org.reactivestreams.Publisher-io.opentracing.Tracer-io.opentracing.Tracer.SpanBuilder-io.micronaut.tracing.instrument.util.TracingObserver-">createTracingPublisher(Publisher&lt;T&gt;, Tracer, Tracer.SpanBuilder, TracingObserver&lt;T&gt;)</a></span> - Static method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisherUtils.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisherUtils</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisherUtils.html#createTracingPublisher-org.reactivestreams.Publisher-io.opentracing.Tracer-io.opentracing.Tracer.SpanBuilder-boolean-io.micronaut.tracing.instrument.util.TracingObserver-">createTracingPublisher(Publisher&lt;T&gt;, Tracer, Tracer.SpanBuilder, boolean, TracingObserver&lt;T&gt;)</a></span> - Static method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisherUtils.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisherUtils</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/jaeger/JaegerTracerFactory.html#customizeConfiguration-io.jaegertracing.Configuration-">customizeConfiguration(Configuration)</a></span> - Method in class io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerTracerFactory.html" title="class in io.micronaut.tracing.jaeger">JaegerTracerFactory</a></dt>
 <dd>
 <div class="block">Override in subclass to customize.</div>
@@ -227,21 +239,43 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/http/OpenTracingServerFilter.html#doFilter-io.micronaut.http.HttpRequest-io.micronaut.http.filter.ServerFilterChain-">doFilter(HttpRequest&lt;?&gt;, ServerFilterChain)</a></span> - Method in class io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/OpenTracingServerFilter.html" title="class in io.micronaut.tracing.instrument.http">OpenTracingServerFilter</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingObserver.html#doOnError-java.lang.Throwable-io.opentracing.Span-">doOnError(Throwable, Span)</a></span> - Method in interface io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a></dt>
+<dd>
+<div class="block">Designed for subclasses to override and implement custom on error behaviour.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#doOnError-java.lang.Throwable-io.opentracing.Span-">doOnError(Throwable, Span)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
 <dd>
 <div class="block">Designed for subclasses to override and implement custom on error behaviour.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingObserver.html#doOnFinish-io.opentracing.Span-">doOnFinish(Span)</a></span> - Method in interface io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a></dt>
+<dd>
+<div class="block">Designed for subclasses to override and implement custom on finish behaviour.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#doOnFinish-io.opentracing.Span-">doOnFinish(Span)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
 <dd>
 <div class="block">Designed for subclasses to override and implement custom on finish behaviour.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingObserver.html#doOnNext-T-io.opentracing.Span-">doOnNext(T, Span)</a></span> - Method in interface io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a></dt>
+<dd>
+<div class="block">Designed for subclasses to override and implement custom behaviour when an item is emitted.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#doOnNext-T-io.opentracing.Span-">doOnNext(T, Span)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
 <dd>
 <div class="block">Designed for subclasses to override and implement custom behaviour when an item is emitted.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingObserver.html#doOnSubscribe-io.opentracing.Span-">doOnSubscribe(Span)</a></span> - Method in interface io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a></dt>
+<dd>
+<div class="block">Designed for subclasses to override and implement custom on subscribe behaviour.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#doOnSubscribe-io.opentracing.Span-">doOnSubscribe(Span)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
 <dd>
 <div class="block">Designed for subclasses to override and implement custom on subscribe behaviour.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html#doSubscribe-org.reactivestreams.Subscriber-io.opentracing.ScopeManager-io.opentracing.Span-boolean-">doSubscribe(Subscriber&lt;? super T&gt;, ScopeManager, Span, boolean)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingCorePublisher</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#doSubscribe-org.reactivestreams.Subscriber-io.opentracing.ScopeManager-io.opentracing.Span-boolean-">doSubscribe(Subscriber&lt;? super T&gt;, ScopeManager, Span, boolean)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
+<dd>
+<div class="block">Do subscribe to the publisher.</div>
 </dd>
 </dl>
 <a name="I:E">
@@ -385,6 +419,10 @@
 <dd>
 <div class="block">Configuration for Jaeger-based tracing.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingObserver.html#isContinued--">isContinued()</a></span> - Method in interface io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a></dt>
+<dd>
+<div class="block">Designed for subclasses to override if the current active span is to be continued by this publisher.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#isContinued--">isContinued()</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
 <dd>
 <div class="block">Designed for subclasses to override if the current active span is to be continued by this publisher.</div>
@@ -395,6 +433,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html#isExpandExceptionLogs--">isExpandExceptionLogs()</a></span> - Method in class io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingObserver.html#isFinishOnError--">isFinishOnError()</a></span> - Method in interface io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a></dt>
+<dd>
+<div class="block">Designed for subclasses to override if the span needs to be finished upon error.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#isFinishOnError--">isFinishOnError()</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
 <dd>
 <div class="block">Designed for subclasses to override if the span needs to be finished upon error.</div>
@@ -503,12 +545,24 @@
 <dd>
 <div class="block">An optional instrumentation.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingObserver.html#NO_OP">NO_OP</a></span> - Static variable in interface io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a></dt>
+<dd>
+<div class="block">No op observer.</div>
+</dd>
 </dl>
 <a name="I:O">
 <!--   -->
 </a>
 <h2 class="title">O</h2>
 <dl>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html#onComplete--">onComplete()</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html#onError-java.lang.Throwable-">onError(Throwable)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html#onNext-T-">onNext(T)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html#onSubscribe-org.reactivestreams.Subscription-">onSubscribe(Subscription)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/instrument/http/OpenTracingClientFilter.html" title="class in io.micronaut.tracing.instrument.http"><span class="typeNameLink">OpenTracingClientFilter</span></a> - Class in <a href="io/micronaut/tracing/instrument/http/package-summary.html">io.micronaut.tracing.instrument.http</a></dt>
 <dd>
 <div class="block">An HTTP client instrumentation filter that uses Open Tracing.</div>
@@ -559,6 +613,8 @@
 <dd>
 <div class="block">The configuration prefix.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#publisher">publisher</a></span> - Variable in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <a name="I:R">
 <!--   -->
@@ -705,6 +761,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/ScopePropagationPublisher.html#subscribe-org.reactivestreams.Subscriber-">subscribe(Subscriber&lt;? super T&gt;)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/ScopePropagationPublisher.html" title="class in io.micronaut.tracing.instrument.util">ScopePropagationPublisher</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html#subscribe-reactor.core.CoreSubscriber-">subscribe(CoreSubscriber&lt;? super T&gt;)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingCorePublisher</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#subscribe-org.reactivestreams.Subscriber-">subscribe(Subscriber&lt;? super T&gt;)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/http/TraceRequestAttributes.html#subSequence-int-int-">subSequence(int, int)</a></span> - Method in enum io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/TraceRequestAttributes.html" title="enum in io.micronaut.tracing.instrument.http">TraceRequestAttributes</a></dt>
@@ -746,6 +804,42 @@
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html#tracingBuilder">tracingBuilder</a></span> - Variable in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util"><span class="typeNameLink">TracingCorePublisher</span></a>&lt;<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt; - Class in <a href="io/micronaut/tracing/instrument/util/package-summary.html">io.micronaut.tracing.instrument.util</a></dt>
+<dd>
+<div class="block">The tracing publisher that supports Reactor's context.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html#TracingCorePublisher-reactor.core.CorePublisher-io.opentracing.Tracer-java.lang.String-">TracingCorePublisher(CorePublisher&lt;T&gt;, Tracer, String)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingCorePublisher</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html#TracingCorePublisher-reactor.core.CorePublisher-io.opentracing.Tracer-java.lang.String-io.micronaut.tracing.instrument.util.TracingObserver-">TracingCorePublisher(CorePublisher&lt;T&gt;, Tracer, String, TracingObserver)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingCorePublisher</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html#TracingCorePublisher-reactor.core.CorePublisher-io.opentracing.Tracer-">TracingCorePublisher(CorePublisher&lt;T&gt;, Tracer)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingCorePublisher</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html#TracingCorePublisher-reactor.core.CorePublisher-io.opentracing.Tracer-io.micronaut.tracing.instrument.util.TracingObserver-">TracingCorePublisher(CorePublisher&lt;T&gt;, Tracer, TracingObserver)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingCorePublisher</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html#TracingCorePublisher-reactor.core.CorePublisher-io.opentracing.Tracer-io.opentracing.Tracer.SpanBuilder-">TracingCorePublisher(CorePublisher&lt;T&gt;, Tracer, Tracer.SpanBuilder)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingCorePublisher</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html#TracingCorePublisher-reactor.core.CorePublisher-io.opentracing.Tracer-io.opentracing.Tracer.SpanBuilder-io.micronaut.tracing.instrument.util.TracingObserver-">TracingCorePublisher(CorePublisher&lt;T&gt;, Tracer, Tracer.SpanBuilder, TracingObserver)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingCorePublisher</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html#TracingCorePublisher-reactor.core.CorePublisher-io.opentracing.Tracer-io.opentracing.Tracer.SpanBuilder-boolean-">TracingCorePublisher(CorePublisher&lt;T&gt;, Tracer, Tracer.SpanBuilder, boolean)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingCorePublisher</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html#TracingCorePublisher-reactor.core.CorePublisher-io.opentracing.Tracer-io.opentracing.Tracer.SpanBuilder-boolean-io.micronaut.tracing.instrument.util.TracingObserver-">TracingCorePublisher(CorePublisher&lt;T&gt;, Tracer, Tracer.SpanBuilder, boolean, TracingObserver)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingCorePublisher</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
 <dt><a href="io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http"><span class="typeNameLink">TracingExclusionsConfiguration</span></a> - Class in <a href="io/micronaut/tracing/instrument/http/package-summary.html">io.micronaut.tracing.instrument.http</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html#TracingExclusionsConfiguration--">TracingExclusionsConfiguration()</a></span> - Constructor for class io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http">TracingExclusionsConfiguration</a></dt>
@@ -753,6 +847,10 @@
 <dt><a href="io/micronaut/tracing/instrument/util/TracingInvocationInstrumenterFactory.html" title="interface in io.micronaut.tracing.instrument.util"><span class="typeNameLink">TracingInvocationInstrumenterFactory</span></a> - Interface in <a href="io/micronaut/tracing/instrument/util/package-summary.html">io.micronaut.tracing.instrument.util</a></dt>
 <dd>
 <div class="block">A factory interface for tracing invocation instrumentation.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util"><span class="typeNameLink">TracingObserver</span></a>&lt;<a href="io/micronaut/tracing/instrument/util/TracingObserver.html" title="type parameter in TracingObserver">T</a>&gt; - Interface in <a href="io/micronaut/tracing/instrument/util/package-summary.html">io.micronaut.tracing.instrument.util</a></dt>
+<dd>
+<div class="block">The tracing observer.</div>
 </dd>
 <dt><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util"><span class="typeNameLink">TracingPublisher</span></a>&lt;<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="type parameter in TracingPublisher">T</a>&gt; - Class in <a href="io/micronaut/tracing/instrument/util/package-summary.html">io.micronaut.tracing.instrument.util</a></dt>
 <dd>
@@ -762,7 +860,15 @@
 <dd>
 <div class="block">Creates a new tracing publisher for the given arguments.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#TracingPublisher-org.reactivestreams.Publisher-io.opentracing.Tracer-java.lang.String-io.micronaut.tracing.instrument.util.TracingObserver-">TracingPublisher(Publisher&lt;T&gt;, Tracer, String, TracingObserver)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#TracingPublisher-org.reactivestreams.Publisher-io.opentracing.Tracer-">TracingPublisher(Publisher&lt;T&gt;, Tracer)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#TracingPublisher-org.reactivestreams.Publisher-io.opentracing.Tracer-io.micronaut.tracing.instrument.util.TracingObserver-">TracingPublisher(Publisher&lt;T&gt;, Tracer, TracingObserver)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
 <dd>
 <div class="block">Creates a new tracing publisher for the given arguments.</div>
 </dd>
@@ -770,10 +876,30 @@
 <dd>
 <div class="block">Creates a new tracing publisher for the given arguments.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#TracingPublisher-org.reactivestreams.Publisher-io.opentracing.Tracer-io.opentracing.Tracer.SpanBuilder-io.micronaut.tracing.instrument.util.TracingObserver-">TracingPublisher(Publisher&lt;T&gt;, Tracer, Tracer.SpanBuilder, TracingObserver)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#TracingPublisher-org.reactivestreams.Publisher-io.opentracing.Tracer-io.opentracing.Tracer.SpanBuilder-boolean-">TracingPublisher(Publisher&lt;T&gt;, Tracer, Tracer.SpanBuilder, boolean)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
 <dd>
 <div class="block">Creates a new tracing publisher for the given arguments.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#TracingPublisher-org.reactivestreams.Publisher-io.opentracing.Tracer-io.opentracing.Tracer.SpanBuilder-boolean-io.micronaut.tracing.instrument.util.TracingObserver-">TracingPublisher(Publisher&lt;T&gt;, Tracer, Tracer.SpanBuilder, boolean, TracingObserver)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
+<dd>
+<div class="block">Creates a new tracing publisher for the given arguments.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.instrument.util"><span class="typeNameLink">TracingPublisher.TracingSubscriber</span></a> - Class in <a href="io/micronaut/tracing/instrument/util/package-summary.html">io.micronaut.tracing.instrument.util</a></dt>
+<dd>
+<div class="block">The tracing subscriber.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/instrument/util/TracingPublisherUtils.html" title="class in io.micronaut.tracing.instrument.util"><span class="typeNameLink">TracingPublisherUtils</span></a> - Class in <a href="io/micronaut/tracing/instrument/util/package-summary.html">io.micronaut.tracing.instrument.util</a></dt>
+<dd>
+<div class="block">Tracing publisher utils.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisherUtils.html#TracingPublisherUtils--">TracingPublisherUtils()</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisherUtils.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisherUtils</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html#TracingSubscriber-io.opentracing.ScopeManager-io.opentracing.Span-org.reactivestreams.Subscriber-boolean-">TracingSubscriber(ScopeManager, Span, Subscriber&lt;? super T&gt;, boolean)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <a name="I:U">
 <!--   -->

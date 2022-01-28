@@ -20,14 +20,14 @@ import io.micronaut.scheduling.instrument.InvocationInstrumenter
 import kotlinx.coroutines.ThreadContextElement
 import kotlin.coroutines.CoroutineContext
 
-internal class CoroutineTracingDispatcherContextKey : CoroutineContext.Key<CoroutineTracingDispatcher>
+object CoroutineTracingDispatcherContextKey : CoroutineContext.Key<CoroutineTracingDispatcher>
 
 class CoroutineTracingDispatcher(
     private val invocationInstrumenters: List<InvocationInstrumenter>
 ): ThreadContextElement<List<Instrumentation>> {
 
     override val key: CoroutineContext.Key<*>
-        get() = CoroutineTracingDispatcherContextKey()
+        get() = CoroutineTracingDispatcherContextKey
 
     override fun restoreThreadContext(context: CoroutineContext, oldState: List<Instrumentation>) =
         oldState.forEach(Instrumentation::close)

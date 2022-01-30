@@ -17,12 +17,14 @@ package io.micronaut.tracing.jaeger;
 
 import io.jaegertracing.Configuration;
 import io.jaegertracing.internal.JaegerTracer;
+import io.jaegertracing.internal.MDCScopeManager;
 import io.jaegertracing.spi.Reporter;
 import io.jaegertracing.spi.Sampler;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
+import io.opentracing.ScopeManager;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
 import jakarta.annotation.PreDestroy;
@@ -46,6 +48,7 @@ public class JaegerTracerFactory implements Closeable {
     private final JaegerConfiguration configuration;
     private Reporter reporter;
     private Sampler sampler;
+    private ScopeManager scopeManager = new MDCScopeManager.Builder().build();
 
     /**
      * @param configuration the configuration
@@ -72,6 +75,18 @@ public class JaegerTracerFactory implements Closeable {
     @Inject
     public void setSampler(@Nullable Sampler sampler) {
         this.sampler = sampler;
+    }
+
+    /**
+     * Overrides the default MDCScopeManager with a custom scope manager.
+     *
+     * @param scopeManager the scope manager
+     */
+    @Inject
+    public void setScopeManager(@Nullable ScopeManager scopeManager) {
+        if (scopeManager != null) {
+            this.scopeManager = scopeManager;
+        }
     }
 
     /**
@@ -109,6 +124,7 @@ public class JaegerTracerFactory implements Closeable {
         if (sampler != null) {
             tracerBuilder.withSampler(sampler);
         }
+        tracerBuilder.withScopeManager(scopeManager);
         return tracerBuilder;
     }
 

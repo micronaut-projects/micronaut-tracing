@@ -254,9 +254,94 @@
 </div>
 <div class="sect2">
 <h3 id="_tracing_zipkin_config_properties">Tracing Zipkin Config Properties</h3>
+<a id="io.micronaut.tracing.brave.BraveTracerConfiguration.SamplerConfiguration" href="#io.micronaut.tracing.brave.BraveTracerConfiguration.SamplerConfiguration">&#128279;</a>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 6. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.SamplerConfiguration.html">SamplerConfiguration</a></caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.sampler.probability</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">float</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets the sampler probability used by the default &lt;code&gt;CountingSampler&lt;/code&gt;.
+ A value of 1.0 indicates to sample all requests.
+ A value of 0.1 indicates to sample 10% of requests.</p></td>
+</tr>
+</tbody>
+</table>
+<div style="page-break-after: always;"></div>
+<a id="io.micronaut.tracing.brave.AsyncReporterConfiguration" href="#io.micronaut.tracing.brave.AsyncReporterConfiguration">&#128279;</a>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 7. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/AsyncReporterConfiguration.html">AsyncReporterConfiguration</a></caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.thread-factory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.concurrent.ThreadFactory</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.metrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">zipkin2.reporter.ReporterMetrics</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.message-max-bytes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.message-timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.Duration</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.close-timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.Duration</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.queued-max-spans</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.queued-max-bytes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.build</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">zipkin2.codec.BytesEncoder</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div style="page-break-after: always;"></div>
 <a id="io.micronaut.tracing.brave.BraveTracerConfiguration" href="#io.micronaut.tracing.brave.BraveTracerConfiguration">&#128279;</a>
 <table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 6. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.html">BraveTracerConfiguration</a></caption>
+<caption class="title">Table 8. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.html">BraveTracerConfiguration</a></caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -315,7 +400,7 @@
 <div style="page-break-after: always;"></div>
 <a id="io.micronaut.tracing.brave.BraveTracerConfiguration.HttpClientSenderConfiguration" href="#io.micronaut.tracing.brave.BraveTracerConfiguration.HttpClientSenderConfiguration">&#128279;</a>
 <table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 7. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.HttpClientSenderConfiguration.html">HttpClientSenderConfiguration</a></caption>
+<caption class="title">Table 9. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.HttpClientSenderConfiguration.html">HttpClientSenderConfiguration</a></caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -492,91 +577,6 @@
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.http.build</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">jakarta.inject.Provider</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-</tbody>
-</table>
-<div style="page-break-after: always;"></div>
-<a id="io.micronaut.tracing.brave.BraveTracerConfiguration.SamplerConfiguration" href="#io.micronaut.tracing.brave.BraveTracerConfiguration.SamplerConfiguration">&#128279;</a>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 8. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.SamplerConfiguration.html">SamplerConfiguration</a></caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.sampler.probability</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">float</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Sets the sampler probability used by the default &lt;code&gt;CountingSampler&lt;/code&gt;.
- A value of 1.0 indicates to sample all requests.
- A value of 0.1 indicates to sample 10% of requests.</p></td>
-</tr>
-</tbody>
-</table>
-<div style="page-break-after: always;"></div>
-<a id="io.micronaut.tracing.brave.AsyncReporterConfiguration" href="#io.micronaut.tracing.brave.AsyncReporterConfiguration">&#128279;</a>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 9. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/AsyncReporterConfiguration.html">AsyncReporterConfiguration</a></caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.thread-factory</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.concurrent.ThreadFactory</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.metrics</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">zipkin2.reporter.ReporterMetrics</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.message-max-bytes</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.message-timeout</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.Duration</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.close-timeout</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.Duration</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.queued-max-spans</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.queued-max-bytes</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.reporter.build</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">zipkin2.codec.BytesEncoder</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 </tbody>

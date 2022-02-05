@@ -7,6 +7,7 @@ import io.jaegertracing.internal.reporters.InMemoryReporter
 import io.micronaut.context.ApplicationContext
 import io.micronaut.core.async.annotation.SingleResult
 import io.micronaut.core.async.publisher.Publishers
+import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Error
@@ -654,6 +655,19 @@ class HttpTracingSpec extends Specification {
         }
     }
 
+    void 'test retried HTTP request - should contain tracing headers only once'() {
+        expect:
+        context.containsBean(JaegerTracer)
+
+        when:
+        def exchange = client.exchange('/traced/need-retry', String)
+        HttpResponse<String> response = Mono.from(exchange).retry(2).block();
+
+        then:
+        response
+        response.body.get() == "1"
+    }
+
     private long getJaegerMetric(String name, Map tags = [:]) {
         context.getBean(InMemoryMetricsFactory).getCounter('jaeger_tracer_' + name, tags)
     }
@@ -674,6 +688,8 @@ class HttpTracingSpec extends Specification {
 
         @Inject
         TracedClient tracedClient
+
+        boolean failed;
 
         @Get('/hello/{name}')
         String hello(String name) {
@@ -805,6 +821,15 @@ class HttpTracingSpec extends Specification {
         Publisher<Object> delayedError(Duration duration) {
             Mono.error(new RuntimeException('delayed error'))
                     .delaySubscription(Duration.of(duration.toMillis(), MILLIS))
+        }
+
+        @Get("/need-retry")
+        String needRetry(HttpRequest req) {
+            if (!failed) {
+                failed = true
+                throw new QuotaException('retry later')
+            }
+           req.headers.getAll("uber-trace-id").size()
         }
 
         @Error(QuotaException)

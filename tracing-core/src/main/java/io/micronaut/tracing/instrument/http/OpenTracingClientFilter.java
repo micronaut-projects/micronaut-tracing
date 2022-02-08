@@ -114,7 +114,6 @@ public class OpenTracingClientFilter extends AbstractOpenTracingFilter implement
                 }
                 setErrorTags(span, error);
             }
-
         });
     }
 }

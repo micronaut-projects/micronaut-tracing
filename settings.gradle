@@ -18,7 +18,6 @@ include 'tracing-zipkin'
 include 'tests:kotlin-tests'
 
 enableFeaturePreview 'TYPESAFE_PROJECT_ACCESSORS'
-enableFeaturePreview 'VERSION_CATALOGS'
 
 dependencyResolutionManagement {
     repositories {

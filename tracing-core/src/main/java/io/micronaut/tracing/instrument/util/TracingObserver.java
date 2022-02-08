@@ -32,28 +32,31 @@ public interface TracingObserver<T> {
     TracingObserver<?> NO_OP = new TracingObserver<Object>() { };
 
     /**
-     * Designed for subclasses to override if the current active span is to be continued by this publisher. False by default.
-     * This only has effects if no spanBuilder was defined.
+     * Designed for subclasses to override if the current active span is to be
+     * continued by this publisher. False by default. This only has effects if
+     * no spanBuilder was defined.
      *
      * @return true, if the current span should be continued by this publisher
-     * @since 2.0.3
+     * @since 4.0.2
      */
     default boolean isContinued() {
         return false;
     }
 
     /**
-     * Designed for subclasses to override if the span needs to be finished upon error. True by default.
+     * Designed for subclasses to override if the span needs to be finished
+     * upon error. True by default.
      *
      * @return true, if the active span needs to be finished on error
-     * @since 2.0.3
+     * @since 4.0.2
      */
     default boolean isFinishOnError() {
         return true;
     }
 
     /**
-     * Designed for subclasses to override and implement custom behaviour when an item is emitted.
+     * Designed for subclasses to override and implement custom behaviour when
+     * an item is emitted.
      *
      * @param object The object
      * @param span   The span
@@ -72,8 +75,8 @@ public interface TracingObserver<T> {
     }
 
     /**
-     * Designed for subclasses to override and implement custom on finish behaviour. Fired
-     * prior to calling {@link Span#finish()}.
+     * Designed for subclasses to override and implement custom on finish
+     * behaviour. Fired prior to calling {@link Span#finish()}.
      *
      * @param span The span
      */
@@ -91,5 +94,4 @@ public interface TracingObserver<T> {
     default void doOnError(@NonNull Throwable throwable, @NonNull Span span) {
         // no-op
     }
-
 }

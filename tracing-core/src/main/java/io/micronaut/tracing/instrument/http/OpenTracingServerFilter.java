@@ -119,7 +119,6 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
             public boolean isFinishOnError() {
                 return false;
             }
-
         });
     }
 

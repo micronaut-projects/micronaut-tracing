@@ -52,9 +52,9 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher       the target publisher
-     * @param tracer          the tracer
-     * @param operationName   the operation name that should be started
+     * @param publisher     the target publisher
+     * @param tracer        the tracer
+     * @param operationName the operation name that should be started
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
@@ -81,8 +81,8 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      * Creates a new tracing publisher for the given arguments. This constructor
      * will just add tracing of the existing span if it is present.
      *
-     * @param publisher       the target publisher
-     * @param tracer          the tracer
+     * @param publisher the target publisher
+     * @param tracer    the tracer
      */
     public TracingPublisher(Publisher<T> publisher, Tracer tracer) {
         this(publisher, tracer, (SpanBuilder) null, TracingObserver.NO_OP);
@@ -105,9 +105,9 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher       the target publisher
-     * @param tracer          the tracer
-     * @param spanBuilder     the span builder that represents the span that will be
+     * @param publisher   the target publisher
+     * @param tracer      the tracer
+     * @param spanBuilder the span builder that represents the span that will be
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
@@ -133,11 +133,11 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher       the target publisher
-     * @param tracer          the tracer
-     * @param spanBuilder     the span builder that represents the span that will
-     *                        be created when the publisher is subscribed to
-     * @param isSingle        true if the publisher emits a single item
+     * @param publisher   the target publisher
+     * @param tracer      the tracer
+     * @param spanBuilder the span builder that represents the span that will
+     *                    be created when the publisher is subscribed to
+     * @param isSingle    true if the publisher emits a single item
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,

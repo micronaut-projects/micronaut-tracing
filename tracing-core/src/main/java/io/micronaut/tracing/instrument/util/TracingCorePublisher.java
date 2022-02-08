@@ -31,7 +31,7 @@ import reactor.util.context.Context;
  * @author Denis Stepanov
  */
 @SuppressWarnings("PublisherImplementation")
-public class TracingCorePublisher<T>  extends TracingPublisher<T> implements CorePublisher<T> {
+public class TracingCorePublisher<T> extends TracingPublisher<T> implements CorePublisher<T> {
 
     /**
      * Creates a new tracing publisher for the given arguments.
@@ -40,7 +40,9 @@ public class TracingCorePublisher<T>  extends TracingPublisher<T> implements Cor
      * @param tracer        the tracer
      * @param operationName the operation name that should be started
      */
-    public TracingCorePublisher(CorePublisher<T> publisher, Tracer tracer, String operationName) {
+    public TracingCorePublisher(CorePublisher<T> publisher,
+                                Tracer tracer,
+                                String operationName) {
         super(publisher, tracer, operationName);
     }
 
@@ -52,7 +54,10 @@ public class TracingCorePublisher<T>  extends TracingPublisher<T> implements Cor
      * @param operationName   the operation name that should be started
      * @param tracingObserver the tracing observer
      */
-    public TracingCorePublisher(CorePublisher<T> publisher, Tracer tracer, String operationName, TracingObserver tracingObserver) {
+    public TracingCorePublisher(CorePublisher<T> publisher,
+                                Tracer tracer,
+                                String operationName,
+                                TracingObserver tracingObserver) {
         super(publisher, tracer, operationName, tracingObserver);
     }
 
@@ -63,7 +68,8 @@ public class TracingCorePublisher<T>  extends TracingPublisher<T> implements Cor
      * @param publisher the target publisher
      * @param tracer    the tracer
      */
-    public TracingCorePublisher(CorePublisher<T> publisher, Tracer tracer) {
+    public TracingCorePublisher(CorePublisher<T> publisher,
+                                Tracer tracer) {
         super(publisher, tracer);
     }
 
@@ -75,7 +81,9 @@ public class TracingCorePublisher<T>  extends TracingPublisher<T> implements Cor
      * @param tracer          the tracer
      * @param tracingObserver the tracing observer
      */
-    public TracingCorePublisher(CorePublisher<T> publisher, Tracer tracer, TracingObserver tracingObserver) {
+    public TracingCorePublisher(CorePublisher<T> publisher,
+                                Tracer tracer,
+                                TracingObserver tracingObserver) {
         super(publisher, tracer, tracingObserver);
     }
 
@@ -86,7 +94,9 @@ public class TracingCorePublisher<T>  extends TracingPublisher<T> implements Cor
      * @param tracer      the tracer
      * @param spanBuilder the span builder that represents the span that will be
      */
-    public TracingCorePublisher(CorePublisher<T> publisher, Tracer tracer, SpanBuilder spanBuilder) {
+    public TracingCorePublisher(CorePublisher<T> publisher,
+                                Tracer tracer,
+                                SpanBuilder spanBuilder) {
         super(publisher, tracer, spanBuilder);
     }
 
@@ -98,7 +108,10 @@ public class TracingCorePublisher<T>  extends TracingPublisher<T> implements Cor
      * @param spanBuilder     the span builder that represents the span that will be
      * @param tracingObserver the tracing observer
      */
-    public TracingCorePublisher(CorePublisher<T> publisher, Tracer tracer, SpanBuilder spanBuilder, TracingObserver tracingObserver) {
+    public TracingCorePublisher(CorePublisher<T> publisher,
+                                Tracer tracer,
+                                SpanBuilder spanBuilder,
+                                TracingObserver tracingObserver) {
         super(publisher, tracer, spanBuilder, tracingObserver);
     }
 
@@ -111,7 +124,10 @@ public class TracingCorePublisher<T>  extends TracingPublisher<T> implements Cor
      *                    be created when the publisher is subscribed to
      * @param isSingle    true if the publisher emits a single item
      */
-    public TracingCorePublisher(CorePublisher<T> publisher, Tracer tracer, SpanBuilder spanBuilder, boolean isSingle) {
+    public TracingCorePublisher(CorePublisher<T> publisher,
+                                Tracer tracer,
+                                SpanBuilder spanBuilder,
+                                boolean isSingle) {
         super(publisher, tracer, spanBuilder, isSingle);
     }
 
@@ -125,7 +141,11 @@ public class TracingCorePublisher<T>  extends TracingPublisher<T> implements Cor
      * @param isSingle        true if the publisher emits a single item
      * @param tracingObserver the tracing observer
      */
-    public TracingCorePublisher(CorePublisher<T> publisher, Tracer tracer, SpanBuilder spanBuilder, boolean isSingle, TracingObserver tracingObserver) {
+    public TracingCorePublisher(CorePublisher<T> publisher,
+                                Tracer tracer,
+                                SpanBuilder spanBuilder,
+                                boolean isSingle,
+                                TracingObserver tracingObserver) {
         super(publisher, tracer, spanBuilder, isSingle, tracingObserver);
     }
 
@@ -135,7 +155,10 @@ public class TracingCorePublisher<T>  extends TracingPublisher<T> implements Cor
     }
 
     @Override
-    protected void doSubscribe(Subscriber<? super T> actual, ScopeManager scopeManager, Span span, boolean finishOnClose) {
+    protected void doSubscribe(Subscriber<? super T> actual,
+                               ScopeManager scopeManager,
+                               Span span,
+                               boolean finishOnClose) {
         CoreSubscriber<? extends T> coreActual = (CoreSubscriber<? extends T>) actual;
         publisher.subscribe(new TracingCoreSubscriber(scopeManager, span, actual, finishOnClose, coreActual.currentContext()));
     }
@@ -144,7 +167,11 @@ public class TracingCorePublisher<T>  extends TracingPublisher<T> implements Cor
 
         private final Context context;
 
-        public TracingCoreSubscriber(ScopeManager scopeManager, Span span, Subscriber<? super T> actual, boolean finishOnClose, Context context) {
+        public TracingCoreSubscriber(ScopeManager scopeManager,
+                                     Span span,
+                                     Subscriber<? super T> actual,
+                                     boolean finishOnClose,
+                                     Context context) {
             super(scopeManager, span, actual, finishOnClose);
             this.context = context;
         }
@@ -154,5 +181,4 @@ public class TracingCorePublisher<T>  extends TracingPublisher<T> implements Cor
             return context;
         }
     }
-
 }

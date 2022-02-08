@@ -5,7 +5,12 @@ import io.micronaut.context.annotation.Requires
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.MutableHttpResponse
-import io.micronaut.http.annotation.*
+import io.micronaut.http.annotation.Body
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Filter
+import io.micronaut.http.annotation.Filter.MATCH_ALL_PATTERN
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Post
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.filter.HttpServerFilter
 import io.micronaut.http.filter.ServerFilterChain
@@ -27,12 +32,13 @@ import reactor.core.publisher.Mono
 import reactor.util.context.Context
 import reactor.util.function.Tuple2
 import reactor.util.function.Tuples
-import java.util.*
+import java.util.UUID
 
 class ReactorContextPropagationSpec {
 
     @Test
     fun testKotlinPropagation() {
+
         val embeddedServer = ApplicationContext.run(EmbeddedServer::class.java,
                 mapOf("reactortestpropagation.enabled" to "true", "micronaut.http.client.read-timeout" to "30s")
         )
@@ -41,7 +47,8 @@ class ReactorContextPropagationSpec {
         val result: MutableList<Tuple2<String, String>> = Flux.range(1, 100)
                 .flatMap {
                     val tracingId = UUID.randomUUID().toString()
-                    val get = HttpRequest.POST<Any>("http://localhost:${embeddedServer.port}/trigger", NameRequestBody("sss-" + tracingId)).header("X-TrackingId", tracingId)
+                    val get = HttpRequest.POST<Any>("http://localhost:${embeddedServer.port}/trigger", NameRequestBody("sss-" + tracingId))
+                            .header("X-TrackingId", tracingId)
                     Mono.from(client.retrieve(get, String::class.java))
                             .map { Tuples.of(it as String, tracingId) }
                 }
@@ -54,8 +61,6 @@ class ReactorContextPropagationSpec {
 
         embeddedServer.stop()
     }
-
-
 }
 
 @Requires(property = "reactortestpropagation.enabled")
@@ -74,7 +79,6 @@ class TestController(private val someService: SomeService) {
         val reactorContextView = currentCoroutineContext()[ReactorContext.Key]!!.context
         return reactorContextView.get("reactorTrackingId") as String
     }
-
 }
 
 @Introspected
@@ -97,11 +101,10 @@ class SomeService {
             suspendTrackingId
         }
     }
-
 }
 
 @Requires(property = "reactortestpropagation.enabled")
-@Filter(Filter.MATCH_ALL_PATTERN)
+@Filter(MATCH_ALL_PATTERN)
 class ReactorHttpServerFilter : HttpServerFilter {
 
     override fun doFilter(request: HttpRequest<*>, chain: ServerFilterChain): Publisher<MutableHttpResponse<*>> {
@@ -115,7 +118,7 @@ class ReactorHttpServerFilter : HttpServerFilter {
 }
 
 @Requires(property = "reactortestpropagation.enabled")
-@Filter(Filter.MATCH_ALL_PATTERN)
+@Filter(MATCH_ALL_PATTERN)
 class SuspendHttpServerFilter : CoroutineHttpServerFilter {
 
     override suspend fun filter(request: HttpRequest<*>, chain: ServerFilterChain): MutableHttpResponse<*> {
@@ -138,11 +141,10 @@ interface CoroutineHttpServerFilter : HttpServerFilter {
             filter(request, chain)
         }
     }
-
 }
 
 suspend fun ServerFilterChain.next(request: HttpRequest<*>): MutableHttpResponse<*> {
-    return this.proceed(request).asFlow().single()
+    return proceed(request).asFlow().single()
 }
 
 @Introspected

@@ -17,6 +17,7 @@ package io.micronaut.tracing.instrument.util;
 
 import io.micronaut.core.annotation.NonNull;
 import io.opentracing.Tracer;
+import io.opentracing.Tracer.SpanBuilder;
 import org.reactivestreams.Publisher;
 import reactor.core.CorePublisher;
 
@@ -33,7 +34,7 @@ public final class TracingPublisherUtils {
      * @param publisher       the target publisher
      * @param tracer          the tracer
      * @param tracingObserver the tracing observer
-     * @param <T>             The publisher's type
+     * @param <T>             the publisher's type
      * @return new instance
      */
     public static <T> TracingPublisher<T> createTracingPublisher(Publisher<T> publisher,
@@ -54,12 +55,12 @@ public final class TracingPublisherUtils {
      * @param spanBuilder     the span builder that represents the span that will
      *                        be created when the publisher is subscribed to
      * @param tracingObserver the tracing observer
-     * @param <T>             The publisher's type
+     * @param <T>             the publisher's type
      * @return new instance
      */
     public static <T> TracingPublisher<T> createTracingPublisher(Publisher<T> publisher,
                                                                  Tracer tracer,
-                                                                 Tracer.SpanBuilder spanBuilder,
+                                                                 SpanBuilder spanBuilder,
                                                                  @NonNull TracingObserver<T> tracingObserver) {
 
         if (publisher instanceof CorePublisher) {
@@ -77,12 +78,12 @@ public final class TracingPublisherUtils {
      *                        be created when the publisher is subscribed to
      * @param isSingle        true if the publisher emits a single item
      * @param tracingObserver the tracing observer
-     * @param <T>             The publisher's type
+     * @param <T>             the publisher's type
      * @return new instance
      */
     public static <T> TracingPublisher<T> createTracingPublisher(Publisher<T> publisher,
                                                                  Tracer tracer,
-                                                                 Tracer.SpanBuilder spanBuilder,
+                                                                 SpanBuilder spanBuilder,
                                                                  boolean isSingle,
                                                                  @NonNull TracingObserver<T> tracingObserver) {
 
@@ -91,5 +92,4 @@ public final class TracingPublisherUtils {
         }
         return new TracingPublisher<>(publisher, tracer, spanBuilder, isSingle, tracingObserver);
     }
-
 }

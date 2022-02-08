@@ -72,7 +72,7 @@ tracing:
     codecs: W3C,B3,JAEGER
 ----
 
-You can also optionally dependency-inject common configuration classes into api:tracing.jaeger.JaegerConfiguration[] such as `io.jaegertracing.Configuration.SamplerConfiguration` just by defining them as beans. See the API for api:tracing.jaeger.JaegerConfiguration[] for available injection points.
+You can also optionally dependency-inject common configuration classes into api:tracing.jaeger.JaegerConfiguration[] such as `io.jaegertracing.Configuration.SamplerConfiguration` just by defining them as beans. Likewise, a custom `io.opentracing.ScopeManager` can be injected into api:tracing.jaeger.JaegerTracerFactory[]. See the API for api:tracing.jaeger.JaegerConfiguration[] and api:tracing.jaeger.JaegerTracerFactory[] for available injection points.
 
 == Filtering HTTP spans
 

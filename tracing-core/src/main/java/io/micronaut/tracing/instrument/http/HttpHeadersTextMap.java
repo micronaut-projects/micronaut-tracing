@@ -87,7 +87,7 @@ class HttpHeadersTextMap implements TextMap {
     @Override
     public void put(String key, String value) {
         if (headers instanceof MutableHttpHeaders) {
-            ((MutableHttpHeaders) headers).add(key, value);
+            ((MutableHttpHeaders) headers).set(key, value);
         }
     }
 }

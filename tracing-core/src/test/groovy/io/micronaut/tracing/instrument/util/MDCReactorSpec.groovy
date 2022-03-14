@@ -22,7 +22,9 @@ import io.micronaut.http.filter.HttpClientFilter
 import io.micronaut.http.filter.HttpServerFilter
 import io.micronaut.http.filter.ServerFilterChain
 import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.rxjava2.http.client.RxHttpClient
 import io.micronaut.scheduling.annotation.ExecuteOn
+import io.reactivex.Single
 import jakarta.inject.Inject
 import org.reactivestreams.Publisher
 import org.slf4j.Logger
@@ -86,6 +88,10 @@ class MDCReactorSpec extends Specification {
         private HttpClient httpClient
 
         @Inject
+        @Client("/")
+        private RxHttpClient rxHttpClient
+
+        @Inject
         @Client
         private MDCClient mdcClient
 
@@ -111,12 +117,11 @@ class MDCReactorSpec extends Specification {
         }
 
         @Put("/test3")
-        Mono<String> test3(@Header("X-TrackingId") String tracingId, @Body SomeBody body) {
+        Single<String> test3(@Header("X-TrackingId") String tracingId, @Body SomeBody body) {
             LOG.info("test3")
             checkTracing(tracingId)
-
-            return Mono.from(
-                    httpClient.retrieve(HttpRequest
+            return Single.fromPublisher(
+                    rxHttpClient.retrieve(HttpRequest
                             .POST("/mdc/test4", body)
                             .header("X-TrackingId", tracingId), String)
             )

@@ -159,8 +159,12 @@ public class TracingCorePublisher<T> extends TracingPublisher<T> implements Core
                                ScopeManager scopeManager,
                                Span span,
                                boolean finishOnClose) {
-        CoreSubscriber<? extends T> coreActual = (CoreSubscriber<? extends T>) actual;
-        publisher.subscribe(new TracingCoreSubscriber(scopeManager, span, actual, finishOnClose, coreActual.currentContext()));
+        if (actual instanceof  CoreSubscriber) {
+            CoreSubscriber<? extends T> coreActual = (CoreSubscriber<? extends T>) actual;
+            publisher.subscribe(new TracingCoreSubscriber(scopeManager, span, actual, finishOnClose, coreActual.currentContext()));
+        } else {
+            publisher.subscribe(new TracingSubscriber(scopeManager, span, actual, finishOnClose));
+        }
     }
 
     private final class TracingCoreSubscriber extends TracingSubscriber implements CoreSubscriber<T> {

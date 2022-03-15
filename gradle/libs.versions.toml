@@ -10,6 +10,7 @@ zipkin-reporter = '2.16.3'
 [libraries]
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'brave-opentracing' }
 jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'jaeger' }
+junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
 kotlinx-coroutines-core = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-core', version.ref = 'kotlin-coroutines' }
 kotlinx-coroutines-reactor = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor', version.ref = 'kotlin-coroutines' }
 opentracing = { module = 'io.opentracing:opentracing-api', version.ref = 'opentracing' }

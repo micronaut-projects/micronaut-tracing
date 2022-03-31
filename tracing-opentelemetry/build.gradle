@@ -1,0 +1,22 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api mn.micronaut.runtime
+    api mn.micronaut.http.client
+    api projects.tracingAnnotation
+    api projects.tracingCore
+    api libs.opentelemetry.api
+    api libs.opentelemetry.opentracing.shim
+
+    compileOnly libs.kotlinx.coroutines.core
+    compileOnly libs.kotlinx.coroutines.reactor
+
+    testImplementation mn.reactor
+    testImplementation mn.micronaut.reactor.http.client
+    testImplementation libs.opentelemetry.sdk
+    testImplementation libs.opentelemetry.sdk.testing
+    testImplementation libs.opentelemetry.sdk.metrics
+    testImplementation libs.opentelemetry.sdk.logs
+}

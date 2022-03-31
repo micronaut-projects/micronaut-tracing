@@ -24,7 +24,7 @@ import reactor.core.CorePublisher;
 /**
  * Tracing publisher utils.
  *
- * @author Denis Stepanov
+ * @author Nemanja Mikic
  */
 public final class TracingPublisherUtils {
 

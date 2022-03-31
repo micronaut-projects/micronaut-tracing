@@ -37,7 +37,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Inherited
 @Target(value = {PARAMETER, ANNOTATION_TYPE})
-@InterceptorBinding(kind = InterceptorKind.AROUND)
 public @interface SpanTag {
 
     /**

@@ -17,6 +17,7 @@ package io.micronaut.tracing.opentelemetry.interceptor;
 
 import io.micronaut.aop.InterceptPhase;
 import io.micronaut.aop.InterceptedMethod;
+import io.micronaut.aop.InterceptorBean;
 import io.micronaut.aop.MethodInterceptor;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
@@ -50,11 +51,12 @@ import java.util.concurrent.CompletionStage;
  * Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
  * using the Open Tracing API.
  *
- * @author graemerocher
+ * @author Nemanja Mikic
  * @since 1.0
  */
 @Singleton
 @Requires(beans = Tracer.class)
+@InterceptorBean({ContinueSpan.class, NewSpan.class})
 public class TraceInterceptor implements MethodInterceptor<Object, Object> {
 
     public static final String CLASS_TAG = "class";

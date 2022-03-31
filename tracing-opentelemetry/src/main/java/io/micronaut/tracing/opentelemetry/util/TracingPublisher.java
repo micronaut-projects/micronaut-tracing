@@ -35,7 +35,7 @@ import java.util.Optional;
  * A reactive streams publisher that traces.
  *
  * @param <T> the type of element signaled
- * @author graemerocher
+ * @author Nemanja Mikic
  * @since 1.0
  */
 @SuppressWarnings("PublisherImplementation")

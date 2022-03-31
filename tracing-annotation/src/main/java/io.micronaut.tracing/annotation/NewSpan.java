@@ -38,8 +38,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Inherited
 @Target(value = {METHOD, ANNOTATION_TYPE})
-@Around
-@InterceptorBinding(kind = InterceptorKind.AROUND)
+@InterceptorBinding
 public @interface NewSpan {
 
     /**

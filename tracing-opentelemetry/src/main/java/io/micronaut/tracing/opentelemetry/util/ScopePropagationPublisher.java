@@ -27,7 +27,7 @@ import org.reactivestreams.Subscription;
  * A <code>Publisher</code> that just propagates tracing state without creating a new span.
  *
  * @param <T> the publisher generic type
- * @author graemerocher
+ * @author Nemanja Mikic
  * @since 1.0
  */
 @SuppressWarnings("PublisherImplementation")

@@ -28,7 +28,7 @@ import reactor.util.context.Context;
  * The tracing publisher that supports Reactor's context.
  *
  * @param <T> the type of element signaled
- * @author Denis Stepanov
+ * @author Nemanja Mikic
  */
 @SuppressWarnings("PublisherImplementation")
 public class TracingCorePublisher<T> extends TracingPublisher<T> implements CorePublisher<T> {

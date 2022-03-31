@@ -22,7 +22,7 @@ import io.opentelemetry.api.trace.Span;
  * The tracing observer.
  *
  * @param <T> The publisher's type
- * @author Denis Stepanov
+ * @author Nemanja Mikic
  */
 public interface TracingObserver<T> {
 

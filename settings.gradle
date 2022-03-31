@@ -11,9 +11,11 @@ plugins {
 
 rootProject.name = 'micronaut-tracing'
 
+include 'tracing-annotation'
 include 'tracing-bom'
 include 'tracing-core'
 include 'tracing-jaeger'
+include 'tracing-opentelemetry'
 include 'tracing-zipkin'
 include 'tests:kotlin-tests'
 

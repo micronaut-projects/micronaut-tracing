@@ -1,17 +1,19 @@
 plugins {
     id 'io.micronaut.build.internal.tracing-module'
-    alias libs.plugins.kotlinjvm
 }
 
 dependencies {
     api mn.micronaut.runtime
     api mn.micronaut.http.client
-    api libs.opentracing
-    api libs.opentracing.util
     api projects.tracingAnnotation
+    api libs.opentelemetry
 
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor
 
     testImplementation mn.reactor
+    testImplementation mn.rxjava2
+    testImplementation projects.tracingCore
+    testImplementation mn.micronaut.rxjava2.http.client
+    testImplementation mn.micronaut.reactor.http.client
 }

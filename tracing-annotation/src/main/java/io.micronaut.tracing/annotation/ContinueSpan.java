@@ -15,16 +15,21 @@
  */
 package io.micronaut.tracing.annotation;
 
+import io.micronaut.aop.Around;
+import io.micronaut.aop.InterceptorBinding;
+import io.micronaut.aop.InterceptorKind;
+import io.micronaut.context.annotation.Type;
+
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * <p>Applied to parameters of a method to indicate which parameters should be included in span tags.</p>
+ * <p>Indicates that the current span should be continued.</p>
  *
  * <p>Annotation inspired by Spring Sleuth but using Open Tracing and Micronaut AOP.</p>
  *
@@ -33,11 +38,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Retention(RUNTIME)
 @Inherited
-@Target(value = {PARAMETER, ANNOTATION_TYPE})
-public @interface SpanTag {
-
-    /**
-     * @return the key to use for the tag
-     */
-    String value() default "";
+@Target(value = {METHOD, ANNOTATION_TYPE})
+@Around
+@InterceptorBinding(kind = InterceptorKind.AROUND)
+public @interface ContinueSpan {
 }

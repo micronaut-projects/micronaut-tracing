@@ -76,7 +76,7 @@ public interface TracingObserver<T> {
 
     /**
      * Designed for subclasses to override and implement custom on finish
-     * behaviour. Fired prior to calling {@link Span#finish()}.
+     * behaviour. Fired prior to calling {@link Span#end()}.
      *
      * @param span The span
      */

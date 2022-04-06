@@ -7,6 +7,7 @@ kotlin-coroutines = '1.6.0'
 opentracing = '0.33.0'
 zipkin-reporter = '2.16.3'
 opentelemetry = '1.12.0'
+opentelemetry-alpha='1.12.0-alpha'
 
 [libraries]
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'brave-opentracing' }
@@ -17,7 +18,11 @@ opentracing = { module = 'io.opentracing:opentracing-api', version.ref = 'opentr
 opentracing-util = { module = 'io.opentracing:opentracing-util', version.ref = 'opentracing' }
 zipkin-brave-instrumentation = { module = 'io.zipkin.brave:brave-instrumentation-http', version.ref = 'brave-instrumentation' }
 zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter', version.ref = 'zipkin-reporter' }
-opentelemetry = {module='io.opentelemetry:opentelemetry-api', version.ref='opentelemetry'}
+opentelemetry-api = {module='io.opentelemetry:opentelemetry-api', version.ref ='opentelemetry'}
+opentelemetry-sdk = {module='io.opentelemetry:opentelemetry-sdk', version.ref ='opentelemetry'}
+opentelemetry-sdk-testing = {module='io.opentelemetry:opentelemetry-sdk-testing', version.ref = 'opentelemetry'}
+opentelemetry-sdk-metrics = {module='io.opentelemetry:opentelemetry-sdk-metrics', version.ref = 'opentelemetry-alpha'}
+opentelemetry-sdk-logs = {module='io.opentelemetry:opentelemetry-sdk-logs', version.ref = 'opentelemetry-alpha'}
 
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }

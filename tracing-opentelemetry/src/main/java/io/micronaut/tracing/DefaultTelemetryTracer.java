@@ -46,7 +46,8 @@ public class DefaultTelemetryTracer {
     @Singleton
     @Primary
     @Requires(missingBeans = Tracer.class)
-    Tracer defaultTracer() {
-        return OpenTelemetry.noop().getTracer(applicationName);
+    Tracer defaultTracer(OpenTelemetry openTelemetry) {
+        return openTelemetry.getTracer(applicationName);
     }
+
 }

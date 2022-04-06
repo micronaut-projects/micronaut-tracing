@@ -12,6 +12,7 @@ plugins {
 rootProject.name = 'micronaut-tracing'
 
 include 'tracing-annotation'
+include 'tracing-aws'
 include 'tracing-bom'
 include 'tracing-core'
 include 'tracing-jaeger'

@@ -21,9 +21,20 @@ import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import jakarta.inject.Singleton;
 
+/**
+ * Registers an OpenTelemetry bean.
+ *
+ * @author Nemanja Mikic
+ * @since 1.0
+ */
 @Factory
 public class DefaultOpenTelemetryFactory {
 
+    /**
+     * The OpenTelemetry bean with default values.
+     *
+     * @return the OpenTelemetry
+     */
     @Singleton
     @Primary
     OpenTelemetry defaultOpenTelemetry() {

@@ -33,10 +33,21 @@ import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import jakarta.inject.Singleton;
 
 
+/**
+ * Registers an OpenTelemetry bean.
+ *
+ * @author Nemanja Mikic
+ * @since 1.0
+ */
 @Factory
 @Replaces(factory = DefaultOpenTelemetryFactory.class)
 public class AwsOpenTelemetryFactory {
 
+    /**
+     * The OpenTelemetry bean configured with AwsOpenTelemetryConfiguration.
+     * @param awsOpenTelemetryConfiguration the aws open-telemetry configuration
+     * @return the OpenTelemetry
+     */
     @Singleton
     @Primary
     OpenTelemetry defaultOpenTelemetryWithConfig(@NonNull AwsOpenTelemetryConfiguration awsOpenTelemetryConfiguration) {
@@ -67,6 +78,11 @@ public class AwsOpenTelemetryFactory {
             .buildAndRegisterGlobal();
     }
 
+    /**
+     * The OpenTelemetry bean with default values.
+     *
+     * @return the OpenTelemetry
+     */
     @Singleton
     OpenTelemetry defaultOpenTelemetry() {
         return OpenTelemetrySdk.builder()

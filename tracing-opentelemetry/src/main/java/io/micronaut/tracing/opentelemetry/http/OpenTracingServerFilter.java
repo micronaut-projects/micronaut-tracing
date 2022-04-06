@@ -59,6 +59,7 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
     /**
      * Creates an HTTP server instrumentation filter.
      *
+     * @param openTelemetry the openTelemetry
      * @param tracer for span creation and propagation across transport
      */
     public OpenTracingServerFilter(OpenTelemetry openTelemetry, Tracer tracer) {
@@ -68,6 +69,7 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
     /**
      * Creates an HTTP server instrumentation filter.
      *
+     * @param openTelemetry the openTelemetry
      * @param tracer           for span creation and propagation across transport
      * @param exclusionsConfig The {@link TracingExclusionsConfiguration}
      */

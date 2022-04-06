@@ -59,7 +59,7 @@ public abstract class AbstractOpenTracingFilter implements HttpFilter {
 
     /**
      * Configure tracer in the filter for span creation and propagation across arbitrary transports.
-     *
+     * @param openTelemetry the openTelemetry
      * @param tracer the tracer
      */
     public AbstractOpenTracingFilter(OpenTelemetry openTelemetry, Tracer tracer) {
@@ -71,6 +71,7 @@ public abstract class AbstractOpenTracingFilter implements HttpFilter {
      * arbitrary transports.
      *
      * @param tracer            the tracer
+     * @param openTelemetry the openTelemetry
      * @param pathExclusionTest the predicate for excluding URI paths from tracing
      */
     public AbstractOpenTracingFilter(OpenTelemetry openTelemetry, Tracer tracer,

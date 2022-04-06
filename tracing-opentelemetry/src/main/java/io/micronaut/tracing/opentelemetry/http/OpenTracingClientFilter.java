@@ -48,10 +48,10 @@ import static io.micronaut.tracing.opentelemetry.http.TraceRequestAttributes.CUR
  */
 @Filter(CLIENT_PATH)
 @Requires(beans = Tracer.class)
-//@Requires(missingBeans = NoopTracer.class)
 public class OpenTracingClientFilter extends AbstractOpenTracingFilter implements HttpClientFilter {
 
     /**
+     * @param openTelemetry the openTelemetry
      * @param tracer the tracer for span creation and configuring across arbitrary transports
      */
     public OpenTracingClientFilter(OpenTelemetry openTelemetry, Tracer tracer) {
@@ -62,6 +62,7 @@ public class OpenTracingClientFilter extends AbstractOpenTracingFilter implement
      * Initialize the open tracing client filter with tracer and exclusion configuration.
      *
      * @param tracer           the tracer for span creation and configuring across arbitrary transports
+     * @param openTelemetry    the openTelemetry
      * @param exclusionsConfig The {@link TracingExclusionsConfiguration}
      */
     @Inject

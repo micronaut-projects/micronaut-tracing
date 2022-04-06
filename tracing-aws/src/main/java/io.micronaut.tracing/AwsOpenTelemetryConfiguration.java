@@ -16,7 +16,6 @@
 package io.micronaut.tracing;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.core.util.Toggleable;
 
 
 import static io.micronaut.tracing.AwsOpenTelemetryConfiguration.PREFIX;

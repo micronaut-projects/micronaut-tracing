@@ -41,8 +41,6 @@ import io.opentelemetry.context.Scope;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 

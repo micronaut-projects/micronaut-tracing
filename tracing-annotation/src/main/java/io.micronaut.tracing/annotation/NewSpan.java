@@ -15,9 +15,7 @@
  */
 package io.micronaut.tracing.annotation;
 
-import io.micronaut.aop.Around;
 import io.micronaut.aop.InterceptorBinding;
-import io.micronaut.aop.InterceptorKind;
 
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;

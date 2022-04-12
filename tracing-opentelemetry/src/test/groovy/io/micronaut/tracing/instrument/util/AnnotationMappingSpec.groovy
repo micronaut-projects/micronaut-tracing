@@ -15,13 +15,10 @@ import io.micronaut.rxjava2.http.client.RxHttpClient
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
-import io.opentelemetry.api.trace.Tracer
-import io.opentelemetry.sdk.OpenTelemetrySdk
+import io.micronaut.tracing.annotation.SpanTag
+import io.opentelemetry.extension.annotations.SpanAttribute
+import io.opentelemetry.extension.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
-import io.opentelemetry.sdk.trace.SdkTracerProvider
-import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor
-import io.reactivex.Flowable
-import io.reactivex.Single
 import jakarta.inject.Inject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -36,9 +33,9 @@ import spock.lang.Specification
 
 import static io.micronaut.scheduling.TaskExecutors.IO
 
-class ReactorRx2JavaSpec extends Specification {
+class AnnotationMappingSpec extends Specification {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ReactorRx2JavaSpec)
+    private static final Logger LOG = LoggerFactory.getLogger(AnnotationMappingSpec)
 
     @Shared
     @AutoCleanup
@@ -50,13 +47,18 @@ class ReactorRx2JavaSpec extends Specification {
     @AutoCleanup
     RxHttpClient rxHttpClient = RxHttpClient.create(embeddedServer.URL)
 
-    void "test RxJava2 integration"() {
+    void 'test map WithSpan annotation'() {
+        def count = 10
+        def numOfCalls = 3
+        def spanNumbers = 2
+        def testExporter = embeddedServer.getApplicationContext().getBean(InMemorySpanExporter.class)
+
         expect:
-        List<Tuple2> result = Flux.range(1, 10)
+        List<Tuple2> result = Flux.range(1, count)
                 .flatMap {
                     String tracingId = UUID.randomUUID()
                     HttpRequest<Object> request = HttpRequest
-                            .POST("/rxjava2/enter", new SomeBody())
+                            .POST("/annotations/enter", new SomeBody())
                             .header("X-TrackingId", tracingId)
                     return Mono.from(rxHttpClient.retrieve(request)).map(response -> {
                         Tuples.of(tracingId, response)
@@ -66,18 +68,23 @@ class ReactorRx2JavaSpec extends Specification {
                 .block()
         for (Tuple2 t : result)
             assert t.getT1() == t.getT2()
+
+        testExporter.getFinishedSpanItems().size() == count * numOfCalls * spanNumbers
+
+        testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-attribute"))
+        testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag"))
+
+        cleanup:
+        testExporter.reset()
+
     }
 
     @Introspected
     static class SomeBody {
     }
 
-    @Controller("/rxjava2")
-    static class RxJava2Controller {
-
-        @Inject
-        @Client("/")
-        private RxHttpClient rxHttpClient
+    @Controller("/annotations")
+    static class TestController {
 
         @Inject
         @Client("/")
@@ -86,11 +93,11 @@ class ReactorRx2JavaSpec extends Specification {
         @ExecuteOn(IO)
         @Post("/enter")
         @NewSpan("enter")
-        Single<String> test(@Header("X-TrackingId") String tracingId, @Body SomeBody body) {
+        Mono<String> enter(@Header("X-TrackingId") String tracingId, @Body SomeBody body) {
             LOG.info("enter")
-            return Single.fromPublisher(
+            return Mono.from(
                     reactorHttpClient.retrieve(HttpRequest
-                            .GET("/rxjava2/test")
+                            .GET("/annotations/test")
                             .header("X-TrackingId", tracingId), String)
             )
         }
@@ -98,25 +105,21 @@ class ReactorRx2JavaSpec extends Specification {
         @ExecuteOn(IO)
         @Get("/test")
         @ContinueSpan
-        Mono<String> testRxJava2(@Header("X-TrackingId") String tracingId) {
+        Mono<String> test(@SpanAttribute("tracing-annotation-span-attribute") @Header("X-TrackingId") String tracingId) {
             LOG.info("test")
             return Mono.from(
-                    rxHttpClient.exchange(HttpRequest
-                            .GET("/rxjava2/test2")
+                    reactorHttpClient.retrieve(HttpRequest
+                            .GET("/annotations/test2")
                             .header("X-TrackingId", tracingId), String)
             )
         }
 
         @ExecuteOn(IO)
         @Get("/test2")
-        String test2RxJava2(@Header("X-TrackingId") String tracingId) {
+        @WithSpan
+        Mono<String> test2(@SpanTag("tracing-annotation-span-tag") @Header("X-TrackingId") String tracingId) {
             LOG.info("test2")
-            return Flux.from(trackingIdRxJava2(tracingId)).blockFirst()
-        }
-
-
-        Flowable<String> trackingIdRxJava2(String tracingId) {
-           return Flowable.just(tracingId, tracingId, tracingId)
+            return Mono.just(tracingId)
         }
 
     }

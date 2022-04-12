@@ -41,7 +41,6 @@ import io.opentelemetry.context.Scope;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 
-import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 
@@ -59,11 +58,6 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
 
     public static final String CLASS_TAG = "class";
     public static final String METHOD_TAG = "method";
-
-    private static final String TAG_HYSTRIX_COMMAND = "hystrix.command";
-    private static final String TAG_HYSTRIX_GROUP = "hystrix.group";
-    private static final String TAG_HYSTRIX_THREAD_POOL = "hystrix.threadPool";
-    private static final String HYSTRIX_ANNOTATION = "io.micronaut.configuration.hystrix.annotation.HystrixCommand";
 
     private final Tracer tracer;
 
@@ -105,7 +99,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                             return publisher;
                         }
                         return interceptedMethod.handleResult(
-                                TracingPublisherUtils.createTracingPublisher(publisher, tracer, new TracingObserver() {
+                                TracingPublisherUtils.createTracingPublisher(publisher, new TracingObserver() {
 
                                     @Override
                                     public void doOnSubscribe(@NonNull Span span) {
@@ -132,10 +126,8 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
         } else {
             // must be new
             String operationName = newSpan.stringValue().orElse(null);
-            Optional<String> hystrixCommand = context.stringValue(HYSTRIX_ANNOTATION);
             if (StringUtils.isEmpty(operationName)) {
-                // try hystrix command name
-                operationName = hystrixCommand.orElse(context.getMethodName());
+                operationName = context.getMethodName();
             }
             SpanBuilder builder = tracer.spanBuilder(operationName);
 
@@ -152,11 +144,11 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                             return publisher;
                         }
                         return interceptedMethod.handleResult(
-                            TracingPublisherUtils.createTracingPublisher(publisher, tracer, builder, new TracingObserver() {
+                            TracingPublisherUtils.createTracingPublisher(publisher, builder, new TracingObserver() {
 
                                     @Override
                                     public void doOnSubscribe(@NonNull Span span) {
-                                        populateTags(context, hystrixCommand, span);
+                                        populateTags(context, span);
                                     }
 
                                 })
@@ -164,7 +156,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                     case COMPLETION_STAGE:
                         Span span = builder.startSpan();
                         try (Scope ignored = span.makeCurrent()) {
-                            populateTags(context, hystrixCommand, span);
+                            populateTags(context, span);
                             try {
                                 CompletionStage<?> completionStage = interceptedMethod.interceptResultAsCompletionStage();
                                 if (completionStage != null) {
@@ -184,7 +176,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                     case SYNCHRONOUS:
                         Span syncSpan = builder.startSpan();
                         try (Scope scope = syncSpan.makeCurrent()) {
-                            populateTags(context, hystrixCommand, syncSpan);
+                            populateTags(context, syncSpan);
                             try {
                                 return context.proceed();
                             } catch (RuntimeException e) {
@@ -204,17 +196,9 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
     }
 
     private void populateTags(MethodInvocationContext<Object, Object> context,
-                              Optional<String> hystrixCommand,
                               Span span) {
         span.setAttribute(CLASS_TAG, context.getDeclaringType().getSimpleName());
         span.setAttribute(METHOD_TAG, context.getMethodName());
-        hystrixCommand.ifPresent(s -> span.setAttribute(TAG_HYSTRIX_COMMAND, s));
-        context.stringValue(HYSTRIX_ANNOTATION, "group").ifPresent(s ->
-                span.setAttribute(TAG_HYSTRIX_GROUP, s)
-        );
-        context.stringValue(HYSTRIX_ANNOTATION, "threadPool").ifPresent(s ->
-                span.setAttribute(TAG_HYSTRIX_THREAD_POOL, s)
-        );
         tagArguments(span, context);
     }
 

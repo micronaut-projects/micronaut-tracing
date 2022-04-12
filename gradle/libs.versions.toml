@@ -23,6 +23,7 @@ opentelemetry-sdk = {module='io.opentelemetry:opentelemetry-sdk', version.ref ='
 opentelemetry-sdk-testing = {module='io.opentelemetry:opentelemetry-sdk-testing', version.ref = 'opentelemetry'}
 opentelemetry-sdk-metrics = {module='io.opentelemetry:opentelemetry-sdk-metrics', version.ref = 'opentelemetry-alpha'}
 opentelemetry-sdk-logs = {module='io.opentelemetry:opentelemetry-sdk-logs', version.ref = 'opentelemetry-alpha'}
+opentelemetry-extension-annotations = {module='io.opentelemetry:opentelemetry-extension-annotations', version.ref = 'opentelemetry'}
 
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }

@@ -17,7 +17,6 @@ package io.micronaut.tracing.opentelemetry.util;
 
 import io.micronaut.core.annotation.NonNull;
 import io.opentelemetry.api.trace.SpanBuilder;
-import io.opentelemetry.api.trace.Tracer;
 import org.reactivestreams.Publisher;
 import reactor.core.CorePublisher;
 
@@ -32,26 +31,23 @@ public final class TracingPublisherUtils {
      * Creates a new tracing publisher for the given arguments.
      *
      * @param publisher       the target publisher
-     * @param tracer          the tracer
      * @param tracingObserver the tracing observer
      * @param <T>             the publisher's type
      * @return new instance
      */
     public static <T> TracingPublisher<T> createTracingPublisher(Publisher<T> publisher,
-                                                                 Tracer tracer,
                                                                  @NonNull TracingObserver<T> tracingObserver) {
 
         if (publisher instanceof CorePublisher) {
-            return new TracingCorePublisher<>((CorePublisher<T>) publisher, tracer, tracingObserver);
+            return new TracingCorePublisher<>((CorePublisher<T>) publisher, tracingObserver);
         }
-        return new TracingPublisher<>(publisher, tracer, tracingObserver);
+        return new TracingPublisher<>(publisher, tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
      * @param publisher       the target publisher
-     * @param tracer          the tracer
      * @param spanBuilder     the span builder that represents the span that will
      *                        be created when the publisher is subscribed to
      * @param tracingObserver the tracing observer
@@ -59,21 +55,18 @@ public final class TracingPublisherUtils {
      * @return new instance
      */
     public static <T> TracingPublisher<T> createTracingPublisher(Publisher<T> publisher,
-                                                                 Tracer tracer,
                                                                  SpanBuilder spanBuilder,
                                                                  @NonNull TracingObserver<T> tracingObserver) {
-
         if (publisher instanceof CorePublisher) {
-            return new TracingCorePublisher<>((CorePublisher<T>) publisher, tracer, spanBuilder, tracingObserver);
+            return new TracingCorePublisher<>((CorePublisher<T>) publisher, spanBuilder, tracingObserver);
         }
-        return new TracingPublisher<>(publisher, tracer, spanBuilder, tracingObserver);
+        return new TracingPublisher<>(publisher, spanBuilder, tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
      * @param publisher       the target publisher
-     * @param tracer          the tracer
      * @param spanBuilder     the span builder that represents the span that will
      *                        be created when the publisher is subscribed to
      * @param isSingle        true if the publisher emits a single item
@@ -82,14 +75,13 @@ public final class TracingPublisherUtils {
      * @return new instance
      */
     public static <T> TracingPublisher<T> createTracingPublisher(Publisher<T> publisher,
-                                                                 Tracer tracer,
                                                                  SpanBuilder spanBuilder,
                                                                  boolean isSingle,
                                                                  @NonNull TracingObserver<T> tracingObserver) {
 
         if (publisher instanceof CorePublisher) {
-            return new TracingCorePublisher<>((CorePublisher<T>) publisher, tracer, spanBuilder, isSingle, tracingObserver);
+            return new TracingCorePublisher<>((CorePublisher<T>) publisher, spanBuilder, isSingle, tracingObserver);
         }
-        return new TracingPublisher<>(publisher, tracer, spanBuilder, isSingle, tracingObserver);
+        return new TracingPublisher<>(publisher, spanBuilder, isSingle, tracingObserver);
     }
 }

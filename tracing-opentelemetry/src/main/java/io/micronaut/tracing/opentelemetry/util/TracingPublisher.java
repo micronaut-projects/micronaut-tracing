@@ -28,6 +28,7 @@ import io.opentelemetry.context.Scope;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import reactor.core.CoreSubscriber;
 
 import java.util.Optional;
 
@@ -42,7 +43,6 @@ import java.util.Optional;
 public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
 
     protected final Publisher<T> publisher;
-    private final Tracer tracer;
     private final SpanBuilder spanBuilder;
     private final Span parentSpan;
     private final boolean isSingle;
@@ -58,7 +58,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
                             String operationName) {
-        this(publisher, tracer, tracer.spanBuilder(operationName), TracingObserver.NO_OP);
+        this(publisher, tracer.spanBuilder(operationName), TracingObserver.NO_OP);
     }
 
     /**
@@ -73,7 +73,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
                             Tracer tracer,
                             String operationName,
                             @NonNull TracingObserver tracingObserver) {
-        this(publisher, tracer, tracer.spanBuilder(operationName), tracingObserver);
+        this(publisher, tracer.spanBuilder(operationName), tracingObserver);
     }
 
     /**
@@ -81,10 +81,9 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      * will just add tracing of the existing span if it is present.
      *
      * @param publisher the target publisher
-     * @param tracer    the tracer
-     */
-    public TracingPublisher(Publisher<T> publisher, Tracer tracer) {
-        this(publisher, tracer, (SpanBuilder) null, TracingObserver.NO_OP);
+     * */
+    public TracingPublisher(Publisher<T> publisher) {
+        this(publisher, (SpanBuilder) null, TracingObserver.NO_OP);
     }
 
     /**
@@ -92,75 +91,64 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      * will just add tracing of the existing span if it is present.
      *
      * @param publisher       the target publisher
-     * @param tracer          the tracer
      * @param tracingObserver the tracing observer
      */
     public TracingPublisher(Publisher<T> publisher,
-                            Tracer tracer,
                             @NonNull TracingObserver tracingObserver) {
-        this(publisher, tracer, (SpanBuilder) null, tracingObserver);
+        this(publisher, (SpanBuilder) null, tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
      * @param publisher   the target publisher
-     * @param tracer      the tracer
      * @param spanBuilder the span builder that represents the span that will be
      */
     public TracingPublisher(Publisher<T> publisher,
-                            Tracer tracer,
                             SpanBuilder spanBuilder) {
-        this(publisher, tracer, spanBuilder, Publishers.isSingle(publisher.getClass()), TracingObserver.NO_OP);
+        this(publisher, spanBuilder, Publishers.isSingle(publisher.getClass()), TracingObserver.NO_OP);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
      * @param publisher       the target publisher
-     * @param tracer          the tracer
      * @param spanBuilder     the span builder that represents the span that will be
      * @param tracingObserver the tracing observer
      */
     public TracingPublisher(Publisher<T> publisher,
-                            Tracer tracer,
                             SpanBuilder spanBuilder,
                             @NonNull TracingObserver tracingObserver) {
-        this(publisher, tracer, spanBuilder, Publishers.isSingle(publisher.getClass()), tracingObserver);
+        this(publisher, spanBuilder, Publishers.isSingle(publisher.getClass()), tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
      * @param publisher   the target publisher
-     * @param tracer      the tracer
      * @param spanBuilder the span builder that represents the span that will
      *                    be created when the publisher is subscribed to
      * @param isSingle    true if the publisher emits a single item
      */
     public TracingPublisher(Publisher<T> publisher,
-                            Tracer tracer,
                             SpanBuilder spanBuilder,
                             boolean isSingle) {
-        this(publisher, tracer, spanBuilder, isSingle, TracingObserver.NO_OP);
+        this(publisher, spanBuilder, isSingle, TracingObserver.NO_OP);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
      * @param publisher       the target publisher
-     * @param tracer          the tracer
      * @param spanBuilder     the span builder that represents the span that will
      *                        be created when the publisher is subscribed to
      * @param isSingle        true if the publisher emits a single item
      * @param tracingObserver the tracing observer
      */
     public TracingPublisher(Publisher<T> publisher,
-                            Tracer tracer,
                             SpanBuilder spanBuilder,
                             boolean isSingle, @NonNull TracingObserver tracingObserver) {
         this.publisher = publisher;
-        this.tracer = tracer;
         this.spanBuilder = spanBuilder;
         this.parentSpan = Span.current();
         this.isSingle = isSingle;
@@ -274,7 +262,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      * The tracing subscriber.
      */
     @Internal
-    protected class TracingSubscriber implements Subscriber<T> {
+    protected class TracingSubscriber implements CoreSubscriber<T> {
         private final Span span;
         private final Subscriber<? super T> actual;
         private final boolean finishOnClose;
@@ -312,7 +300,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
                         if (Publishers.isConvertibleToPublisher(o)) {
                             Class<?> type = o.getClass();
                             Publisher<?> resultPublisher = Publishers.convertPublisher(o, Publisher.class);
-                            Publisher<?> scopedPublisher = new ScopePropagationPublisher(resultPublisher, tracer, span);
+                            Publisher<?> scopedPublisher = new ScopePropagationPublisher(resultPublisher, span);
                             response.body(Publishers.convertPublisher(scopedPublisher, type));
                         }
                     }

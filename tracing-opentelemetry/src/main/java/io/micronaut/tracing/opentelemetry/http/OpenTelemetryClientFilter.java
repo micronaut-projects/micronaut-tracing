@@ -48,13 +48,13 @@ import static io.micronaut.tracing.opentelemetry.http.TraceRequestAttributes.CUR
  */
 @Filter(CLIENT_PATH)
 @Requires(beans = Tracer.class)
-public class OpenTracingClientFilter extends AbstractOpenTracingFilter implements HttpClientFilter {
+public class OpenTelemetryClientFilter extends AbstractOpenTracingFilter implements HttpClientFilter {
 
     /**
      * @param openTelemetry the openTelemetry
      * @param tracer the tracer for span creation and configuring across arbitrary transports
      */
-    public OpenTracingClientFilter(OpenTelemetry openTelemetry, Tracer tracer) {
+    public OpenTelemetryClientFilter(OpenTelemetry openTelemetry, Tracer tracer) {
         this(openTelemetry, tracer, null);
     }
 
@@ -66,8 +66,8 @@ public class OpenTracingClientFilter extends AbstractOpenTracingFilter implement
      * @param exclusionsConfig The {@link TracingExclusionsConfiguration}
      */
     @Inject
-    public OpenTracingClientFilter(OpenTelemetry openTelemetry, Tracer tracer,
-                                   @Nullable TracingExclusionsConfiguration exclusionsConfig) {
+    public OpenTelemetryClientFilter(OpenTelemetry openTelemetry, Tracer tracer,
+                                     @Nullable TracingExclusionsConfiguration exclusionsConfig) {
         super(openTelemetry, tracer, exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
     }
 
@@ -83,7 +83,7 @@ public class OpenTracingClientFilter extends AbstractOpenTracingFilter implement
 
         SpanBuilder spanBuilder = newSpan(request);
 
-        return TracingPublisherUtils.createTracingPublisher(requestPublisher, tracer, spanBuilder, true, new TracingObserver() {
+        return TracingPublisherUtils.createTracingPublisher(requestPublisher, spanBuilder, true, new TracingObserver() {
 
             @Override
             public void doOnSubscribe(@NonNull Span span) {

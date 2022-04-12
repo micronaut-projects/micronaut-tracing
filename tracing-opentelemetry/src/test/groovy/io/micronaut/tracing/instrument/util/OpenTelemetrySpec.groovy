@@ -31,7 +31,6 @@ import static io.micronaut.scheduling.TaskExecutors.IO
 class OpenTelemetrySpec extends Specification {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetrySpec)
-    private final InMemorySpanExporter testExporter = InMemorySpanExporter.create()
 
     @Shared
     @AutoCleanup
@@ -43,20 +42,12 @@ class OpenTelemetrySpec extends Specification {
     @AutoCleanup
     RxHttpClient rxHttpClient = RxHttpClient.create(embeddedServer.URL)
 
-    def setup() {
-        def provider = SdkTracerProvider.builder()
-                .addSpanProcessor(SimpleSpanProcessor.create(testExporter))
-                .build()
-        OpenTelemetrySdk.builder()
-                .setTracerProvider(provider)
-                .buildAndRegisterGlobal()
-    }
-
     void "test OpenTelemetry integration"() {
         given:
-        def count = 10
+        def count = 1
         def numOfCalls = 2
         def spanNumbers = 2
+        def testExporter = embeddedServer.getApplicationContext().getBean(InMemorySpanExporter.class)
         expect:
         List<Tuple2> result = Flux.range(1, count)
                 .flatMap {
@@ -73,6 +64,8 @@ class OpenTelemetrySpec extends Specification {
         for (Tuple2 t : result)
             assert t.getT1() == t.getT2()
         testExporter.getFinishedSpanItems().size() == count * numOfCalls * spanNumbers
+        cleanup:
+        testExporter.reset()
     }
 
     @Introspected

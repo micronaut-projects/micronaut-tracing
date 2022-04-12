@@ -15,24 +15,13 @@
  */
 package io.micronaut.tracing;
 
-
-import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.core.util.Toggleable;
-import static io.micronaut.tracing.DefaultConfiguration.PREFIX;
-
 /**
  * Configuration for OpenTelemetry tracing.
  *
  * @author Nemanja Mikic
  * @since 1.0
  */
-@ConfigurationProperties(PREFIX)
-public class DefaultConfiguration implements Toggleable {
-
-    /**
-     * The configuration prefix.
-     */
-    public static final String PREFIX = "tracing";
+public class TracingDefaultConfiguration implements TracingConfiguration {
 
     /**
      * The default enable value.

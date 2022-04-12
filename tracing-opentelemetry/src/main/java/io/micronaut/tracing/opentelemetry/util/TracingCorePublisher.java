@@ -66,11 +66,9 @@ public class TracingCorePublisher<T> extends TracingPublisher<T> implements Core
      * will just add tracing of the existing span if it is present.
      *
      * @param publisher the target publisher
-     * @param tracer    the tracer
      */
-    public TracingCorePublisher(CorePublisher<T> publisher,
-                                Tracer tracer) {
-        super(publisher, tracer);
+    public TracingCorePublisher(CorePublisher<T> publisher) {
+        super(publisher);
     }
 
     /**
@@ -78,75 +76,65 @@ public class TracingCorePublisher<T> extends TracingPublisher<T> implements Core
      * will just add tracing of the existing span if it is present.
      *
      * @param publisher       the target publisher
-     * @param tracer          the tracer
      * @param tracingObserver the tracing observer
      */
     public TracingCorePublisher(CorePublisher<T> publisher,
-                                Tracer tracer,
                                 TracingObserver tracingObserver) {
-        super(publisher, tracer, tracingObserver);
+        super(publisher, tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
      * @param publisher   the target publisher
-     * @param tracer      the tracer
      * @param spanBuilder the span builder that represents the span that will be
      */
     public TracingCorePublisher(CorePublisher<T> publisher,
-                                Tracer tracer,
                                 SpanBuilder spanBuilder) {
-        super(publisher, tracer, spanBuilder);
+        super(publisher, spanBuilder);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
      * @param publisher       the target publisher
-     * @param tracer          the tracer
      * @param spanBuilder     the span builder that represents the span that will be
      * @param tracingObserver the tracing observer
      */
     public TracingCorePublisher(CorePublisher<T> publisher,
-                                Tracer tracer,
                                 SpanBuilder spanBuilder,
                                 TracingObserver tracingObserver) {
-        super(publisher, tracer, spanBuilder, tracingObserver);
+        super(publisher, spanBuilder, tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
      * @param publisher   the target publisher
-     * @param tracer      the tracer
      * @param spanBuilder the span builder that represents the span that will
      *                    be created when the publisher is subscribed to
      * @param isSingle    true if the publisher emits a single item
      */
     public TracingCorePublisher(CorePublisher<T> publisher,
-                                Tracer tracer,
                                 SpanBuilder spanBuilder,
                                 boolean isSingle) {
-        super(publisher, tracer, spanBuilder, isSingle);
+        super(publisher, spanBuilder, isSingle);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
      * @param publisher       the target publisher
-     * @param tracer          the tracer
      * @param spanBuilder     the span builder that represents the span that will
      *                        be created when the publisher is subscribed to
      * @param isSingle        true if the publisher emits a single item
      * @param tracingObserver the tracing observer
      */
     public TracingCorePublisher(CorePublisher<T> publisher,
-                                Tracer tracer,
                                 SpanBuilder spanBuilder,
                                 boolean isSingle,
                                 TracingObserver tracingObserver) {
-        super(publisher, tracer, spanBuilder, isSingle, tracingObserver);
+        super(publisher, spanBuilder, isSingle, tracingObserver);
     }
 
     @Override

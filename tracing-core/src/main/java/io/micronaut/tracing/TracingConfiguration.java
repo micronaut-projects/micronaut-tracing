@@ -15,29 +15,12 @@
  */
 package io.micronaut.tracing;
 
-import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Primary;
-import io.opentelemetry.api.GlobalOpenTelemetry;
-import io.opentelemetry.api.OpenTelemetry;
-import jakarta.inject.Singleton;
+import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.core.util.Toggleable;
 
-/**
- * Registers an OpenTelemetry bean.
- *
- * @author Nemanja Mikic
- * @since 1.0
- */
-@Factory
-public class DefaultOpenTelemetryFactory {
+import static io.micronaut.tracing.TracingConfiguration.PREFIX;
 
-    /**
-     * The OpenTelemetry bean with default values.
-     *
-     * @return the OpenTelemetry
-     */
-    @Singleton
-    @Primary
-    protected OpenTelemetry defaultOpenTelemetry() {
-        return GlobalOpenTelemetry.get();
-    }
+@ConfigurationProperties(PREFIX)
+public interface TracingConfiguration extends Toggleable {
+    String PREFIX = "tracing";
 }

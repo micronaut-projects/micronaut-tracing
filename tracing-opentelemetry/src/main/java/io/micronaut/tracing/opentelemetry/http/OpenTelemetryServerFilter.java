@@ -51,10 +51,10 @@ import static io.micronaut.tracing.opentelemetry.http.TraceRequestAttributes.CUR
  */
 @Filter(SERVER_PATH)
 @Requires(beans = Tracer.class)
-public class OpenTracingServerFilter extends AbstractOpenTracingFilter implements HttpServerFilter {
+public class OpenTelemetryServerFilter extends AbstractOpenTracingFilter implements HttpServerFilter {
 
-    private static final String APPLIED = OpenTracingServerFilter.class.getName() + "-applied";
-    private static final String CONTINUE = OpenTracingServerFilter.class.getName() + "-continue";
+    private static final String APPLIED = OpenTelemetryServerFilter.class.getName() + "-applied";
+    private static final String CONTINUE = OpenTelemetryServerFilter.class.getName() + "-continue";
 
     /**
      * Creates an HTTP server instrumentation filter.
@@ -62,7 +62,7 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
      * @param openTelemetry the openTelemetry
      * @param tracer for span creation and propagation across transport
      */
-    public OpenTracingServerFilter(OpenTelemetry openTelemetry, Tracer tracer) {
+    public OpenTelemetryServerFilter(OpenTelemetry openTelemetry, Tracer tracer) {
         this(openTelemetry, tracer, null);
     }
 
@@ -74,8 +74,8 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
      * @param exclusionsConfig The {@link TracingExclusionsConfiguration}
      */
     @Inject
-    public OpenTracingServerFilter(OpenTelemetry openTelemetry, Tracer tracer,
-                                   @Nullable TracingExclusionsConfiguration exclusionsConfig) {
+    public OpenTelemetryServerFilter(OpenTelemetry openTelemetry, Tracer tracer,
+                                     @Nullable TracingExclusionsConfiguration exclusionsConfig) {
         super(openTelemetry, tracer, exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
     }
 
@@ -89,7 +89,7 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
         }
         initSpanContext(request);
         SpanBuilder spanBuilder = continued ? null : newSpan(request);
-        return TracingPublisherUtils.createTracingPublisher(chain.proceed(request), tracer, spanBuilder, new TracingObserver() {
+        return TracingPublisherUtils.createTracingPublisher(chain.proceed(request), spanBuilder, new TracingObserver() {
 
             @Override
             public void doOnSubscribe(@NonNull Span span) {
@@ -163,6 +163,7 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
             .extract(Context.current(), request, getter);
 
         request.setAttribute(CURRENT_SPAN_CONTEXT, extractedContext);
+        extractedContext.makeCurrent();
         return extractedContext;
     }
 }

@@ -17,11 +17,11 @@ package io.micronaut.tracing.opentelemetry.util;
 
 import io.micronaut.core.async.publisher.Publishers;
 import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import reactor.core.CoreSubscriber;
 
 /**
  * A <code>Publisher</code> that just propagates tracing state without creating a new span.
@@ -34,21 +34,17 @@ import org.reactivestreams.Subscription;
 public class ScopePropagationPublisher<T> implements Publishers.MicronautPublisher<T> {
 
     private final Publisher<T> publisher;
-    private final Tracer tracer;
     private final Span parentSpan;
 
     /**
      * Default constructor.
      *
      * @param publisher  the publisher
-     * @param tracer     the tracer
      * @param parentSpan the parent span
      */
     public ScopePropagationPublisher(Publisher<T> publisher,
-                                     Tracer tracer,
                                      Span parentSpan) {
         this.publisher = publisher;
-        this.tracer = tracer;
         this.parentSpan = parentSpan;
     }
 
@@ -62,7 +58,7 @@ public class ScopePropagationPublisher<T> implements Publishers.MicronautPublish
         }
 
         try (Scope ignored = span.makeCurrent()) {
-            publisher.subscribe(new Subscriber<T>() {
+            publisher.subscribe(new CoreSubscriber<T>() {
                 @Override
                 public void onSubscribe(Subscription s) {
                     try (Scope ignored = span.makeCurrent()) {

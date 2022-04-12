@@ -7,6 +7,7 @@ dependencies {
     api mn.micronaut.http.client
     api projects.tracingAnnotation
     api libs.opentelemetry.api
+    api libs.opentelemetry.extension.annotations
 
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor
@@ -16,6 +17,7 @@ dependencies {
     testImplementation projects.tracingCore
     testImplementation mn.micronaut.rxjava2.http.client
     testImplementation mn.micronaut.reactor.http.client
+
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
     testImplementation libs.opentelemetry.sdk.metrics

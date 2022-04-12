@@ -1,0 +1,2 @@
+io.micronaut.tracing.opentelemetry.processing.WithSpanAnnotationMapper
+io.micronaut.tracing.opentelemetry.processing.SpanAttributeAnnotationMapper

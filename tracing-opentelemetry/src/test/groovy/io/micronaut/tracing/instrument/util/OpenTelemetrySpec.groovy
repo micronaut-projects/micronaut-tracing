@@ -10,6 +10,9 @@ import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
+import io.micronaut.tracing.annotation.SpanTag
+import io.opentelemetry.extension.annotations.SpanAttribute
+import io.opentelemetry.extension.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
 import org.slf4j.Logger
@@ -42,7 +45,7 @@ class OpenTelemetrySpec extends Specification {
     void "test OpenTelemetry integration"() {
         given:
         def count = 10
-        def numOfCalls = 2
+        def numOfCalls = 3
         def spanNumbers = 2
         def testExporter = embeddedServer.getApplicationContext().getBean(InMemorySpanExporter.class)
         expect:
@@ -62,6 +65,11 @@ class OpenTelemetrySpec extends Specification {
             assert t.getT1() == t.getT2()
 
         testExporter.getFinishedSpanItems().size() == count * numOfCalls * spanNumbers
+
+        testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-attribute"))
+        testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag"))
+
+
     }
 
     @Introspected
@@ -90,8 +98,20 @@ class OpenTelemetrySpec extends Specification {
         @ExecuteOn(IO)
         @Get("/test")
         @ContinueSpan
-        Mono<String> test(@Header("X-TrackingId") String tracingId) {
+        Mono<String> test(@SpanAttribute("tracing-annotation-span-attribute") @Header("X-TrackingId") String tracingId) {
             LOG.info("test")
+            return Mono.from(
+                    reactorHttpClient.retrieve(HttpRequest
+                            .GET("/test2")
+                            .header("X-TrackingId", tracingId), String)
+            )
+        }
+
+        @ExecuteOn(IO)
+        @Get("/test2")
+        @WithSpan
+        Mono<String> test2(@SpanTag("tracing-annotation-span-tag") @Header("X-TrackingId") String tracingId) {
+            LOG.info("test2")
             return Mono.just(tracingId)
         }
 

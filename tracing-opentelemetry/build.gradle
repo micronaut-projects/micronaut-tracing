@@ -9,6 +9,7 @@ dependencies {
     api projects.tracingCore
     api libs.opentelemetry.api
     api libs.opentelemetry.opentracing.shim
+    api libs.opentelemetry.extension.annotations
 
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor

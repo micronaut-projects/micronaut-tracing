@@ -48,7 +48,7 @@ public class TestDefaultOpenTelemetryFactory {
             .setTracerProvider(SdkTracerProvider.builder()
                 .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter))
                 .build()
-            ).buildAndRegisterGlobal();
+            ).build();
     }
 
     @Singleton

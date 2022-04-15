@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 /**
- * Default tracer.
+ * HTTP Tracing.
  *
  * @author Nemanja Mikic
  */
-package io.micronaut.tracing;
+package io.micronaut.tracing.opentelemetry.interceptor;

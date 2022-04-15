@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing.opentelemetry.util;
+package io.micronaut.tracing.opentelemetry.instrument.util;
 
 import io.micronaut.core.async.publisher.Publishers;
-import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -28,61 +28,60 @@ import reactor.core.CoreSubscriber;
  *
  * @param <T> the publisher generic type
  * @author Nemanja Mikic
- * @since 1.0
  */
 @SuppressWarnings("PublisherImplementation")
 public class ScopePropagationPublisher<T> implements Publishers.MicronautPublisher<T> {
 
     private final Publisher<T> publisher;
-    private final Span parentSpan;
+    private final Context parentContext;
 
     /**
      * Default constructor.
      *
-     * @param publisher  the publisher
-     * @param parentSpan the parent span
+     * @param publisher     the publisher
+     * @param parentContext the parent context
      */
     public ScopePropagationPublisher(Publisher<T> publisher,
-                                     Span parentSpan) {
+                                     Context parentContext) {
         this.publisher = publisher;
-        this.parentSpan = parentSpan;
+        this.parentContext = parentContext;
     }
 
     @SuppressWarnings("SubscriberImplementation")
     @Override
     public void subscribe(Subscriber<? super T> actual) {
-        Span span = parentSpan;
-        if (span == null) {
+        Context context = parentContext;
+        if (context == null) {
             publisher.subscribe(actual);
             return;
         }
 
-        try (Scope ignored = span.makeCurrent()) {
+        try (Scope ignored = context.makeCurrent()) {
             publisher.subscribe(new CoreSubscriber<T>() {
                 @Override
                 public void onSubscribe(Subscription s) {
-                    try (Scope ignored = span.makeCurrent()) {
+                    try (Scope ignored = context.makeCurrent()) {
                         actual.onSubscribe(s);
                     }
                 }
 
                 @Override
                 public void onNext(T object) {
-                    try (Scope ignored = span.makeCurrent()) {
+                    try (Scope ignored = context.makeCurrent()) {
                         actual.onNext(object);
                     }
                 }
 
                 @Override
                 public void onError(Throwable t) {
-                    try (Scope ignored = span.makeCurrent()) {
+                    try (Scope ignored = context.makeCurrent()) {
                         actual.onError(t);
                     }
                 }
 
                 @Override
                 public void onComplete() {
-                    try (Scope ignored = span.makeCurrent()) {
+                    try (Scope ignored = context.makeCurrent()) {
                         actual.onComplete();
                     }
                 }

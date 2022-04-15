@@ -13,30 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing;
+package io.micronaut.tracing.opentelemetry.instrument.util;
 
-import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Primary;
-import io.opentelemetry.api.GlobalOpenTelemetry;
-import io.opentelemetry.api.OpenTelemetry;
-import jakarta.inject.Singleton;
+import io.micronaut.core.annotation.Experimental;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.scheduling.instrument.InvocationInstrumenter;
 
 /**
- * Registers an OpenTelemetry bean.
+ * A factory interface for tracing invocation instrumentation.
+ * The factory method decides if instrumentation is needed.
  *
- * @author Nemanja Mikic
+ * @author Denis Stepanov
  */
-@Factory
-public class DefaultOpenTelemetryFactory {
+@Experimental
+public interface TracingInvocationInstrumenterFactory {
 
     /**
-     * The OpenTelemetry bean with default values.
+     * An optional instrumentation.
      *
-     * @return the OpenTelemetry
+     * @return an instrumentation, or null if none is necessary
      */
-    @Singleton
-    @Primary
-    protected OpenTelemetry defaultOpenTelemetry() {
-        return GlobalOpenTelemetry.get();
-    }
+    @Nullable
+    InvocationInstrumenter newTracingInvocationInstrumenter();
 }

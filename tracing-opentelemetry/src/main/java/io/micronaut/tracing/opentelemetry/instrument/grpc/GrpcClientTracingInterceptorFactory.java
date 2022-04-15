@@ -13,30 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing;
+package io.micronaut.tracing.opentelemetry.instrument.grpc;
 
+import io.grpc.ClientInterceptor;
+import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Primary;
-import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.micronaut.context.annotation.Requires;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.grpc.v1_6.GrpcTracing;
 import jakarta.inject.Singleton;
 
+import javax.annotation.Nonnull;
+
 /**
- * Registers an OpenTelemetry bean.
+ * Factory that builds the Tracing interceptors.
  *
  * @author Nemanja Mikic
  */
 @Factory
-public class DefaultOpenTelemetryFactory {
+public class GrpcClientTracingInterceptorFactory {
 
     /**
-     * The OpenTelemetry bean with default values.
+     * The client interceptor.
      *
-     * @return the OpenTelemetry
+     * @param openTelemetry The OpenTelemetry
+     * @return The client interceptor
      */
+    @Nonnull
     @Singleton
-    @Primary
-    protected OpenTelemetry defaultOpenTelemetry() {
-        return GlobalOpenTelemetry.get();
+    @Bean
+    @Requires(beans = OpenTelemetry.class)
+    protected ClientInterceptor clientTracingInterceptor(OpenTelemetry openTelemetry) {
+        return GrpcTracing.builder(openTelemetry).build().newClientInterceptor();
     }
+
 }

@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 /**
- * Default tracer.
+ * HTTP Tracing.
  *
  * @author Nemanja Mikic
  */
-package io.micronaut.tracing;
+@Requires(classes = {OpenTelemetry.class, GrpcTracing.class})
+@Requires(beans = OpenTelemetry.class)
+package io.micronaut.tracing.opentelemetry.instrument.grpc;
+
+import io.micronaut.context.annotation.Requires;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.grpc.v1_6.GrpcTracing;

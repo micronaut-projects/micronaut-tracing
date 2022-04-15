@@ -3,15 +3,10 @@ package io.micronaut.tracing.instrument.util
 import io.micronaut.context.ApplicationContext
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.http.HttpRequest
-import io.micronaut.http.annotation.Body
-import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Header
-import io.micronaut.http.annotation.Post
+import io.micronaut.http.annotation.*
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.reactor.http.client.ReactorHttpClient
 import io.micronaut.runtime.server.EmbeddedServer
-import io.micronaut.rxjava2.http.client.RxHttpClient
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
@@ -30,7 +25,6 @@ import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
-
 import static io.micronaut.scheduling.TaskExecutors.IO
 
 class AnnotationMappingSpec extends Specification {
@@ -45,12 +39,12 @@ class AnnotationMappingSpec extends Specification {
 
     @Shared
     @AutoCleanup
-    RxHttpClient rxHttpClient = RxHttpClient.create(embeddedServer.URL)
+    ReactorHttpClient reactorHttpClient = ReactorHttpClient.create(embeddedServer.URL)
 
     void 'test map WithSpan annotation'() {
         def count = 10
-        def numOfCalls = 3
-        def spanNumbers = 2
+        // 1x Server POST, 2x Server GET, 2x Client GET, 3x Method call - 2 continue span = 6
+        def spanNumbers = 6
         def testExporter = embeddedServer.getApplicationContext().getBean(InMemorySpanExporter.class)
 
         expect:
@@ -60,7 +54,7 @@ class AnnotationMappingSpec extends Specification {
                     HttpRequest<Object> request = HttpRequest
                             .POST("/annotations/enter", new SomeBody())
                             .header("X-TrackingId", tracingId)
-                    return Mono.from(rxHttpClient.retrieve(request)).map(response -> {
+                    return Mono.from(reactorHttpClient.retrieve(request)).map(response -> {
                         Tuples.of(tracingId, response)
                     })
                 }
@@ -69,7 +63,7 @@ class AnnotationMappingSpec extends Specification {
         for (Tuple2 t : result)
             assert t.getT1() == t.getT2()
 
-        testExporter.getFinishedSpanItems().size() == count * numOfCalls * spanNumbers
+        testExporter.getFinishedSpanItems().size() == count * spanNumbers
 
         testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-attribute"))
         testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag"))

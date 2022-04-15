@@ -37,7 +37,6 @@ import jakarta.inject.Singleton;
  * Registers an OpenTelemetry bean.
  *
  * @author Nemanja Mikic
- * @since 1.0
  */
 @Factory
 @Replaces(factory = DefaultOpenTelemetryFactory.class)
@@ -75,7 +74,7 @@ public class AwsOpenTelemetryFactory {
                         ).build())
                     .setIdGenerator(AwsXrayIdGenerator.getInstance())
                     .build())
-            .buildAndRegisterGlobal();
+            .build();
     }
 
     /**

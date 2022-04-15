@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * HTTP Tracing.
- *
- * @author graemerocher
- * @since 1.0
- */
-package io.micronaut.tracing.opentelemetry.http;
+package io.micronaut.tracing.opentelemetry.instrument.http;
+
+import io.micronaut.http.MutableHttpRequest;
+import io.opentelemetry.context.propagation.TextMapSetter;
+
+enum HttpRequestSetter implements TextMapSetter<MutableHttpRequest> {
+    INSTANCE;
+
+    @Override
+    public void set(MutableHttpRequest httpRequest, String key, String value) {
+        httpRequest.header(key, value);
+    }
+}

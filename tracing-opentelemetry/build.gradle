@@ -5,17 +5,21 @@ plugins {
 dependencies {
     api mn.micronaut.runtime
     api mn.micronaut.http.client
+    api mn.micronaut.grpc.server.runtime
+    api mn.micronaut.grpc.client.runtime
     api projects.tracingAnnotation
+    api projects.tracingCore
     api libs.opentelemetry.api
     api libs.opentelemetry.extension.annotations
+    api libs.opentelemetry.instrumentation.api
+    api libs.opentelemetry.instrumentation.grpc
 
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor
 
     testImplementation mn.reactor
     testImplementation mn.rxjava2
-    testImplementation projects.tracingCore
-    testImplementation mn.micronaut.rxjava2.http.client
+    api projects.tracingCore
     testImplementation mn.micronaut.reactor.http.client
 
     testImplementation libs.opentelemetry.sdk

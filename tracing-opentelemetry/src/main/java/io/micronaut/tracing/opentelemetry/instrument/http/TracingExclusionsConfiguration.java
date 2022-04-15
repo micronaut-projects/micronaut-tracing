@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing.opentelemetry.http;
+package io.micronaut.tracing.opentelemetry.instrument.http;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.core.annotation.Nullable;
@@ -47,7 +47,6 @@ public class TracingExclusionsConfiguration {
      *
      * @param exclusions regular expression patterns to be excluded from
      *                   tracing if the request URI matches
-     *
      * @see Pattern#compile(String)
      */
     public void setExclusions(@Nullable List<String> exclusions) {
@@ -56,8 +55,8 @@ public class TracingExclusionsConfiguration {
 
     /**
      * @return null (implying everything should be included), or a Predicate
-     *         which, when given a URL path, returns whether that path should
-     *         be excluded from tracing.
+     * which, when given a URL path, returns whether that path should
+     * be excluded from tracing.
      */
     @Nullable
     public Predicate<String> exclusionTest() {

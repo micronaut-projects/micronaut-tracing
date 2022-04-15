@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing.opentelemetry.util;
+package io.micronaut.tracing.opentelemetry.instrument.util;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.scheduling.instrument.InvocationInstrumenter;
 import io.micronaut.scheduling.instrument.ReactiveInvocationInstrumenterFactory;
-import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
+import io.opentelemetry.context.ContextStorage;
 import io.opentelemetry.context.Scope;
 import jakarta.inject.Singleton;
 
@@ -29,14 +29,12 @@ import jakarta.inject.Singleton;
  * Tracing invocation instrument for OpenTelemetry.
  *
  * @author Nemanja Mikic
- * @since 1.0
  */
 @Singleton
 @Requires(beans = Tracer.class)
 @Requires(missingBeans = TracingInvocationInstrumenterFactory.class)
 @Internal
 public class OpenTelemetryInvocationInstrumenter implements TracingInvocationInstrumenterFactory, ReactiveInvocationInstrumenterFactory {
-
 
     protected OpenTelemetryInvocationInstrumenter() {
     }
@@ -48,14 +46,13 @@ public class OpenTelemetryInvocationInstrumenter implements TracingInvocationIns
 
     @Override
     public InvocationInstrumenter newTracingInvocationInstrumenter() {
-        Span activeSpan = Span.current();
-        if (activeSpan == null || !activeSpan.getSpanContext().isValid()) {
-            return null;
+        final Context activeContext = ContextStorage.get().current();
+        if (activeContext != null) {
+            return () -> {
+                Scope activeScope = activeContext.makeCurrent();
+                return cleanup -> activeScope.close();
+            };
         }
-
-        return () -> {
-            Scope activeScope = Context.current().with(activeSpan).makeCurrent();
-            return cleanup -> activeScope.close();
-        };
+        return null;
     }
 }

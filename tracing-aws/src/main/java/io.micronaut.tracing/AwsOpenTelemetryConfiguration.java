@@ -24,7 +24,6 @@ import static io.micronaut.tracing.AwsOpenTelemetryConfiguration.PREFIX;
  * Configuration for aws tracing.
  *
  * @author Nemanja Mikic
- * @since 1.0
  */
 @ConfigurationProperties(PREFIX)
 public class AwsOpenTelemetryConfiguration {

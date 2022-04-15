@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing.opentelemetry.http;
+package io.micronaut.tracing.opentelemetry.instrument.http;
 
 import io.micronaut.core.annotation.NonNull;
 
@@ -21,7 +21,6 @@ import io.micronaut.core.annotation.NonNull;
  * Constants used to store <code>Span</code>s in instrumented request attributes.
  *
  * @author Nemanja Mikic
- * @since 1.0
  */
 public enum TraceRequestAttributes implements CharSequence {
 

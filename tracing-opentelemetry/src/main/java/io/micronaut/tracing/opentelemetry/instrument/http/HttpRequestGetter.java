@@ -13,27 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing.opentelemetry.util;
+package io.micronaut.tracing.opentelemetry.instrument.http;
 
-import io.micronaut.core.annotation.Experimental;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.scheduling.instrument.InvocationInstrumenter;
+import io.micronaut.http.HttpRequest;
+import io.opentelemetry.context.propagation.TextMapGetter;
 
-/**
- * A factory interface for tracing invocation instrumentation.
- * The factory method decides if instrumentation is needed.
- *
- * @author Denis Stepanov
- * @since 1.3
- */
-@Experimental
-public interface TracingInvocationInstrumenterFactory {
+enum HttpRequestGetter implements TextMapGetter<HttpRequest> {
+    INSTANCE;
 
-    /**
-     * An optional instrumentation.
-     *
-     * @return an instrumentation, or null if none is necessary
-     */
+    @Override
+    public Iterable<String> keys(HttpRequest request) {
+        return request.getHeaders().names();
+    }
+
+    @Override
     @Nullable
-    InvocationInstrumenter newTracingInvocationInstrumenter();
+    public String get(@Nullable HttpRequest request, String key) {
+        if (request == null) {
+            return null;
+        }
+        return request.getHeaders().getFirst(key).orElse(null);
+    }
 }

@@ -26,18 +26,18 @@ import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.type.Argument;
-import io.micronaut.core.util.StringUtils;
 import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
-import io.micronaut.tracing.opentelemetry.util.TracingObserver;
-import io.micronaut.tracing.opentelemetry.util.TracingPublisher;
-import io.micronaut.tracing.opentelemetry.util.TracingPublisherUtils;
+import io.micronaut.tracing.opentelemetry.instrument.http.MicronautCodeTelemetryBuilder;
+import io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisher;
+import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.SpanBuilder;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
+import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
+import io.opentelemetry.instrumentation.api.util.ClassAndMethod;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 
@@ -49,7 +49,6 @@ import java.util.concurrent.CompletionStage;
  * using the Open Tracing API.
  *
  * @author Nemanja Mikic
- * @since 1.0
  */
 @Singleton
 @Requires(beans = Tracer.class)
@@ -59,20 +58,30 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
     public static final String CLASS_TAG = "class";
     public static final String METHOD_TAG = "method";
 
-    private final Tracer tracer;
+    private final Instrumenter<ClassAndMethod, Object> instrumenter;
 
     /**
      * Initialize the interceptor with tracer and conversion service.
      *
-     * @param tracer for span creation and propagation across arbitrary transports
+     * @param openTelemetry the openTelemetry
      */
-    public TraceInterceptor(Tracer tracer) {
-        this.tracer = tracer;
+    public TraceInterceptor(OpenTelemetry openTelemetry) {
+        instrumenter = new MicronautCodeTelemetryBuilder(openTelemetry).build();
     }
 
     @Override
     public int getOrder() {
         return InterceptPhase.TRACE.getPosition();
+    }
+
+    /**
+     * Logs an error to the span.
+     *
+     * @param context the span
+     * @param e       the error
+     */
+    public static void logError(Context context, Throwable e) {
+        Span.fromContext(context).recordException(e);
     }
 
     @Nullable
@@ -85,11 +94,11 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
         if (!isContinue && !isNew) {
             return context.proceed();
         }
-        Span currentSpan = Span.current();
+        Context currentContext = Context.current();
+
+        ClassAndMethod classAndMethod = ClassAndMethod.create(context.getDeclaringType(), context.getMethodName());
+
         if (isContinue) {
-            if (currentSpan == null) {
-                return context.proceed();
-            }
             InterceptedMethod interceptedMethod = InterceptedMethod.of(context);
             try {
                 switch (interceptedMethod.resultType()) {
@@ -99,22 +108,24 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                             return publisher;
                         }
                         return interceptedMethod.handleResult(
-                                TracingPublisherUtils.createTracingPublisher(publisher, new TracingObserver() {
+                            new TracingPublisher(
+                                publisher, null, classAndMethod,
+                                currentContext
+                            ) {
 
-                                    @Override
-                                    public void doOnSubscribe(@NonNull Span span) {
-                                        tagArguments(span, context);
-                                    }
+                                @Override
+                                public void doOnSubscribe(@NonNull Context openTelemetryContext) {
+                                    tagArguments(context, openTelemetryContext);
+                                }
 
-                                })
-                        );
+                            });
                     case COMPLETION_STAGE:
                     case SYNCHRONOUS:
-                        tagArguments(currentSpan, context);
+                        tagArguments(context, currentContext);
                         try {
                             return context.proceed();
                         } catch (RuntimeException e) {
-                            logError(currentSpan, e);
+                            logError(currentContext, e);
                             throw e;
                         }
                     default:
@@ -125,14 +136,11 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
             }
         } else {
             // must be new
+            // don't create a nested span if you're not supposed to.
             String operationName = newSpan.stringValue().orElse(null);
-            if (StringUtils.isEmpty(operationName)) {
-                operationName = context.getMethodName();
-            }
-            SpanBuilder builder = tracer.spanBuilder(operationName);
 
-            if (currentSpan != null) {
-                builder.setParent(Context.current().with(currentSpan));
+            if (operationName != null) {
+                classAndMethod = ClassAndMethod.create(classAndMethod.declaringClass(), classAndMethod.methodName() + "#" + operationName);
             }
 
             InterceptedMethod interceptedMethod = InterceptedMethod.of(context);
@@ -143,47 +151,51 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                         if (publisher instanceof TracingPublisher) {
                             return publisher;
                         }
-                        return interceptedMethod.handleResult(
-                            TracingPublisherUtils.createTracingPublisher(publisher, builder, new TracingObserver() {
+                        return interceptedMethod.handleResult(new TracingPublisher(
+                            publisher, instrumenter, classAndMethod,
+                            currentContext
+                        ) {
 
-                                    @Override
-                                    public void doOnSubscribe(@NonNull Span span) {
-                                        populateTags(context, span);
-                                    }
+                            @Override
+                            public void doOnSubscribe(@NonNull Context openTelemetryContext) {
+                                tagArguments(context, openTelemetryContext);
+                            }
 
-                                })
-                        );
+                        });
                     case COMPLETION_STAGE:
-                        Span span = builder.startSpan();
-                        try (Scope ignored = span.makeCurrent()) {
-                            populateTags(context, span);
+                        if (!instrumenter.shouldStart(currentContext, classAndMethod)) {
+                            return context.proceed();
+                        }
+                        Context newContext = instrumenter.start(currentContext, classAndMethod);
+                        try (Scope ignored = newContext.makeCurrent()) {
+                            tagArguments(context, newContext);
                             try {
                                 CompletionStage<?> completionStage = interceptedMethod.interceptResultAsCompletionStage();
                                 if (completionStage != null) {
                                     completionStage = completionStage.whenComplete((o, throwable) -> {
                                         if (throwable != null) {
-                                            logError(span, throwable);
+                                            logError(newContext, throwable);
                                         }
-                                        span.end();
                                     });
                                 }
                                 return interceptedMethod.handleResult(completionStage);
                             } catch (RuntimeException e) {
-                                logError(span, e);
+                                logError(newContext, e);
                                 throw e;
                             }
                         }
                     case SYNCHRONOUS:
-                        Span syncSpan = builder.startSpan();
-                        try (Scope scope = syncSpan.makeCurrent()) {
-                            populateTags(context, syncSpan);
+                        if (!instrumenter.shouldStart(currentContext, classAndMethod)) {
+                            return context.proceed();
+                        }
+                        newContext = instrumenter.start(currentContext, classAndMethod);
+                        try (Scope scope = newContext.makeCurrent()) {
+                            tagArguments(context, newContext);
                             try {
                                 return context.proceed();
                             } catch (RuntimeException e) {
-                                logError(syncSpan, e);
+                                logError(newContext, e);
                                 throw e;
-                            } finally {
-                                syncSpan.end();
                             }
                         }
                     default:
@@ -195,24 +207,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
         }
     }
 
-    private void populateTags(MethodInvocationContext<Object, Object> context,
-                              Span span) {
-        span.setAttribute(CLASS_TAG, context.getDeclaringType().getSimpleName());
-        span.setAttribute(METHOD_TAG, context.getMethodName());
-        tagArguments(span, context);
-    }
-
-    /**
-     * Logs an error to the span.
-     *
-     * @param span the span
-     * @param e    the error
-     */
-    public static void logError(Span span, Throwable e) {
-        span.recordException(e);
-    }
-
-    private void tagArguments(Span span, MethodInvocationContext<Object, Object> context) {
+    private void tagArguments(MethodInvocationContext<Object, Object> context, Context openTelemetryContext) {
         Argument<?>[] arguments = context.getArguments();
         Object[] parameterValues = context.getParameterValues();
         for (int i = 0; i < arguments.length; i++) {
@@ -222,6 +217,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                 Object v = parameterValues[i];
                 if (v != null) {
                     String tagName = annotationMetadata.stringValue(SpanTag.class).orElse(argument.getName());
+                    Span span = Span.current();
                     span.setAttribute(tagName, v.toString());
                 }
             }

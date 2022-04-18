@@ -16,7 +16,7 @@
 package io.micronaut.tracing.processing;
 
 import io.micronaut.core.annotation.AnnotationValue;
-import io.micronaut.inject.annotation.TypedAnnotationMapper;
+import io.micronaut.inject.annotation.TypedAnnotationTransformer;
 import io.micronaut.inject.visitor.VisitorContext;
 import io.micronaut.tracing.annotation.SpanTag;
 import io.opentelemetry.extension.annotations.SpanAttribute;
@@ -29,18 +29,17 @@ import java.util.List;
  *
  * @author Nemanja Mikic
  */
-public class SpanAttributeAnnotationMapper implements TypedAnnotationMapper<SpanAttribute> {
-
-    @Override
-    public List<AnnotationValue<?>> map(AnnotationValue<SpanAttribute> annotation, VisitorContext visitorContext) {
-
-        return Collections.singletonList(AnnotationValue.builder(SpanTag.class)
-                .value(annotation.stringValue().orElse(null))
-            .build());
-    }
+public class SpanAttributeAnnotationTransformer implements TypedAnnotationTransformer<SpanAttribute> {
 
     @Override
     public Class<SpanAttribute> annotationType() {
         return SpanAttribute.class;
+    }
+
+    @Override
+    public List<AnnotationValue<?>> transform(AnnotationValue<SpanAttribute> annotation, VisitorContext visitorContext) {
+        return Collections.singletonList(AnnotationValue.builder(SpanTag.class)
+            .value(annotation.stringValue().orElse(null))
+            .build());
     }
 }

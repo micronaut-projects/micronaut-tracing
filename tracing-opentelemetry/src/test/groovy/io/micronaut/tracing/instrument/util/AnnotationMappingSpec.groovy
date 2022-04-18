@@ -65,6 +65,7 @@ class AnnotationMappingSpec extends Specification {
                 .block()
         for (Tuple2 t : result)
             assert t.getT1() == t.getT2()
+
         Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> testExporter.getFinishedSpanItems().size() == count * spanNumbers)
 
         testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-attribute"))

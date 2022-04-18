@@ -1,2 +1,0 @@
-io.micronaut.tracing.processing.WithSpanAnnotationMapper
-io.micronaut.tracing.processing.SpanAttributeAnnotationMapper

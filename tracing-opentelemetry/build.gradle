@@ -1,5 +1,6 @@
 plugins {
     id 'io.micronaut.build.internal.tracing-module'
+    id 'com.google.protobuf'
 }
 
 dependencies {
@@ -29,4 +30,23 @@ dependencies {
     testImplementation libs.opentracing.grpc
     testImplementation libs.grpc.protobuf
     testImplementation libs.grpc.stub
+}
+
+sourceSets {
+    test {
+        java {
+            srcDirs 'build/generated/source/proto/test/grpc'
+            srcDirs 'build/generated/source/proto/test/java'
+        }
+    }
+}
+
+protobuf {
+    protoc { artifact = libs.protoc.asProvider().get() }
+    plugins {
+        grpc { artifact = libs.protoc.grpc.get() }
+    }
+    generateProtoTasks {
+        all()*.plugins { grpc {} }
+    }
 }

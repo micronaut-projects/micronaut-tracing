@@ -111,7 +111,7 @@ class AnnotationMappingSpec extends Specification {
         @ExecuteOn(IO)
         @Get("/test2")
         @WithSpan
-        Mono<String> test2(@SpanTag("tracing-annotation-span-tag") @Header("X-TrackingId") String tracingId) {
+        Mono<String> test2(@SpanAttribute("tracing-annotation-span-tag") @Header("X-TrackingId") String tracingId) {
             LOG.info("test2")
             return Mono.just(tracingId)
         }

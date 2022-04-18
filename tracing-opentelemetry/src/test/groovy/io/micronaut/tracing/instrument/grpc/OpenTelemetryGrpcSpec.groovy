@@ -16,7 +16,10 @@ import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import org.awaitility.Awaitility
 import spock.lang.Specification
+
+import java.util.concurrent.TimeUnit
 
 @MicronautTest
 class OpenTelemetryGrpcSpec extends Specification {
@@ -33,9 +36,12 @@ class OpenTelemetryGrpcSpec extends Specification {
     void "test hello world grpc"() {
         expect:
         testBean.sayHello("Fred") == "Hello Fred"
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> exporter.getFinishedSpanItems().size() == 2)
         exporter.getFinishedSpanItems().size() == 2
         exporter.getFinishedSpanItems().kind.contains(io.opentelemetry.api.trace.SpanKind.SERVER)
         exporter.getFinishedSpanItems().kind.contains(io.opentelemetry.api.trace.SpanKind.CLIENT)
+        cleanup:
+        exporter.reset()
     }
 
 

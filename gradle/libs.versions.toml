@@ -11,6 +11,7 @@ opentelemetry-alpha='1.12.0-alpha'
 opentracing-grpc = '0.2.3'
 managed-grpc = '1.45.0'
 managed-protobuf = '3.19.4'
+awaitility-version = '4.2.0'
 
 [libraries]
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'brave-opentracing' }
@@ -36,6 +37,7 @@ protoc-grpc = { module = 'io.grpc:protoc-gen-grpc-java', version.ref = 'managed-
 protoc = { module = 'com.google.protobuf:protoc', version.ref = 'managed-protobuf' }
 managed-protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'managed-protobuf' }
 managed-protobuf-java-util = { module = 'com.google.protobuf:protobuf-java-util', version.ref = 'managed-protobuf' }
+awaitility = { module = 'org.awaitility:awaitility', version.ref = 'awaitility-version' }
 
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }

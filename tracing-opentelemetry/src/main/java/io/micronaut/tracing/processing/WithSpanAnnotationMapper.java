@@ -19,7 +19,6 @@ import io.micronaut.aop.InterceptorBinding;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.inject.annotation.TypedAnnotationMapper;
 import io.micronaut.inject.visitor.VisitorContext;
-import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.opentelemetry.extension.annotations.WithSpan;
 
@@ -27,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Adds interceptor binding to {@link WithSpan} and adds {@link ContinueSpan} to it.
+ * Adds interceptor binding to {@link WithSpan} and adds {@link NewSpan} to it.
  *
  * @author Nemanja Mikic
  */

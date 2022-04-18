@@ -67,7 +67,6 @@ class AnnotationMappingSpec extends Specification {
             assert t.getT1() == t.getT2()
         Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> testExporter.getFinishedSpanItems().size() == count * spanNumbers)
 
-        testExporter.getFinishedSpanItems().size() == count * spanNumbers
         testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-attribute"))
         !testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag-no-withspan"))
         testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag-with-withspan"))

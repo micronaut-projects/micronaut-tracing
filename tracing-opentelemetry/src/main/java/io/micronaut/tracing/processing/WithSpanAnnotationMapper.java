@@ -37,19 +37,18 @@ public class WithSpanAnnotationMapper implements TypedAnnotationMapper<WithSpan>
     public List<AnnotationValue<?>> map(AnnotationValue<WithSpan> annotation, VisitorContext visitorContext) {
         AnnotationValue<InterceptorBinding> interceptorBinding = AnnotationValue.builder(InterceptorBinding.class)
             .value(ContinueSpan.class)
-            .member("kind", InterceptorKind.AROUND)
             .build();
 
         AnnotationValue<ContinueSpan> continueSpan = AnnotationValue.builder(ContinueSpan.class)
             .value(annotation.stringValue().orElse(null))
             .build();
 
-        ArrayList<AnnotationValue<?>> test = new ArrayList<>();
+        ArrayList<AnnotationValue<?>> annotationValues = new ArrayList<>();
 
-        test.add(interceptorBinding);
-        test.add(continueSpan);
+        annotationValues.add(interceptorBinding);
+        annotationValues.add(continueSpan);
 
-        return test;
+        return annotationValues;
     }
 
     @Override

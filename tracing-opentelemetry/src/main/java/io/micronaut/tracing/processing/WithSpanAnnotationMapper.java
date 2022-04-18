@@ -16,11 +16,11 @@
 package io.micronaut.tracing.processing;
 
 import io.micronaut.aop.InterceptorBinding;
-import io.micronaut.aop.InterceptorKind;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.inject.annotation.TypedAnnotationMapper;
 import io.micronaut.inject.visitor.VisitorContext;
 import io.micronaut.tracing.annotation.ContinueSpan;
+import io.micronaut.tracing.annotation.NewSpan;
 import io.opentelemetry.extension.annotations.WithSpan;
 
 import java.util.ArrayList;
@@ -36,10 +36,10 @@ public class WithSpanAnnotationMapper implements TypedAnnotationMapper<WithSpan>
     @Override
     public List<AnnotationValue<?>> map(AnnotationValue<WithSpan> annotation, VisitorContext visitorContext) {
         AnnotationValue<InterceptorBinding> interceptorBinding = AnnotationValue.builder(InterceptorBinding.class)
-            .value(ContinueSpan.class)
+            .value(NewSpan.class)
             .build();
 
-        AnnotationValue<ContinueSpan> continueSpan = AnnotationValue.builder(ContinueSpan.class)
+        AnnotationValue<NewSpan> continueSpan = AnnotationValue.builder(NewSpan.class)
             .value(annotation.stringValue().orElse(null))
             .build();
 

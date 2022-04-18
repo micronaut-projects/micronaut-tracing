@@ -43,8 +43,8 @@ class AnnotationMappingSpec extends Specification {
 
     void 'test map WithSpan annotation'() {
         def count = 10
-        // 1x Server POST, 2x Server GET, 2x Client GET, 3x Method call - 2 continue span = 6
-        def spanNumbers = 6
+        // 1x Server POST, 2x Server GET, 2x Client GET, 4x Method call - 1 continue span - 1 without withspan(newspan) annotation = 7
+        def spanNumbers = 7
         def testExporter = embeddedServer.getApplicationContext().getBean(InMemorySpanExporter.class)
 
         expect:
@@ -66,7 +66,8 @@ class AnnotationMappingSpec extends Specification {
         testExporter.getFinishedSpanItems().size() == count * spanNumbers
 
         testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-attribute"))
-        testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag"))
+        !testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag-no-withspan"))
+        testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag-with-withspan"))
 
         cleanup:
         testExporter.reset()
@@ -110,9 +111,13 @@ class AnnotationMappingSpec extends Specification {
 
         @ExecuteOn(IO)
         @Get("/test2")
-        @WithSpan
-        Mono<String> test2(@SpanAttribute("tracing-annotation-span-tag") @Header("X-TrackingId") String tracingId) {
+        Mono<String> test2(@SpanTag("tracing-annotation-span-tag-no-withspan") @Header("X-TrackingId") String tracingId) {
             LOG.info("test2")
+            return methodWithSpan(tracingId)
+        }
+
+        @WithSpan
+        Mono<String> methodWithSpan(@SpanTag("tracing-annotation-span-tag-with-withspan") String tracingId){
             return Mono.just(tracingId)
         }
 

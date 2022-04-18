@@ -33,9 +33,9 @@ import jakarta.inject.Singleton;
 @Singleton
 @Requires(beans = Tracer.class)
 @Internal
-public class OpenTelemetryInvocationInstrumenter implements ReactiveInvocationInstrumenterFactory {
+public final class OpenTelemetryInvocationInstrumenter implements ReactiveInvocationInstrumenterFactory {
 
-    protected OpenTelemetryInvocationInstrumenter() {
+    OpenTelemetryInvocationInstrumenter() {
     }
 
     @Override

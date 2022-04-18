@@ -18,7 +18,7 @@ package io.micronaut.tracing.opentelemetry.instrument.util;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.async.publisher.Publishers;
-import io.opentelemetry.api.trace.Span;
+
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
@@ -146,30 +146,30 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     /**
      * Designed for subclasses to override and implement custom behaviour when an item is emitted.
      *
-     * @param object The object
-     * @param span   The span
+     * @param object  The object
+     * @param context The context
      */
-    protected void doOnNext(@NonNull T object, @NonNull Context span) {
+    protected void doOnNext(@NonNull T object, @NonNull Context context) {
         // no-op
     }
 
     /**
      * Designed for subclasses to override and implement custom on subscribe behaviour.
      *
-     * @param span The span
+     * @param context The context
      */
-    protected void doOnSubscribe(@NonNull Context span) {
+    protected void doOnSubscribe(@NonNull Context context) {
         // no-op
     }
 
     /**
      * Designed for subclasses to override and implement custom on finish behaviour. Fired
-     * prior to calling {@link Span#end()}.
+     * prior to calling end on the span.
      *
-     * @param span The span
+     * @param context The context
      */
     @SuppressWarnings("WeakerAccess")
-    protected void doOnFinish(@NonNull Context span) {
+    protected void doOnFinish(@NonNull Context context) {
         // no-op
     }
 

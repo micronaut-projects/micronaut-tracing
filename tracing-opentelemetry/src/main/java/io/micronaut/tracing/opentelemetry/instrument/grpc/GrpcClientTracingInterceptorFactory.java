@@ -20,7 +20,7 @@ import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.grpc.v1_6.GrpcTracing;
+import io.opentelemetry.instrumentation.grpc.v1_6.GrpcTelemetry;
 import jakarta.inject.Singleton;
 
 import javax.annotation.Nonnull;
@@ -44,7 +44,7 @@ public class GrpcClientTracingInterceptorFactory {
     @Bean
     @Requires(beans = OpenTelemetry.class)
     protected ClientInterceptor clientTracingInterceptor(OpenTelemetry openTelemetry) {
-        return GrpcTracing.builder(openTelemetry).build().newClientInterceptor();
+        return GrpcTelemetry.builder(openTelemetry).build().newClientInterceptor();
     }
 
 }

@@ -1,9 +1,9 @@
 [versions]
-brave-instrumentation = '5.13.7'
+brave-instrumentation = '5.13.8'
 brave-opentracing = '1.0.0'
 jaeger = '1.8.0'
 kotlin = '1.6.0'
-kotlin-coroutines = '1.6.0'
+kotlin-coroutines = '1.6.1'
 opentracing = '0.33.0'
 zipkin-reporter = '2.16.3'
 opentelemetry = '1.13.0'
@@ -17,6 +17,7 @@ awaitility-version = '4.2.0'
 [libraries]
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'brave-opentracing' }
 jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'jaeger' }
+junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
 kotlinx-coroutines-core = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-core', version.ref = 'kotlin-coroutines' }
 kotlinx-coroutines-reactor = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor', version.ref = 'kotlin-coroutines' }
 opentracing = { module = 'io.opentracing:opentracing-api', version.ref = 'opentracing' }

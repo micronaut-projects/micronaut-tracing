@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api project(':tracing-core')
+    api projects.tracingCore
     api mn.micronaut.http.client
     api mn.micronaut.runtime
 
@@ -18,13 +18,13 @@ dependencies {
 
     testImplementation mn.micronaut.http.server.netty
     testImplementation mn.micronaut.test.junit5
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation libs.junit.jupiter.engine
 }
 
-tasks.named("compileTestKotlin") {
-    kotlinOptions.jvmTarget = "1.8"
+tasks.named('compileTestKotlin') {
+    kotlinOptions.jvmTarget = '1.8'
 }
 
-tasks.named("test") {
+tasks.named('test') {
     useJUnitPlatform()
 }

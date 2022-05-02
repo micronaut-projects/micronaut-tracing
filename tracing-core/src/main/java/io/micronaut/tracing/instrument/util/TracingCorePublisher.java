@@ -22,6 +22,7 @@ import io.opentracing.Tracer.SpanBuilder;
 import org.reactivestreams.Subscriber;
 import reactor.core.CorePublisher;
 import reactor.core.CoreSubscriber;
+import reactor.core.publisher.Operators;
 import reactor.util.context.Context;
 
 /**
@@ -159,7 +160,7 @@ public class TracingCorePublisher<T> extends TracingPublisher<T> implements Core
                                ScopeManager scopeManager,
                                Span span,
                                boolean finishOnClose) {
-        CoreSubscriber<? extends T> coreActual = (CoreSubscriber<? extends T>) actual;
+        CoreSubscriber<? super T> coreActual = Operators.toCoreSubscriber(actual);
         publisher.subscribe(new TracingCoreSubscriber(scopeManager, span, actual, finishOnClose, coreActual.currentContext()));
     }
 

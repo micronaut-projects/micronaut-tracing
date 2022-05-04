@@ -28,9 +28,12 @@ import io.opentelemetry.contrib.awsxray.AwsXrayIdGenerator;
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import io.opentelemetry.extension.aws.AwsXrayPropagator;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.OpenTelemetrySdkBuilder;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import jakarta.inject.Singleton;
+
+import java.util.Optional;
 
 
 /**
@@ -42,6 +45,8 @@ import jakarta.inject.Singleton;
 @Replaces(factory = DefaultOpenTelemetryFactory.class)
 public class AwsOpenTelemetryFactory {
 
+    private static final String DEFAULT_OTEL_COLLECTOR_ENDPOINT = "http://localhost:4317";
+
     /**
      * The OpenTelemetry bean configured with AwsOpenTelemetryConfiguration.
      * @param awsOpenTelemetryConfiguration the aws open-telemetry configuration
@@ -50,11 +55,6 @@ public class AwsOpenTelemetryFactory {
     @Singleton
     @Primary
     OpenTelemetry defaultOpenTelemetryWithConfig(@NonNull AwsOpenTelemetryConfiguration awsOpenTelemetryConfiguration) {
-        String endpoint = "http://localhost:4317";
-
-        if (!StringUtils.isEmpty(awsOpenTelemetryConfiguration.getOtlpGrpcEndpoint())) {
-            endpoint = awsOpenTelemetryConfiguration.getOtlpGrpcEndpoint();
-        }
 
         return OpenTelemetrySdk.builder()
             // This will enable your downstream requests to include the X-Ray trace header
@@ -69,7 +69,10 @@ public class AwsOpenTelemetryFactory {
                     .addSpanProcessor(
                         BatchSpanProcessor.builder(
                             OtlpGrpcSpanExporter.builder()
-                                .setEndpoint(endpoint)
+                                .setEndpoint(
+                                    Optional.ofNullable(awsOpenTelemetryConfiguration.getOtlpGrpcEndpoint())
+                                    .filter(x -> !StringUtils.isEmpty(x))
+                                    .orElse(DEFAULT_OTEL_COLLECTOR_ENDPOINT))
                                 .build()
                         ).build())
                     .setIdGenerator(AwsXrayIdGenerator.getInstance())

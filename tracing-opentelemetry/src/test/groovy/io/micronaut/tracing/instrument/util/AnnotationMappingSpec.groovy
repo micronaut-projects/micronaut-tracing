@@ -15,7 +15,6 @@ import io.opentelemetry.extension.annotations.SpanAttribute
 import io.opentelemetry.extension.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
-import org.awaitility.Awaitility
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Flux
@@ -25,8 +24,6 @@ import reactor.util.function.Tuples
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
-
-import java.util.concurrent.TimeUnit
 
 import static io.micronaut.scheduling.TaskExecutors.IO
 
@@ -46,7 +43,7 @@ class AnnotationMappingSpec extends Specification {
 
     void 'test map WithSpan annotation'() {
         def count = 10
-        // 1x Server POST, 2x Server GET, 2x Client GET, 4x Method call - 1 continue span - 1 without withspan(newspan) annotation = 7
+        // 1x Server POST, 2x Server GET, 2x Client GET, 2x Method call with NewSpan  = 7
         def spanNumbers = 7
         def testExporter = embeddedServer.getApplicationContext().getBean(InMemorySpanExporter.class)
 
@@ -66,7 +63,7 @@ class AnnotationMappingSpec extends Specification {
         for (Tuple2 t : result)
             assert t.getT1() == t.getT2()
 
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> testExporter.getFinishedSpanItems().size() == count * spanNumbers)
+        testExporter.getFinishedSpanItems().size() == count * spanNumbers
 
         testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-attribute"))
         !testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag-no-withspan"))

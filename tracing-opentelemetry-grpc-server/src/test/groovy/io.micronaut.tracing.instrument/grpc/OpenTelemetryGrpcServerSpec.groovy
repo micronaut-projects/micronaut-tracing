@@ -13,33 +13,27 @@ import io.micronaut.context.annotation.Factory
 import io.micronaut.grpc.annotation.GrpcChannel
 import io.micronaut.grpc.server.GrpcServerChannel
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
+import io.micronaut.tracing.annotation.NewSpan
+import io.micronaut.tracing.opentelemetry.interceptor.TraceInterceptor
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import org.awaitility.Awaitility
 import spock.lang.Specification
 
-import java.util.concurrent.TimeUnit
-
 @MicronautTest
-class OpenTelemetryGrpcSpec extends Specification {
+class OpenTelemetryGrpcServerSpec extends Specification {
 
     @Inject
     TestBean testBean
 
     @Inject
-    MyInterceptor myInterceptor
-
-    @Inject
     InMemorySpanExporter exporter
 
-    void "test hello world grpc"() {
+    void "test opentelemetry grpc server"() {
         expect:
         testBean.sayHello("Fred") == "Hello Fred"
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> exporter.getFinishedSpanItems().size() == 2)
-        exporter.getFinishedSpanItems().size() == 2
+        exporter.getFinishedSpanItems().size() == 1
         exporter.getFinishedSpanItems().kind.contains(io.opentelemetry.api.trace.SpanKind.SERVER)
-        exporter.getFinishedSpanItems().kind.contains(io.opentelemetry.api.trace.SpanKind.CLIENT)
         cleanup:
         exporter.reset()
     }
@@ -51,17 +45,6 @@ class OpenTelemetryGrpcSpec extends Specification {
         @Singleton
         GreeterGrpc.GreeterBlockingStub blockingStub(@GrpcChannel(GrpcServerChannel.NAME) Channel channel) {
             GreeterGrpc.newBlockingStub(channel)
-        }
-    }
-
-    @Singleton
-    static class MyInterceptor implements ServerInterceptor {
-
-        boolean intercepted = false
-        @Override
-        <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
-            intercepted = true
-            return next.startCall(call, headers)
         }
     }
 
@@ -82,8 +65,13 @@ class OpenTelemetryGrpcSpec extends Specification {
         @Override
         void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
             HelloReply reply = HelloReply.newBuilder().setMessage("Hello " + request.getName()).build();
+            testNewSpan()
             responseObserver.onNext(reply)
             responseObserver.onCompleted()
+        }
+
+        @NewSpan
+        void testNewSpan() {
         }
     }
 }

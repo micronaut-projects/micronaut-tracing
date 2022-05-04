@@ -36,7 +36,6 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.extension.annotations.WithSpan;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.util.ClassAndMethod;
 import jakarta.inject.Singleton;
@@ -53,7 +52,7 @@ import java.util.concurrent.CompletionStage;
  */
 @Singleton
 @Requires(beans = Tracer.class)
-@InterceptorBean({ContinueSpan.class, NewSpan.class, WithSpan.class})
+@InterceptorBean({ContinueSpan.class, NewSpan.class})
 public class TraceInterceptor implements MethodInterceptor<Object, Object> {
 
     private final Instrumenter<ClassAndMethod, Object> instrumenter;
@@ -135,7 +134,11 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
         } else {
             // must be new
             // don't create a nested span if you're not supposed to.
-            String operationName = newSpan.stringValue().orElse(null);
+            String operationName = null;
+
+            if (newSpan != null) {
+                operationName = newSpan.stringValue().orElse(null);
+            }
 
             if (operationName != null) {
                 classAndMethod = ClassAndMethod.create(classAndMethod.declaringClass(), classAndMethod.methodName() + "#" + operationName);

@@ -1,2 +1,0 @@
-io.micronaut.tracing.processing.WithSpanAnnotationTransformer
-io.micronaut.tracing.processing.SpanAttributeAnnotationTransformer

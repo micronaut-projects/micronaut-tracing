@@ -20,6 +20,8 @@ include 'tracing-bom'
 include 'tracing-core'
 include 'tracing-jaeger'
 include 'tracing-opentelemetry'
+include 'tracing-opentelemetry-grpc-server'
+include 'tracing-opentelemetry-grpc-client'
 include 'tracing-zipkin'
 include 'tests:kotlin-tests'
 

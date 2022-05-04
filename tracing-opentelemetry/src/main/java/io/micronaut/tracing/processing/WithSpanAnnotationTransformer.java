@@ -17,6 +17,7 @@ package io.micronaut.tracing.processing;
 
 import io.micronaut.aop.InterceptorBinding;
 import io.micronaut.core.annotation.AnnotationValue;
+import io.micronaut.inject.annotation.TypedAnnotationMapper;
 import io.micronaut.inject.annotation.TypedAnnotationTransformer;
 import io.micronaut.inject.visitor.VisitorContext;
 import io.micronaut.tracing.annotation.NewSpan;
@@ -39,18 +40,17 @@ public class WithSpanAnnotationTransformer implements TypedAnnotationTransformer
 
     @Override
     public List<AnnotationValue<?>> transform(AnnotationValue<WithSpan> annotation, VisitorContext visitorContext) {
-        AnnotationValue<InterceptorBinding> interceptorBinding = AnnotationValue.builder(InterceptorBinding.class)
-            .value(NewSpan.class)
+        AnnotationValue<InterceptorBinding> interceptBinding = AnnotationValue.builder(InterceptorBinding.class)
             .build();
 
-        AnnotationValue<NewSpan> continueSpan = AnnotationValue.builder(NewSpan.class)
+        AnnotationValue<NewSpan> newSpan = AnnotationValue.builder(NewSpan.class)
+            .stereotype(interceptBinding)
             .value(annotation.stringValue().orElse(null))
             .build();
 
         ArrayList<AnnotationValue<?>> annotationValues = new ArrayList<>();
 
-        annotationValues.add(interceptorBinding);
-        annotationValues.add(continueSpan);
+        annotationValues.add(newSpan);
 
         return annotationValues;
     }

@@ -6,14 +6,13 @@ plugins {
 dependencies {
     api mn.micronaut.runtime
     api mn.micronaut.http.client
-    api mn.micronaut.grpc.server.runtime
-    api mn.micronaut.grpc.client.runtime
     api projects.tracingAnnotation
     api projects.tracingCore
     api libs.opentelemetry.api
     api libs.opentelemetry.extension.annotations
     api libs.opentelemetry.instrumentation.api
-    api libs.opentelemetry.instrumentation.grpc
+    api libs.opentelemetry.instrumentation.api.semconv
+    api libs.opentelemetry.autoconfigure
 
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor
@@ -27,27 +26,4 @@ dependencies {
     testImplementation libs.opentelemetry.sdk.testing
     testImplementation libs.opentelemetry.sdk.metrics
     testImplementation libs.opentelemetry.sdk.logs
-    testImplementation libs.opentracing.grpc
-    testImplementation libs.grpc.protobuf
-    testImplementation libs.grpc.stub
-    testImplementation libs.awaitility
-}
-
-sourceSets {
-    test {
-        java {
-            srcDirs 'build/generated/source/proto/test/grpc'
-            srcDirs 'build/generated/source/proto/test/java'
-        }
-    }
-}
-
-protobuf {
-    protoc { artifact = libs.protoc.asProvider().get() }
-    plugins {
-        grpc { artifact = libs.protoc.grpc.get() }
-    }
-    generateProtoTasks {
-        all()*.plugins { grpc {} }
-    }
 }

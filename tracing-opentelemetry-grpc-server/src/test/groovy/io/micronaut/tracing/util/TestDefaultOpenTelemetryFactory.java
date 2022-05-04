@@ -13,22 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing;
+package io.micronaut.tracing.util;
 
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
-import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.micronaut.context.annotation.Replaces;
+import io.micronaut.tracing.DefaultOpenTelemetryFactory;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import jakarta.inject.Singleton;
 
 /**
  * Registers an OpenTelemetry bean.
  *
  * @author Nemanja Mikic
+ * @since 1.0
  */
 @Factory
-public class DefaultOpenTelemetryFactory {
+@Replaces(factory = DefaultOpenTelemetryFactory.class)
+public class TestDefaultOpenTelemetryFactory {
 
     /**
      * The OpenTelemetry bean with default values.
@@ -37,8 +43,16 @@ public class DefaultOpenTelemetryFactory {
      */
     @Singleton
     @Primary
-    protected OpenTelemetry defaultOpenTelemetry() {
-        AutoConfiguredOpenTelemetrySdk.initialize();
-        return GlobalOpenTelemetry.get();
+    OpenTelemetry defaultOpenTelemetry(InMemorySpanExporter inMemorySpanExporter) {
+        return OpenTelemetrySdk.builder()
+            .setTracerProvider(SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter))
+                .build()
+            ).build();
+    }
+
+    @Singleton
+    InMemorySpanExporter inMemorySpanExporter() {
+        return InMemorySpanExporter.create();
     }
 }

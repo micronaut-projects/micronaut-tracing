@@ -12,7 +12,6 @@ import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
-import org.awaitility.Awaitility
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Flux
@@ -22,8 +21,6 @@ import reactor.util.function.Tuples
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
-
-import java.util.concurrent.TimeUnit
 
 import static io.micronaut.scheduling.TaskExecutors.IO
 
@@ -62,7 +59,8 @@ class OpenTelemetrySpec extends Specification {
                 .block()
         for (Tuple2 t : result)
             assert t.getT1() == t.getT2()
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> testExporter.getFinishedSpanItems().size() == count * spanNumbers)
+
+        testExporter.getFinishedSpanItems().size() == count * spanNumbers
 
         // test if newspan has appended name
         testExporter.getFinishedSpanItems().name.any(x->x.contains("#test-enter-new-span"))

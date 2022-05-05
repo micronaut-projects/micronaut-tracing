@@ -1,10 +1,6 @@
 package io.micronaut.tracing.instrument.grpc
 
 import io.grpc.Channel
-import io.grpc.Metadata
-import io.grpc.ServerCall
-import io.grpc.ServerCallHandler
-import io.grpc.ServerInterceptor
 import io.grpc.examples.helloworld.GreeterGrpc
 import io.grpc.examples.helloworld.HelloReply
 import io.grpc.examples.helloworld.HelloRequest
@@ -14,7 +10,6 @@ import io.micronaut.grpc.annotation.GrpcChannel
 import io.micronaut.grpc.server.GrpcServerChannel
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import io.micronaut.tracing.annotation.NewSpan
-import io.micronaut.tracing.opentelemetry.interceptor.TraceInterceptor
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
 import jakarta.inject.Singleton

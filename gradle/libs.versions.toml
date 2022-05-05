@@ -27,8 +27,6 @@ zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter', version.ref 
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api', version.ref = 'opentelemetry' }
 opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk', version.ref = 'opentelemetry' }
 opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing', version.ref = 'opentelemetry' }
-opentelemetry-sdk-metrics = { module = 'io.opentelemetry:opentelemetry-sdk-metrics', version.ref = 'opentelemetry-alpha' }
-opentelemetry-sdk-logs = { module = 'io.opentelemetry:opentelemetry-sdk-logs', version.ref = 'opentelemetry-alpha' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure', version.ref = 'opentelemetry-alpha' }
 opentelemetry-extension-annotations = { module = 'io.opentelemetry:opentelemetry-extension-annotations', version.ref = 'opentelemetry' }
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api', version.ref = 'opentelemetry-instrumentation' }

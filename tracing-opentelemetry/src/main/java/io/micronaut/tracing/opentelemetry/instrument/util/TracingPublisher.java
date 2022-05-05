@@ -18,7 +18,6 @@ package io.micronaut.tracing.opentelemetry.instrument.util;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.async.publisher.Publishers;
-
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
@@ -64,35 +63,27 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
             publisher.subscribe(new Subscriber<T>() {
                 @Override
                 public void onSubscribe(Subscription s) {
-                    try (Scope ignored = parentContext.makeCurrent()) {
                         doOnSubscribe(parentContext);
                         actual.onSubscribe(s);
-                    }
                 }
 
                 @Override
                 public void onNext(T object) {
-                    try (Scope ignored = parentContext.makeCurrent()) {
                         doOnNext(object, parentContext);
                         actual.onNext(object);
                         doOnFinish(parentContext);
-                    }
                 }
 
                 @Override
                 public void onError(Throwable t) {
-                    try (Scope ignored = parentContext.makeCurrent()) {
                         doOnError(t, parentContext);
                         actual.onError(t);
-                    }
                 }
 
                 @Override
                 public void onComplete() {
-                    try (Scope ignored = parentContext.makeCurrent()) {
                         actual.onComplete();
                         doOnFinish(parentContext);
-                    }
                 }
             });
             return;
@@ -126,6 +117,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
                     try (Scope ignored = context.makeCurrent()) {
                         doOnError(t, context);
                         actual.onError(t);
+                    } finally {
                         instrumenter.end(context, classAndMethod, null, t);
                     }
                 }

@@ -18,11 +18,13 @@ package io.micronaut.tracing.opentelemetry.instrument.http;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.async.publisher.Publishers;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MutableHttpRequest;
+import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
-import io.micronaut.http.filter.ClientFilterChain;
-import io.micronaut.http.filter.HttpClientFilter;
+import io.micronaut.http.filter.HttpServerFilter;
+import io.micronaut.http.filter.ServerFilterChain;
+import io.micronaut.tracing.opentelemetry.instrument.util.TracingExclusionsConfiguration;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
@@ -34,62 +36,71 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import static io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTracingFilter.CLIENT_PATH;
+import java.util.function.Predicate;
+
+import static io.micronaut.tracing.opentelemetry.instrument.http.OpenTelemetryServerFilter.SERVER_PATH;
 
 /**
- * An HTTP client instrumentation filter that uses Open Telemetry.
+ * An HTTP server instrumentation filter that uses Open Telemetry.
  *
  * @author Nemanja Mikic
  */
-@Filter(CLIENT_PATH)
+@Filter(SERVER_PATH)
 @Requires(beans = Tracer.class)
-public class OpenTelemetryClientFilter extends AbstractOpenTracingFilter implements HttpClientFilter {
+public class OpenTelemetryServerFilter implements HttpServerFilter {
 
-    private final Instrumenter<MutableHttpRequest, HttpResponse> instrumenter;
+    public static final String SERVER_PATH = "${tracing.http.server.path:/**}";
+
+    private static final String APPLIED = OpenTelemetryServerFilter.class.getName() + "-applied";
+    private static final String CONTINUE = OpenTelemetryServerFilter.class.getName() + "-continue";
+
+    private final Instrumenter<HttpRequest, HttpResponse> instrumenter;
+
+    public static final String TAG_ERROR = "error";
+
+    private final Predicate<String> pathExclusionTest;
 
     /**
+     * Creates an HTTP server instrumentation filter.
+     *
      * @param openTelemetry the openTelemetry
      */
-    public OpenTelemetryClientFilter(OpenTelemetry openTelemetry) {
-        super(null);
-        instrumenter = new MicronautHttpClientTelemetryBuilder(openTelemetry).build();
+    public OpenTelemetryServerFilter(OpenTelemetry openTelemetry) {
+        this(openTelemetry, null);
     }
 
     /**
-     * Initialize the open tracing client filter with tracer and exclusion configuration.
+     * Creates an HTTP server instrumentation filter.
      *
      * @param openTelemetry    the openTelemetry
      * @param exclusionsConfig The {@link TracingExclusionsConfiguration}
      */
     @Inject
-    public OpenTelemetryClientFilter(OpenTelemetry openTelemetry,
+    public OpenTelemetryServerFilter(OpenTelemetry openTelemetry,
                                      @Nullable TracingExclusionsConfiguration exclusionsConfig) {
-        super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
-        instrumenter = new MicronautHttpClientTelemetryBuilder(openTelemetry).build();
-
+        pathExclusionTest = exclusionsConfig == null ? null : exclusionsConfig.exclusionTest();
+        instrumenter = new MicronautHttpServerTelemetryBuilder(openTelemetry).build();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Publisher<? extends HttpResponse<?>> doFilter(MutableHttpRequest<?> request,
-                                                         ClientFilterChain chain) {
-
-        Publisher<? extends HttpResponse<?>> requestPublisher = chain.proceed(request);
-
-        if (shouldExclude(request.getPath())) {
-            return requestPublisher;
+    public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
+        boolean applied = request.getAttribute(APPLIED, Boolean.class).orElse(false);
+        boolean continued = request.getAttribute(CONTINUE, Boolean.class).orElse(false);
+        if ((applied && !continued) || shouldExclude(request.getPath())) {
+            return chain.proceed(request);
         }
 
-        Context parentContext = Context.current();
-        if (!instrumenter.shouldStart(parentContext, request)) {
-            return requestPublisher;
-        }
+        request.setAttribute(APPLIED, true);
 
-        return (Publishers.MicronautPublisher<HttpResponse<?>>) actual -> {
+        Publisher<MutableHttpResponse<?>> requestPublisher = chain.proceed(request);
+
+        return (Publishers.MicronautPublisher<MutableHttpResponse<?>>) actual -> {
+            Context parentContext = Context.current();
             Context context = instrumenter.start(parentContext, request);
 
             try (Scope ignored = context.makeCurrent()) {
-                requestPublisher.subscribe(new Subscriber<HttpResponse<?>>() {
+                requestPublisher.subscribe(new Subscriber<MutableHttpResponse<?>>() {
                     @Override
                     public void onSubscribe(Subscription s) {
                         try (Scope ignored = context.makeCurrent()) {
@@ -98,7 +109,7 @@ public class OpenTelemetryClientFilter extends AbstractOpenTracingFilter impleme
                     }
 
                     @Override
-                    public void onNext(HttpResponse<?> response) {
+                    public void onNext(MutableHttpResponse<?> response) {
                         try (Scope ignored = context.makeCurrent()) {
                             actual.onNext(response);
                         } finally {
@@ -111,6 +122,7 @@ public class OpenTelemetryClientFilter extends AbstractOpenTracingFilter impleme
                         try (Scope ignored = context.makeCurrent()) {
                             actual.onError(t);
                         } finally {
+                            request.setAttribute(CONTINUE, true);
                             setErrorTags(Span.current(), t);
                             instrumenter.end(context, request, null, t);
                         }
@@ -127,5 +139,34 @@ public class OpenTelemetryClientFilter extends AbstractOpenTracingFilter impleme
                 });
             }
         };
+
+    }
+
+    /**
+     * Sets the error tags to use on the span.
+     *
+     * @param span  the span
+     * @param error the error
+     */
+    protected void setErrorTags(Span span, Throwable error) {
+        if (error == null) {
+            return;
+        }
+
+        String message = error.getMessage();
+        if (message == null) {
+            message = error.getClass().getSimpleName();
+        }
+        span.setAttribute(TAG_ERROR, message);
+    }
+
+    /**
+     * Tests if the defined path should be excluded from tracing.
+     *
+     * @param path the path to test
+     * @return {@code true} if the path should be excluded
+     */
+    protected boolean shouldExclude(@Nullable String path) {
+        return pathExclusionTest != null && path != null && pathExclusionTest.test(path);
     }
 }

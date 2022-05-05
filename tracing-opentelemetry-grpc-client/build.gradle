@@ -19,8 +19,6 @@ dependencies {
     testImplementation mn.micronaut.grpc.server.runtime
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
-    testImplementation libs.opentelemetry.sdk.metrics
-    testImplementation libs.opentelemetry.sdk.logs
     testImplementation libs.opentracing.grpc
     testImplementation libs.grpc.protobuf
     testImplementation libs.grpc.stub

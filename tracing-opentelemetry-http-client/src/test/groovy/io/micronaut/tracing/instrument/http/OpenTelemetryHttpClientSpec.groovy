@@ -1,4 +1,4 @@
-package io.micronaut.tracing.instrument.util
+package io.micronaut.tracing.instrument.http
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.core.annotation.Introspected
@@ -27,9 +27,9 @@ import spock.lang.Specification
 
 import static io.micronaut.scheduling.TaskExecutors.IO
 
-class AnnotationMappingSpec extends Specification {
+class OpenTelemetryHttpClientSpec extends Specification {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AnnotationMappingSpec)
+    private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetryHttpClientSpec)
 
     @Shared
     @AutoCleanup
@@ -42,9 +42,9 @@ class AnnotationMappingSpec extends Specification {
     ReactorHttpClient reactorHttpClient = ReactorHttpClient.create(embeddedServer.URL)
 
     void 'test map WithSpan annotation'() {
-        def count = 1
-        // 2x Method call 1x NewSpan, 1x WithSpan  = 2
-        def spanNumbers = 2
+        def count = 5
+        //  2x Client GET, 2x Method call with NewSpan  = 4
+        def spanNumbers = 4
         def testExporter = embeddedServer.getApplicationContext().getBean(InMemorySpanExporter.class)
 
         expect:
@@ -68,10 +68,8 @@ class AnnotationMappingSpec extends Specification {
         !testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-attribute"))
         !testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag-no-withspan"))
         testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag-with-withspan"))
-        testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag-continue-span"))
         // test if newspan has appended name
         testExporter.getFinishedSpanItems().name.any(x->x.contains("#test-withspan-mapping"))
-        testExporter.getFinishedSpanItems().name.any(x->x.contains("#enter"))
 
         cleanup:
         testExporter.reset()
@@ -94,11 +92,16 @@ class AnnotationMappingSpec extends Specification {
         @NewSpan("enter")
         Mono<String> enter(@Header("X-TrackingId") String tracingId, @Body SomeBody body) {
             LOG.info("enter")
-            return test(tracingId)
+            return Mono.from(
+                    reactorHttpClient.retrieve(HttpRequest
+                            .GET("/annotations/test")
+                            .header("X-TrackingId", tracingId), String)
+            )
         }
 
         @ExecuteOn(IO)
         @Get("/test")
+        @ContinueSpan
         Mono<String> test(@SpanAttribute("tracing-annotation-span-attribute") @Header("X-TrackingId") String tracingId) {
             LOG.info("test")
             return Mono.from(
@@ -117,11 +120,6 @@ class AnnotationMappingSpec extends Specification {
 
         @WithSpan("test-withspan-mapping")
         Mono<String> methodWithSpan(@SpanTag("tracing-annotation-span-tag-with-withspan") String tracingId){
-            return Mono.from(methodContinueSpan(tracingId))
-        }
-
-        @ContinueSpan
-        Mono<String> methodContinueSpan(@SpanTag("tracing-annotation-span-tag-continue-span") String tracingId) {
             return Mono.just(tracingId)
         }
 

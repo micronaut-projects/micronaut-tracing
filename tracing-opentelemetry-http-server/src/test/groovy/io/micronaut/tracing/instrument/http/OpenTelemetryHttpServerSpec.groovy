@@ -1,4 +1,4 @@
-package io.micronaut.tracing.instrument.util
+package io.micronaut.tracing.instrument.http
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.core.annotation.Introspected
@@ -10,6 +10,9 @@ import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
+import io.micronaut.tracing.annotation.SpanTag
+import io.opentelemetry.extension.annotations.SpanAttribute
+import io.opentelemetry.extension.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
 import org.slf4j.Logger
@@ -24,9 +27,9 @@ import spock.lang.Specification
 
 import static io.micronaut.scheduling.TaskExecutors.IO
 
-class OpenTelemetrySpec extends Specification {
+class OpenTelemetryHttpServerSpec extends Specification {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetrySpec)
+    private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetryHttpServerSpec)
 
     @Shared
     @AutoCleanup
@@ -38,18 +41,18 @@ class OpenTelemetrySpec extends Specification {
     @AutoCleanup
     ReactorHttpClient reactorHttpClient = ReactorHttpClient.create(embeddedServer.URL)
 
-    void "test OpenTelemetry integration"() {
-        given:
-        def count = 10
-        // 1x Server POST, 1x Server GET, 1x Client GET, 2x Method call - 1 continue span = 4
-        def spanNumbers = 4
+    void 'test map WithSpan annotation'() {
+        def count = 5
+        // 1x Server POST, 2x Server GET, 2x Method call with NewSpan  = 5
+        def spanNumbers = 5
         def testExporter = embeddedServer.getApplicationContext().getBean(InMemorySpanExporter.class)
+
         expect:
         List<Tuple2> result = Flux.range(1, count)
                 .flatMap {
                     String tracingId = UUID.randomUUID()
                     HttpRequest<Object> request = HttpRequest
-                            .POST("/enter", new SomeBody())
+                            .POST("/annotations/enter", new SomeBody())
                             .header("X-TrackingId", tracingId)
                     return Mono.from(reactorHttpClient.retrieve(request)).map(response -> {
                         Tuples.of(tracingId, response)
@@ -62,17 +65,22 @@ class OpenTelemetrySpec extends Specification {
 
         testExporter.getFinishedSpanItems().size() == count * spanNumbers
 
+        testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-attribute"))
+        !testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag-no-withspan"))
+        testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag-with-withspan"))
         // test if newspan has appended name
-        testExporter.getFinishedSpanItems().name.any(x->x.contains("#test-enter-new-span"))
+        testExporter.getFinishedSpanItems().name.any(x->x.contains("#test-withspan-mapping"))
+
         cleanup:
         testExporter.reset()
+
     }
 
     @Introspected
     static class SomeBody {
     }
 
-    @Controller("/")
+    @Controller("/annotations")
     static class TestController {
 
         @Inject
@@ -81,12 +89,12 @@ class OpenTelemetrySpec extends Specification {
 
         @ExecuteOn(IO)
         @Post("/enter")
-        @NewSpan("test-enter-new-span")
+        @NewSpan("enter")
         Mono<String> enter(@Header("X-TrackingId") String tracingId, @Body SomeBody body) {
             LOG.info("enter")
             return Mono.from(
                     reactorHttpClient.retrieve(HttpRequest
-                            .GET("/test")
+                            .GET("/annotations/test")
                             .header("X-TrackingId", tracingId), String)
             )
         }
@@ -94,8 +102,24 @@ class OpenTelemetrySpec extends Specification {
         @ExecuteOn(IO)
         @Get("/test")
         @ContinueSpan
-        Mono<String> test(@Header("X-TrackingId") String tracingId) {
+        Mono<String> test(@SpanAttribute("tracing-annotation-span-attribute") @Header("X-TrackingId") String tracingId) {
             LOG.info("test")
+            return Mono.from(
+                    reactorHttpClient.retrieve(HttpRequest
+                            .GET("/annotations/test2")
+                            .header("X-TrackingId", tracingId), String)
+            )
+        }
+
+        @ExecuteOn(IO)
+        @Get("/test2")
+        Mono<String> test2(@SpanTag("tracing-annotation-span-tag-no-withspan") @Header("X-TrackingId") String tracingId) {
+            LOG.info("test2")
+            return methodWithSpan(tracingId)
+        }
+
+        @WithSpan("test-withspan-mapping")
+        Mono<String> methodWithSpan(@SpanTag("tracing-annotation-span-tag-with-withspan") String tracingId){
             return Mono.just(tracingId)
         }
 

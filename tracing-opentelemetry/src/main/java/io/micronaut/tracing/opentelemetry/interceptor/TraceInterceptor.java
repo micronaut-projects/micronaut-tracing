@@ -26,10 +26,11 @@ import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.type.Argument;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
-import io.micronaut.tracing.opentelemetry.instrument.http.MicronautCodeTelemetryBuilder;
+import io.micronaut.tracing.opentelemetry.instrument.util.MicronautCodeTelemetryBuilder;
 import io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisher;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
@@ -134,13 +135,9 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
         } else {
             // must be new
             // don't create a nested span if you're not supposed to.
-            String operationName = null;
+            String operationName = newSpan.stringValue().orElse("");
 
-            if (newSpan != null) {
-                operationName = newSpan.stringValue().orElse(null);
-            }
-
-            if (operationName != null) {
+            if (!StringUtils.isEmpty(operationName)) {
                 classAndMethod = ClassAndMethod.create(classAndMethod.declaringClass(), classAndMethod.methodName() + "#" + operationName);
             }
 
@@ -190,7 +187,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                             return context.proceed();
                         }
                         newContext = instrumenter.start(currentContext, classAndMethod);
-                        try (Scope scope = newContext.makeCurrent()) {
+                        try (Scope ignored = newContext.makeCurrent()) {
                             tagArguments(context, newContext);
                             try {
                                 return context.proceed();

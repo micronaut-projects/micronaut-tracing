@@ -5,12 +5,13 @@ plugins {
 
 dependencies {
     api mn.micronaut.runtime
+    api mn.micronaut.http.client
     api projects.tracingAnnotation
+    api projects.tracingOpentelemetry
     api libs.opentelemetry.api
     api libs.opentelemetry.extension.annotations
     api libs.opentelemetry.instrumentation.api
     api libs.opentelemetry.instrumentation.api.semconv
-    api libs.opentelemetry.autoconfigure
 
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor

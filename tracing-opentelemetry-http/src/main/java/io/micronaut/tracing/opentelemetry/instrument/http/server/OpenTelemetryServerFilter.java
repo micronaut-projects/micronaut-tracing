@@ -24,6 +24,7 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
+import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTracingFilter;
 import io.micronaut.tracing.opentelemetry.instrument.util.TracingExclusionsConfiguration;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
@@ -36,8 +37,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.function.Predicate;
-
 import static io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTelemetryServerFilter.SERVER_PATH;
 
 /**
@@ -47,18 +46,12 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTele
  */
 @Filter(SERVER_PATH)
 @Requires(beans = Tracer.class)
-public class OpenTelemetryServerFilter implements HttpServerFilter {
-
-    public static final String SERVER_PATH = "${tracing.http.server.path:/**}";
+public class OpenTelemetryServerFilter extends AbstractOpenTracingFilter implements HttpServerFilter {
 
     private static final String APPLIED = OpenTelemetryServerFilter.class.getName() + "-applied";
     private static final String CONTINUE = OpenTelemetryServerFilter.class.getName() + "-continue";
 
     private final Instrumenter<HttpRequest, HttpResponse> instrumenter;
-
-    public static final String TAG_ERROR = "error";
-
-    private final Predicate<String> pathExclusionTest;
 
     /**
      * Creates an HTTP server instrumentation filter.
@@ -68,7 +61,6 @@ public class OpenTelemetryServerFilter implements HttpServerFilter {
     public OpenTelemetryServerFilter(OpenTelemetry openTelemetry) {
         this(openTelemetry, null);
     }
-
     /**
      * Creates an HTTP server instrumentation filter.
      *
@@ -78,7 +70,7 @@ public class OpenTelemetryServerFilter implements HttpServerFilter {
     @Inject
     public OpenTelemetryServerFilter(OpenTelemetry openTelemetry,
                                      @Nullable TracingExclusionsConfiguration exclusionsConfig) {
-        pathExclusionTest = exclusionsConfig == null ? null : exclusionsConfig.exclusionTest();
+        super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
         instrumenter = new MicronautHttpServerTelemetryBuilder(openTelemetry).build();
     }
 
@@ -140,33 +132,5 @@ public class OpenTelemetryServerFilter implements HttpServerFilter {
             }
         };
 
-    }
-
-    /**
-     * Sets the error tags to use on the span.
-     *
-     * @param span  the span
-     * @param error the error
-     */
-    protected void setErrorTags(Span span, Throwable error) {
-        if (error == null) {
-            return;
-        }
-
-        String message = error.getMessage();
-        if (message == null) {
-            message = error.getClass().getSimpleName();
-        }
-        span.setAttribute(TAG_ERROR, message);
-    }
-
-    /**
-     * Tests if the defined path should be excluded from tracing.
-     *
-     * @param path the path to test
-     * @return {@code true} if the path should be excluded
-     */
-    protected boolean shouldExclude(@Nullable String path) {
-        return pathExclusionTest != null && path != null && pathExclusionTest.test(path);
     }
 }

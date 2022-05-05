@@ -17,7 +17,6 @@ package io.micronaut.tracing.processing;
 
 import io.micronaut.aop.InterceptorBinding;
 import io.micronaut.core.annotation.AnnotationValue;
-import io.micronaut.inject.annotation.TypedAnnotationMapper;
 import io.micronaut.inject.annotation.TypedAnnotationTransformer;
 import io.micronaut.inject.visitor.VisitorContext;
 import io.micronaut.tracing.annotation.NewSpan;

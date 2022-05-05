@@ -23,6 +23,7 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
+import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTracingFilter;
 import io.micronaut.tracing.opentelemetry.instrument.util.TracingExclusionsConfiguration;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
@@ -35,8 +36,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.function.Predicate;
-
 import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTelemetryClientFilter.CLIENT_PATH;
 
 /**
@@ -46,12 +45,7 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTele
  */
 @Filter(CLIENT_PATH)
 @Requires(beans = Tracer.class)
-public class OpenTelemetryClientFilter implements HttpClientFilter {
-
-    public static final String CLIENT_PATH = "${tracing.http.client.path:/**}";
-    public static final String TAG_ERROR = "error";
-
-    private final Predicate<String> pathExclusionTest;
+public class OpenTelemetryClientFilter extends AbstractOpenTracingFilter implements HttpClientFilter {
 
     private final Instrumenter<MutableHttpRequest, HttpResponse> instrumenter;
 
@@ -59,7 +53,8 @@ public class OpenTelemetryClientFilter implements HttpClientFilter {
      * @param openTelemetry the openTelemetry
      */
     public OpenTelemetryClientFilter(OpenTelemetry openTelemetry) {
-        this(openTelemetry, null);
+        super(null);
+        instrumenter = new MicronautHttpClientTelemetryBuilder(openTelemetry).build();
     }
 
     /**
@@ -71,8 +66,7 @@ public class OpenTelemetryClientFilter implements HttpClientFilter {
     @Inject
     public OpenTelemetryClientFilter(OpenTelemetry openTelemetry,
                                      @Nullable TracingExclusionsConfiguration exclusionsConfig) {
-        pathExclusionTest = exclusionsConfig != null ? exclusionsConfig.exclusionTest() : null;
-
+        super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
         instrumenter = new MicronautHttpClientTelemetryBuilder(openTelemetry).build();
 
     }
@@ -135,32 +129,5 @@ public class OpenTelemetryClientFilter implements HttpClientFilter {
                 });
             }
         };
-    }
-    /**
-     * Sets the error tags to use on the span.
-     *
-     * @param span  the span
-     * @param error the error
-     */
-    protected void setErrorTags(Span span, Throwable error) {
-        if (error == null) {
-            return;
-        }
-
-        String message = error.getMessage();
-        if (message == null) {
-            message = error.getClass().getSimpleName();
-        }
-        span.setAttribute(TAG_ERROR, message);
-    }
-
-    /**
-     * Tests if the defined path should be excluded from tracing.
-     *
-     * @param path the path to test
-     * @return {@code true} if the path should be excluded
-     */
-    protected boolean shouldExclude(@Nullable String path) {
-        return pathExclusionTest != null && path != null && pathExclusionTest.test(path);
     }
 }

@@ -12,7 +12,6 @@ opentelemetry-instrumentation = '1.13.1-alpha'
 opentracing-grpc = '0.2.3'
 managed-grpc = '1.45.0'
 managed-protobuf = '3.19.4'
-awaitility-version = '4.2.0'
 
 [libraries]
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'brave-opentracing' }

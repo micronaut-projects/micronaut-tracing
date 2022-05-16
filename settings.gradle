@@ -1,7 +1,4 @@
 pluginManagement {
-    plugins {
-        id "com.google.protobuf" version "${protobufGradleVersion}"
-    }
     repositories {
         gradlePluginPortal()
         mavenCentral()

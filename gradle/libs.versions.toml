@@ -11,6 +11,7 @@ opentelemetry-alpha = '1.13.0-alpha'
 opentelemetry-instrumentation = '1.13.1-alpha'
 opentracing = '0.33.0'
 opentracing-grpc = '0.2.3'
+protobuf = '0.8.17'
 zipkin-reporter = '2.16.3'
 
 [libraries]
@@ -42,3 +43,4 @@ zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter', version.ref 
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }
 kotlinkapt = { id = 'org.jetbrains.kotlin.kapt', version.ref = 'kotlin' }
+protobuf = { id = 'com.google.protobuf', version.ref = 'protobuf' }

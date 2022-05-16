@@ -1,6 +1,6 @@
 plugins {
     id 'io.micronaut.build.internal.tracing-module'
-    id 'com.google.protobuf'
+    alias libs.plugins.protobuf
 }
 
 dependencies {

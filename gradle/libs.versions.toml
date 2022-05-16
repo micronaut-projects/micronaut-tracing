@@ -6,6 +6,7 @@ kotlin = '1.6.0'
 kotlin-coroutines = '1.6.1'
 managed-grpc = '1.45.0'
 managed-protobuf = '3.19.4'
+micronaut-docs = '2.0.0'
 opentelemetry = '1.13.0'
 opentelemetry-alpha = '1.13.0-alpha'
 opentelemetry-instrumentation = '1.13.1-alpha'
@@ -24,6 +25,7 @@ kotlinx-coroutines-core = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-reactor = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor', version.ref = 'kotlin-coroutines' }
 managed-protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'managed-protobuf' }
 managed-protobuf-java-util = { module = 'com.google.protobuf:protobuf-java-util', version.ref = 'managed-protobuf' }
+micronaut-docs-asciidoc-config-props = { module = 'io.micronaut.docs:micronaut-docs-asciidoc-config-props', version.ref = 'micronaut-docs' }
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api', version.ref = 'opentelemetry' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure', version.ref = 'opentelemetry-alpha' }
 opentelemetry-extension-annotations = { module = 'io.opentelemetry:opentelemetry-extension-annotations', version.ref = 'opentelemetry' }

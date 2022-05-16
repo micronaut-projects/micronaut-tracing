@@ -22,7 +22,7 @@ import io.micronaut.inject.visitor.VisitorContext;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.opentelemetry.extension.annotations.WithSpan;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,10 +47,6 @@ public class WithSpanAnnotationTransformer implements TypedAnnotationTransformer
             .value(annotation.stringValue().orElse(null))
             .build();
 
-        ArrayList<AnnotationValue<?>> annotationValues = new ArrayList<>();
-
-        annotationValues.add(newSpan);
-
-        return annotationValues;
+        return Collections.singletonList(newSpan);
     }
 }

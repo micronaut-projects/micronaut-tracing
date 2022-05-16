@@ -27,19 +27,16 @@ import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import jakarta.inject.Singleton;
 
 /**
- * Registers an OpenTelemetry bean.
+ * Registers an OpenTelemetry bean for test.
  *
  * @author Nemanja Mikic
- * @since 1.0
  */
 @Factory
 @Replaces(factory = DefaultOpenTelemetryFactory.class)
 public class TestDefaultOpenTelemetryFactory {
 
     /**
-     * The OpenTelemetry bean with default values.
-     *
-     * @return the OpenTelemetry
+     * @return the OpenTelemetry bean with default values
      */
     @Singleton
     @Primary

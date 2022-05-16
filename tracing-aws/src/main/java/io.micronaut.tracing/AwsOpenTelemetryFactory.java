@@ -34,7 +34,6 @@ import jakarta.inject.Singleton;
 
 import java.util.Optional;
 
-
 /**
  * Registers an OpenTelemetry bean.
  *
@@ -49,20 +48,20 @@ public class AwsOpenTelemetryFactory {
     /**
      * The OpenTelemetry bean configured with AwsOpenTelemetryConfiguration.
      * @param awsOpenTelemetryConfiguration the aws open-telemetry configuration
-     * @return the OpenTelemetry
+     * @return the bean
      */
     @Singleton
     @Primary
     OpenTelemetry defaultOpenTelemetryWithConfig(@NonNull AwsOpenTelemetryConfiguration awsOpenTelemetryConfiguration) {
 
         return OpenTelemetrySdk.builder()
-            // This will enable your downstream requests to include the X-Ray trace header
+            // enables your downstream requests to include the X-Ray trace header
             .setPropagators(
                 ContextPropagators.create(
                     TextMapPropagator.composite(
                         W3CTraceContextPropagator.getInstance(), AwsXrayPropagator.getInstance())))
 
-            // This provides basic configuration of a TracerProvider which generates X-Ray compliant IDs
+            // provides basic configuration of a TracerProvider which generates X-Ray compliant IDs
             .setTracerProvider(
                 SdkTracerProvider.builder()
                     .addSpanProcessor(
@@ -87,23 +86,21 @@ public class AwsOpenTelemetryFactory {
     @Singleton
     OpenTelemetry defaultOpenTelemetry() {
         return OpenTelemetrySdk.builder()
-            // This will enable your downstream requests to include the X-Ray trace header
+            // enables your downstream requests to include the X-Ray trace header
             .setPropagators(
                 ContextPropagators.create(
                     TextMapPropagator.composite(
                         W3CTraceContextPropagator.getInstance(), AwsXrayPropagator.getInstance())))
 
-            // This provides basic configuration of a TracerProvider which generates X-Ray compliant IDs
+            // provides basic configuration of a TracerProvider which generates X-Ray compliant IDs
             .setTracerProvider(
                 SdkTracerProvider.builder()
                     .addSpanProcessor(
                         BatchSpanProcessor.builder(
-                            OtlpGrpcSpanExporter.builder()
-                                .build()
+                            OtlpGrpcSpanExporter.builder().build()
                         ).build())
                     .setIdGenerator(AwsXrayIdGenerator.getInstance())
                     .build())
             .buildAndRegisterGlobal();
     }
-
 }

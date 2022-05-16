@@ -1,11 +1,7 @@
 plugins {
     id 'io.micronaut.build.internal.tracing-module'
-    alias libs.plugins.kotlinjvm
 }
 
 dependencies {
     api mn.micronaut.runtime
-
-    compileOnly libs.kotlinx.coroutines.core
-    compileOnly libs.kotlinx.coroutines.reactor
 }

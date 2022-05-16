@@ -26,7 +26,7 @@ import io.opentelemetry.context.Scope;
 import jakarta.inject.Singleton;
 
 /**
- * Tracing invocation instrument for OpenTelemetry.
+ * Tracing invocation instrumenter for OpenTelemetry.
  *
  * @author Nemanja Mikic
  */
@@ -35,9 +35,6 @@ import jakarta.inject.Singleton;
 @Internal
 public final class OpenTelemetryInvocationInstrumenter implements ReactiveInvocationInstrumenterFactory {
 
-    OpenTelemetryInvocationInstrumenter() {
-    }
-
     @Override
     public InvocationInstrumenter newReactiveInvocationInstrumenter() {
         return newTracingInvocationInstrumenter();
@@ -45,12 +42,13 @@ public final class OpenTelemetryInvocationInstrumenter implements ReactiveInvoca
 
     public InvocationInstrumenter newTracingInvocationInstrumenter() {
         final Context activeContext = ContextStorage.get().current();
-        if (activeContext != null) {
-            return () -> {
-                Scope activeScope = activeContext.makeCurrent();
-                return cleanup -> activeScope.close();
-            };
+        if (activeContext == null) {
+            return null;
         }
-        return null;
+
+        return () -> {
+            Scope activeScope = activeContext.makeCurrent();
+            return cleanup -> activeScope.close();
+        };
     }
 }

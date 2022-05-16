@@ -36,13 +36,13 @@ import java.util.List;
  *
  * @author Nemanja Mikic
  */
+@SuppressWarnings({"rawtypes", "unused"})
 public final class MicronautHttpClientTelemetryBuilder {
 
     private static final String INSTRUMENTATION_NAME = "io.micronaut.http.client";
 
     private final OpenTelemetry openTelemetry;
-    private final HttpClientAttributesExtractorBuilder<HttpRequest, HttpResponse>
-        httpAttributesExtractorBuilder =
+    private final HttpClientAttributesExtractorBuilder<HttpRequest, HttpResponse> httpAttributesExtractorBuilder =
         HttpClientAttributesExtractor.builder(MicronautHttpClientAttributesGetter.INSTANCE);
 
     public MicronautHttpClientTelemetryBuilder(OpenTelemetry openTelemetry) {
@@ -85,5 +85,4 @@ public final class MicronautHttpClientTelemetryBuilder {
             .addRequestMetrics(HttpClientMetrics.get())
             .newClientInstrumenter(HttpRequestSetter.INSTANCE);
     }
-
 }

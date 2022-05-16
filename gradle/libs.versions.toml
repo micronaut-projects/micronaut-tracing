@@ -4,40 +4,40 @@ brave-opentracing = '1.0.0'
 jaeger = '1.8.0'
 kotlin = '1.6.0'
 kotlin-coroutines = '1.6.1'
-opentracing = '0.33.0'
-zipkin-reporter = '2.16.3'
+managed-grpc = '1.45.0'
+managed-protobuf = '3.19.4'
 opentelemetry = '1.13.0'
 opentelemetry-alpha = '1.13.0-alpha'
 opentelemetry-instrumentation = '1.13.1-alpha'
+opentracing = '0.33.0'
 opentracing-grpc = '0.2.3'
-managed-grpc = '1.45.0'
-managed-protobuf = '3.19.4'
+zipkin-reporter = '2.16.3'
 
 [libraries]
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'brave-opentracing' }
+grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'managed-grpc' }
+grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'managed-grpc' }
 jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'jaeger' }
 junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
 kotlinx-coroutines-core = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-core', version.ref = 'kotlin-coroutines' }
 kotlinx-coroutines-reactor = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor', version.ref = 'kotlin-coroutines' }
-opentracing = { module = 'io.opentracing:opentracing-api', version.ref = 'opentracing' }
-opentracing-util = { module = 'io.opentracing:opentracing-util', version.ref = 'opentracing' }
-zipkin-brave-instrumentation = { module = 'io.zipkin.brave:brave-instrumentation-http', version.ref = 'brave-instrumentation' }
-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter', version.ref = 'zipkin-reporter' }
+managed-protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'managed-protobuf' }
+managed-protobuf-java-util = { module = 'com.google.protobuf:protobuf-java-util', version.ref = 'managed-protobuf' }
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api', version.ref = 'opentelemetry' }
-opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk', version.ref = 'opentelemetry' }
-opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing', version.ref = 'opentelemetry' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure', version.ref = 'opentelemetry-alpha' }
 opentelemetry-extension-annotations = { module = 'io.opentelemetry:opentelemetry-extension-annotations', version.ref = 'opentelemetry' }
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api', version.ref = 'opentelemetry-instrumentation' }
-opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6', version.ref = 'opentelemetry-instrumentation' }
 opentelemetry-instrumentation-api-semconv = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv', version.ref = 'opentelemetry-instrumentation' }
+opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6', version.ref = 'opentelemetry-instrumentation' }
+opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk', version.ref = 'opentelemetry' }
+opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing', version.ref = 'opentelemetry' }
+opentracing = { module = 'io.opentracing:opentracing-api', version.ref = 'opentracing' }
 opentracing-grpc = { module = 'io.opentracing.contrib:opentracing-grpc', version.ref = 'opentracing-grpc' }
-grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'managed-grpc' }
-grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'managed-grpc' }
-protoc-grpc = { module = 'io.grpc:protoc-gen-grpc-java', version.ref = 'managed-grpc' }
+opentracing-util = { module = 'io.opentracing:opentracing-util', version.ref = 'opentracing' }
 protoc = { module = 'com.google.protobuf:protoc', version.ref = 'managed-protobuf' }
-managed-protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'managed-protobuf' }
-managed-protobuf-java-util = { module = 'com.google.protobuf:protobuf-java-util', version.ref = 'managed-protobuf' }
+protoc-grpc = { module = 'io.grpc:protoc-gen-grpc-java', version.ref = 'managed-grpc' }
+zipkin-brave-instrumentation = { module = 'io.zipkin.brave:brave-instrumentation-http', version.ref = 'brave-instrumentation' }
+zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter', version.ref = 'zipkin-reporter' }
 
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }

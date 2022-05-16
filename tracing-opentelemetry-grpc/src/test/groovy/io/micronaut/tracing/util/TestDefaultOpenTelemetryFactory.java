@@ -27,7 +27,7 @@ import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import jakarta.inject.Singleton;
 
 /**
- * Registers an OpenTelemetry bean.
+ * Registers an OpenTelemetry bean for test.
  *
  * @author Nemanja Mikic
  * @since 1.0

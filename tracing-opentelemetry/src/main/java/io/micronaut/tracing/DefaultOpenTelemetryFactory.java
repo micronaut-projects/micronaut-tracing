@@ -31,9 +31,7 @@ import jakarta.inject.Singleton;
 public class DefaultOpenTelemetryFactory {
 
     /**
-     * The OpenTelemetry bean with default values.
-     *
-     * @return the OpenTelemetry
+     * @return the OpenTelemetry bean with default values
      */
     @Singleton
     @Primary

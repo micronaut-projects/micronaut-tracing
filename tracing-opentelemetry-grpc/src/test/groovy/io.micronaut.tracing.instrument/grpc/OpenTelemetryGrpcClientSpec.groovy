@@ -1,10 +1,6 @@
 package io.micronaut.tracing.instrument.grpc
 
 import io.grpc.Channel
-import io.grpc.Metadata
-import io.grpc.ServerCall
-import io.grpc.ServerCallHandler
-import io.grpc.ServerInterceptor
 import io.grpc.examples.helloworld.GreeterGrpc
 import io.grpc.examples.helloworld.HelloReply
 import io.grpc.examples.helloworld.HelloRequest
@@ -18,6 +14,9 @@ import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import spock.lang.Specification
 
+import static io.opentelemetry.api.trace.SpanKind.CLIENT
+import static io.opentelemetry.api.trace.SpanKind.SERVER
+
 @MicronautTest
 class OpenTelemetryGrpcClientSpec extends Specification {
 
@@ -27,16 +26,16 @@ class OpenTelemetryGrpcClientSpec extends Specification {
     @Inject
     InMemorySpanExporter exporter
 
-    void "test opentelemetry grpc"() {
+    void "test opentelemetry gRPC"() {
         expect:
         testBean.sayHello("Fred") == "Hello Fred"
-        exporter.getFinishedSpanItems().size() == 2
-        exporter.getFinishedSpanItems().kind.contains(io.opentelemetry.api.trace.SpanKind.SERVER)
-        exporter.getFinishedSpanItems().kind.contains(io.opentelemetry.api.trace.SpanKind.CLIENT)
+        exporter.finishedSpanItems.size() == 2
+        exporter.finishedSpanItems.kind.contains(SERVER)
+        exporter.finishedSpanItems.kind.contains(CLIENT)
+
         cleanup:
         exporter.reset()
     }
-
 
     @Factory
     static class Clients {
@@ -49,6 +48,7 @@ class OpenTelemetryGrpcClientSpec extends Specification {
 
     @Singleton
     static class TestBean {
+
         @Inject
         GreeterGrpc.GreeterBlockingStub blockingStub
 
@@ -63,7 +63,7 @@ class OpenTelemetryGrpcClientSpec extends Specification {
     static class GreeterImpl extends GreeterGrpc.GreeterImplBase {
         @Override
         void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
-            HelloReply reply = HelloReply.newBuilder().setMessage("Hello " + request.getName()).build();
+            HelloReply reply = HelloReply.newBuilder().setMessage("Hello $request.name").build()
             responseObserver.onNext(reply)
             responseObserver.onCompleted()
         }

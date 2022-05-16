@@ -19,6 +19,7 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.opentelemetry.context.propagation.TextMapGetter;
 
+@SuppressWarnings("rawtypes")
 enum HttpRequestGetter implements TextMapGetter<HttpRequest> {
     INSTANCE;
 

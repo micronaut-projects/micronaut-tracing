@@ -1,9 +1,14 @@
 package io.micronaut.tracing.instrument.http
 
+import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.http.HttpRequest
-import io.micronaut.http.annotation.*
+import io.micronaut.http.annotation.Body
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Header
+import io.micronaut.http.annotation.Post
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.reactor.http.client.ReactorHttpClient
 import io.micronaut.runtime.server.EmbeddedServer
@@ -15,8 +20,6 @@ import io.opentelemetry.extension.annotations.SpanAttribute
 import io.opentelemetry.extension.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.function.Tuple2
@@ -27,9 +30,8 @@ import spock.lang.Specification
 
 import static io.micronaut.scheduling.TaskExecutors.IO
 
+@Slf4j("LOG")
 class OpenTelemetryHttpClientSpec extends Specification {
-
-    private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetryHttpClientSpec)
 
     @Shared
     @AutoCleanup
@@ -42,10 +44,10 @@ class OpenTelemetryHttpClientSpec extends Specification {
     ReactorHttpClient reactorHttpClient = ReactorHttpClient.create(embeddedServer.URL)
 
     void 'test map WithSpan annotation'() {
-        def count = 5
+        int count = 5
         // 1x Server POST 2x Server GET 2x Client GET, 2x Method call with NewSpan  = 4
-        def spanNumbers = 7
-        def testExporter = embeddedServer.getApplicationContext().getBean(InMemorySpanExporter.class)
+        int spanNumbers = 7
+        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
 
         expect:
         List<Tuple2> result = Flux.range(1, count)
@@ -60,20 +62,20 @@ class OpenTelemetryHttpClientSpec extends Specification {
                 }
                 .collectList()
                 .block()
-        for (Tuple2 t : result)
+        for (Tuple2 t : result) {
             assert t.getT1() == t.getT2()
+        }
 
-        testExporter.getFinishedSpanItems().size() == count * spanNumbers
+        testExporter.finishedSpanItems.size() == count * spanNumbers
 
-        testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-attribute"))
-        !testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag-no-withspan"))
-        testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag-with-withspan"))
+        testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-attribute"))
+        !testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-no-withspan"))
+        testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-with-withspan"))
         // test if newspan has appended name
-        testExporter.getFinishedSpanItems().name.any(x->x.contains("#test-withspan-mapping"))
+        testExporter.finishedSpanItems.name.any(x -> x.contains("#test-withspan-mapping"))
 
         cleanup:
         testExporter.reset()
-
     }
 
     @Introspected
@@ -85,13 +87,13 @@ class OpenTelemetryHttpClientSpec extends Specification {
 
         @Inject
         @Client("/")
-        private ReactorHttpClient reactorHttpClient
+        ReactorHttpClient reactorHttpClient
 
         @ExecuteOn(IO)
         @Post("/enter")
         @NewSpan("enter")
         Mono<String> enter(@Header("X-TrackingId") String tracingId, @Body SomeBody body) {
-            LOG.info("enter")
+            LOG.debug("enter")
             return Mono.from(
                     reactorHttpClient.retrieve(HttpRequest
                             .GET("/annotations/test")
@@ -102,8 +104,9 @@ class OpenTelemetryHttpClientSpec extends Specification {
         @ExecuteOn(IO)
         @Get("/test")
         @ContinueSpan
-        Mono<String> test(@SpanAttribute("tracing-annotation-span-attribute") @Header("X-TrackingId") String tracingId) {
-            LOG.info("test")
+        Mono<String> test(@SpanAttribute("tracing-annotation-span-attribute")
+                          @Header("X-TrackingId") String tracingId) {
+            LOG.debug("test")
             return Mono.from(
                     reactorHttpClient.retrieve(HttpRequest
                             .GET("/annotations/test2")
@@ -113,16 +116,15 @@ class OpenTelemetryHttpClientSpec extends Specification {
 
         @ExecuteOn(IO)
         @Get("/test2")
-        Mono<String> test2(@SpanTag("tracing-annotation-span-tag-no-withspan") @Header("X-TrackingId") String tracingId) {
-            LOG.info("test2")
+        Mono<String> test2(@SpanTag("tracing-annotation-span-tag-no-withspan")
+                           @Header("X-TrackingId") String tracingId) {
+            LOG.debug("test2")
             return methodWithSpan(tracingId)
         }
 
         @WithSpan("test-withspan-mapping")
-        Mono<String> methodWithSpan(@SpanTag("tracing-annotation-span-tag-with-withspan") String tracingId){
+        Mono<String> methodWithSpan(@SpanTag("tracing-annotation-span-tag-with-withspan") String tracingId) {
             return Mono.just(tracingId)
         }
-
     }
-
 }

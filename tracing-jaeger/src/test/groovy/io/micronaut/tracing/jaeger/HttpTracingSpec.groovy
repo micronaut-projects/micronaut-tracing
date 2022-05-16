@@ -661,7 +661,7 @@ class HttpTracingSpec extends Specification {
 
         when:
         def exchange = client.exchange('/traced/need-retry', String)
-        HttpResponse<String> response = Mono.from(exchange).retry(2).block();
+        HttpResponse<String> response = Mono.from(exchange).retry(2).block()
 
         then:
         response
@@ -689,7 +689,7 @@ class HttpTracingSpec extends Specification {
         @Inject
         TracedClient tracedClient
 
-        boolean failed;
+        boolean failed
 
         @Get('/hello/{name}')
         String hello(String name) {

@@ -17,11 +17,10 @@ package io.micronaut.tracing;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
 
-
 import static io.micronaut.tracing.AwsOpenTelemetryConfiguration.PREFIX;
 
 /**
- * Configuration for aws tracing.
+ * Configuration for AWS tracing.
  *
  * @author Nemanja Mikic
  */
@@ -36,17 +35,16 @@ public class AwsOpenTelemetryConfiguration {
     private String otlpGrpcEndpoint;
 
     /**
-     * @return key otlpGrpc endpoint url.
+     * @return key OTLP gRPC endpoint URL
      */
     public String getOtlpGrpcEndpoint() {
         return otlpGrpcEndpoint;
     }
 
     /**
-     * @param otlpGrpcEndpoint otlp Grpc url.
+     * @param otlpGrpcEndpoint OTLP gRPC URL
      */
     public void setOtlpGrpcEndpoint(String otlpGrpcEndpoint) {
         this.otlpGrpcEndpoint = otlpGrpcEndpoint;
     }
-
 }

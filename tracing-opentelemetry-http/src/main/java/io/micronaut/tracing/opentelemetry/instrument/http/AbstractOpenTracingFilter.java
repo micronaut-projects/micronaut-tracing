@@ -39,7 +39,7 @@ public abstract class AbstractOpenTracingFilter implements HttpFilter {
      * Configure tracer in the filter for span creation and propagation across
      * arbitrary transports.
      *
-     * @param pathExclusionTest the predicate for excluding URI paths from tracing
+     * @param pathExclusionTest for excluding URI paths from tracing
      */
     public AbstractOpenTracingFilter(@Nullable Predicate<String> pathExclusionTest) {
         this.pathExclusionTest = pathExclusionTest;
@@ -66,7 +66,7 @@ public abstract class AbstractOpenTracingFilter implements HttpFilter {
     /**
      * Tests if the defined path should be excluded from tracing.
      *
-     * @param path the path to test
+     * @param path the path
      * @return {@code true} if the path should be excluded
      */
     protected boolean shouldExclude(@Nullable String path) {

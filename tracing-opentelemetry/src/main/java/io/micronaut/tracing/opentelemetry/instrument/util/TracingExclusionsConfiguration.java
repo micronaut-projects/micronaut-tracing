@@ -45,8 +45,7 @@ public class TracingExclusionsConfiguration {
     /**
      * Sets the URI patterns to be excluded from tracing.
      *
-     * @param exclusions regular expression patterns to be excluded from
-     *                   tracing if the request URI matches
+     * @param exclusions regex patterns to be excluded if the request URI matches
      *
      * @see Pattern#compile(String)
      */

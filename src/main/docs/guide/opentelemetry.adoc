@@ -1,0 +1,57 @@
+The Micronaut Open Telemetry module uses https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md[Open Telemetry Autoconfigure SDK] to configure Open Telemetry for tracing. For some functionalities you have to add additional dependencies. The Default values that are defined inside the Micronaut which values might be different from the default ones inside https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md[Open Telemetry Autoconfigure SDK] module are:
+
+- otel.traces.exporter = none
+- otel.metrics.exporter = none
+- otel.logs.exporte = none
+- otel.service.name = value of the application.name
+
+== OpenTelemetry annotations
+The pkg:tracing.opentelemetry-annotation[] package contains transformers and mappers that enables usage of Open Telemetry annotations.
+
+To enable Open telemetry annotations you have to add next annotation processor in your dependency block:
+dependency:micronaut-management[scope="annotationProcessor", version="{version}", groupId="io.micronaut.tracing"]
+
+The Open Tracing annotations that are defined inside the The pkg:tracing.annotation[] package are also available for usage inside Open Telemetry.
+
+== Open Telemetry Exporters
+
+In your project you can specify exporters that you want to use. The default one is set to "none" value which means by default there are no exporter registered. The available values are defined on the https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md[Open Telemetry Autoconfigure SDK documentation].
+
+For each exporter that you want to use you have to specify it inside configuration, and you have to add required dependency:
+
+- Otlp exporter:
+dependency:opentelemetry-exporter-otlp[scope="implementation", groupId="io.opentelemetry"]
+- Zipkin exporter:
+dependency:opentelemetry-exporter-zipkin[scope="implementation", groupId="io.opentelemetry"]
+- logging exporter:
+dependency:opentelemetry-exporter-logging[scope="implementation", groupId="io.opentelemetry"]
+- Jaeger exporter:
+dependency:opentelemetry-exporter-jaeger[scope="implementation", groupId="io.opentelemetry"]
+
+Example configuration for the Zipkin exporter:
+
+.application.yml
+[source,yaml]
+----
+otel:
+  traces:
+    exporter: zipkin
+----
+
+== Open Telemetry Propagators
+In your project you can specify propagators that you want to use. The default one is set to "tracecontext, baggage". The available values are defined on the https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md[Open Telemetry Autoconfigure SDK documentation].
+
+To use https://docs.aws.amazon.com/xray/latest/devguide/xray-concepts.html#xray-concepts-tracingheader[AWS X-Ray] propagator inside your application you have to add next dependency in your project:
+
+dependency:opentelemetry-extension-aws[scope="implementation", groupId="io.opentelemetry"]
+
+And the "xray" has to be added inside configuration file.
+
+.application.yml
+[source,yaml]
+----
+otel:
+  traces:
+    exporter: otlp
+  propagators: tracecontext, baggage, xray
+----

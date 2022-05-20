@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing.processing;
+package io.micronaut.tracing.opentelemetry.processing;
 
 import io.micronaut.aop.InterceptorBinding;
 import io.micronaut.core.annotation.AnnotationValue;

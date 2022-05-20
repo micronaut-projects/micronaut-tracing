@@ -1,22 +1,22 @@
 package io.micronaut.tracing.instrument.http
 
 import io.micronaut.context.ApplicationContext
-import io.micronaut.tracing.opentelemetry.instrument.util.TracingExclusionsConfiguration
+import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.function.Predicate
 
-class TracingExclusionsConfigurationSpec extends Specification {
+class OpenTelemetryExclusionsConfigurationSpec extends Specification {
 
     @AutoCleanup
     ApplicationContext context = ApplicationContext.run(
-            'tracing.exclusions[0]': '.*pattern.*',
-            'tracing.exclusions[1]': '/literal',
+            'otel.exclusions[0]': '.*pattern.*',
+            'otel.exclusions[1]': '/literal',
     )
 
-    TracingExclusionsConfiguration configuration = context.getBean(TracingExclusionsConfiguration)
+    OpenTelemetryExclusionsConfiguration configuration = context.getBean(OpenTelemetryExclusionsConfiguration)
 
     Predicate<String> pathPredicate = configuration.exclusionTest()
 

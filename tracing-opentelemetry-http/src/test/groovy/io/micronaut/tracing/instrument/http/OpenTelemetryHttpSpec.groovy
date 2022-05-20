@@ -11,6 +11,8 @@ import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
 import io.micronaut.tracing.annotation.SpanTag
+import io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTelemetryHttpClientConfig
+import io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTelemetryHttpServerConfig
 import io.opentelemetry.extension.annotations.SpanAttribute
 import io.opentelemetry.extension.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
@@ -22,22 +24,26 @@ import reactor.core.publisher.Mono
 import reactor.util.function.Tuple2
 import reactor.util.function.Tuples
 import spock.lang.AutoCleanup
-import spock.lang.Shared
 import spock.lang.Specification
 
 import static io.micronaut.scheduling.TaskExecutors.IO
 
-class OpenTelemetryHttpClientSpec extends Specification {
+class OpenTelemetryHttpSpec extends Specification {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetryHttpClientSpec)
+    private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetryHttpSpec)
 
-    @Shared
+    String TRACING_ID = "X-TrackingId"
+    String TRACING_ID_IN_SPAN = "http.request.header.x_trackingid"
+
     @AutoCleanup
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
+            'otel.http.client.request-headers': [TRACING_ID],
+            'otel.http.client.response-headers': [TRACING_ID],
+            'otel.http.server.request-headers': [TRACING_ID],
+            'otel.http.server.response-headers': [TRACING_ID],
             'micronaut.application.name': 'test-app'
     ])
 
-    @Shared
     @AutoCleanup
     ReactorHttpClient reactorHttpClient = ReactorHttpClient.create(embeddedServer.URL)
 
@@ -45,7 +51,9 @@ class OpenTelemetryHttpClientSpec extends Specification {
         def count = 5
         // 1x Server POST 2x Server GET 2x Client GET, 2x Method call with NewSpan  = 4
         def spanNumbers = 7
-        def testExporter = embeddedServer.getApplicationContext().getBean(InMemorySpanExporter.class)
+        def spanNumbersOfRequests = 5
+        def context = embeddedServer.getApplicationContext()
+        def testExporter = context.getBean(InMemorySpanExporter.class)
 
         expect:
         List<Tuple2> result = Flux.range(1, count)
@@ -53,7 +61,7 @@ class OpenTelemetryHttpClientSpec extends Specification {
                     String tracingId = UUID.randomUUID()
                     HttpRequest<Object> request = HttpRequest
                             .POST("/annotations/enter", new SomeBody())
-                            .header("X-TrackingId", tracingId)
+                            .header(TRACING_ID, tracingId)
                     return Mono.from(reactorHttpClient.retrieve(request)).map(response -> {
                         Tuples.of(tracingId, response)
                     })
@@ -70,6 +78,8 @@ class OpenTelemetryHttpClientSpec extends Specification {
         testExporter.getFinishedSpanItems().attributes.any(x->x.asMap().keySet().any(y-> y.key == "tracing-annotation-span-tag-with-withspan"))
         // test if newspan has appended name
         testExporter.getFinishedSpanItems().name.any(x->x.contains("#test-withspan-mapping"))
+
+        testExporter.getFinishedSpanItems().attributes.stream().filter(x->x.asMap().keySet().any(y-> y.key == TRACING_ID_IN_SPAN)).collect().size() == spanNumbersOfRequests * count
 
         cleanup:
         testExporter.reset()

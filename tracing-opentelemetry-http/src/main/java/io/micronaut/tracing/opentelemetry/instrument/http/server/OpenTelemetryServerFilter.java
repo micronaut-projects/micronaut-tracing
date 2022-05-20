@@ -24,8 +24,8 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
-import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTracingFilter;
-import io.micronaut.tracing.opentelemetry.instrument.util.TracingExclusionsConfiguration;
+import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter;
+import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
@@ -46,7 +46,7 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTele
  */
 @Filter(SERVER_PATH)
 @Requires(beans = Tracer.class)
-public class OpenTelemetryServerFilter extends AbstractOpenTracingFilter implements HttpServerFilter {
+public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter implements HttpServerFilter {
 
     private static final String APPLIED = OpenTelemetryServerFilter.class.getName() + "-applied";
     private static final String CONTINUE = OpenTelemetryServerFilter.class.getName() + "-continue";
@@ -59,19 +59,27 @@ public class OpenTelemetryServerFilter extends AbstractOpenTracingFilter impleme
      * @param openTelemetry the openTelemetry
      */
     public OpenTelemetryServerFilter(OpenTelemetry openTelemetry) {
-        this(openTelemetry, null);
+        this(openTelemetry, null, null);
     }
     /**
      * Creates an HTTP server instrumentation filter.
      *
      * @param openTelemetry    the openTelemetry
-     * @param exclusionsConfig The {@link TracingExclusionsConfiguration}
+     * @param exclusionsConfig The {@link OpenTelemetryExclusionsConfiguration}
      */
     @Inject
     public OpenTelemetryServerFilter(OpenTelemetry openTelemetry,
-                                     @Nullable TracingExclusionsConfiguration exclusionsConfig) {
+                                     @Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig, @Nullable OpenTelemetryHttpServerConfig openTelemetryHttpServerConfig) {
         super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
-        instrumenter = new MicronautHttpServerTelemetryBuilder(openTelemetry).build();
+
+        MicronautHttpServerTelemetryBuilder micronautHtServerTelemetryBuilder = new MicronautHttpServerTelemetryBuilder(openTelemetry);
+
+        if(openTelemetryHttpServerConfig != null) {
+            micronautHtServerTelemetryBuilder.setCapturedRequestHeaders(openTelemetryHttpServerConfig.getRequestHeaders());
+            micronautHtServerTelemetryBuilder.setCapturedResponseHeaders(openTelemetryHttpServerConfig.getResponseHeaders());
+        }
+
+        instrumenter = micronautHtServerTelemetryBuilder.build();
     }
 
     @SuppressWarnings("unchecked")

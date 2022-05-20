@@ -23,8 +23,8 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
-import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTracingFilter;
-import io.micronaut.tracing.opentelemetry.instrument.util.TracingExclusionsConfiguration;
+import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter;
+import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
@@ -45,7 +45,7 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTele
  */
 @Filter(CLIENT_PATH)
 @Requires(beans = Tracer.class)
-public class OpenTelemetryClientFilter extends AbstractOpenTracingFilter implements HttpClientFilter {
+public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter implements HttpClientFilter {
 
     private final Instrumenter<MutableHttpRequest, HttpResponse> instrumenter;
 
@@ -53,22 +53,29 @@ public class OpenTelemetryClientFilter extends AbstractOpenTracingFilter impleme
      * @param openTelemetry the openTelemetry
      */
     public OpenTelemetryClientFilter(OpenTelemetry openTelemetry) {
-        super(null);
-        instrumenter = new MicronautHttpClientTelemetryBuilder(openTelemetry).build();
+        this(openTelemetry, null, null);
     }
 
     /**
      * Initialize the open tracing client filter with tracer and exclusion configuration.
      *
      * @param openTelemetry    the openTelemetry
-     * @param exclusionsConfig The {@link TracingExclusionsConfiguration}
+     * @param exclusionsConfig The {@link OpenTelemetryExclusionsConfiguration}
+     * @param openTelemetryHttpClientConfig The {@link OpenTelemetryHttpClientConfig}
      */
     @Inject
     public OpenTelemetryClientFilter(OpenTelemetry openTelemetry,
-                                     @Nullable TracingExclusionsConfiguration exclusionsConfig) {
+                                     @Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig,
+                                     @Nullable OpenTelemetryHttpClientConfig openTelemetryHttpClientConfig) {
         super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
-        instrumenter = new MicronautHttpClientTelemetryBuilder(openTelemetry).build();
+        MicronautHttpClientTelemetryBuilder micronautHttpClientTelemetryBuilder = new MicronautHttpClientTelemetryBuilder(openTelemetry);
 
+        if(openTelemetryHttpClientConfig != null) {
+            micronautHttpClientTelemetryBuilder.setCapturedRequestHeaders(openTelemetryHttpClientConfig.getRequestHeaders());
+            micronautHttpClientTelemetryBuilder.setCapturedResponseHeaders(openTelemetryHttpClientConfig.getResponseHeaders());
+        }
+
+        instrumenter = micronautHttpClientTelemetryBuilder.build();
     }
 
     @SuppressWarnings("unchecked")

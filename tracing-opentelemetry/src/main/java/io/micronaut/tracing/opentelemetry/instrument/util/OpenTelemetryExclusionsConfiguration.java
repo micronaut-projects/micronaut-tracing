@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 /**
  * @since 4.0
  */
-@ConfigurationProperties(TracingExclusionsConfiguration.PREFIX)
-public class TracingExclusionsConfiguration {
+@ConfigurationProperties(OpenTelemetryExclusionsConfiguration.PREFIX)
+public class OpenTelemetryExclusionsConfiguration {
 
-    public static final String PREFIX = "tracing";
+    public static final String PREFIX = "otel";
 
     private List<String> exclusions;
 

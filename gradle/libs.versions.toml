@@ -6,9 +6,9 @@ kotlin = '1.6.0'
 kotlin-coroutines = '1.6.1'
 opentracing = '0.33.0'
 zipkin-reporter = '2.16.3'
-opentelemetry = '1.13.0'
-opentelemetry-alpha = '1.13.0-alpha'
-opentelemetry-instrumentation = '1.13.1-alpha'
+opentelemetry = '1.14.0'
+opentelemetry-alpha = '1.14.0-alpha'
+opentelemetry-instrumentation-alpha = '1.14.0-alpha'
 opentracing-grpc = '0.2.3'
 managed-grpc = '1.45.0'
 managed-protobuf = '3.19.4'
@@ -23,14 +23,17 @@ opentracing = { module = 'io.opentracing:opentracing-api', version.ref = 'opentr
 opentracing-util = { module = 'io.opentracing:opentracing-util', version.ref = 'opentracing' }
 zipkin-brave-instrumentation = { module = 'io.zipkin.brave:brave-instrumentation-http', version.ref = 'brave-instrumentation' }
 zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter', version.ref = 'zipkin-reporter' }
-opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api', version.ref = 'opentelemetry' }
-opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk', version.ref = 'opentelemetry' }
-opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing', version.ref = 'opentelemetry' }
-opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure', version.ref = 'opentelemetry-alpha' }
-opentelemetry-extension-annotations = { module = 'io.opentelemetry:opentelemetry-extension-annotations', version.ref = 'opentelemetry' }
-opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api', version.ref = 'opentelemetry-instrumentation' }
-opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6', version.ref = 'opentelemetry-instrumentation' }
-opentelemetry-instrumentation-api-semconv = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv', version.ref = 'opentelemetry-instrumentation' }
+opentelemetry-bom = { module = 'io.opentelemetry:opentelemetry-bom', version.ref = 'opentelemetry' }
+opentelemetry-bom-alpha = { module = 'io.opentelemetry:opentelemetry-bom-alpha', version.ref = 'opentelemetry-alpha' }
+opentelemetry-instrumentation-bom-alpha = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha', version.ref = 'opentelemetry-instrumentation-alpha' }
+opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api' }
+opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk' }
+opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing' }
+opentelemetry-extension-annotations = { module = 'io.opentelemetry:opentelemetry-extension-annotations' }
+opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure' }
+opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api' }
+opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6'}
+opentelemetry-instrumentation-api-semconv = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv' }
 opentracing-grpc = { module = 'io.opentracing.contrib:opentracing-grpc', version.ref = 'opentracing-grpc' }
 grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'managed-grpc' }
 grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'managed-grpc' }

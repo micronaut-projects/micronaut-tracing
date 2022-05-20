@@ -4,8 +4,12 @@ plugins {
 }
 
 dependencies {
+    api platform (libs.opentelemetry.bom)
+    api platform (libs.opentelemetry.bom.alpha)
+    api platform (libs.opentelemetry.instrumentation.bom.alpha)
     api mn.micronaut.runtime
     api projects.tracingAnnotation
+    api projects.tracingOpentelemetryAnnotation
     api libs.opentelemetry.api
     api libs.opentelemetry.extension.annotations
     api libs.opentelemetry.instrumentation.api
@@ -14,6 +18,8 @@ dependencies {
 
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor
+
+    testAnnotationProcessor projects.tracingOpentelemetryAnnotation
 
     testImplementation mn.reactor
     testImplementation mn.micronaut.reactor.http.client

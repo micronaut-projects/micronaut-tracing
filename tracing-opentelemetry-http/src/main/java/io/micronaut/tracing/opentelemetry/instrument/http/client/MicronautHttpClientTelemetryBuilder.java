@@ -82,7 +82,7 @@ public final class MicronautHttpClientTelemetryBuilder {
             .addAttributesExtractor(httpAttributesExtractorBuilder.build())
             .addAttributesExtractor(NetClientAttributesExtractor.create(netAttributesGetter))
             .addAttributesExtractor(PeerServiceAttributesExtractor.create(netAttributesGetter))
-            .addRequestMetrics(HttpClientMetrics.get())
+            .addOperationMetrics(HttpClientMetrics.get())
             .newClientInstrumenter(HttpRequestSetter.INSTANCE);
     }
 

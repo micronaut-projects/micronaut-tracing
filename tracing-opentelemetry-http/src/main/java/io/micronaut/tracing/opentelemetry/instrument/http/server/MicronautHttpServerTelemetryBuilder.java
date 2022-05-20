@@ -82,7 +82,7 @@ public final class MicronautHttpServerTelemetryBuilder {
             .addAttributesExtractor(httpAttributesExtractorBuilder.build())
             .addAttributesExtractor(
                 NetServerAttributesExtractor.create(new MicronautHttpNetServerAttributesGetter()))
-            .addRequestMetrics(HttpServerMetrics.get())
+            .addOperationMetrics(HttpServerMetrics.get())
             .addContextCustomizer(HttpRouteHolder.get())
             .newServerInstrumenter(HttpRequestGetter.INSTANCE);
     }

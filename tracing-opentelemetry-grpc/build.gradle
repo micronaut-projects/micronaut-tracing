@@ -4,6 +4,9 @@ plugins {
 }
 
 dependencies {
+    api platform (libs.opentelemetry.bom)
+    api platform (libs.opentelemetry.bom.alpha)
+    api platform (libs.opentelemetry.instrumentation.bom.alpha)
     api mn.micronaut.runtime
     api mn.micronaut.grpc.client.runtime
     api mn.micronaut.grpc.server.runtime

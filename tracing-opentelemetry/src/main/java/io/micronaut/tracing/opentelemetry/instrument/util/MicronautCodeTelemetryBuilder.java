@@ -43,7 +43,7 @@ public final class MicronautCodeTelemetryBuilder {
         CodeAttributesGetter<ClassAndMethod> classAndMethodAttributesGetter = ClassAndMethod.codeAttributesGetter();
         InstrumenterBuilder<ClassAndMethod, Object> builder = Instrumenter.builder(openTelemetry, INSTRUMENTATION_NAME, CodeSpanNameExtractor.create(classAndMethodAttributesGetter));
 
-        return builder.addRequestMetrics(HttpClientMetrics.get())
+        return builder.addOperationMetrics(HttpClientMetrics.get())
             .newInstrumenter();
     }
 

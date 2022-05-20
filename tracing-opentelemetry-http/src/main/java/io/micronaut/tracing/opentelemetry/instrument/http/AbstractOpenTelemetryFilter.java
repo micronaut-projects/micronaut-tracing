@@ -26,7 +26,7 @@ import java.util.function.Predicate;
  *
  * @author Nemanja Mikic
  */
-public abstract class AbstractOpenTracingFilter implements HttpFilter {
+public abstract class AbstractOpenTelemetryFilter implements HttpFilter {
 
     public static final String CLIENT_PATH = "${tracing.http.client.path:/**}";
     public static final String SERVER_PATH = "${tracing.http.server.path:/**}";
@@ -41,7 +41,7 @@ public abstract class AbstractOpenTracingFilter implements HttpFilter {
      *
      * @param pathExclusionTest the predicate for excluding URI paths from tracing
      */
-    public AbstractOpenTracingFilter(@Nullable Predicate<String> pathExclusionTest) {
+    public AbstractOpenTelemetryFilter(@Nullable Predicate<String> pathExclusionTest) {
         this.pathExclusionTest = pathExclusionTest;
     }
 

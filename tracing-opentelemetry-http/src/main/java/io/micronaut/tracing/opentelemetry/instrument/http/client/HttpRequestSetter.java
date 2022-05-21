@@ -18,6 +18,7 @@ package io.micronaut.tracing.opentelemetry.instrument.http.client;
 import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.context.propagation.TextMapSetter;
 
+@SuppressWarnings("rawtypes")
 enum HttpRequestSetter implements TextMapSetter<MutableHttpRequest> {
     INSTANCE;
 

@@ -54,8 +54,6 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
     private final Instrumenter<HttpRequest, HttpResponse> instrumenter;
 
     /**
-     * Creates an HTTP server instrumentation filter.
-     *
      * @param openTelemetry the openTelemetry
      */
     public OpenTelemetryServerFilter(OpenTelemetry openTelemetry) {
@@ -63,8 +61,6 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
     }
 
     /**
-     * Creates an HTTP server instrumentation filter.
-     *
      * @param openTelemetry    the openTelemetry
      * @param exclusionsConfig The {@link OpenTelemetryExclusionsConfiguration}
      * @param openTelemetryHttpServerConfig The {@link OpenTelemetryHttpServerConfig}
@@ -84,7 +80,6 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
         instrumenter = micronautHtServerTelemetryBuilder.build();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
         boolean applied = request.getAttribute(APPLIED, Boolean.class).orElse(false);

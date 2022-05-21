@@ -35,13 +35,13 @@ import java.util.List;
  *
  * @author Nemanja Mikic
  */
+@SuppressWarnings({"rawtypes", "unused"})
 public final class MicronautHttpServerTelemetryBuilder {
 
     private static final String INSTRUMENTATION_NAME = "io.micronaut.http.server";
 
     private final OpenTelemetry openTelemetry;
-    private final HttpServerAttributesExtractorBuilder<HttpRequest, HttpResponse>
-        httpAttributesExtractorBuilder =
+    private final HttpServerAttributesExtractorBuilder<HttpRequest, HttpResponse> httpAttributesExtractorBuilder =
         HttpServerAttributesExtractor.builder(MicronautHttpServerAttributesGetter.INSTANCE);
 
     public MicronautHttpServerTelemetryBuilder(OpenTelemetry openTelemetry) {
@@ -49,10 +49,10 @@ public final class MicronautHttpServerTelemetryBuilder {
     }
 
     /**
-     * Configures the HTTP request headers that will be captured as span attributes.
+     * Configures the HTTP request headers to be captured as span attributes.
      *
-     * @param requestHeaders A list of HTTP header names.
-     * @return MicronautHttpServerTelemetryBuilder builder
+     * @param requestHeaders HTTP header names.
+     * @return the builder
      */
     public MicronautHttpServerTelemetryBuilder setCapturedRequestHeaders(List<String> requestHeaders) {
         httpAttributesExtractorBuilder.setCapturedRequestHeaders(requestHeaders);
@@ -60,10 +60,10 @@ public final class MicronautHttpServerTelemetryBuilder {
     }
 
     /**
-     * Configures the HTTP response headers that will be captured as span attributes.
+     * Configures the HTTP response headers to be captured as span attributes.
      *
-     * @param responseHeaders A list of HTTP header names.
-     * @return MicronautHttpServerTelemetryBuilder builder
+     * @param responseHeaders HTTP header names.
+     * @return the builder
      */
     public MicronautHttpServerTelemetryBuilder setCapturedResponseHeaders(List<String> responseHeaders) {
         httpAttributesExtractorBuilder.setCapturedResponseHeaders(responseHeaders);
@@ -86,5 +86,4 @@ public final class MicronautHttpServerTelemetryBuilder {
             .addContextCustomizer(HttpRouteHolder.get())
             .newServerInstrumenter(HttpRequestGetter.INSTANCE);
     }
-
 }

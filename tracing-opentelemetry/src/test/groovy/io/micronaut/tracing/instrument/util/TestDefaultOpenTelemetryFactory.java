@@ -37,16 +37,14 @@ import jakarta.inject.Singleton;
 public class TestDefaultOpenTelemetryFactory {
 
     /**
-     * The OpenTelemetry bean with default values.
-     *
-     * @return the OpenTelemetry
+     * @return the OpenTelemetry bean with default values
      */
     @Singleton
     @Primary
-    OpenTelemetry defaultOpenTelemetry(InMemorySpanExporter inMemorySpanExporter) {
+    OpenTelemetry defaultOpenTelemetry(InMemorySpanExporter spanExporter) {
         return OpenTelemetrySdk.builder()
             .setTracerProvider(SdkTracerProvider.builder()
-                .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter))
+                .addSpanProcessor(SimpleSpanProcessor.create(spanExporter))
                 .build()
             ).build();
     }

@@ -47,6 +47,7 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTele
 @Requires(beans = Tracer.class)
 public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter implements HttpClientFilter {
 
+    @SuppressWarnings("rawtypes")
     private final Instrumenter<MutableHttpRequest, HttpResponse> instrumenter;
 
     /**
@@ -78,7 +79,6 @@ public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter imple
         instrumenter = micronautHttpClientTelemetryBuilder.build();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Publisher<? extends HttpResponse<?>> doFilter(MutableHttpRequest<?> request,
                                                          ClientFilterChain chain) {

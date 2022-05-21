@@ -23,6 +23,7 @@ import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import javax.annotation.Nullable;
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<HttpRequest, HttpResponse> {
 
     INSTANCE;
@@ -91,7 +92,7 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
         String requestPath = request.getPath();
         String queryString = request.getUri().getRawQuery();
         if (queryString != null && !queryString.isEmpty()) {
-            return requestPath + "?" + queryString;
+            return requestPath + '?' + queryString;
         }
         return requestPath;
     }

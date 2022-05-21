@@ -44,7 +44,6 @@ import org.reactivestreams.Publisher;
 
 import java.util.concurrent.CompletionStage;
 
-
 /**
  * Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
  * using the Open Tracing API.
@@ -106,10 +105,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                             return publisher;
                         }
                         return interceptedMethod.handleResult(
-                            new TracingPublisher(
-                                publisher, null, classAndMethod,
-                                currentContext
-                            ) {
+                            new TracingPublisher(publisher, null, classAndMethod, currentContext) {
 
                                 @Override
                                 public void doOnSubscribe(@NonNull Context openTelemetryContext) {
@@ -138,7 +134,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
             String operationName = newSpan.stringValue().orElse("");
 
             if (!StringUtils.isEmpty(operationName)) {
-                classAndMethod = ClassAndMethod.create(classAndMethod.declaringClass(), classAndMethod.methodName() + "#" + operationName);
+                classAndMethod = ClassAndMethod.create(classAndMethod.declaringClass(), classAndMethod.methodName() + '#' + operationName);
             }
 
             InterceptedMethod interceptedMethod = InterceptedMethod.of(context);
@@ -149,10 +145,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                         if (publisher instanceof TracingPublisher) {
                             return publisher;
                         }
-                        return interceptedMethod.handleResult(new TracingPublisher(
-                            publisher, instrumenter, classAndMethod,
-                            currentContext
-                        ) {
+                        return interceptedMethod.handleResult(new TracingPublisher(publisher, instrumenter, classAndMethod, currentContext) {
 
                             @Override
                             public void doOnSubscribe(@NonNull Context openTelemetryContext) {
@@ -205,7 +198,8 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
         }
     }
 
-    private void tagArguments(MethodInvocationContext<Object, Object> context, Context openTelemetryContext) {
+    private void tagArguments(MethodInvocationContext<Object, Object> context,
+                              Context openTelemetryContext) {
         Argument<?>[] arguments = context.getArguments();
         Object[] parameterValues = context.getParameterValues();
         for (int i = 0; i < arguments.length; i++) {

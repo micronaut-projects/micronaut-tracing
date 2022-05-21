@@ -42,13 +42,14 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     private final Context parentContext;
 
     /**
-     * Creates a new tracing publisher for the given arguments.
-     * @param publisher     the target publisher
-     * @param instrumenter  the instrumenter
+     * @param publisher      the target publisher
+     * @param instrumenter   the instrumenter
      * @param classAndMethod the operation name that should be started
-     * @param parentContext the parent {@link Context}.
+     * @param parentContext  the parent {@link Context}.
      */
-    public TracingPublisher(Publisher<T> publisher, Instrumenter<ClassAndMethod, Object> instrumenter, @Nullable ClassAndMethod classAndMethod,
+    public TracingPublisher(Publisher<T> publisher,
+                            Instrumenter<ClassAndMethod, Object> instrumenter,
+                            @Nullable ClassAndMethod classAndMethod,
                             Context parentContext) {
         this.publisher = publisher;
         this.instrumenter = instrumenter;
@@ -63,27 +64,27 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
             publisher.subscribe(new Subscriber<T>() {
                 @Override
                 public void onSubscribe(Subscription s) {
-                        doOnSubscribe(parentContext);
-                        actual.onSubscribe(s);
+                    doOnSubscribe(parentContext);
+                    actual.onSubscribe(s);
                 }
 
                 @Override
                 public void onNext(T object) {
-                        doOnNext(object, parentContext);
-                        actual.onNext(object);
-                        doOnFinish(parentContext);
+                    doOnNext(object, parentContext);
+                    actual.onNext(object);
+                    doOnFinish(parentContext);
                 }
 
                 @Override
                 public void onError(Throwable t) {
-                        doOnError(t, parentContext);
-                        actual.onError(t);
+                    doOnError(t, parentContext);
+                    actual.onError(t);
                 }
 
                 @Override
                 public void onComplete() {
-                        actual.onComplete();
-                        doOnFinish(parentContext);
+                    actual.onComplete();
+                    doOnFinish(parentContext);
                 }
             });
             return;
@@ -136,7 +137,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     }
 
     /**
-     * Designed for subclasses to override and implement custom behaviour when an item is emitted.
+     * For subclasses to override and implement custom behaviour when an item is emitted.
      *
      * @param object  The object
      * @param context The context
@@ -146,19 +147,19 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     }
 
     /**
-     * Designed for subclasses to override and implement custom on subscribe behaviour.
+     * For subclasses to override and implement custom on-subscribe behaviour.
      *
-     * @param context The context
+     * @param context the context
      */
     protected void doOnSubscribe(@NonNull Context context) {
         // no-op
     }
 
     /**
-     * Designed for subclasses to override and implement custom on finish behaviour. Fired
+     * For subclasses to override and implement custom on-finish behaviour. Fired
      * prior to calling end on the span.
      *
-     * @param context The context
+     * @param context the context
      */
     @SuppressWarnings("WeakerAccess")
     protected void doOnFinish(@NonNull Context context) {
@@ -166,13 +167,12 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     }
 
     /**
-     * Designed for subclasses to override and implement custom on error behaviour.
+     * For subclasses to override and implement custom on-error behaviour.
      *
-     * @param throwable The error
-     * @param span      The span
+     * @param throwable the error
+     * @param span      the span
      */
     protected void doOnError(@NonNull Throwable throwable, @NonNull Context span) {
         // no-op
     }
-
 }

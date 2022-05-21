@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     annotationProcessor mn.micronaut.inject.java
+    annotationProcessor libs.micronaut.docs.asciidoc.config.props
 
     compileOnly 'com.google.code.findbugs:jsr305' // for "warning: unknown enum constant When.MAYBE"
 
@@ -17,5 +18,12 @@ tasks.withType(Test) {
     testLogging {
         showStandardStreams = true
         exceptionFormat = 'full'
+    }
+}
+
+// TODO temporarily disable binary compatibility checks
+micronautBuild {
+    binaryCompatibility {
+        enabled = false
     }
 }

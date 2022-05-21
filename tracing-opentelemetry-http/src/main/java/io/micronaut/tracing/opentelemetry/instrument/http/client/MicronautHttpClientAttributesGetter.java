@@ -23,6 +23,7 @@ import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import javax.annotation.Nullable;
 import java.util.List;
 
+@SuppressWarnings({"rawtypes", "unused"})
 enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<HttpRequest, HttpResponse> {
 
     INSTANCE;

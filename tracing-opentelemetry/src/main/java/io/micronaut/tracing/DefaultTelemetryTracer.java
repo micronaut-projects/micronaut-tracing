@@ -36,18 +36,17 @@ import static io.micronaut.runtime.ApplicationConfiguration.APPLICATION_NAME;
 @Requires(property = APPLICATION_NAME)
 public class DefaultTelemetryTracer {
 
-    final String applicationName;
+    private final String applicationName;
 
     DefaultTelemetryTracer(@Property(name = APPLICATION_NAME) String applicationName) {
         this.applicationName = applicationName;
     }
 
     /**
-     * Creates a default {@link io.opentelemetry.api.trace.Tracer} if no other <code>Tracer</code> is present.
+     * Creates a default {@link Tracer} if no other <code>Tracer</code> is present.
      * @param openTelemetry the openTelemetry
      * @return no-op <code>Tracer</code>
      */
-
     @Singleton
     @Primary
     @Requires(missingBeans = Tracer.class)

@@ -17,10 +17,12 @@ package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.http.HttpRequest;
 import io.opentelemetry.instrumentation.api.instrumenter.net.InetSocketAddressNetServerAttributesGetter;
-import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 
 import java.net.InetSocketAddress;
 
+import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.NetTransportValues.IP_TCP;
+
+@SuppressWarnings("rawtypes")
 final class MicronautHttpNetServerAttributesGetter extends InetSocketAddressNetServerAttributesGetter<HttpRequest> {
 
     @Override
@@ -30,7 +32,6 @@ final class MicronautHttpNetServerAttributesGetter extends InetSocketAddressNetS
 
     @Override
     public String transport(HttpRequest request) {
-        return SemanticAttributes.NetTransportValues.IP_TCP;
+        return IP_TCP;
     }
-
 }

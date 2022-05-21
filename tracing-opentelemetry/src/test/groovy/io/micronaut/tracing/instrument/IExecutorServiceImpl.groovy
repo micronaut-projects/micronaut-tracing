@@ -42,7 +42,7 @@ class IExecutorServiceImpl extends AbstractExecutorService implements IExecutorS
     }
 
     @Override
-    boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+    boolean awaitTermination(long timeout, TimeUnit unit) {
         false
     }
 

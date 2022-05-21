@@ -23,7 +23,6 @@ import io.opentelemetry.instrumentation.api.instrumenter.code.CodeSpanNameExtrac
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientMetrics;
 import io.opentelemetry.instrumentation.api.util.ClassAndMethod;
 
-
 /**
  * An HTTP client instrumentation builder for Open Telemetry.
  *
@@ -41,10 +40,10 @@ public final class MicronautCodeTelemetryBuilder {
 
     public Instrumenter<ClassAndMethod, Object> build() {
         CodeAttributesGetter<ClassAndMethod> classAndMethodAttributesGetter = ClassAndMethod.codeAttributesGetter();
-        InstrumenterBuilder<ClassAndMethod, Object> builder = Instrumenter.builder(openTelemetry, INSTRUMENTATION_NAME, CodeSpanNameExtractor.create(classAndMethodAttributesGetter));
+        InstrumenterBuilder<ClassAndMethod, Object> builder = Instrumenter.builder(
+            openTelemetry, INSTRUMENTATION_NAME, CodeSpanNameExtractor.create(classAndMethodAttributesGetter));
 
         return builder.addOperationMetrics(HttpClientMetrics.get())
             .newInstrumenter();
     }
-
 }

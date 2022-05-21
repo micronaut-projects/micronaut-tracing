@@ -1,10 +1,9 @@
 package io.micronaut.tracing.instrument.util
 
+import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import io.micronaut.inject.qualifiers.Qualifiers
 import io.micronaut.scheduling.instrument.InvocationInstrumenter
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import spock.lang.AutoCleanup
 import spock.lang.Shared
@@ -14,9 +13,8 @@ import spock.util.concurrent.AsyncConditions
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 
+@Slf4j("LOG")
 class MdcInstrumenterSpec extends Specification {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MdcInstrumenterSpec)
 
     private static final String key = 'foo'
     private static final String value = 'bar'

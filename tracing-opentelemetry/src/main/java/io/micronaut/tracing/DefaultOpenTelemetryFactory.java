@@ -47,7 +47,7 @@ public class DefaultOpenTelemetryFactory {
      * The OpenTelemetry bean with default values.
      * @param applicationName the application name from configuration
      * @param otelProperties the configuration properties for the opentelemetry autoconfigure
-     * @return the OpenTelemetry
+     * @return the OpenTelemetry bean with default values
      */
     @Singleton
     @Primary

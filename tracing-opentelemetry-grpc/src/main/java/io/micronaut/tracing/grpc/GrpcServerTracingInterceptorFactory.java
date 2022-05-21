@@ -26,7 +26,7 @@ import jakarta.inject.Singleton;
 import javax.annotation.Nonnull;
 
 /**
- * Factory that builds the Tracing interceptors.
+ * Builds the server Tracing interceptors.
  *
  * @author Nemanja Mikic
  */
@@ -34,10 +34,8 @@ import javax.annotation.Nonnull;
 public class GrpcServerTracingInterceptorFactory {
 
     /**
-     * The server interceptor.
-     *
-     * @param openTelemetry The openTelemetry
-     * @return The server interceptor
+     * @param openTelemetry openTelemetry
+     * @return the server interceptor
      */
     @Nonnull
     @Singleton
@@ -46,5 +44,4 @@ public class GrpcServerTracingInterceptorFactory {
     protected ServerInterceptor serverTracingInterceptor(OpenTelemetry openTelemetry) {
         return GrpcTelemetry.create(openTelemetry).newServerInterceptor();
     }
-
 }

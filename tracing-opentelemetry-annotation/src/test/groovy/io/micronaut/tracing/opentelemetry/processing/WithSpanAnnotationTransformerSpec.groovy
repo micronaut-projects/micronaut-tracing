@@ -5,7 +5,7 @@ import io.micronaut.aop.Intercepted
 
 class WithSpanAnnotationTransformerSpec extends AbstractTypeElementSpec {
 
-    void 'test map withSpan annotation'() {
+    void 'test WithSpan annotation'() {
         given:
         def context = buildContext('test.Test', '''
 package test;

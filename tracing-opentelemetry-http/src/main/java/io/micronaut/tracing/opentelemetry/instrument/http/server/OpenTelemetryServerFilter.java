@@ -61,11 +61,13 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
     public OpenTelemetryServerFilter(OpenTelemetry openTelemetry) {
         this(openTelemetry, null, null);
     }
+
     /**
      * Creates an HTTP server instrumentation filter.
      *
      * @param openTelemetry    the openTelemetry
      * @param exclusionsConfig The {@link OpenTelemetryExclusionsConfiguration}
+     * @param openTelemetryHttpServerConfig The {@link OpenTelemetryHttpServerConfig}
      */
     @Inject
     public OpenTelemetryServerFilter(OpenTelemetry openTelemetry,
@@ -74,7 +76,7 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
 
         MicronautHttpServerTelemetryBuilder micronautHtServerTelemetryBuilder = new MicronautHttpServerTelemetryBuilder(openTelemetry);
 
-        if(openTelemetryHttpServerConfig != null) {
+        if (openTelemetryHttpServerConfig != null) {
             micronautHtServerTelemetryBuilder.setCapturedRequestHeaders(openTelemetryHttpServerConfig.getRequestHeaders());
             micronautHtServerTelemetryBuilder.setCapturedResponseHeaders(openTelemetryHttpServerConfig.getResponseHeaders());
         }

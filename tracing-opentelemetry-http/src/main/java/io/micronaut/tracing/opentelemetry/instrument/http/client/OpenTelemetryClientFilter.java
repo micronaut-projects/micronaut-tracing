@@ -70,7 +70,7 @@ public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter imple
         super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
         MicronautHttpClientTelemetryBuilder micronautHttpClientTelemetryBuilder = new MicronautHttpClientTelemetryBuilder(openTelemetry);
 
-        if(openTelemetryHttpClientConfig != null) {
+        if (openTelemetryHttpClientConfig != null) {
             micronautHttpClientTelemetryBuilder.setCapturedRequestHeaders(openTelemetryHttpClientConfig.getRequestHeaders());
             micronautHttpClientTelemetryBuilder.setCapturedResponseHeaders(openTelemetryHttpClientConfig.getResponseHeaders());
         }

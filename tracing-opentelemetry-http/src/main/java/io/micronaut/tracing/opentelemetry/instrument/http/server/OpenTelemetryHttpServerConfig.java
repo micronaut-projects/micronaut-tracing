@@ -20,7 +20,11 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Stores http Open Telemetry Http server configuration.
+ *
+ * @author Nemanja Mikic
+ */
 @ConfigurationProperties(value = OpenTelemetryHttpServerConfig.PREFIX)
 public class OpenTelemetryHttpServerConfig {
     public static final String PREFIX = "otel.http.server";
@@ -28,18 +32,30 @@ public class OpenTelemetryHttpServerConfig {
     private List<String> responseHeaders = new ArrayList<>();
     private List<String> requestHeaders = new ArrayList<>();
 
+    /**
+     * @return The List of response headers that will be included inside spans
+     */
     public List<String> getResponseHeaders() {
         return responseHeaders;
     }
 
+    /**
+     * @param responseHeaders The response headers
+     */
     public void setResponseHeaders(List<String> responseHeaders) {
         this.responseHeaders = responseHeaders;
     }
 
+    /**
+     * @return The List of request headers that will be included inside spans
+     */
     public List<String> getRequestHeaders() {
         return requestHeaders;
     }
 
+    /**
+     * @param requestHeaders The request headers
+     */
     public void setRequestHeaders(List<String> requestHeaders) {
         this.requestHeaders = requestHeaders;
     }

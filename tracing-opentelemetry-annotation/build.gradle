@@ -1,3 +1,5 @@
+import org.gradle.internal.jvm.Jvm
+
 plugins {
     id 'io.micronaut.build.internal.tracing-module'
 }
@@ -12,4 +14,7 @@ dependencies {
 
     testImplementation mn.micronaut.inject.java.test
     testImplementation mn.micronaut.inject.groovy.test
+    if (!JavaVersion.current().isJava9Compatible()) {
+        testImplementation files(Jvm.current().toolsJar)
+    }
 }

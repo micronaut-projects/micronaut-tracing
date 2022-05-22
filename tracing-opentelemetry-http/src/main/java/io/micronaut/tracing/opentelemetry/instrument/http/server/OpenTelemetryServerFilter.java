@@ -32,7 +32,6 @@ import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
-import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -54,18 +53,10 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
     private final Instrumenter<HttpRequest, HttpResponse> instrumenter;
 
     /**
-     * @param openTelemetry the openTelemetry
-     */
-    public OpenTelemetryServerFilter(OpenTelemetry openTelemetry) {
-        this(openTelemetry, null, null);
-    }
-
-    /**
      * @param openTelemetry    the openTelemetry
      * @param exclusionsConfig The {@link OpenTelemetryExclusionsConfiguration}
      * @param openTelemetryHttpServerConfig The {@link OpenTelemetryHttpServerConfig}
      */
-    @Inject
     public OpenTelemetryServerFilter(OpenTelemetry openTelemetry,
                                      @Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig, @Nullable OpenTelemetryHttpServerConfig openTelemetryHttpServerConfig) {
         super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());

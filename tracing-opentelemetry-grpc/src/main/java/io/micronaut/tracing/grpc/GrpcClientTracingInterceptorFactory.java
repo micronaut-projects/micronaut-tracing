@@ -16,14 +16,13 @@
 package io.micronaut.tracing.grpc;
 
 import io.grpc.ClientInterceptor;
-import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.NonNull;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.grpc.v1_6.GrpcTelemetry;
 import jakarta.inject.Singleton;
 
-import javax.annotation.Nonnull;
 
 /**
  * Builds the client Tracing interceptors.
@@ -37,9 +36,8 @@ public class GrpcClientTracingInterceptorFactory {
      * @param openTelemetry OpenTelemetry
      * @return the client interceptor
      */
-    @Nonnull
+    @NonNull
     @Singleton
-    @Bean
     @Requires(beans = OpenTelemetry.class)
     protected ClientInterceptor clientTracingInterceptor(OpenTelemetry openTelemetry) {
         return GrpcTelemetry.builder(openTelemetry).build().newClientInterceptor();

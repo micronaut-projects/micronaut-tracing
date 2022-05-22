@@ -19,6 +19,7 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.annotation.Value;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Tracer;
 import jakarta.inject.Singleton;
@@ -38,7 +39,7 @@ public class DefaultTelemetryTracer {
 
     private final String applicationName;
 
-    DefaultTelemetryTracer(@Property(name = APPLICATION_NAME) String applicationName) {
+    DefaultTelemetryTracer(@Value(APPLICATION_NAME) String applicationName) {
         this.applicationName = applicationName;
     }
 

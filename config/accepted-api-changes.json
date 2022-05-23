@@ -1,0 +1,47 @@
+[
+  {
+    "type": "io.micronaut.tracing.annotation.ContinueSpan",
+    "member": "Class io.micronaut.tracing.annotation.ContinueSpan",
+    "reason": "Type has moved to micronaut-tracing-annotation"
+  },
+  {
+    "type": "io.micronaut.tracing.annotation.ContinueSpan",
+    "member": "Implemented interface java.lang.annotation.Annotation",
+    "reason": "Type has moved to micronaut-tracing-annotation"
+  },
+  {
+    "type": "io.micronaut.tracing.annotation.NewSpan",
+    "member": "Class io.micronaut.tracing.annotation.NewSpan",
+    "reason": "Type has moved to micronaut-tracing-annotation"
+  },
+  {
+    "type": "io.micronaut.tracing.annotation.NewSpan",
+    "member": "Method io.micronaut.tracing.annotation.NewSpan.value()",
+    "reason": "Type has moved to micronaut-tracing-annotation"
+  },
+  {
+    "type": "io.micronaut.tracing.annotation.NewSpan",
+    "member": "Implemented interface java.lang.annotation.Annotation",
+    "reason": "Type has moved to micronaut-tracing-annotation"
+  },
+  {
+    "type": "io.micronaut.tracing.annotation.NewSpan",
+    "member": "Method io.micronaut.tracing.annotation.NewSpan.value()",
+    "reason": "Type has moved to micronaut-tracing-annotation"
+  },
+  {
+    "type": "io.micronaut.tracing.annotation.SpanTag",
+    "member": "Class io.micronaut.tracing.annotation.SpanTag",
+    "reason": "Type has moved to micronaut-tracing-annotation"
+  },
+  {
+    "type": "io.micronaut.tracing.annotation.SpanTag",
+    "member": "Method io.micronaut.tracing.annotation.SpanTag.value()",
+    "reason": "Type has moved to micronaut-tracing-annotation"
+  },
+  {
+    "type": "io.micronaut.tracing.annotation.SpanTag",
+    "member": "Implemented interface java.lang.annotation.Annotation",
+    "reason": "Type has moved to micronaut-tracing-annotation"
+  }
+]

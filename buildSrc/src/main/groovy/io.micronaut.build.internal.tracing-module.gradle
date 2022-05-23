@@ -20,10 +20,3 @@ tasks.withType(Test) {
         exceptionFormat = 'full'
     }
 }
-
-// TODO temporarily disable binary compatibility checks
-micronautBuild {
-    binaryCompatibility {
-        enabled = false
-    }
-}

@@ -24,3 +24,10 @@ dependencies {
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
 }
+
+// TODO temporarily disable binary compatibility checks
+micronautBuild {
+    binaryCompatibility {
+        enabled = false
+    }
+}

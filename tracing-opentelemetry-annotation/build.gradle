@@ -18,3 +18,10 @@ dependencies {
         testImplementation files(Jvm.current().toolsJar)
     }
 }
+
+// TODO temporarily disable binary compatibility checks
+micronautBuild {
+    binaryCompatibility {
+        enabled = false
+    }
+}

@@ -25,7 +25,6 @@ kotlinx-coroutines-core = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-reactor = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor', version.ref = 'kotlin-coroutines' }
 managed-protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'managed-protobuf' }
 managed-protobuf-java-util = { module = 'com.google.protobuf:protobuf-java-util', version.ref = 'managed-protobuf' }
-micronaut-docs-asciidoc-config-props = { module = 'io.micronaut.docs:micronaut-docs-asciidoc-config-props', version.ref = 'micronaut-docs' }
 opentracing = { module = 'io.opentracing:opentracing-api', version.ref = 'opentracing' }
 opentracing-grpc = { module = 'io.opentracing.contrib:opentracing-grpc', version.ref = 'opentracing-grpc' }
 opentracing-util = { module = 'io.opentracing:opentracing-util', version.ref = 'opentracing' }

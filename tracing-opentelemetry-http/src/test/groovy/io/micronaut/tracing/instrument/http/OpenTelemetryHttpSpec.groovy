@@ -49,7 +49,7 @@ class OpenTelemetryHttpSpec extends Specification {
     ReactorHttpClient reactorHttpClient = ReactorHttpClient.create(embeddedServer.URL)
 
     void 'test map WithSpan annotation'() {
-        int count = 5
+        int count = 1
         // 1x Server POST 2x Server GET 2x Client GET, 2x Method call with NewSpan  = 4
         int spanNumbers = 7
         def spanNumbersOfRequests = 5

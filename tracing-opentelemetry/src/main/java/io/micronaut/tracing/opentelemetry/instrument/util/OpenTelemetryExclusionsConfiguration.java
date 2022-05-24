@@ -25,7 +25,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * @since 4.0
+ *
+ * @author Nemanja Mikic
+ * @since 4.1.0
  */
 @ConfigurationProperties(OpenTelemetryExclusionsConfiguration.PREFIX)
 public class OpenTelemetryExclusionsConfiguration {

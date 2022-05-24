@@ -30,15 +30,14 @@ import io.micronaut.core.util.StringUtils;
 import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
-import io.micronaut.tracing.opentelemetry.instrument.util.MicronautCodeTelemetryBuilder;
 import io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisher;
-import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.util.ClassAndMethod;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 
@@ -49,6 +48,7 @@ import java.util.concurrent.CompletionStage;
  * using the Open Tracing API.
  *
  * @author Nemanja Mikic
+ * @since 4.1.0
  */
 @Singleton
 @Requires(beans = Tracer.class)
@@ -60,10 +60,10 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
     /**
      * Initialize the interceptor with tracer and conversion service.
      *
-     * @param openTelemetry the openTelemetry
+     * @param instrumenter the ClassAndMethod Instrumenter
      */
-    public TraceInterceptor(OpenTelemetry openTelemetry) {
-        instrumenter = new MicronautCodeTelemetryBuilder(openTelemetry).build();
+    public TraceInterceptor(@Named("micronautCodeTelemetryInstrumenter") Instrumenter<ClassAndMethod, Object> instrumenter) {
+        this.instrumenter = instrumenter;
     }
 
     @Override

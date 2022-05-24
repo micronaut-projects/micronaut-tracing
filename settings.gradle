@@ -12,7 +12,6 @@ plugins {
 rootProject.name = 'tracing-parent'
 
 include 'tracing-annotation'
-include 'tracing-aws'
 include 'tracing-bom'
 include 'tracing-core'
 include 'tracing-jaeger'

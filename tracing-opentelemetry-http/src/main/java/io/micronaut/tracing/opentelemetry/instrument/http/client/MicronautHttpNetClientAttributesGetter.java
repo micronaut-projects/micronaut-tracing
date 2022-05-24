@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.instrumentation.api.instrumenter.net.InetSocketAddressNetClientAttributesGetter;
@@ -24,19 +25,19 @@ import java.net.InetSocketAddress;
 
 import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.NetTransportValues.IP_TCP;
 
-@SuppressWarnings("rawtypes")
+@Internal
 final class MicronautHttpNetClientAttributesGetter
-    extends InetSocketAddressNetClientAttributesGetter<MutableHttpRequest, HttpResponse> {
+    extends InetSocketAddressNetClientAttributesGetter<MutableHttpRequest<?>, HttpResponse<?>> {
 
     @Override
-    public InetSocketAddress getAddress(MutableHttpRequest request,
-                                        @Nullable HttpResponse response) {
+    public InetSocketAddress getAddress(MutableHttpRequest<?> request,
+                                        @Nullable HttpResponse<?> response) {
         return request.getRemoteAddress();
     }
 
     @Override
-    public String transport(MutableHttpRequest request,
-                            @Nullable HttpResponse response) {
+    public String transport(MutableHttpRequest<?> request,
+                            @Nullable HttpResponse<?> response) {
         return IP_TCP;
     }
 }

@@ -29,7 +29,6 @@ import jakarta.inject.Singleton;
 /**
  * Registers an OpenTelemetry bean for test.
  *
- * @author Nemanja Mikic
  */
 @Factory
 @Replaces(factory = DefaultOpenTelemetryFactory.class)

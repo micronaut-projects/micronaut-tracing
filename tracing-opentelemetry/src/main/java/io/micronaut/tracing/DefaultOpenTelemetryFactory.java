@@ -18,21 +18,22 @@ package io.micronaut.tracing;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.core.convert.format.MapFormat;
+import io.micronaut.runtime.ApplicationConfiguration;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
 import jakarta.inject.Singleton;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
-import static io.micronaut.runtime.ApplicationConfiguration.APPLICATION_NAME;
+import static io.micronaut.core.convert.format.MapFormat.MapTransformation.FLAT;
 
 /**
  * Registers an OpenTelemetry bean.
  *
  * @author Nemanja Mikic
+ * @since 4.1.0
  */
 @Factory
 public class DefaultOpenTelemetryFactory {
@@ -45,24 +46,22 @@ public class DefaultOpenTelemetryFactory {
 
     /**
      * The OpenTelemetry bean with default values.
-     * @param applicationName the application name from configuration
-     * @param otelProperties the configuration properties for the opentelemetry autoconfigure
+     * @param applicationConfiguration the {@link ApplicationConfiguration}
+     * @param otelConfig the configuration values for the opentelemetry autoconfigure
      * @return the OpenTelemetry bean with default values
      */
     @Singleton
     @Primary
-    protected OpenTelemetry defaultOpenTelemetry(@Property(name = APPLICATION_NAME) String applicationName,
-                                                 @Property(name = "otel") Properties otelProperties) {
+    protected OpenTelemetry defaultOpenTelemetry(ApplicationConfiguration applicationConfiguration,
+                                                 @Property(name = "otel") @MapFormat(transformation = FLAT) Map<String, String> otelConfig) {
 
-        Map<String, String> otel = otelProperties.entrySet().stream().collect(
-            Collectors.toMap(
+        Map<String, String> otel = otelConfig.entrySet().stream().collect(Collectors.toMap(
                 e -> "otel." + e.getKey(),
-                e -> String.valueOf(e.getValue()),
-                (prev, next) -> next, HashMap::new
+                Map.Entry::getValue
         ));
 
         if (!otel.containsKey(SERVICE_NAME_KEY)) {
-            otel.put(SERVICE_NAME_KEY, applicationName);
+            otel.put(SERVICE_NAME_KEY, applicationConfiguration.getName().orElse(""));
         }
         if (!otel.containsKey(DEFAULT_TRACES_EXPORTER)) {
             otel.put(DEFAULT_TRACES_EXPORTER, NONE);
@@ -78,4 +77,5 @@ public class DefaultOpenTelemetryFactory {
             .addPropertiesSupplier(() -> otel)
             .build().getOpenTelemetrySdk();
     }
+
 }

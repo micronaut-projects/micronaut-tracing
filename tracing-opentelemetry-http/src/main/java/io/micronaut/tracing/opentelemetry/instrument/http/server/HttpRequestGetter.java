@@ -15,22 +15,23 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.opentelemetry.context.propagation.TextMapGetter;
 
-@SuppressWarnings("rawtypes")
-enum HttpRequestGetter implements TextMapGetter<HttpRequest> {
+@Internal
+enum HttpRequestGetter implements TextMapGetter<HttpRequest<?>> {
     INSTANCE;
 
     @Override
-    public Iterable<String> keys(HttpRequest request) {
+    public Iterable<String> keys(HttpRequest<?> request) {
         return request.getHeaders().names();
     }
 
     @Override
     @Nullable
-    public String get(@Nullable HttpRequest request, String key) {
+    public String get(@Nullable HttpRequest<?> request, String key) {
         if (request == null) {
             return null;
         }

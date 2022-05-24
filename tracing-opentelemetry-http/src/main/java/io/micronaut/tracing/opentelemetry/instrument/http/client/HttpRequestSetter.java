@@ -15,15 +15,16 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.context.propagation.TextMapSetter;
 
-@SuppressWarnings("rawtypes")
-enum HttpRequestSetter implements TextMapSetter<MutableHttpRequest> {
+@Internal
+enum HttpRequestSetter implements TextMapSetter<MutableHttpRequest<?>> {
     INSTANCE;
 
     @Override
-    public void set(MutableHttpRequest httpRequest, String key, String value) {
+    public void set(MutableHttpRequest<?> httpRequest, String key, String value) {
         httpRequest.header(key, value);
     }
 }

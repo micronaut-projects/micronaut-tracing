@@ -26,15 +26,16 @@ import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
 import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
-import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
+import jakarta.inject.Named;
+import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import reactor.core.CoreSubscriber;
 
 import static io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTelemetryServerFilter.SERVER_PATH;
 
@@ -42,6 +43,7 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTele
  * An HTTP server instrumentation filter that uses Open Telemetry.
  *
  * @author Nemanja Mikic
+ * @since 4.1.0
  */
 @Filter(SERVER_PATH)
 @Requires(beans = Tracer.class)
@@ -50,25 +52,17 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
     private static final String APPLIED = OpenTelemetryServerFilter.class.getName() + "-applied";
     private static final String CONTINUE = OpenTelemetryServerFilter.class.getName() + "-continue";
 
-    private final Instrumenter<HttpRequest, HttpResponse> instrumenter;
+    private final Instrumenter<HttpRequest<?>, HttpResponse<?>> instrumenter;
 
     /**
-     * @param openTelemetry    the openTelemetry
      * @param exclusionsConfig The {@link OpenTelemetryExclusionsConfiguration}
-     * @param openTelemetryHttpServerConfig The {@link OpenTelemetryHttpServerConfig}
+     * @param instrumenter The {@link OpenTelemetryHttpServerConfig}
      */
-    public OpenTelemetryServerFilter(OpenTelemetry openTelemetry,
-                                     @Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig, @Nullable OpenTelemetryHttpServerConfig openTelemetryHttpServerConfig) {
+    public OpenTelemetryServerFilter(@Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig,
+                                     @Named("micronautHttpServerTelemetryInstrumenter") Instrumenter<HttpRequest<?>, HttpResponse<?>> instrumenter) {
         super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
 
-        MicronautHttpServerTelemetryBuilder micronautHtServerTelemetryBuilder = new MicronautHttpServerTelemetryBuilder(openTelemetry);
-
-        if (openTelemetryHttpServerConfig != null) {
-            micronautHtServerTelemetryBuilder.setCapturedRequestHeaders(openTelemetryHttpServerConfig.getRequestHeaders());
-            micronautHtServerTelemetryBuilder.setCapturedResponseHeaders(openTelemetryHttpServerConfig.getResponseHeaders());
-        }
-
-        instrumenter = micronautHtServerTelemetryBuilder.build();
+        this.instrumenter = instrumenter;
     }
 
     @Override
@@ -88,9 +82,9 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
             Context context = instrumenter.start(parentContext, request);
 
             try (Scope ignored = context.makeCurrent()) {
-                requestPublisher.subscribe(new Subscriber<MutableHttpResponse<?>>() {
+                requestPublisher.subscribe(new CoreSubscriber<MutableHttpResponse<?>>() {
                     @Override
-                    public void onSubscribe(Subscription s) {
+                    public void onSubscribe(@NotNull Subscription s) {
                         try (Scope ignored = context.makeCurrent()) {
                             actual.onSubscribe(s);
                         }

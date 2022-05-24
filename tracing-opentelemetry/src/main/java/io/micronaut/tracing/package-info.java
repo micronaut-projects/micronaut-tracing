@@ -17,5 +17,6 @@
  * Default tracer.
  *
  * @author Nemanja Mikic
+ * @since 4.1.0
  */
 package io.micronaut.tracing;

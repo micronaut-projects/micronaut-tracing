@@ -15,49 +15,50 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
-import io.micronaut.http.HttpRequest;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientAttributesGetter;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-@SuppressWarnings({"rawtypes", "unused"})
-enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<HttpRequest, HttpResponse> {
+@Internal
+enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<MutableHttpRequest<?>, HttpResponse<?>> {
 
     INSTANCE;
 
     @Override
-    public String method(HttpRequest request) {
+    public String method(MutableHttpRequest<?> request) {
         return request.getMethodName();
     }
 
     @Override
-    public String url(HttpRequest request) {
+    public String url(MutableHttpRequest<?> request) {
         return request.getUri().toString();
     }
 
     @Override
-    public List<String> requestHeader(HttpRequest request, String name) {
+    public List<String> requestHeader(MutableHttpRequest<?> request, String name) {
         return request.getHeaders().getAll(name);
     }
 
     @Override
-    public Long requestContentLength(HttpRequest request, @Nullable HttpResponse response) {
+    public Long requestContentLength(MutableHttpRequest<?> request, @Nullable HttpResponse<?> response) {
         return request.getContentLength();
     }
 
     @Override
     @Nullable
-    public Long requestContentLengthUncompressed(HttpRequest request, @Nullable HttpResponse response) {
+    public Long requestContentLengthUncompressed(MutableHttpRequest<?> request, @Nullable HttpResponse<?> response) {
         return null;
     }
 
     @Override
     @SuppressWarnings("UnnecessaryDefaultInEnumSwitch")
     @Nullable
-    public String flavor(HttpRequest request, @Nullable HttpResponse response) {
+    public String flavor(MutableHttpRequest<?> request, @Nullable HttpResponse<?> response) {
         switch (request.getHttpVersion()) {
             case HTTP_1_0:
                 return SemanticAttributes.HttpFlavorValues.HTTP_1_0;
@@ -71,23 +72,23 @@ enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<H
     }
 
     @Override
-    public Integer statusCode(HttpRequest request, HttpResponse response) {
+    public Integer statusCode(MutableHttpRequest<?> request, HttpResponse<?> response) {
         return response.code();
     }
 
     @Override
-    public Long responseContentLength(HttpRequest request, HttpResponse response) {
+    public Long responseContentLength(MutableHttpRequest<?> request, HttpResponse<?> response) {
         return response.getContentLength();
     }
 
     @Override
     @Nullable
-    public Long responseContentLengthUncompressed(HttpRequest request, HttpResponse response) {
+    public Long responseContentLengthUncompressed(MutableHttpRequest<?> request, HttpResponse<?> response) {
         return null;
     }
 
     @Override
-    public List<String> responseHeader(HttpRequest request, HttpResponse response, String name) {
+    public List<String> responseHeader(MutableHttpRequest<?> request, HttpResponse<?> response, String name) {
         return response.getHeaders().getAll(name);
     }
 

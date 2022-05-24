@@ -15,6 +15,9 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.util;
 
+import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Prototype;
+import io.micronaut.context.annotation.Requires;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.instrumenter.InstrumenterBuilder;
@@ -22,23 +25,28 @@ import io.opentelemetry.instrumentation.api.instrumenter.code.CodeAttributesGett
 import io.opentelemetry.instrumentation.api.instrumenter.code.CodeSpanNameExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientMetrics;
 import io.opentelemetry.instrumentation.api.util.ClassAndMethod;
+import jakarta.inject.Named;
 
 /**
- * An HTTP client instrumentation builder for Open Telemetry.
+ * An HTTP client instrumentation factory for Open Telemetry.
  *
  * @author Nemanja Mikic
+ * @since 4.1.0
  */
-public final class MicronautCodeTelemetryBuilder {
+@Factory
+public final class MicronautCodeTelemetryFactory {
 
     private static final String INSTRUMENTATION_NAME = "io.micronaut.code";
 
-    private final OpenTelemetry openTelemetry;
-
-    public MicronautCodeTelemetryBuilder(OpenTelemetry openTelemetry) {
-        this.openTelemetry = openTelemetry;
-    }
-
-    public Instrumenter<ClassAndMethod, Object> build() {
+    /**
+     * Builds the code Open Telemetry instrumenter
+     * @param openTelemetry the {@link OpenTelemetry}
+     * @return the OpenTelemetry bean with default values
+     */
+    @Prototype
+    @Requires(beans = OpenTelemetry.class)
+    @Named("micronautCodeTelemetryInstrumenter")
+    public Instrumenter<ClassAndMethod, Object> instrumenter(OpenTelemetry openTelemetry) {
         CodeAttributesGetter<ClassAndMethod> classAndMethodAttributesGetter = ClassAndMethod.codeAttributesGetter();
         InstrumenterBuilder<ClassAndMethod, Object> builder = Instrumenter.builder(
             openTelemetry, INSTRUMENTATION_NAME, CodeSpanNameExtractor.create(classAndMethodAttributesGetter));

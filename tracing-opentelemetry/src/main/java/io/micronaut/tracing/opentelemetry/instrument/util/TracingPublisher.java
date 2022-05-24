@@ -22,15 +22,18 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.util.ClassAndMethod;
+import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import reactor.core.CoreSubscriber;
 
 /**
  * A reactive streams publisher that traces.
  *
  * @param <T> the type of element signaled
  * @author Nemanja Mikic
+ * @since 4.1.0
  */
 @SuppressWarnings("PublisherImplementation")
 public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
@@ -61,9 +64,9 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     public void subscribe(Subscriber<? super T> actual) {
 
         if (instrumenter == null || !instrumenter.shouldStart(parentContext, classAndMethod)) {
-            publisher.subscribe(new Subscriber<T>() {
+            publisher.subscribe(new CoreSubscriber<T>() {
                 @Override
-                public void onSubscribe(Subscription s) {
+                public void onSubscribe(@NotNull Subscription s) {
                     doOnSubscribe(parentContext);
                     actual.onSubscribe(s);
                 }
@@ -72,7 +75,6 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
                 public void onNext(T object) {
                     doOnNext(object, parentContext);
                     actual.onNext(object);
-                    doOnFinish(parentContext);
                 }
 
                 @Override
@@ -93,7 +95,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
         Context context = instrumenter.start(parentContext, classAndMethod);
 
         try (Scope ignored = context.makeCurrent()) {
-            publisher.subscribe(new Subscriber<T>() {
+            publisher.subscribe(new CoreSubscriber<T>() {
                 @Override
                 public void onSubscribe(Subscription s) {
                     try (Scope ignored = context.makeCurrent()) {
@@ -107,7 +109,6 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
                     try (Scope ignored = context.makeCurrent()) {
                         doOnNext(object, context);
                         actual.onNext(object);
-                        doOnFinish(context);
                     } finally {
                         instrumenter.end(context, classAndMethod, object, null);
                     }

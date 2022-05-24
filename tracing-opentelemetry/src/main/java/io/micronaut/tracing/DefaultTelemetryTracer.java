@@ -17,30 +17,27 @@ package io.micronaut.tracing;
 
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
-import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.context.annotation.Value;
+import io.micronaut.runtime.ApplicationConfiguration;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Tracer;
 import jakarta.inject.Singleton;
 
 import javax.validation.constraints.NotNull;
 
-import static io.micronaut.runtime.ApplicationConfiguration.APPLICATION_NAME;
-
 /**
  * Creates a default NoopTracer if no other tracer is present.
  *
  * @author Nemanja Mikic
+ * @since 4.1.0
  */
 @Factory
-@Requires(property = APPLICATION_NAME)
 public class DefaultTelemetryTracer {
 
     private final String applicationName;
 
-    DefaultTelemetryTracer(@Value(APPLICATION_NAME) String applicationName) {
-        this.applicationName = applicationName;
+    DefaultTelemetryTracer(ApplicationConfiguration applicationConfiguration) {
+        this.applicationName = applicationConfiguration.getName().orElse("");
     }
 
     /**

@@ -16,33 +16,36 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.core.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Stores http Open Telemetry Http server configuration.
  *
  * @author Nemanja Mikic
+ * @since 4.1.0
  */
 @ConfigurationProperties(value = OpenTelemetryHttpServerConfig.PREFIX)
 public class OpenTelemetryHttpServerConfig {
     public static final String PREFIX = "otel.http.server";
 
-    private List<String> responseHeaders = new ArrayList<>();
-    private List<String> requestHeaders = new ArrayList<>();
+    private List<String> responseHeaders = new ArrayList<>(10);
+    private List<String> requestHeaders = new ArrayList<>(10);
 
     /**
      * @return The List of response headers that will be included inside spans
      */
     public List<String> getResponseHeaders() {
-        return responseHeaders;
+        return Collections.unmodifiableList(responseHeaders);
     }
 
     /**
      * @param responseHeaders The response headers
      */
-    public void setResponseHeaders(List<String> responseHeaders) {
+    public void setResponseHeaders(@NonNull List<String> responseHeaders) {
         this.responseHeaders = responseHeaders;
     }
 
@@ -50,13 +53,13 @@ public class OpenTelemetryHttpServerConfig {
      * @return The List of request headers that will be included inside spans
      */
     public List<String> getRequestHeaders() {
-        return requestHeaders;
+        return Collections.unmodifiableList(requestHeaders);
     }
 
     /**
      * @param requestHeaders The request headers
      */
-    public void setRequestHeaders(List<String> requestHeaders) {
+    public void setRequestHeaders(@NonNull List<String> requestHeaders) {
         this.requestHeaders = requestHeaders;
     }
 }

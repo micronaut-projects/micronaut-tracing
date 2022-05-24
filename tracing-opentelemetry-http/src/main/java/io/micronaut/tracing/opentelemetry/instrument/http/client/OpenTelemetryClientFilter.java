@@ -15,7 +15,6 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
-import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.http.HttpResponse;
@@ -25,15 +24,15 @@ import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
 import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
-import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
+import jakarta.inject.Named;
+import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import reactor.core.CoreSubscriber;
 
 import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTelemetryClientFilter.CLIENT_PATH;
 
@@ -41,33 +40,22 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTele
  * An HTTP client instrumentation filter that uses Open Telemetry.
  *
  * @author Nemanja Mikic
+ * @since 4.1.0
  */
 @Filter(CLIENT_PATH)
-@Requires(beans = Tracer.class)
 public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter implements HttpClientFilter {
 
-    @SuppressWarnings("rawtypes")
-    private final Instrumenter<MutableHttpRequest, HttpResponse> instrumenter;
+    private final Instrumenter<MutableHttpRequest<?>, HttpResponse<?>> instrumenter;
 
     /**
      * Initialize the open tracing client filter with tracer and exclusion configuration.
      *
-     * @param openTelemetry    the openTelemetry
      * @param exclusionsConfig The {@link OpenTelemetryExclusionsConfiguration}
-     * @param openTelemetryHttpClientConfig The {@link OpenTelemetryHttpClientConfig}
+     * @param instrumenter The {@link OpenTelemetryHttpClientConfig}
      */
-    public OpenTelemetryClientFilter(OpenTelemetry openTelemetry,
-                                     @Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig,
-                                     @Nullable OpenTelemetryHttpClientConfig openTelemetryHttpClientConfig) {
+    public OpenTelemetryClientFilter(@Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig, @Named("micronautHttpClientTelemetryInstrumenter") Instrumenter<MutableHttpRequest<?>, HttpResponse<?>> instrumenter) {
         super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
-        MicronautHttpClientTelemetryBuilder micronautHttpClientTelemetryBuilder = new MicronautHttpClientTelemetryBuilder(openTelemetry);
-
-        if (openTelemetryHttpClientConfig != null) {
-            micronautHttpClientTelemetryBuilder.setCapturedRequestHeaders(openTelemetryHttpClientConfig.getRequestHeaders());
-            micronautHttpClientTelemetryBuilder.setCapturedResponseHeaders(openTelemetryHttpClientConfig.getResponseHeaders());
-        }
-
-        instrumenter = micronautHttpClientTelemetryBuilder.build();
+        this.instrumenter = instrumenter;
     }
 
     @Override
@@ -89,9 +77,9 @@ public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter imple
             Context context = instrumenter.start(parentContext, request);
 
             try (Scope ignored = context.makeCurrent()) {
-                requestPublisher.subscribe(new Subscriber<HttpResponse<?>>() {
+                requestPublisher.subscribe(new CoreSubscriber<HttpResponse<?>>() {
                     @Override
-                    public void onSubscribe(Subscription s) {
+                    public void onSubscribe(@NotNull Subscription s) {
                         try (Scope ignored = context.makeCurrent()) {
                             actual.onSubscribe(s);
                         }

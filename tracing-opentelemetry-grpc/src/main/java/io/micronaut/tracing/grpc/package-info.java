@@ -17,6 +17,7 @@
  * HTTP Tracing.
  *
  * @author Nemanja Mikic
+ * @since 4.1.0
  */
 @Requires(classes = {OpenTelemetry.class, GrpcTelemetry.class})
 @Requires(beans = OpenTelemetry.class)

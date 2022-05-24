@@ -18,25 +18,27 @@ package io.micronaut.tracing.opentelemetry.instrument.http.client;
 import io.micronaut.context.annotation.ConfigurationProperties;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Stores http Open Telemetry Http client configuration.
  *
  * @author Nemanja Mikic
+ * @since 4.1.0
  */
 @ConfigurationProperties(value = OpenTelemetryHttpClientConfig.PREFIX)
 public class OpenTelemetryHttpClientConfig {
     public static final String PREFIX = "otel.http.client";
 
-    private List<String> responseHeaders = new ArrayList<>();
-    private List<String> requestHeaders = new ArrayList<>();
+    private List<String> responseHeaders = new ArrayList<>(10);
+    private List<String> requestHeaders = new ArrayList<>(10);
 
     /**
      * @return The List of response headers that will be included inside spans
      */
     public List<String> getResponseHeaders() {
-        return responseHeaders;
+        return Collections.unmodifiableList(responseHeaders);
     }
 
     /**
@@ -50,7 +52,7 @@ public class OpenTelemetryHttpClientConfig {
      * @return The List of request headers that will be included inside spans
      */
     public List<String> getRequestHeaders() {
-        return requestHeaders;
+        return Collections.unmodifiableList(requestHeaders);
     }
 
     /**

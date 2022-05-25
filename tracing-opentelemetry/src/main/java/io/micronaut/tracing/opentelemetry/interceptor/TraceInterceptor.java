@@ -47,7 +47,7 @@ import java.util.concurrent.CompletionStage;
 
 /**
  * Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
- * using the Open Tracing API.
+ * using the Open Telemetry API.
  *
  * @author Nemanja Mikic
  * @since 4.1.0

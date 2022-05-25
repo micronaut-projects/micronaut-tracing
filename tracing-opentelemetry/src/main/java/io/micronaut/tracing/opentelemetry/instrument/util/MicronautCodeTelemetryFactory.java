@@ -39,7 +39,7 @@ public final class MicronautCodeTelemetryFactory {
     private static final String INSTRUMENTATION_NAME = "io.micronaut.code";
 
     /**
-     * Builds the code Open Telemetry instrumenter
+     * Builds the code Open Telemetry instrumenter.
      * @param openTelemetry the {@link OpenTelemetry}
      * @return the OpenTelemetry bean with default values
      */

@@ -23,6 +23,7 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTelemetryHttpClientConfig;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.instrumenter.InstrumenterBuilder;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpRouteHolder;
@@ -33,9 +34,13 @@ import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanNameExtrac
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanStatusExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.net.NetServerAttributesExtractor;
 import jakarta.inject.Named;
+import jakarta.inject.Qualifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.util.List;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * An HTTP server instrumentation builder for Open Telemetry.
@@ -49,22 +54,30 @@ public final class MicronautHttpServerTelemetryFactory {
     private static final String INSTRUMENTATION_NAME = "io.micronaut.http.server";
 
     /**
+     * Server Qualifier represents AttributesExtractor that should be used in http srver instrumenter.
+     */
+    @Qualifier
+    @Documented
+    @Retention(RUNTIME)
+    public @interface Server { }
+
+    /**
      * Builds the http server Open Telemetry instrumenter.
      * @param openTelemetry the {@link OpenTelemetry}
-     * @param micronautServerAttributesExtractor the {@link MicronautServerAttributesExtractor}
+     * @param extractors the list of {@link AttributesExtractor}
      * @return the http server Open Telemetry instrumenter
      */
     @Prototype
     @Requires(beans = OpenTelemetry.class)
     @Named("micronautHttpServerTelemetryInstrumenter")
-    public Instrumenter<HttpRequest<?>, HttpResponse<?>> instrumenter(OpenTelemetry openTelemetry, MicronautServerAttributesExtractor micronautServerAttributesExtractor) {
+    public Instrumenter<HttpRequest<?>, HttpResponse<?>> instrumenter(OpenTelemetry openTelemetry, @Server List<AttributesExtractor<HttpRequest<?>, HttpResponse<?>>> extractors) {
         MicronautHttpServerAttributesGetter httpAttributesGetter = MicronautHttpServerAttributesGetter.INSTANCE;
 
         InstrumenterBuilder<HttpRequest<?>, HttpResponse<?>> builder =
             Instrumenter.builder(openTelemetry, INSTRUMENTATION_NAME,
                 HttpSpanNameExtractor.create(httpAttributesGetter));
 
-        builder.addAttributesExtractors(micronautServerAttributesExtractor.getAttributesExtractors());
+        builder.addAttributesExtractors(extractors);
 
         return builder
             .setSpanStatusExtractor(HttpSpanStatusExtractor.create(httpAttributesGetter))
@@ -79,6 +92,7 @@ public final class MicronautHttpServerTelemetryFactory {
      * @return the {@link HttpServerAttributesExtractor}
      */
     @Prototype
+    @Server
     HttpServerAttributesExtractor<HttpRequest<?>, HttpResponse<?>> httpServerAttributesExtractor(@Nullable OpenTelemetryHttpServerConfig openTelemetryHttpServerConfig) {
         HttpServerAttributesExtractorBuilder<HttpRequest<?>, HttpResponse<?>> httpAttributesExtractorBuilder =
             HttpServerAttributesExtractor.builder(MicronautHttpServerAttributesGetter.INSTANCE);
@@ -95,19 +109,9 @@ public final class MicronautHttpServerTelemetryFactory {
      * @return the {@link NetServerAttributesExtractor}
      */
     @Prototype
+    @Server
     NetServerAttributesExtractor<HttpRequest<?>, HttpResponse<?>> netServerAttributesExtractor() {
         return NetServerAttributesExtractor.create(new MicronautHttpNetServerAttributesGetter());
     }
 
-    /**
-     * Builds the MicronautServerAttributesExtractor.
-     * @param httpServerAttributesExtractor the {@link HttpServerAttributesExtractor}
-     * @param netServerAttributesExtractor the {@link NetServerAttributesExtractor}
-     * @return the {@link MicronautServerAttributesExtractor}
-     */
-    @Prototype
-    MicronautServerAttributesExtractor serverAttributesExtractor(HttpServerAttributesExtractor<HttpRequest<?>, HttpResponse<?>> httpServerAttributesExtractor,
-                                                                 NetServerAttributesExtractor<HttpRequest<?>, HttpResponse<?>> netServerAttributesExtractor) {
-        return new MicronautServerAttributesExtractor(new ArrayList<>(Arrays.asList(httpServerAttributesExtractor, netServerAttributesExtractor)));
-    }
 }

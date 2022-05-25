@@ -15,91 +15,89 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.util;
 
-import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.async.publisher.Publishers;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
-import io.opentelemetry.instrumentation.api.util.ClassAndMethod;
 import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-import reactor.core.CoreSubscriber;
 
 /**
  * A reactive streams publisher that traces.
  *
  * @param <T> the type of element signaled
+ * @param <REQ> the type of request element
  * @author Nemanja Mikic
  * @since 4.1.0
  */
 @SuppressWarnings("PublisherImplementation")
-public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
+public class TracingPublisher<T, REQ> implements Publishers.MicronautPublisher<T> {
 
     private final Publisher<T> publisher;
-    private final Instrumenter<ClassAndMethod, Object> instrumenter;
+    private final Instrumenter<REQ, Object> instrumenter;
     @Nullable
-    private final ClassAndMethod classAndMethod;
-    private final Context parentContext;
+    private final REQ request;
+    private final TracingObserver<T> observer;
 
     /**
      * @param publisher      the target publisher
      * @param instrumenter   the instrumenter
-     * @param classAndMethod the operation name that should be started
-     * @param parentContext  the parent {@link Context}.
+     * @param request the request object
+     * @param observer the tracing observer
      */
     public TracingPublisher(Publisher<T> publisher,
-                            Instrumenter<ClassAndMethod, Object> instrumenter,
-                            @Nullable ClassAndMethod classAndMethod,
-                            Context parentContext) {
+                            Instrumenter<REQ, Object> instrumenter,
+                            @Nullable REQ request, TracingObserver<T> observer) {
         this.publisher = publisher;
         this.instrumenter = instrumenter;
-        this.classAndMethod = classAndMethod;
-        this.parentContext = parentContext;
+        this.request = request;
+        this.observer = observer;
     }
 
     @Override
     public void subscribe(Subscriber<? super T> actual) {
+        Context parentContext = Context.current();
 
-        if (instrumenter == null || !instrumenter.shouldStart(parentContext, classAndMethod)) {
-            publisher.subscribe(new CoreSubscriber<T>() {
+        if (instrumenter == null || !instrumenter.shouldStart(parentContext, request)) {
+            publisher.subscribe(new Subscriber<T>() {
                 @Override
                 public void onSubscribe(@NotNull Subscription s) {
-                    doOnSubscribe(parentContext);
+                    observer.doOnSubscribe(parentContext);
                     actual.onSubscribe(s);
                 }
 
                 @Override
                 public void onNext(T object) {
-                    doOnNext(object, parentContext);
+                    observer.doOnNext(object, parentContext);
                     actual.onNext(object);
                 }
 
                 @Override
                 public void onError(Throwable t) {
-                    doOnError(t, parentContext);
+                    observer.doOnError(t, parentContext);
                     actual.onError(t);
                 }
 
                 @Override
                 public void onComplete() {
                     actual.onComplete();
-                    doOnFinish(parentContext);
+                    observer.doOnFinish(parentContext);
                 }
             });
             return;
         }
 
-        Context context = instrumenter.start(parentContext, classAndMethod);
+        Context context = instrumenter.start(parentContext, request);
 
         try (Scope ignored = context.makeCurrent()) {
-            publisher.subscribe(new CoreSubscriber<T>() {
+            publisher.subscribe(new Subscriber<T>() {
                 @Override
-                public void onSubscribe(Subscription s) {
+                public void onSubscribe(@NotNull Subscription s) {
                     try (Scope ignored = context.makeCurrent()) {
-                        doOnSubscribe(context);
+                        observer.doOnSubscribe(context);
                         actual.onSubscribe(s);
                     }
                 }
@@ -107,20 +105,20 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
                 @Override
                 public void onNext(T object) {
                     try (Scope ignored = context.makeCurrent()) {
-                        doOnNext(object, context);
+                        observer.doOnNext(object, context);
                         actual.onNext(object);
                     } finally {
-                        instrumenter.end(context, classAndMethod, object, null);
+                        instrumenter.end(context, request, object, null);
                     }
                 }
 
                 @Override
                 public void onError(Throwable t) {
                     try (Scope ignored = context.makeCurrent()) {
-                        doOnError(t, context);
+                        observer.doOnError(t, context);
                         actual.onError(t);
                     } finally {
-                        instrumenter.end(context, classAndMethod, null, t);
+                        instrumenter.end(context, request, null, t);
                     }
                 }
 
@@ -128,52 +126,13 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
                 public void onComplete() {
                     try (Scope ignored = context.makeCurrent()) {
                         actual.onComplete();
-                        doOnFinish(context);
+                        observer.doOnFinish(context);
                     } finally {
-                        instrumenter.end(context, classAndMethod, null, null);
+                        instrumenter.end(context, request, null, null);
                     }
                 }
             });
         }
     }
 
-    /**
-     * For subclasses to override and implement custom behaviour when an item is emitted.
-     *
-     * @param object  The object
-     * @param context The context
-     */
-    protected void doOnNext(@NonNull T object, @NonNull Context context) {
-        // no-op
-    }
-
-    /**
-     * For subclasses to override and implement custom on-subscribe behaviour.
-     *
-     * @param context the context
-     */
-    protected void doOnSubscribe(@NonNull Context context) {
-        // no-op
-    }
-
-    /**
-     * For subclasses to override and implement custom on-finish behaviour. Fired
-     * prior to calling end on the span.
-     *
-     * @param context the context
-     */
-    @SuppressWarnings("WeakerAccess")
-    protected void doOnFinish(@NonNull Context context) {
-        // no-op
-    }
-
-    /**
-     * For subclasses to override and implement custom on-error behaviour.
-     *
-     * @param throwable the error
-     * @param span      the span
-     */
-    protected void doOnError(@NonNull Throwable throwable, @NonNull Context span) {
-        // no-op
-    }
 }

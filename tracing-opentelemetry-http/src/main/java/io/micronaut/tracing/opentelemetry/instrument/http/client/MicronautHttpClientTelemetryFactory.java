@@ -22,6 +22,7 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.instrumenter.InstrumenterBuilder;
 import io.opentelemetry.instrumentation.api.instrumenter.PeerServiceAttributesExtractor;
@@ -32,9 +33,13 @@ import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanNameExtrac
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanStatusExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.net.NetClientAttributesExtractor;
 import jakarta.inject.Named;
+import jakarta.inject.Qualifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.util.List;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * An HTTP client instrumentation builder for Open Telemetry.
@@ -45,19 +50,26 @@ import java.util.Arrays;
 @Factory
 public class MicronautHttpClientTelemetryFactory {
 
+    /**
+     * Client Qualifier represents AttributesExtractor that should be used in http client instrumenter.
+     */
+    @Qualifier
+    @Documented
+    @Retention(RUNTIME)
+    public @interface Client { }
+
     private static final String INSTRUMENTATION_NAME = "io.micronaut.http.client";
 
     /**
      * Builds the http client Open Telemetry instrumenter.
      * @param openTelemetry the {@link OpenTelemetry}
-     * @param clientAttributesExtractor the {@link MicronautClientAttributesExtractor}
+     * @param extractors the list of {@link AttributesExtractor}
      * @return the http client Open Telemetry instrumenter
      */
     @Prototype
     @Requires(beans = OpenTelemetry.class)
     @Named("micronautHttpClientTelemetryInstrumenter")
-    Instrumenter<MutableHttpRequest<?>, HttpResponse<?>> instrumenter(OpenTelemetry openTelemetry,
-        MicronautClientAttributesExtractor clientAttributesExtractor) {
+    Instrumenter<MutableHttpRequest<?>, HttpResponse<?>> instrumenter(OpenTelemetry openTelemetry, @Client List<AttributesExtractor<MutableHttpRequest<?>, HttpResponse<?>>> extractors) {
 
         MicronautHttpClientAttributesGetter httpAttributesGetter = MicronautHttpClientAttributesGetter.INSTANCE;
 
@@ -65,7 +77,7 @@ public class MicronautHttpClientTelemetryFactory {
 
         builder.setSpanStatusExtractor(HttpSpanStatusExtractor.create(httpAttributesGetter))
             .addOperationMetrics(HttpClientMetrics.get());
-        builder.addAttributesExtractors(clientAttributesExtractor.getAttributesExtractors());
+        builder.addAttributesExtractors(extractors);
 
         return builder.newClientInstrumenter(HttpRequestSetter.INSTANCE);
     }
@@ -75,6 +87,7 @@ public class MicronautHttpClientTelemetryFactory {
      * @param micronautHttpNetClientAttributesGetter the {@link MicronautHttpNetClientAttributesGetter}
      * @return the {@link PeerServiceAttributesExtractor}
      */
+    @Client
     @Prototype
     PeerServiceAttributesExtractor<MutableHttpRequest<?>, HttpResponse<?>> peerServiceAttributesExtractor(MicronautHttpNetClientAttributesGetter micronautHttpNetClientAttributesGetter) {
         return PeerServiceAttributesExtractor.create(micronautHttpNetClientAttributesGetter);
@@ -94,6 +107,7 @@ public class MicronautHttpClientTelemetryFactory {
      * @param micronautHttpNetClientAttributesGetter the {@link MicronautHttpNetClientAttributesGetter}
      * @return the {@link PeerServiceAttributesExtractor}
      */
+    @Client
     @Prototype
     NetClientAttributesExtractor<MutableHttpRequest<?>, HttpResponse<?>>  micronautHttpNetClientAttributesGetter(MicronautHttpNetClientAttributesGetter micronautHttpNetClientAttributesGetter) {
         return NetClientAttributesExtractor.create(micronautHttpNetClientAttributesGetter);
@@ -104,6 +118,7 @@ public class MicronautHttpClientTelemetryFactory {
      * @param openTelemetryHttpClientConfig the {@link OpenTelemetryHttpClientConfig}
      * @return the {@link HttpClientAttributesExtractor}
      */
+    @Client
     @Prototype
     HttpClientAttributesExtractor<MutableHttpRequest<?>, HttpResponse<?>> mutableHttpRequestHttpResponseHttpClientAttributesExtractorBuilder(@Nullable OpenTelemetryHttpClientConfig openTelemetryHttpClientConfig) {
         HttpClientAttributesExtractorBuilder<MutableHttpRequest<?>, HttpResponse<?>> httpAttributesExtractorBuilder =
@@ -114,21 +129,5 @@ public class MicronautHttpClientTelemetryFactory {
             httpAttributesExtractorBuilder.setCapturedResponseHeaders(openTelemetryHttpClientConfig.getResponseHeaders());
         }
         return httpAttributesExtractorBuilder.build();
-    }
-
-    /**
-     * Builds the MicronautClientAttributesExtractor.
-     * @param httpRequestHttpResponseHttpClientAttributesExtractor the {@link HttpClientAttributesExtractor}
-     * @param netClientAttributesExtractor the {@link NetClientAttributesExtractor}
-     * @param peerServiceAttributesExtractor the {@link PeerServiceAttributesExtractor}
-     * @return the {@link HttpClientAttributesExtractor}
-     */
-    @Prototype
-    MicronautClientAttributesExtractor clientAttributesExtractor(
-        HttpClientAttributesExtractor<MutableHttpRequest<?>, HttpResponse<?>> httpRequestHttpResponseHttpClientAttributesExtractor,
-        NetClientAttributesExtractor<MutableHttpRequest<?>, HttpResponse<?>> netClientAttributesExtractor,
-        PeerServiceAttributesExtractor<MutableHttpRequest<?>, HttpResponse<?>> peerServiceAttributesExtractor
-        ) {
-        return new MicronautClientAttributesExtractor(new ArrayList<>(Arrays.asList(httpRequestHttpResponseHttpClientAttributesExtractor, netClientAttributesExtractor, peerServiceAttributesExtractor)));
     }
 }

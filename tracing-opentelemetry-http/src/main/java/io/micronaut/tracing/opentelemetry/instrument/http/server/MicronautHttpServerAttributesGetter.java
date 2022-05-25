@@ -24,6 +24,7 @@ import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 @Internal
 enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<HttpRequest<?>, HttpResponse<?>> {
@@ -101,10 +102,8 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     @Override
     @Nullable
     public String route(HttpRequest<?> request) {
-        if (request.getAttribute(HttpAttributes.ROUTE_INFO).isPresent()) {
-            return request.getAttribute(HttpAttributes.ROUTE_INFO).get().toString();
-        }
-        return null;
+        Optional<Object> routeInfo = request.getAttribute(HttpAttributes.ROUTE_INFO);
+        return routeInfo.map(Object::toString).orElse(null);
     }
 
     @Override

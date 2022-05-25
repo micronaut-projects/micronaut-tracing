@@ -16,7 +16,6 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.annotation.Filter;
@@ -24,15 +23,11 @@ import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
 import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
-import io.opentelemetry.api.trace.Span;
+import io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisherUtils;
 import io.opentelemetry.context.Context;
-import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import jakarta.inject.Named;
-import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscription;
-import reactor.core.CoreSubscriber;
 
 import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTelemetryClientFilter.CLIENT_PATH;
 
@@ -73,47 +68,7 @@ public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter imple
             return requestPublisher;
         }
 
-        return (Publishers.MicronautPublisher<HttpResponse<?>>) actual -> {
-            Context context = instrumenter.start(parentContext, request);
+        return TracingPublisherUtils.createTracingPublisher(requestPublisher, instrumenter, request);
 
-            try (Scope ignored = context.makeCurrent()) {
-                requestPublisher.subscribe(new CoreSubscriber<HttpResponse<?>>() {
-                    @Override
-                    public void onSubscribe(@NotNull Subscription s) {
-                        try (Scope ignored = context.makeCurrent()) {
-                            actual.onSubscribe(s);
-                        }
-                    }
-
-                    @Override
-                    public void onNext(HttpResponse<?> response) {
-                        try (Scope ignored = context.makeCurrent()) {
-                            actual.onNext(response);
-                        } finally {
-                            instrumenter.end(context, request, response, null);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        try (Scope ignored = context.makeCurrent()) {
-                            actual.onError(t);
-                        } finally {
-                            setErrorTags(Span.current(), t);
-                            instrumenter.end(context, request, null, t);
-                        }
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        try (Scope ignored = context.makeCurrent()) {
-                            actual.onComplete();
-                        } finally {
-                            instrumenter.end(context, request, null, null);
-                        }
-                    }
-                });
-            }
-        };
     }
 }

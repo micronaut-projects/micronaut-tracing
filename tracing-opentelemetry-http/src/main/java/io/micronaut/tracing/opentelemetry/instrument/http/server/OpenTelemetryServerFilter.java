@@ -16,8 +16,8 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
@@ -26,16 +26,13 @@ import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
 import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
-import io.opentelemetry.api.trace.Span;
+import io.micronaut.tracing.opentelemetry.instrument.util.TracingObserver;
+import io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisherUtils;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
-import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import jakarta.inject.Named;
-import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscription;
-import reactor.core.CoreSubscriber;
 
 import static io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTelemetryServerFilter.SERVER_PATH;
 
@@ -77,50 +74,11 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
 
         Publisher<MutableHttpResponse<?>> requestPublisher = chain.proceed(request);
 
-        return (Publishers.MicronautPublisher<MutableHttpResponse<?>>) actual -> {
-            Context parentContext = Context.current();
-            Context context = instrumenter.start(parentContext, request);
-
-            try (Scope ignored = context.makeCurrent()) {
-                requestPublisher.subscribe(new CoreSubscriber<MutableHttpResponse<?>>() {
-                    @Override
-                    public void onSubscribe(@NotNull Subscription s) {
-                        try (Scope ignored = context.makeCurrent()) {
-                            actual.onSubscribe(s);
-                        }
-                    }
-
-                    @Override
-                    public void onNext(MutableHttpResponse<?> response) {
-                        try (Scope ignored = context.makeCurrent()) {
-                            actual.onNext(response);
-                        } finally {
-                            instrumenter.end(context, request, response, null);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        try (Scope ignored = context.makeCurrent()) {
-                            actual.onError(t);
-                        } finally {
-                            request.setAttribute(CONTINUE, true);
-                            setErrorTags(Span.current(), t);
-                            instrumenter.end(context, request, null, t);
-                        }
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        try (Scope ignored = context.makeCurrent()) {
-                            actual.onComplete();
-                        } finally {
-                            instrumenter.end(context, request, null, null);
-                        }
-                    }
-                });
+        return TracingPublisherUtils.createTracingPublisher(requestPublisher, instrumenter, request, new TracingObserver() {
+            @Override
+            public void doOnError(@NonNull Throwable throwable, @NonNull Context span) {
+                request.setAttribute(CONTINUE, true);
             }
-        };
-
+        });
     }
 }

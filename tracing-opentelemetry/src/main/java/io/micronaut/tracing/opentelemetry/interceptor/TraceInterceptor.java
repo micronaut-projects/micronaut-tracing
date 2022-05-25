@@ -30,7 +30,9 @@ import io.micronaut.core.util.StringUtils;
 import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
+import io.micronaut.tracing.opentelemetry.instrument.util.TracingObserver;
 import io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisher;
+import io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisherUtils;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
@@ -93,7 +95,6 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
         }
         Context currentContext = Context.current();
 
-        ClassAndMethod classAndMethod = ClassAndMethod.create(context.getDeclaringType(), context.getMethodName());
 
         if (isContinue) {
             InterceptedMethod interceptedMethod = InterceptedMethod.of(context);
@@ -104,15 +105,16 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                         if (publisher instanceof TracingPublisher) {
                             return publisher;
                         }
+                        ClassAndMethod classAndMethod = ClassAndMethod.create(context.getDeclaringType(), context.getMethodName());
                         return interceptedMethod.handleResult(
-                            new TracingPublisher(publisher, null, classAndMethod, currentContext) {
+                            TracingPublisherUtils.createTracingPublisher(publisher, null, classAndMethod, new TracingObserver() {
 
                                 @Override
                                 public void doOnSubscribe(@NonNull Context openTelemetryContext) {
                                     tagArguments(context, openTelemetryContext);
                                 }
 
-                            });
+                            }));
                     case COMPLETION_STAGE:
                     case SYNCHRONOUS:
                         tagArguments(context, currentContext);
@@ -132,6 +134,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
             // must be new
             // don't create a nested span if you're not supposed to.
             String operationName = newSpan.stringValue().orElse("");
+            ClassAndMethod classAndMethod = ClassAndMethod.create(context.getDeclaringType(), context.getMethodName());
 
             if (!StringUtils.isEmpty(operationName)) {
                 classAndMethod = ClassAndMethod.create(classAndMethod.declaringClass(), classAndMethod.methodName() + '#' + operationName);
@@ -145,14 +148,12 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                         if (publisher instanceof TracingPublisher) {
                             return publisher;
                         }
-                        return interceptedMethod.handleResult(new TracingPublisher(publisher, instrumenter, classAndMethod, currentContext) {
-
+                        return interceptedMethod.handleResult(TracingPublisherUtils.createTracingPublisher(publisher, instrumenter, classAndMethod, new TracingObserver() {
                             @Override
                             public void doOnSubscribe(@NonNull Context openTelemetryContext) {
                                 tagArguments(context, openTelemetryContext);
-                            }
-
-                        });
+                                }
+                            }));
                     case COMPLETION_STAGE:
                         if (!instrumenter.shouldStart(currentContext, classAndMethod)) {
                             return context.proceed();

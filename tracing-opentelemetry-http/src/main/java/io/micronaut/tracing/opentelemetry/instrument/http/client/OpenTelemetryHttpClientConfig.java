@@ -16,6 +16,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.core.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +45,7 @@ public class OpenTelemetryHttpClientConfig {
     /**
      * @param responseHeaders The response headers
      */
-    public void setResponseHeaders(List<String> responseHeaders) {
+    public void setResponseHeaders(@NonNull List<String> responseHeaders) {
         this.responseHeaders = responseHeaders;
     }
 
@@ -58,7 +59,7 @@ public class OpenTelemetryHttpClientConfig {
     /**
      * @param requestHeaders The request headers
      */
-    public void setRequestHeaders(List<String> requestHeaders) {
+    public void setRequestHeaders(@NonNull List<String> requestHeaders) {
         this.requestHeaders = requestHeaders;
     }
 }

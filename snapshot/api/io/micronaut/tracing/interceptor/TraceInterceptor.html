@@ -113,6 +113,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>@Singleton
  @Requires(beans=io.opentracing.Tracer.class)
+ @InterceptorBean(value={<a href="../../../../io/micronaut/tracing/annotation/ContinueSpan.html" title="annotation in io.micronaut.tracing.annotation">ContinueSpan.class</a>,<a href="../../../../io/micronaut/tracing/annotation/NewSpan.html" title="annotation in io.micronaut.tracing.annotation">NewSpan.class</a>})
 public class <span class="typeNameLabel">TraceInterceptor</span>
 extends java.lang.Object
 implements io.micronaut.aop.MethodInterceptor&lt;java.lang.Object,java.lang.Object&gt;</pre>

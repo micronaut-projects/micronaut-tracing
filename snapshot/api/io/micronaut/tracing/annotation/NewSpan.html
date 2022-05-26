@@ -94,8 +94,8 @@
 <pre>@Retention(value=RUNTIME)
  @Inherited
  @Target(value={METHOD,ANNOTATION_TYPE})
- @Around
- @Type(value=<a href="../../../../io/micronaut/tracing/interceptor/TraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">TraceInterceptor.class</a>)
+ @Type(value=io.micronaut.aop.InterceptorBinding.class)
+ @InterceptorBinding
 public @interface <span class="memberNameLabel">NewSpan</span></pre>
 <div class="block"><p>Indicates that a new Open Tracing span should be started.</p>
 

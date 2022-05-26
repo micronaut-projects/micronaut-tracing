@@ -51,7 +51,9 @@
                                 
                                 <div class="toc-item" style="margin-left:0"><a href="#zipkin"><strong>4</strong><span>Tracing with Zipkin</span></a></div>
                                 
-                                <div class="toc-item" style="margin-left:0"><a href="#repository"><strong>5</strong><span>Repository</span></a></div>
+                                <div class="toc-item" style="margin-left:0"><a href="#opentelemetry"><strong>5</strong><span>Use Open Telemetry for tracing</span></a></div>
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#repository"><strong>6</strong><span>Repository</span></a></div>
                                 
                             </div>
                         </div>
@@ -90,7 +92,13 @@
         
         <div class="toc-item" style="margin-left:0px" id="toc-item-zipkin"><a href="#zipkin"><strong>4</strong><span>Tracing with Zipkin</span></a></div>
         
-        <div class="toc-item" style="margin-left:0px" id="toc-item-repository"><a href="#repository"><strong>5</strong><span>Repository</span></a></div>
+        <div class="toc-item" style="margin-left:0px" id="toc-item-opentelemetry"><a href="#opentelemetry"><strong>5</strong><span>Use Open Telemetry for tracing</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-http"><a href="#http"><strong>5.1</strong><span>Open Telemetry for HTTP Server and Client</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-grpc"><a href="#grpc"><strong>5.2</strong><span>Open Telemetry for GRPC Server and Client</span></a></div>
+        
+        <div class="toc-item" style="margin-left:0px" id="toc-item-repository"><a href="#repository"><strong>6</strong><span>Repository</span></a></div>
         
         </div>
     </div>
@@ -547,7 +555,298 @@ This can be achieved by adding a list of regular expression patterns to your con
 </div>
 </div>
 
-<h1 id="repository"><a class="anchor" href="#repository"></a>5 Repository</h1>
+<h1 id="opentelemetry"><a class="anchor" href="#opentelemetry"></a>5 Use Open Telemetry for tracing</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The Micronaut Open Telemetry module uses <a href="https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md">Open Telemetry Autoconfigure SDK</a> to configure Open Telemetry for tracing. For some functionalities you have to add additional dependencies. The Default values that are defined inside the Micronaut which values might be different from the default ones inside <a href="https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md">Open Telemetry Autoconfigure SDK</a> module are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>otel.traces.exporter = none</p>
+</li>
+<li>
+<p>otel.metrics.exporter = none</p>
+</li>
+<li>
+<p>otel.logs.exporte = none</p>
+</li>
+<li>
+<p>otel.service.name = value of the application.name</p>
+</li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="_opentelemetry_annotations">OpenTelemetry annotations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="../api/io/micronaut/tracing/opentelemetry-annotation/package-summary.html">io.micronaut.tracing.opentelemetry-annotation</a> package contains transformers and mappers that enables usage of Open Telemetry annotations.</p>
+</div>
+<div class="paragraph">
+<p>To enable Open telemetry annotations you have to add next annotation processor in your dependency block:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">annotationProcessor(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-annotation:4.1.2-SNAPSHOT")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;annotationProcessorPaths&gt;
+    &lt;path&gt;
+        &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+        &lt;artifactId&gt;micronaut-tracing-opentelemetry-annotation&lt;/artifactId&gt;
+        &lt;version&gt;4.1.2-SNAPSHOT&lt;/version&gt;
+    &lt;/path&gt;
+&lt;/annotationProcessorPaths&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p>The Open Tracing annotations that are defined inside the The <a href="../api/io/micronaut/tracing/annotation/package-summary.html">io.micronaut.tracing.annotation</a> package are also available for usage inside Open Telemetry.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_open_telemetry_exporters">Open Telemetry Exporters</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In your project you can specify exporters that you want to use. The default one is set to "none" value which means by default there are no exporter registered. The available values are defined on the <a href="https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md">Open Telemetry Autoconfigure SDK documentation</a>.</p>
+</div>
+<div class="paragraph">
+<p>For each exporter that you want to use you have to specify it inside configuration, and you have to add required dependency:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Otlp exporter:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry:opentelemetry-exporter-otlp")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-exporter-otlp&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</li>
+<li>
+<p>Zipkin exporter:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry:opentelemetry-exporter-zipkin")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-exporter-zipkin&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</li>
+<li>
+<p>logging exporter:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry:opentelemetry-exporter-logging")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-exporter-logging&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</li>
+<li>
+<p>Jaeger exporter:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry:opentelemetry-exporter-jaeger")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-exporter-jaeger&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Example configuration for the Zipkin exporter:</p>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">otel:
+  traces:
+    exporter: zipkin</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_open_telemetry_propagators">Open Telemetry Propagators</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In your project you can specify propagators that you want to use. The default one is set to "tracecontext, baggage". The available values are defined on the <a href="https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md">Open Telemetry Autoconfigure SDK documentation</a>.</p>
+</div>
+<div class="paragraph">
+<p>To use <a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-concepts.html#xray-concepts-tracingheader">AWS X-Ray</a> propagator inside your application you have to add next dependency in your project:</p>
+</div>
+<div class="paragraph">
+<p>        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry:opentelemetry-extension-aws")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-extension-aws&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p>And the "xray" has to be added inside configuration file.</p>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">otel:
+  traces:
+    exporter: otlp
+  propagators: tracecontext, baggage, xray</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+<h2 id="http"><a class="anchor" href="#http"></a>5.1 Open Telemetry for HTTP Server and Client</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/http.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To enable creating span objects on the every HTTP server request, client request, server response and client response you have to add next depedency:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-http")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-tracing-opentelemetry-http&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="sect1">
+<h2 id="_filtering_http_spans">Filtering HTTP spans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It may be useful to exclude health-checks and other HTTP requests to your service.
+This can be achieved by adding a list of regular expression patterns to your configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">Filtering HTTP request spans</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">otel:
+  exclusions:
+    - /health
+    - /env/.*</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_add_http_headers_into_request_spans">Add HTTP Headers into request spans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you want you can add additional Http Headers inside your span objects. You can specify different headers for client request, client response, server request and server response.</p>
+</div>
+<div class="listingblock">
+<div class="title">Adding HTTP Headers into request spans</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">otel:
+  http:
+    client:
+      request-headers:
+        - X-From-Client-Request
+      response-headers:
+        - X-From-Client-Response
+    server:
+      request-headers:
+        - X-From-Server-Request
+      response-headers:
+        - X-From-Server-Response</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+<h2 id="grpc"><a class="anchor" href="#grpc"></a>5.2 Open Telemetry for GRPC Server and Client</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/grpc.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To enable creating span objects on the every GRPC server request, client request, server response and client response. You have to add next depedency:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-grpc")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-tracing-opentelemetry-grpc&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+
+<h1 id="repository"><a class="anchor" href="#repository"></a>6 Repository</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/repository.adoc"'>

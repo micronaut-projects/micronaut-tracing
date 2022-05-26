@@ -4,7 +4,14 @@ io.micronaut.tracing.brave
 io.micronaut.tracing.brave.instrument.http
 io.micronaut.tracing.brave.log
 io.micronaut.tracing.brave.sender
+io.micronaut.tracing.grpc
 io.micronaut.tracing.instrument.http
 io.micronaut.tracing.instrument.util
 io.micronaut.tracing.interceptor
 io.micronaut.tracing.jaeger
+io.micronaut.tracing.opentelemetry.instrument.http
+io.micronaut.tracing.opentelemetry.instrument.http.client
+io.micronaut.tracing.opentelemetry.instrument.http.server
+io.micronaut.tracing.opentelemetry.instrument.util
+io.micronaut.tracing.opentelemetry.interceptor
+io.micronaut.tracing.opentelemetry.processing

@@ -77,10 +77,17 @@
 <li><a href="io/micronaut/tracing/brave/instrument/http/package-tree.html">io.micronaut.tracing.brave.instrument.http</a>, </li>
 <li><a href="io/micronaut/tracing/brave/log/package-tree.html">io.micronaut.tracing.brave.log</a>, </li>
 <li><a href="io/micronaut/tracing/brave/sender/package-tree.html">io.micronaut.tracing.brave.sender</a>, </li>
+<li><a href="io/micronaut/tracing/grpc/package-tree.html">io.micronaut.tracing.grpc</a>, </li>
 <li><a href="io/micronaut/tracing/instrument/http/package-tree.html">io.micronaut.tracing.instrument.http</a>, </li>
 <li><a href="io/micronaut/tracing/instrument/util/package-tree.html">io.micronaut.tracing.instrument.util</a>, </li>
 <li><a href="io/micronaut/tracing/interceptor/package-tree.html">io.micronaut.tracing.interceptor</a>, </li>
-<li><a href="io/micronaut/tracing/jaeger/package-tree.html">io.micronaut.tracing.jaeger</a></li>
+<li><a href="io/micronaut/tracing/jaeger/package-tree.html">io.micronaut.tracing.jaeger</a>, </li>
+<li><a href="io/micronaut/tracing/opentelemetry/instrument/http/package-tree.html">io.micronaut.tracing.opentelemetry.instrument.http</a>, </li>
+<li><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/package-tree.html">io.micronaut.tracing.opentelemetry.instrument.http.client</a>, </li>
+<li><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/package-tree.html">io.micronaut.tracing.opentelemetry.instrument.http.server</a>, </li>
+<li><a href="io/micronaut/tracing/opentelemetry/instrument/util/package-tree.html">io.micronaut.tracing.opentelemetry.instrument.util</a>, </li>
+<li><a href="io/micronaut/tracing/opentelemetry/interceptor/package-tree.html">io.micronaut.tracing.opentelemetry.interceptor</a>, </li>
+<li><a href="io/micronaut/tracing/opentelemetry/processing/package-tree.html">io.micronaut.tracing.opentelemetry.processing</a></li>
 </ul>
 </div>
 <div class="contentContainer">
@@ -88,6 +95,12 @@
 <ul>
 <li type="circle">java.lang.Object
 <ul>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.http.<a href="io/micronaut/tracing/opentelemetry/instrument/http/AbstractOpenTelemetryFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http"><span class="typeNameLink">AbstractOpenTelemetryFilter</span></a> (implements io.micronaut.http.filter.HttpFilter)
+<ul>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.http.client.<a href="io/micronaut/tracing/opentelemetry/instrument/http/client/OpenTelemetryClientFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client"><span class="typeNameLink">OpenTelemetryClientFilter</span></a> (implements io.micronaut.http.filter.HttpClientFilter)</li>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.http.server.<a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryServerFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server"><span class="typeNameLink">OpenTelemetryServerFilter</span></a> (implements io.micronaut.http.filter.HttpServerFilter)</li>
+</ul>
+</li>
 <li type="circle">io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.instrument.http"><span class="typeNameLink">AbstractOpenTracingFilter</span></a> (implements io.micronaut.http.filter.HttpFilter)
 <ul>
 <li type="circle">io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/OpenTracingClientFilter.html" title="class in io.micronaut.tracing.instrument.http"><span class="typeNameLink">OpenTracingClientFilter</span></a> (implements io.micronaut.http.filter.HttpClientFilter)</li>
@@ -110,7 +123,11 @@
 </li>
 </ul>
 </li>
+<li type="circle">io.micronaut.tracing.<a href="io/micronaut/tracing/DefaultOpenTelemetryFactory.html" title="class in io.micronaut.tracing"><span class="typeNameLink">DefaultOpenTelemetryFactory</span></a></li>
+<li type="circle">io.micronaut.tracing.<a href="io/micronaut/tracing/DefaultTelemetryTracer.html" title="class in io.micronaut.tracing"><span class="typeNameLink">DefaultTelemetryTracer</span></a></li>
 <li type="circle">io.micronaut.tracing.<a href="io/micronaut/tracing/DefaultTracer.html" title="class in io.micronaut.tracing"><span class="typeNameLink">DefaultTracer</span></a></li>
+<li type="circle">io.micronaut.tracing.grpc.<a href="io/micronaut/tracing/grpc/GrpcClientTracingInterceptorFactory.html" title="class in io.micronaut.tracing.grpc"><span class="typeNameLink">GrpcClientTracingInterceptorFactory</span></a></li>
+<li type="circle">io.micronaut.tracing.grpc.<a href="io/micronaut/tracing/grpc/GrpcServerTracingInterceptorFactory.html" title="class in io.micronaut.tracing.grpc"><span class="typeNameLink">GrpcServerTracingInterceptorFactory</span></a></li>
 <li type="circle">io.micronaut.http.client.HttpClientConfiguration
 <ul>
 <li type="circle">io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.HttpClientSenderConfiguration.html" title="class in io.micronaut.tracing.brave"><span class="typeNameLink">BraveTracerConfiguration.HttpClientSenderConfiguration</span></a></li>
@@ -126,18 +143,34 @@
 <li type="circle">io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerConfiguration.JaegerSenderConfiguration.html" title="class in io.micronaut.tracing.jaeger"><span class="typeNameLink">JaegerConfiguration.JaegerSenderConfiguration</span></a></li>
 <li type="circle">io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerTracerFactory.html" title="class in io.micronaut.tracing.jaeger"><span class="typeNameLink">JaegerTracerFactory</span></a> (implements java.io.Closeable)</li>
 <li type="circle">io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/MdcInstrumenter.html" title="class in io.micronaut.tracing.instrument.util"><span class="typeNameLink">MdcInstrumenter</span></a> (implements io.micronaut.scheduling.instrument.InvocationInstrumenterFactory, io.micronaut.scheduling.instrument.ReactiveInvocationInstrumenterFactory)</li>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/MicronautCodeTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">MicronautCodeTelemetryFactory</span></a></li>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.http.client.<a href="io/micronaut/tracing/opentelemetry/instrument/http/client/MicronautHttpClientTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client"><span class="typeNameLink">MicronautHttpClientTelemetryFactory</span></a></li>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.http.server.<a href="io/micronaut/tracing/opentelemetry/instrument/http/server/MicronautHttpServerTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server"><span class="typeNameLink">MicronautHttpServerTelemetryFactory</span></a></li>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">OpenTelemetryExclusionsConfiguration</span></a></li>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.http.client.<a href="io/micronaut/tracing/opentelemetry/instrument/http/client/OpenTelemetryHttpClientConfig.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client"><span class="typeNameLink">OpenTelemetryHttpClientConfig</span></a></li>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.http.server.<a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryHttpServerConfig.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server"><span class="typeNameLink">OpenTelemetryHttpServerConfig</span></a></li>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryInvocationInstrumenter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">OpenTelemetryInvocationInstrumenter</span></a> (implements io.micronaut.scheduling.instrument.ReactiveInvocationInstrumenterFactory)</li>
 <li type="circle">io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/OpenTracingInvocationInstrumenter.html" title="class in io.micronaut.tracing.instrument.util"><span class="typeNameLink">OpenTracingInvocationInstrumenter</span></a> (implements io.micronaut.scheduling.instrument.ReactiveInvocationInstrumenterFactory, io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingInvocationInstrumenterFactory.html" title="interface in io.micronaut.tracing.instrument.util">TracingInvocationInstrumenterFactory</a>)</li>
 <li type="circle">io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/ScopePropagationPublisher.html" title="class in io.micronaut.tracing.instrument.util"><span class="typeNameLink">ScopePropagationPublisher</span></a>&lt;T&gt; (implements io.micronaut.core.async.publisher.Publishers.MicronautPublisher&lt;T&gt;)</li>
 <li type="circle">io.micronaut.tracing.brave.log.<a href="io/micronaut/tracing/brave/log/Slf4jCurrentTraceContextFactory.html" title="class in io.micronaut.tracing.brave.log"><span class="typeNameLink">Slf4jCurrentTraceContextFactory</span></a></li>
+<li type="circle">io.micronaut.tracing.opentelemetry.processing.<a href="io/micronaut/tracing/opentelemetry/processing/SpanAttributeAnnotationMapper.html" title="class in io.micronaut.tracing.opentelemetry.processing"><span class="typeNameLink">SpanAttributeAnnotationMapper</span></a> (implements io.micronaut.inject.annotation.TypedAnnotationMapper&lt;T&gt;)</li>
 <li type="circle">io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/TraceInterceptor.html" title="class in io.micronaut.tracing.interceptor"><span class="typeNameLink">TraceInterceptor</span></a> (implements io.micronaut.aop.MethodInterceptor&lt;T,R&gt;)</li>
+<li type="circle">io.micronaut.tracing.opentelemetry.interceptor.<a href="io/micronaut/tracing/opentelemetry/interceptor/TraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor"><span class="typeNameLink">TraceInterceptor</span></a> (implements io.micronaut.aop.MethodInterceptor&lt;T,R&gt;)</li>
 <li type="circle">io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http"><span class="typeNameLink">TracingExclusionsConfiguration</span></a></li>
 <li type="circle">io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util"><span class="typeNameLink">TracingPublisher</span></a>&lt;T&gt; (implements io.micronaut.core.async.publisher.Publishers.MicronautPublisher&lt;T&gt;)
 <ul>
 <li type="circle">io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util"><span class="typeNameLink">TracingCorePublisher</span></a>&lt;T&gt; (implements reactor.core.CorePublisher&lt;T&gt;)</li>
 </ul>
 </li>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">TracingPublisher</span></a>&lt;T,REQ&gt; (implements io.micronaut.core.async.publisher.Publishers.MicronautPublisher&lt;T&gt;)
+<ul>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">TracingCorePublisher</span></a>&lt;T,REQ&gt; (implements reactor.core.CorePublisher&lt;T&gt;)</li>
+</ul>
+</li>
 <li type="circle">io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.instrument.util"><span class="typeNameLink">TracingPublisher.TracingSubscriber</span></a> (implements org.reactivestreams.Subscriber&lt;T&gt;)</li>
 <li type="circle">io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisherUtils.html" title="class in io.micronaut.tracing.instrument.util"><span class="typeNameLink">TracingPublisherUtils</span></a></li>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisherUtils.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">TracingPublisherUtils</span></a></li>
+<li type="circle">io.micronaut.tracing.opentelemetry.processing.<a href="io/micronaut/tracing/opentelemetry/processing/WithSpanAnnotationTransformer.html" title="class in io.micronaut.tracing.opentelemetry.processing"><span class="typeNameLink">WithSpanAnnotationTransformer</span></a> (implements io.micronaut.inject.annotation.TypedAnnotationTransformer&lt;T&gt;)</li>
 <li type="circle">io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/ZipkinServiceInstanceList.html" title="class in io.micronaut.tracing.brave"><span class="typeNameLink">ZipkinServiceInstanceList</span></a> (implements io.micronaut.discovery.ServiceInstanceList)</li>
 </ul>
 </li>
@@ -146,12 +179,15 @@
 <ul>
 <li type="circle">io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingInvocationInstrumenterFactory.html" title="interface in io.micronaut.tracing.instrument.util"><span class="typeNameLink">TracingInvocationInstrumenterFactory</span></a></li>
 <li type="circle">io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util"><span class="typeNameLink">TracingObserver</span></a>&lt;T&gt;</li>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">TracingObserver</span></a>&lt;T&gt;</li>
 </ul>
 <h2 title="Annotation Type Hierarchy">Annotation Type Hierarchy</h2>
 <ul>
-<li type="circle">io.micronaut.tracing.annotation.<a href="io/micronaut/tracing/annotation/ContinueSpan.html" title="annotation in io.micronaut.tracing.annotation"><span class="typeNameLink">ContinueSpan</span></a> (implements java.lang.annotation.Annotation)</li>
 <li type="circle">io.micronaut.tracing.annotation.<a href="io/micronaut/tracing/annotation/SpanTag.html" title="annotation in io.micronaut.tracing.annotation"><span class="typeNameLink">SpanTag</span></a> (implements java.lang.annotation.Annotation)</li>
+<li type="circle">io.micronaut.tracing.annotation.<a href="io/micronaut/tracing/annotation/ContinueSpan.html" title="annotation in io.micronaut.tracing.annotation"><span class="typeNameLink">ContinueSpan</span></a> (implements java.lang.annotation.Annotation)</li>
 <li type="circle">io.micronaut.tracing.annotation.<a href="io/micronaut/tracing/annotation/NewSpan.html" title="annotation in io.micronaut.tracing.annotation"><span class="typeNameLink">NewSpan</span></a> (implements java.lang.annotation.Annotation)</li>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.http.server.<a href="io/micronaut/tracing/opentelemetry/instrument/http/server/MicronautHttpServerTelemetryFactory.Server.html" title="annotation in io.micronaut.tracing.opentelemetry.instrument.http.server"><span class="typeNameLink">MicronautHttpServerTelemetryFactory.Server</span></a> (implements java.lang.annotation.Annotation)</li>
+<li type="circle">io.micronaut.tracing.opentelemetry.instrument.http.client.<a href="io/micronaut/tracing/opentelemetry/instrument/http/client/MicronautHttpClientTelemetryFactory.Client.html" title="annotation in io.micronaut.tracing.opentelemetry.instrument.http.client"><span class="typeNameLink">MicronautHttpClientTelemetryFactory.Client</span></a> (implements java.lang.annotation.Annotation)</li>
 </ul>
 <h2 title="Enum Hierarchy">Enum Hierarchy</h2>
 <ul>

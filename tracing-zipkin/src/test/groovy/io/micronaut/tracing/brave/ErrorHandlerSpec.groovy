@@ -14,8 +14,9 @@ import spock.lang.Specification
 import static io.micronaut.tracing.brave.sender.HttpClientSender.Builder.DEFAULT_SERVER_URL
 
 class ErrorHandlerSpec extends Specification {
+
     @Issue('https://github.com/micronaut-projects/micronaut-tracing/issues/3')
-    def 'error handler only called once'() {
+    void 'error handler only called once'() {
         given:
         ApplicationContext context = ApplicationContext.run(
                 'spec.name': 'ErrorHandlerSpec',
@@ -30,6 +31,7 @@ class ErrorHandlerSpec extends Specification {
 
         when:
         client.toBlocking().exchange(HttpRequest.GET('/error-handler-controller'))
+
         then:
         thrown HttpClientResponseException
         handler.exceptions.size() == 1

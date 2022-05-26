@@ -17,6 +17,7 @@ package io.micronaut.tracing.interceptor;
 
 import io.micronaut.aop.InterceptPhase;
 import io.micronaut.aop.InterceptedMethod;
+import io.micronaut.aop.InterceptorBean;
 import io.micronaut.aop.MethodInterceptor;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
@@ -55,6 +56,7 @@ import static io.opentracing.log.Fields.MESSAGE;
  */
 @Singleton
 @Requires(beans = Tracer.class)
+@InterceptorBean({ContinueSpan.class, NewSpan.class})
 public class TraceInterceptor implements MethodInterceptor<Object, Object> {
 
     public static final String CLASS_TAG = "class";

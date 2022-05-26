@@ -1,5 +1,6 @@
 package io.micronaut.tracing.instrument.util
 
+import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Requires
 import io.micronaut.http.HttpRequest
@@ -27,9 +28,8 @@ import java.util.function.Consumer
 import static io.micronaut.http.annotation.Filter.MATCH_ALL_PATTERN
 import static io.micronaut.tracing.instrument.util.MDCSpec.RequestIdFilter.TRACE_ID_MDC_KEY
 
+@Slf4j("LOG")
 class MDCSpec extends Specification {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MDCSpec)
 
     @Shared
     @AutoCleanup
@@ -72,11 +72,10 @@ class MDCSpec extends Specification {
         }
     }
 
+    @Slf4j("LOG")
     @Filter(MATCH_ALL_PATTERN)
     @Requires(property = 'mdc.test.enabled')
     static class RequestIdFilter implements HttpServerFilter {
-
-        private static final Logger LOG = LoggerFactory.getLogger(RequestIdFilter)
 
         private static final String TRACE_ID_MDC_KEY = 'traceId'
 

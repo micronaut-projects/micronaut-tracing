@@ -1,0 +1,38 @@
+To enable creating span objects on the every HTTP server request, client request, server response and client response you have to add next depedency:
+dependency:micronaut-tracing-opentelemetry-http[scope="implementation", groupId="io.micronaut.tracing"]
+
+
+== Filtering HTTP spans
+
+It may be useful to exclude health-checks and other HTTP requests to your service.
+This can be achieved by adding a list of regular expression patterns to your configuration:
+
+.Filtering HTTP request spans
+[source,yaml]
+----
+otel:
+  exclusions:
+    - /health
+    - /env/.*
+----
+
+== Add HTTP Headers into request spans
+
+If you want you can add additional Http Headers inside your span objects. You can specify different headers for client request, client response, server request and server response.
+
+.Adding HTTP Headers into request spans
+[source,yaml]
+----
+otel:
+  http:
+    client:
+      request-headers:
+        - X-From-Client-Request
+      response-headers:
+        - X-From-Client-Response
+    server:
+      request-headers:
+        - X-From-Server-Request
+      response-headers:
+        - X-From-Server-Response
+----

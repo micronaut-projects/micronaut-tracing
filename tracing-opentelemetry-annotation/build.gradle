@@ -1,0 +1,27 @@
+import org.gradle.internal.jvm.Jvm
+
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api platform (libs.opentelemetry.bom)
+    api platform (libs.opentelemetry.bom.alpha)
+    api platform (libs.opentelemetry.instrumentation.bom.alpha)
+    api mn.micronaut.runtime
+    api projects.tracingAnnotation
+    api libs.opentelemetry.extension.annotations
+
+    testImplementation mn.micronaut.inject.java.test
+    testImplementation mn.micronaut.inject.groovy.test
+    if (!JavaVersion.current().isJava9Compatible()) {
+        testImplementation files(Jvm.current().toolsJar)
+    }
+}
+
+// TODO temporarily disable binary compatibility checks
+micronautBuild {
+    binaryCompatibility {
+        enabled = false
+    }
+}

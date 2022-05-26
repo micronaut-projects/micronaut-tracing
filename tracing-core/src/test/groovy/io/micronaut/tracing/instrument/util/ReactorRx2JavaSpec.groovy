@@ -1,5 +1,6 @@
 package io.micronaut.tracing.instrument.util
 
+import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.http.HttpRequest
@@ -18,8 +19,6 @@ import io.micronaut.tracing.annotation.NewSpan
 import io.reactivex.Flowable
 import io.reactivex.Single
 import jakarta.inject.Inject
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.function.Tuple2
@@ -28,12 +27,10 @@ import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
-
 import static io.micronaut.scheduling.TaskExecutors.IO
 
+@Slf4j("LOG")
 class ReactorRx2JavaSpec extends Specification {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ReactorRx2JavaSpec)
 
     @Shared
     @AutoCleanup
@@ -80,7 +77,7 @@ class ReactorRx2JavaSpec extends Specification {
         @ContinueSpan
         @Post("/enter")
         Single<String> test(@Header("X-TrackingId") String tracingId, @Body SomeBody body) {
-            LOG.info("enter")
+            LOG.debug("enter")
             return Single.fromPublisher(
                     reactorHttpClient.retrieve(HttpRequest
                             .GET("/rxjava2/test")
@@ -92,7 +89,7 @@ class ReactorRx2JavaSpec extends Specification {
         @Get("/test")
         @ContinueSpan
         Mono<String> testRxJava2(@Header("X-TrackingId") String tracingId) {
-            LOG.info("test")
+            LOG.debug("test")
             return Mono.from(
                     rxHttpClient.exchange(HttpRequest
                             .GET("/rxjava2/test2")
@@ -104,7 +101,7 @@ class ReactorRx2JavaSpec extends Specification {
         @Get("/test2")
         @ContinueSpan
         String test2RxJava2(@Header("X-TrackingId") String tracingId) {
-            LOG.info("test2")
+            LOG.debug("test2")
             return Flux.from(trackingIdRxJava2(tracingId)).blockFirst()
         }
 

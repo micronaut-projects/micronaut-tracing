@@ -3,4 +3,8 @@ introduction:
 releaseHistory: Release History
 jaeger: Tracing with Jaeger
 zipkin: Tracing with Zipkin
+opentelemetry:
+  title: Use Open Telemetry for tracing
+  http: Open Telemetry for HTTP Server and Client
+  grpc: Open Telemetry for GRPC Server and Client
 repository: Repository

@@ -11,11 +11,12 @@ import jakarta.inject.Singleton
 @Singleton
 @Requires(property = 'spec.name', value = 'ErrorHandlerSpec')
 class ErrorHandler implements ExceptionHandler<RuntimeException, HttpResponse> {
-    def exceptions = new ArrayList<Throwable>()
+
+    List<RuntimeException> exceptions = []
 
     @Override
     HttpResponse handle(HttpRequest request, RuntimeException exception) {
-        exceptions.add(exception)
+        exceptions << exception
         return HttpResponse.badRequest()
     }
 }

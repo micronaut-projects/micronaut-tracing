@@ -8,6 +8,7 @@ dependencies {
     api mn.micronaut.http.client
     api libs.opentracing
     api libs.opentracing.util
+    api projects.tracingAnnotation
 
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor

@@ -4,12 +4,14 @@ import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Header
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.context.ServerRequestContext
 import io.micronaut.reactor.http.client.ReactorHttpClient
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.scheduling.annotation.ExecuteOn
@@ -87,6 +89,15 @@ class OpenTelemetryHttpSpec extends Specification {
         testExporter.reset()
     }
 
+    void 'test context propagation'() {
+        when:
+        HttpResponse<String> response = reactorHttpClient.toBlocking().exchange('/propagate/context', String)
+
+        then:
+        response
+        response.body() == "contains micronaut.http.server.request: true, size: 1"
+    }
+
     @Introspected
     static class SomeBody {
     }
@@ -134,6 +145,20 @@ class OpenTelemetryHttpSpec extends Specification {
         @WithSpan("test-withspan-mapping")
         Mono<String> methodWithSpan(@SpanTag("tracing-annotation-span-tag-with-withspan") String tracingId) {
             return Mono.just(tracingId)
+        }
+    }
+
+    @Controller('/propagate')
+    static class ContextPropagateController {
+
+        @Get("/context")
+        Mono<String> context() {
+
+            return Mono.deferContextual(ctx -> {
+                boolean hasKey = ctx.hasKey(ServerRequestContext.KEY)
+                int size = ctx.size()
+                return Mono.just("contains ${ServerRequestContext.KEY}: $hasKey, size: $size")
+            }) as Mono<String>
         }
     }
 }

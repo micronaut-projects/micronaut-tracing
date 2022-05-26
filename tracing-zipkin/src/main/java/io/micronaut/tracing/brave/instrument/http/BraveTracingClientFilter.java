@@ -31,6 +31,7 @@ import io.micronaut.tracing.instrument.http.OpenTracingClientFilter;
 import io.micronaut.tracing.instrument.http.TracingExclusionsConfiguration;
 import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
+import reactor.core.CorePublisher;
 
 import java.util.function.Predicate;
 
@@ -84,6 +85,11 @@ public class BraveTracingClientFilter implements HttpClientFilter {
         if (shouldExclude(request.getPath())) {
             return requestPublisher;
         }
+
+        if (requestPublisher instanceof CorePublisher) {
+            return new HttpClientTracingCorePublisher(requestPublisher, request, clientHandler, httpTracing);
+        }
+
         return new HttpClientTracingPublisher(requestPublisher, request, clientHandler, httpTracing);
     }
 

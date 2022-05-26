@@ -17,6 +17,7 @@ import org.reactivestreams.Publisher
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import spock.lang.AutoCleanup
+import spock.lang.Issue
 import spock.lang.Specification
 import zipkin2.Span
 import zipkin2.Span.Kind
@@ -250,6 +251,17 @@ class HttpTracingSpec extends Specification {
         appWithoutTracing.close()
     }
 
+    @Issue("https://github.com/micronaut-projects/micronaut-tracing/issues/29")
+    void 'test context propagation'() {
+        when:
+        buildContext()
+        HttpResponse<String> response = client.toBlocking().exchange('/propagate/context', String)
+
+        then:
+        response
+        response.body() == "contains micronaut.http.server.request: true, size: 1"
+    }
+
     void 'test nested HTTP error tracing'() {
         when:
         buildContext()
@@ -302,6 +314,20 @@ class HttpTracingSpec extends Specification {
         reporter = context.getBean(TestReporter)
         embeddedServer = context.getBean(EmbeddedServer).start()
         client = context.createBean(HttpClient, embeddedServer.URL)
+    }
+
+    @Controller('/propagate')
+    static class ContextPropagateController {
+
+        @Get("/context")
+        Mono<String> context() {
+
+            return Mono.deferContextual(ctx -> {
+                boolean hasKey = ctx.hasKey(ServerRequestContext.KEY)
+                int size = ctx.size()
+                return Mono.just("contains ${ServerRequestContext.KEY}: $hasKey, size: $size")
+            }) as Mono<String>
+        }
     }
 
     @Controller('/traced')

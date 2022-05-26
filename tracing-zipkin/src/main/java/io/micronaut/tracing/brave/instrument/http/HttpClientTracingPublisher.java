@@ -22,6 +22,7 @@ import brave.http.HttpClientHandler;
 import brave.http.HttpClientRequest;
 import brave.http.HttpClientResponse;
 import brave.http.HttpTracing;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
@@ -45,7 +46,7 @@ import static io.micronaut.tracing.instrument.http.TraceRequestAttributes.CURREN
 @SuppressWarnings("PublisherImplementation")
 class HttpClientTracingPublisher implements Publishers.MicronautPublisher<HttpResponse<?>> {
 
-    private final Publisher<? extends HttpResponse<?>> publisher;
+    protected final Publisher<? extends HttpResponse<?>> publisher;
     private final HttpClientHandler<HttpClientRequest, HttpClientResponse> clientHandler;
     private final MutableHttpRequest<?> request;
     private final Tracer tracer;
@@ -79,43 +80,7 @@ class HttpClientTracingPublisher implements Publishers.MicronautPublisher<HttpRe
         request.setAttribute(CURRENT_SPAN, span);
 
         try (SpanInScope ignored = tracer.withSpanInScope(span)) {
-            publisher.subscribe(new Subscriber<HttpResponse<?>>() {
-
-                @Override
-                public void onSubscribe(Subscription s) {
-                    try (SpanInScope ignored = tracer.withSpanInScope(span)) {
-                        actual.onSubscribe(s);
-                    }
-                }
-
-                @Override
-                public void onNext(HttpResponse<?> response) {
-                    try (SpanInScope ignored = tracer.withSpanInScope(span)) {
-                        clientHandler.handleReceive(mapResponse(request, response, null), span);
-                        actual.onNext(response);
-                    }
-                }
-
-                @Override
-                public void onError(Throwable error) {
-                    try (SpanInScope ignored = tracer.withSpanInScope(span)) {
-                        if (error instanceof HttpClientResponseException) {
-                            HttpClientResponseException e = (HttpClientResponseException) error;
-                            clientHandler.handleReceive(mapResponse(request, e.getResponse(), error), span);
-                        } else {
-                            span.error(error);
-                            span.finish();
-                        }
-
-                        actual.onError(error);
-                    }
-                }
-
-                @Override
-                public void onComplete() {
-                    actual.onComplete();
-                }
-            });
+            doSubscribe(actual, span);
         }
     }
 
@@ -185,4 +150,68 @@ class HttpClientTracingPublisher implements Publishers.MicronautPublisher<HttpRe
             }
         };
     }
+
+    /**
+     * Do subscribe to the publisher.
+     *
+     * @param actual The actual subscriber
+     * @param span   The span
+     */
+    @Internal
+    protected void doSubscribe(Subscriber<? super HttpResponse<?>>  actual, Span span) {
+        publisher.subscribe(new TracingHttpClientSubscriber(actual, span));
+    }
+
+
+
+    /**
+     * The tracing subscriber.
+     */
+    @Internal
+    protected class TracingHttpClientSubscriber implements Subscriber<HttpResponse<?>> {
+        final Subscriber<? super HttpResponse<?>>  actual;
+        final Span span;
+
+        TracingHttpClientSubscriber(Subscriber<? super HttpResponse<?>>  actual, Span span) {
+            this.actual = actual;
+            this.span = span;
+        }
+
+        @Override
+        public void onSubscribe(Subscription s) {
+            try (SpanInScope ignored = tracer.withSpanInScope(span)) {
+                actual.onSubscribe(s);
+            }
+        }
+
+        @Override
+        public void onNext(HttpResponse<?> response) {
+            try (SpanInScope ignored = tracer.withSpanInScope(span)) {
+                clientHandler.handleReceive(mapResponse(request, response, null), span);
+                actual.onNext(response);
+            }
+        }
+
+        @Override
+        public void onError(Throwable error) {
+            try (SpanInScope ignored = tracer.withSpanInScope(span)) {
+                if (error instanceof HttpClientResponseException) {
+                    HttpClientResponseException e = (HttpClientResponseException) error;
+                    clientHandler.handleReceive(mapResponse(request, e.getResponse(), error), span);
+                } else {
+                    span.error(error);
+                    span.finish();
+                }
+
+                actual.onError(error);
+            }
+        }
+
+        @Override
+        public void onComplete() {
+            actual.onComplete();
+        }
+    }
+
+
 }

@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.util;
 
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.async.publisher.Publishers;
 import io.opentelemetry.context.Context;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+
 
 /**
  * A reactive streams publisher that traces.
@@ -36,7 +38,7 @@ import org.reactivestreams.Subscription;
 @SuppressWarnings("PublisherImplementation")
 public class TracingPublisher<T, REQ> implements Publishers.MicronautPublisher<T> {
 
-    private final Publisher<T> publisher;
+    protected final Publisher<T> publisher;
     private final Instrumenter<REQ, Object> instrumenter;
     @Nullable
     private final REQ request;
@@ -61,77 +63,83 @@ public class TracingPublisher<T, REQ> implements Publishers.MicronautPublisher<T
     public void subscribe(Subscriber<? super T> actual) {
         Context parentContext = Context.current();
 
-        if (instrumenter == null || !instrumenter.shouldStart(parentContext, request)) {
-            publisher.subscribe(new Subscriber<T>() {
-                @Override
-                public void onSubscribe(@NotNull Subscription s) {
-                    observer.doOnSubscribe(parentContext);
-                    actual.onSubscribe(s);
-                }
-
-                @Override
-                public void onNext(T object) {
-                    observer.doOnNext(object, parentContext);
-                    actual.onNext(object);
-                }
-
-                @Override
-                public void onError(Throwable t) {
-                    observer.doOnError(t, parentContext);
-                    actual.onError(t);
-                }
-
-                @Override
-                public void onComplete() {
-                    actual.onComplete();
-                    observer.doOnFinish(parentContext);
-                }
-            });
-            return;
+        if (instrumenter != null && instrumenter.shouldStart(parentContext, request)) {
+            parentContext = instrumenter.start(parentContext, request);
         }
 
-        Context context = instrumenter.start(parentContext, request);
+        try (Scope ignored = parentContext.makeCurrent()) {
+            doSubscribe(actual, parentContext);
+        }
+    }
 
-        try (Scope ignored = context.makeCurrent()) {
-            publisher.subscribe(new Subscriber<T>() {
-                @Override
-                public void onSubscribe(@NotNull Subscription s) {
-                    try (Scope ignored = context.makeCurrent()) {
-                        observer.doOnSubscribe(context);
-                        actual.onSubscribe(s);
-                    }
-                }
+    /**
+     * Do subscribe to the publisher.
+     *
+     * @param actual        The actual subscriber
+     * @param context       The context
+     */
+    @Internal
+    protected void doSubscribe(Subscriber<? super T> actual, Context context) {
+        publisher.subscribe(new TracingSubscriber(actual, context));
+    }
 
-                @Override
-                public void onNext(T object) {
-                    try (Scope ignored = context.makeCurrent()) {
-                        observer.doOnNext(object, context);
-                        actual.onNext(object);
-                    } finally {
-                        instrumenter.end(context, request, object, null);
-                    }
-                }
 
-                @Override
-                public void onError(Throwable t) {
-                    try (Scope ignored = context.makeCurrent()) {
-                        observer.doOnError(t, context);
-                        actual.onError(t);
-                    } finally {
-                        instrumenter.end(context, request, null, t);
-                    }
-                }
+    /**
+     * The tracing subscriber.
+     */
+    @Internal
+    protected class TracingSubscriber implements Subscriber<T> {
 
-                @Override
-                public void onComplete() {
-                    try (Scope ignored = context.makeCurrent()) {
-                        actual.onComplete();
-                        observer.doOnFinish(context);
-                    } finally {
-                        instrumenter.end(context, request, null, null);
-                    }
+        final Context context;
+        final Subscriber<? super T> actual;
+
+        public TracingSubscriber(Subscriber<? super T> actual, Context context) {
+            this.context = context;
+            this.actual = actual;
+        }
+
+        @Override
+        public void onSubscribe(@NotNull Subscription s) {
+            try (Scope ignored = context.makeCurrent()) {
+                observer.doOnSubscribe(context);
+                actual.onSubscribe(s);
+            }
+        }
+
+        @Override
+        public void onNext(T object) {
+            try (Scope ignored = context.makeCurrent()) {
+                observer.doOnNext(object, context);
+                actual.onNext(object);
+            } finally {
+                if (instrumenter != null) {
+                    instrumenter.end(context, request, object, null);
                 }
-            });
+            }
+        }
+
+        @Override
+        public void onError(Throwable t) {
+            try (Scope ignored = context.makeCurrent()) {
+                observer.doOnError(t, context);
+                actual.onError(t);
+            } finally {
+                if (instrumenter != null) {
+                    instrumenter.end(context, request, null, t);
+                }
+            }
+        }
+
+        @Override
+        public void onComplete() {
+            try (Scope ignored = context.makeCurrent()) {
+                actual.onComplete();
+                observer.doOnFinish(context);
+            } finally {
+                if (instrumenter != null) {
+                    instrumenter.end(context, request, null, null);
+                }
+            }
         }
     }
 

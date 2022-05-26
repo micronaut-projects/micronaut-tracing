@@ -22,6 +22,7 @@ import brave.http.HttpServerHandler;
 import brave.http.HttpServerRequest;
 import brave.http.HttpServerResponse;
 import brave.http.HttpTracing;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -46,7 +47,7 @@ import static io.micronaut.tracing.instrument.http.TraceRequestAttributes.CURREN
  */
 public class HttpServerTracingPublisher implements Publishers.MicronautPublisher<MutableHttpResponse<?>> {
 
-    private final Publisher<MutableHttpResponse<?>> publisher;
+    protected final Publisher<MutableHttpResponse<?>> publisher;
     private final HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler;
     private final HttpRequest<?> request;
     private final Tracer tracer;
@@ -82,8 +83,19 @@ public class HttpServerTracingPublisher implements Publishers.MicronautPublisher
         Span span = initialSpan;
         request.setAttribute(CURRENT_SPAN, span);
         try (SpanInScope ignored = tracer.withSpanInScope(span)) {
-            publisher.subscribe(new TracingSubscriber(span, actual));
+            doSubscribe(span, actual);
         }
+    }
+
+    /**
+     * Do subscribe to the publisher.
+     *
+     * @param actual The actual subscriber
+     * @param span   The span
+     */
+    @Internal
+    protected void doSubscribe(Span span, Subscriber<? super MutableHttpResponse<?>> actual) {
+        publisher.subscribe(new TracingSubscriber(span, actual));
     }
 
     private HttpServerResponse mapResponse(HttpRequest<?> request, HttpResponse<?> response) {
@@ -142,13 +154,13 @@ public class HttpServerTracingPublisher implements Publishers.MicronautPublisher
     }
 
     @SuppressWarnings("SubscriberImplementation")
-    private final class TracingSubscriber implements Subscriber<MutableHttpResponse<?>> {
+    protected class TracingSubscriber implements Subscriber<MutableHttpResponse<?>> {
 
         private final Subscriber<? super MutableHttpResponse<?>> actual;
         private final Span span;
 
-        private TracingSubscriber(Span span,
-                                  Subscriber<? super MutableHttpResponse<?>> actual) {
+        protected TracingSubscriber(Span span,
+                                    Subscriber<? super MutableHttpResponse<?>> actual) {
             this.actual = actual;
             this.span = span;
         }

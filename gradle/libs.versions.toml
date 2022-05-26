@@ -1,7 +1,7 @@
 [versions]
-brave-instrumentation = '5.13.9'
-brave-opentracing = '1.0.0'
-jaeger = '1.8.0'
+managed-brave-instrumentation = '5.13.9'
+managed-brave-opentracing = '1.0.0'
+managed-jaeger = '1.8.0'
 kotlin = '1.6.21'
 kotlin-coroutines = '1.6.1'
 grpc = '1.46.0'
@@ -10,32 +10,29 @@ micronaut-docs = '2.0.0'
 managed-opentelemetry = '1.14.0'
 managed-opentelemetry-alpha = '1.14.0-alpha'
 managed-opentelemetry-instrumentation-alpha = '1.14.0-alpha'
-opentracing = '0.33.0'
+managed-opentracing = '0.33.0'
 managed-opentracing-grpc = '0.2.3'
 managed-protobuf = '0.8.17'
-zipkin-reporter = '2.16.3'
+managed-zipkin-reporter = '2.16.3'
 
 [libraries]
-brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'brave-opentracing' }
+brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
 grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'grpc' }
 grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'grpc' }
-jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'jaeger' }
+jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'managed-jaeger' }
 junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
 kotlinx-coroutines-core = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-core', version.ref = 'kotlin-coroutines' }
 kotlinx-coroutines-reactor = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor', version.ref = 'kotlin-coroutines' }
 protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'protobuf' }
 protobuf-java-util = { module = 'com.google.protobuf:protobuf-java-util', version.ref = 'protobuf' }
 micronaut-docs-asciidoc-config-props = { module = 'io.micronaut.docs:micronaut-docs-asciidoc-config-props', version.ref = 'micronaut-docs' }
-opentracing = { module = 'io.opentracing:opentracing-api', version.ref = 'opentracing' }
+opentracing = { module = 'io.opentracing:opentracing-api', version.ref = 'managed-opentracing' }
 opentracing-grpc = { module = 'io.opentracing.contrib:opentracing-grpc', version.ref = 'managed-opentracing-grpc' }
-opentracing-util = { module = 'io.opentracing:opentracing-util', version.ref = 'opentracing' }
+opentracing-util = { module = 'io.opentracing:opentracing-util', version.ref = 'managed-opentracing' }
 protoc = { module = 'com.google.protobuf:protoc', version.ref = 'protobuf' }
 protoc-grpc = { module = 'io.grpc:protoc-gen-grpc-java', version.ref = 'grpc' }
-zipkin-brave-instrumentation = { module = 'io.zipkin.brave:brave-instrumentation-http', version.ref = 'brave-instrumentation' }
-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter', version.ref = 'zipkin-reporter' }
-opentelemetry-bom = { module = 'io.opentelemetry:opentelemetry-bom', version.ref = 'managed-opentelemetry' }
-opentelemetry-bom-alpha = { module = 'io.opentelemetry:opentelemetry-bom-alpha', version.ref = 'managed-opentelemetry-alpha' }
-opentelemetry-instrumentation-bom-alpha = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha', version.ref = 'managed-opentelemetry-instrumentation-alpha' }
+zipkin-brave-instrumentation = { module = 'io.zipkin.brave:brave-instrumentation-http', version.ref = 'managed-brave-instrumentation' }
+zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter', version.ref = 'managed-zipkin-reporter' }
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api' }
 opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk' }
 opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing' }
@@ -44,6 +41,11 @@ opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-ext
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api' }
 opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6'}
 opentelemetry-instrumentation-api-semconv = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv' }
+
+# BOMs
+boms-opentelemetry = { module = 'io.opentelemetry:opentelemetry-bom', version.ref = 'managed-opentelemetry' }
+boms-opentelemetry-alpha = { module = 'io.opentelemetry:opentelemetry-bom-alpha', version.ref = 'managed-opentelemetry-alpha' }
+boms-opentelemetry-instrumentation-alpha = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha', version.ref = 'managed-opentelemetry-instrumentation-alpha' }
 
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }

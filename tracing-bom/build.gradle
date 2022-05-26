@@ -4,4 +4,10 @@ plugins {
 
 micronautBom {
      extraExcludedProjects.add 'kotlin-tests'
+     suppressions {
+            bomAuthorizedGroupIds.put(
+                "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha", 
+                ["io.opentelemetry.javaagent", "io.opentelemetry", "io.opentelemetry.instrumentation"] as Set
+            )
+     }
 }

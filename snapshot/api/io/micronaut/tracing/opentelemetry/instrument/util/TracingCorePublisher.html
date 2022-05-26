@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10};
+var methods = {"i0":10,"i1":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -72,8 +72,8 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisher">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisher">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
@@ -137,6 +137,36 @@ implements reactor.core.CorePublisher&lt;T&gt;</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested.classes.inherited.from.class.io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisher">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from class&nbsp;io.micronaut.tracing.opentelemetry.instrument.util.<a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher</a></h3>
+<code><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher.TracingSubscriber</a></code></li>
+</ul>
+</li>
+</ul>
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisher">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;io.micronaut.tracing.opentelemetry.instrument.util.<a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher</a></h3>
+<code><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html#publisher">publisher</a></code></li>
+</ul>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -170,6 +200,13 @@ implements reactor.core.CorePublisher&lt;T&gt;</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingCorePublisher.html#doSubscribe-org.reactivestreams.Subscriber-io.opentelemetry.context.Context-">doSubscribe</a></span>(org.reactivestreams.Subscriber&lt;? super <a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;actual,
+           io.opentelemetry.context.Context&nbsp;context)</code>
+<div class="block">Do subscribe to the publisher.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingCorePublisher.html#subscribe-reactor.core.CoreSubscriber-">subscribe</a></span>(reactor.core.CoreSubscriber&lt;? super <a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;subscriber)</code>&nbsp;</td>
 </tr>
@@ -241,13 +278,32 @@ implements reactor.core.CorePublisher&lt;T&gt;</pre>
 <a name="subscribe-reactor.core.CoreSubscriber-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>subscribe</h4>
 <pre>public&nbsp;void&nbsp;subscribe(reactor.core.CoreSubscriber&lt;? super <a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;subscriber)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>subscribe</code>&nbsp;in interface&nbsp;<code>reactor.core.CorePublisher&lt;<a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;</code></dd>
+</dl>
+</li>
+</ul>
+<a name="doSubscribe-org.reactivestreams.Subscriber-io.opentelemetry.context.Context-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>doSubscribe</h4>
+<pre>protected&nbsp;void&nbsp;doSubscribe(org.reactivestreams.Subscriber&lt;? super <a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;actual,
+                           io.opentelemetry.context.Context&nbsp;context)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html#doSubscribe-org.reactivestreams.Subscriber-io.opentelemetry.context.Context-">TracingPublisher</a></code></span></div>
+<div class="block">Do subscribe to the publisher.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html#doSubscribe-org.reactivestreams.Subscriber-io.opentelemetry.context.Context-">doSubscribe</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher</a>&lt;<a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>,<a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">REQ</a>&gt;</code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>actual</code> - The actual subscriber</dd>
+<dd><code>context</code> - The context</dd>
 </dl>
 </li>
 </ul>
@@ -303,8 +359,8 @@ implements reactor.core.CorePublisher&lt;T&gt;</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisher">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisher">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>

@@ -332,9 +332,21 @@
 <dd>
 <div class="block">For subclasses to override and implement custom on-subscribe behaviour.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingCorePublisher.html#doSubscribe-brave.Span-org.reactivestreams.Subscriber-">doSubscribe(Span, Subscriber&lt;? super MutableHttpResponse&lt;?&gt;&gt;)</a></span> - Method in class io.micronaut.tracing.brave.instrument.http.<a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingCorePublisher.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingCorePublisher</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.html#doSubscribe-brave.Span-org.reactivestreams.Subscriber-">doSubscribe(Span, Subscriber&lt;? super MutableHttpResponse&lt;?&gt;&gt;)</a></span> - Method in class io.micronaut.tracing.brave.instrument.http.<a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingPublisher</a></dt>
+<dd>
+<div class="block">Do subscribe to the publisher.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html#doSubscribe-org.reactivestreams.Subscriber-io.opentracing.ScopeManager-io.opentracing.Span-boolean-">doSubscribe(Subscriber&lt;? super T&gt;, ScopeManager, Span, boolean)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingCorePublisher</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#doSubscribe-org.reactivestreams.Subscriber-io.opentracing.ScopeManager-io.opentracing.Span-boolean-">doSubscribe(Subscriber&lt;? super T&gt;, ScopeManager, Span, boolean)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
+<dd>
+<div class="block">Do subscribe to the publisher.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingCorePublisher.html#doSubscribe-org.reactivestreams.Subscriber-io.opentelemetry.context.Context-">doSubscribe(Subscriber&lt;? super T&gt;, Context)</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingCorePublisher</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html#doSubscribe-org.reactivestreams.Subscriber-io.opentelemetry.context.Context-">doSubscribe(Subscriber&lt;? super T&gt;, Context)</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher</a></dt>
 <dd>
 <div class="block">Do subscribe to the publisher.</div>
 </dd>
@@ -444,10 +456,16 @@
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/sender/HttpClientSenderFactory.html#HttpClientSenderFactory-io.micronaut.tracing.brave.BraveTracerConfiguration.HttpClientSenderConfiguration-io.micronaut.context.BeanProvider-">HttpClientSenderFactory(BraveTracerConfiguration.HttpClientSenderConfiguration, BeanProvider&lt;InvocationInstrumenterFactory&gt;)</a></span> - Constructor for class io.micronaut.tracing.brave.sender.<a href="io/micronaut/tracing/brave/sender/HttpClientSenderFactory.html" title="class in io.micronaut.tracing.brave.sender">HttpClientSenderFactory</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingCorePublisher.html" title="class in io.micronaut.tracing.brave.instrument.http"><span class="typeNameLink">HttpServerTracingCorePublisher</span></a> - Class in <a href="io/micronaut/tracing/brave/instrument/http/package-summary.html">io.micronaut.tracing.brave.instrument.http</a></dt>
+<dd>
+<div class="block">Handles HTTP client server tracing.</div>
+</dd>
 <dt><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.html" title="class in io.micronaut.tracing.brave.instrument.http"><span class="typeNameLink">HttpServerTracingPublisher</span></a> - Class in <a href="io/micronaut/tracing/brave/instrument/http/package-summary.html">io.micronaut.tracing.brave.instrument.http</a></dt>
 <dd>
 <div class="block">Handles HTTP client server tracing.</div>
 </dd>
+<dt><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.brave.instrument.http"><span class="typeNameLink">HttpServerTracingPublisher.TracingSubscriber</span></a> - Class in <a href="io/micronaut/tracing/brave/instrument/http/package-summary.html">io.micronaut.tracing.brave.instrument.http</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/brave/instrument/http/HttpTracingFactory.html" title="class in io.micronaut.tracing.brave.instrument.http"><span class="typeNameLink">HttpTracingFactory</span></a> - Class in <a href="io/micronaut/tracing/brave/instrument/http/package-summary.html">io.micronaut.tracing.brave.instrument.http</a></dt>
 <dd>
 <div class="block">Adds HTTP tracing for Micronaut using Brave.</div>
@@ -724,13 +742,29 @@
 </a>
 <h2 class="title">O</h2>
 <dl>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.TracingSubscriber.html#onComplete--">onComplete()</a></span> - Method in class io.micronaut.tracing.brave.instrument.http.<a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html#onComplete--">onComplete()</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html#onComplete--">onComplete()</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.TracingSubscriber.html#onError-java.lang.Throwable-">onError(Throwable)</a></span> - Method in class io.micronaut.tracing.brave.instrument.http.<a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingPublisher.TracingSubscriber</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html#onError-java.lang.Throwable-">onError(Throwable)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html#onError-java.lang.Throwable-">onError(Throwable)</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.TracingSubscriber.html#onNext-io.micronaut.http.MutableHttpResponse-">onNext(MutableHttpResponse&lt;?&gt;)</a></span> - Method in class io.micronaut.tracing.brave.instrument.http.<a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html#onNext-T-">onNext(T)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html#onNext-T-">onNext(T)</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.TracingSubscriber.html#onSubscribe-org.reactivestreams.Subscription-">onSubscribe(Subscription)</a></span> - Method in class io.micronaut.tracing.brave.instrument.http.<a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html#onSubscribe-org.reactivestreams.Subscription-">onSubscribe(Subscription)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html#onSubscribe-org.reactivestreams.Subscription-">onSubscribe(Subscription)</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/OpenTelemetryClientFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client"><span class="typeNameLink">OpenTelemetryClientFilter</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/http/client/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.http.client</a></dt>
 <dd>
@@ -824,7 +858,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html#PREFIX">PREFIX</a></span> - Static variable in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryExclusionsConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.html#publisher">publisher</a></span> - Variable in class io.micronaut.tracing.brave.instrument.http.<a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingPublisher</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html#publisher">publisher</a></span> - Variable in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html#publisher">publisher</a></span> - Variable in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <a name="I:R">
@@ -1002,6 +1040,8 @@
 <dd>
 <div class="block">Applied to parameters of a method to indicate which parameters should be included in span tags.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingCorePublisher.html#subscribe-reactor.core.CoreSubscriber-">subscribe(CoreSubscriber&lt;? super MutableHttpResponse&lt;?&gt;&gt;)</a></span> - Method in class io.micronaut.tracing.brave.instrument.http.<a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingCorePublisher.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingCorePublisher</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.html#subscribe-org.reactivestreams.Subscriber-">subscribe(Subscriber&lt;? super MutableHttpResponse&lt;?&gt;&gt;)</a></span> - Method in class io.micronaut.tracing.brave.instrument.http.<a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingPublisher</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/ScopePropagationPublisher.html#subscribe-org.reactivestreams.Subscriber-">subscribe(Subscriber&lt;? super T&gt;)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/ScopePropagationPublisher.html" title="class in io.micronaut.tracing.instrument.util">ScopePropagationPublisher</a></dt>
@@ -1168,6 +1208,10 @@
 <dd>
 <div class="block">The tracing subscriber.</div>
 </dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">TracingPublisher.TracingSubscriber</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a></dt>
+<dd>
+<div class="block">The tracing subscriber.</div>
+</dd>
 <dt><a href="io/micronaut/tracing/instrument/util/TracingPublisherUtils.html" title="class in io.micronaut.tracing.instrument.util"><span class="typeNameLink">TracingPublisherUtils</span></a> - Class in <a href="io/micronaut/tracing/instrument/util/package-summary.html">io.micronaut.tracing.instrument.util</a></dt>
 <dd>
 <div class="block">Tracing publisher utils.</div>
@@ -1180,7 +1224,11 @@
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisherUtils.html#TracingPublisherUtils--">TracingPublisherUtils()</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisherUtils.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisherUtils</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.TracingSubscriber.html#TracingSubscriber-brave.Span-org.reactivestreams.Subscriber-">TracingSubscriber(Span, Subscriber&lt;? super MutableHttpResponse&lt;?&gt;&gt;)</a></span> - Constructor for class io.micronaut.tracing.brave.instrument.http.<a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html#TracingSubscriber-io.opentracing.ScopeManager-io.opentracing.Span-org.reactivestreams.Subscriber-boolean-">TracingSubscriber(ScopeManager, Span, Subscriber&lt;? super T&gt;, boolean)</a></span> - Constructor for class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html#TracingSubscriber-org.reactivestreams.Subscriber-io.opentelemetry.context.Context-">TracingSubscriber(Subscriber&lt;? super T&gt;, Context)</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/processing/WithSpanAnnotationTransformer.html#transform-io.micronaut.core.annotation.AnnotationValue-io.micronaut.inject.visitor.VisitorContext-">transform(AnnotationValue&lt;WithSpan&gt;, VisitorContext)</a></span> - Method in class io.micronaut.tracing.opentelemetry.processing.<a href="io/micronaut/tracing/opentelemetry/processing/WithSpanAnnotationTransformer.html" title="class in io.micronaut.tracing.opentelemetry.processing">WithSpanAnnotationTransformer</a></dt>
 <dd>&nbsp;</dd>

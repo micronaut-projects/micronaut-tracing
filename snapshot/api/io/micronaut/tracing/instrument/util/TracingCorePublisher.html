@@ -192,7 +192,7 @@ implements reactor.core.CorePublisher&lt;T&gt;</pre>
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html#TracingCorePublisher-reactor.core.CorePublisher-io.opentracing.Tracer-java.lang.String-io.micronaut.tracing.instrument.util.TracingObserver-">TracingCorePublisher</a></span>(reactor.core.CorePublisher&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;publisher,
                     io.opentracing.Tracer&nbsp;tracer,
                     java.lang.String&nbsp;operationName,
-                    <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&nbsp;tracingObserver)</code>
+                    <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;tracingObserver)</code>
 <div class="block">Creates a new tracing publisher for the given arguments.</div>
 </td>
 </tr>
@@ -216,7 +216,7 @@ implements reactor.core.CorePublisher&lt;T&gt;</pre>
                     io.opentracing.Tracer&nbsp;tracer,
                     io.opentracing.Tracer.SpanBuilder&nbsp;spanBuilder,
                     boolean&nbsp;isSingle,
-                    <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&nbsp;tracingObserver)</code>
+                    <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;tracingObserver)</code>
 <div class="block">Creates a new tracing publisher for the given arguments.</div>
 </td>
 </tr>
@@ -224,14 +224,14 @@ implements reactor.core.CorePublisher&lt;T&gt;</pre>
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html#TracingCorePublisher-reactor.core.CorePublisher-io.opentracing.Tracer-io.opentracing.Tracer.SpanBuilder-io.micronaut.tracing.instrument.util.TracingObserver-">TracingCorePublisher</a></span>(reactor.core.CorePublisher&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;publisher,
                     io.opentracing.Tracer&nbsp;tracer,
                     io.opentracing.Tracer.SpanBuilder&nbsp;spanBuilder,
-                    <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&nbsp;tracingObserver)</code>
+                    <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;tracingObserver)</code>
 <div class="block">Creates a new tracing publisher for the given arguments.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html#TracingCorePublisher-reactor.core.CorePublisher-io.opentracing.Tracer-io.micronaut.tracing.instrument.util.TracingObserver-">TracingCorePublisher</a></span>(reactor.core.CorePublisher&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;publisher,
                     io.opentracing.Tracer&nbsp;tracer,
-                    <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&nbsp;tracingObserver)</code>
+                    <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;tracingObserver)</code>
 <div class="block">Creates a new tracing publisher for the given arguments.</div>
 </td>
 </tr>
@@ -326,7 +326,7 @@ implements reactor.core.CorePublisher&lt;T&gt;</pre>
 <pre>public&nbsp;TracingCorePublisher(reactor.core.CorePublisher&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;publisher,
                             io.opentracing.Tracer&nbsp;tracer,
                             java.lang.String&nbsp;operationName,
-                            <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&nbsp;tracingObserver)</pre>
+                            <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;tracingObserver)</pre>
 <div class="block">Creates a new tracing publisher for the given arguments.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -362,7 +362,7 @@ implements reactor.core.CorePublisher&lt;T&gt;</pre>
 <h4>TracingCorePublisher</h4>
 <pre>public&nbsp;TracingCorePublisher(reactor.core.CorePublisher&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;publisher,
                             io.opentracing.Tracer&nbsp;tracer,
-                            <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&nbsp;tracingObserver)</pre>
+                            <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;tracingObserver)</pre>
 <div class="block">Creates a new tracing publisher for the given arguments. This constructor
  will just add tracing of the existing span if it is present.</div>
 <dl>
@@ -400,7 +400,7 @@ implements reactor.core.CorePublisher&lt;T&gt;</pre>
 <pre>public&nbsp;TracingCorePublisher(reactor.core.CorePublisher&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;publisher,
                             io.opentracing.Tracer&nbsp;tracer,
                             io.opentracing.Tracer.SpanBuilder&nbsp;spanBuilder,
-                            <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&nbsp;tracingObserver)</pre>
+                            <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;tracingObserver)</pre>
 <div class="block">Creates a new tracing publisher for the given arguments.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -442,7 +442,7 @@ implements reactor.core.CorePublisher&lt;T&gt;</pre>
                             io.opentracing.Tracer&nbsp;tracer,
                             io.opentracing.Tracer.SpanBuilder&nbsp;spanBuilder,
                             boolean&nbsp;isSingle,
-                            <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&nbsp;tracingObserver)</pre>
+                            <a href="../../../../../io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&lt;<a href="../../../../../io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;&nbsp;tracingObserver)</pre>
 <div class="block">Creates a new tracing publisher for the given arguments.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>

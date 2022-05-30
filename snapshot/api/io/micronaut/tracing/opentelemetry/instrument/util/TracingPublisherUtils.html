@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
@@ -152,7 +152,7 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static &lt;T,REQ,RESP&gt;<br><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher</a>&lt;T,REQ&gt;</code></td>
+<td class="colFirst"><code>static &lt;T,REQ,RESP&gt;<br><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryTracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryTracingPublisher</a>&lt;T,REQ&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisherUtils.html#createTracingPublisher-org.reactivestreams.Publisher-io.opentelemetry.instrumentation.api.instrumenter.Instrumenter-REQ-">createTracingPublisher</a></span>(org.reactivestreams.Publisher&lt;T&gt;&nbsp;publisher,
                       io.opentelemetry.instrumentation.api.instrumenter.Instrumenter&lt;REQ,RESP&gt;&nbsp;instrumenter,
                       REQ&nbsp;request)</code>
@@ -160,7 +160,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>static &lt;T,REQ,RESP&gt;<br><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher</a>&lt;T,REQ&gt;</code></td>
+<td class="colFirst"><code>static &lt;T,REQ,RESP&gt;<br><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryTracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryTracingPublisher</a>&lt;T,REQ&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisherUtils.html#createTracingPublisher-org.reactivestreams.Publisher-io.opentelemetry.instrumentation.api.instrumenter.Instrumenter-REQ-io.micronaut.tracing.opentelemetry.instrument.util.TracingObserver-">createTracingPublisher</a></span>(org.reactivestreams.Publisher&lt;T&gt;&nbsp;publisher,
                       io.opentelemetry.instrumentation.api.instrumenter.Instrumenter&lt;REQ,RESP&gt;&nbsp;instrumenter,
                       REQ&nbsp;request,
@@ -215,11 +215,11 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>createTracingPublisher</h4>
-<pre>public static&nbsp;&lt;T,REQ,RESP&gt;&nbsp;<a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher</a>&lt;T,REQ&gt;&nbsp;createTracingPublisher(org.reactivestreams.Publisher&lt;T&gt;&nbsp;publisher,
-                                                                          io.opentelemetry.instrumentation.api.instrumenter.Instrumenter&lt;REQ,RESP&gt;&nbsp;instrumenter,
-                                                                          @Nullable
-                                                                          REQ&nbsp;request,
-                                                                          <a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.util">TracingObserver</a>&lt;T&gt;&nbsp;observer)</pre>
+<pre>public static&nbsp;&lt;T,REQ,RESP&gt;&nbsp;<a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryTracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryTracingPublisher</a>&lt;T,REQ&gt;&nbsp;createTracingPublisher(org.reactivestreams.Publisher&lt;T&gt;&nbsp;publisher,
+                                                                                       io.opentelemetry.instrumentation.api.instrumenter.Instrumenter&lt;REQ,RESP&gt;&nbsp;instrumenter,
+                                                                                       @Nullable
+                                                                                       REQ&nbsp;request,
+                                                                                       <a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.util">TracingObserver</a>&lt;T&gt;&nbsp;observer)</pre>
 <div class="block">Creates a new tracing publisher for the given arguments.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
@@ -244,10 +244,10 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>createTracingPublisher</h4>
-<pre>public static&nbsp;&lt;T,REQ,RESP&gt;&nbsp;<a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">TracingPublisher</a>&lt;T,REQ&gt;&nbsp;createTracingPublisher(org.reactivestreams.Publisher&lt;T&gt;&nbsp;publisher,
-                                                                          io.opentelemetry.instrumentation.api.instrumenter.Instrumenter&lt;REQ,RESP&gt;&nbsp;instrumenter,
-                                                                          @Nullable
-                                                                          REQ&nbsp;request)</pre>
+<pre>public static&nbsp;&lt;T,REQ,RESP&gt;&nbsp;<a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryTracingPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryTracingPublisher</a>&lt;T,REQ&gt;&nbsp;createTracingPublisher(org.reactivestreams.Publisher&lt;T&gt;&nbsp;publisher,
+                                                                                       io.opentelemetry.instrumentation.api.instrumenter.Instrumenter&lt;REQ,RESP&gt;&nbsp;instrumenter,
+                                                                                       @Nullable
+                                                                                       REQ&nbsp;request)</pre>
 <div class="block">Creates a new tracing publisher for the given arguments.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
@@ -290,7 +290,7 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">

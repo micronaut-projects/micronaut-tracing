@@ -27,11 +27,11 @@ import reactor.util.context.Context;
  * A reactor publisher that traces.
  *
  * @param <T> the type of element signaled
- * @param <REQ> the type of request element
+ * @param <R> the type of request element
  * @author Nemanja Mikic
  * @since 4.1.0
  */
-public class TracingCorePublisher<T, REQ> extends TracingPublisher<T, REQ> implements CorePublisher<T> {
+public class OpenTelemetryTracingCorePublisher<T, R> extends OpenTelemetryTracingPublisher<T, R> implements CorePublisher<T> {
 
     /**
      * @param publisher      the target publisher
@@ -39,7 +39,7 @@ public class TracingCorePublisher<T, REQ> extends TracingPublisher<T, REQ> imple
      * @param request the request object
      * @param observer the tracing observer
      */
-    public TracingCorePublisher(Publisher<T> publisher, Instrumenter<REQ, Object> instrumenter, REQ request, TracingObserver<T> observer) {
+    public OpenTelemetryTracingCorePublisher(Publisher<T> publisher, Instrumenter<R, Object> instrumenter, R request, TracingObserver<T> observer) {
         super(publisher, instrumenter, request, observer);
     }
 
@@ -56,18 +56,18 @@ public class TracingCorePublisher<T, REQ> extends TracingPublisher<T, REQ> imple
 
     private final class TracingCoreSubscriber extends TracingSubscriber implements CoreSubscriber<T> {
 
-        private final Context context;
+        private final Context coreSubscriberContext;
 
         public TracingCoreSubscriber(Subscriber<? super T> actual,
                                      io.opentelemetry.context.Context openTelemetryContext,
                                      Context context) {
             super(actual, openTelemetryContext);
-            this.context = context;
+            this.coreSubscriberContext = context;
         }
 
         @Override
         public Context currentContext() {
-            return context;
+            return coreSubscriberContext;
         }
     }
 }

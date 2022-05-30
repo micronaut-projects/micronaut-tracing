@@ -119,9 +119,9 @@ class HttpClientTracingPublisher implements Publishers.MicronautPublisher<HttpRe
         };
     }
 
-    private HttpClientResponse mapResponse(HttpRequest<?> request,
-                                           HttpResponse<?> response,
-                                           Throwable error) {
+    private static HttpClientResponse mapResponse(HttpRequest<?> request,
+                                                  HttpResponse<?> response,
+                                                  Throwable error) {
         return new HttpClientResponse() {
 
             @Override

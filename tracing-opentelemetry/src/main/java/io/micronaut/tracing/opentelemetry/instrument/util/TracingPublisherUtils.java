@@ -40,13 +40,13 @@ public class TracingPublisherUtils {
      * @param observer the tracing observer
      * @return new instance
      */
-    public static <T, REQ, RESP> TracingPublisher<T, REQ> createTracingPublisher(Publisher<T> publisher,
-                                                                    Instrumenter<REQ, RESP> instrumenter,
-                                                                    @Nullable REQ request, TracingObserver<T> observer) {
+    public static <T, REQ, RESP> OpenTelemetryTracingPublisher<T, REQ> createTracingPublisher(Publisher<T> publisher,
+                                                                                              Instrumenter<REQ, RESP> instrumenter,
+                                                                                              @Nullable REQ request, TracingObserver<T> observer) {
         if (publisher instanceof CorePublisher) {
-            return new TracingCorePublisher(publisher, instrumenter, request, observer);
+            return new OpenTelemetryTracingCorePublisher(publisher, instrumenter, request, observer);
         }
-        return new TracingPublisher(publisher, instrumenter, request, observer);
+        return new OpenTelemetryTracingPublisher(publisher, instrumenter, request, observer);
     }
 
     /**
@@ -60,13 +60,13 @@ public class TracingPublisherUtils {
      * @param request the request object
      * @return new instance
      */
-    public static <T, REQ, RESP> TracingPublisher<T, REQ> createTracingPublisher(Publisher<T> publisher,
-                                                                                 Instrumenter<REQ, RESP> instrumenter,
-                                                                                 @Nullable REQ request) {
+    public static <T, REQ, RESP> OpenTelemetryTracingPublisher<T, REQ> createTracingPublisher(Publisher<T> publisher,
+                                                                                              Instrumenter<REQ, RESP> instrumenter,
+                                                                                              @Nullable REQ request) {
         if (publisher instanceof CorePublisher) {
-            return new TracingCorePublisher(publisher, instrumenter, request, TracingObserver.NO_OP);
+            return new OpenTelemetryTracingCorePublisher(publisher, instrumenter, request, TracingObserver.NO_OP);
         }
-        return new TracingPublisher(publisher, instrumenter, request, TracingObserver.NO_OP);
+        return new OpenTelemetryTracingPublisher(publisher, instrumenter, request, TracingObserver.NO_OP);
     }
 
 }

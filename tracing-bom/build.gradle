@@ -7,7 +7,9 @@ micronautBom {
      suppressions {
             bomAuthorizedGroupIds.put(
                 "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha", 
-                ["io.opentelemetry.javaagent", "io.opentelemetry", "io.opentelemetry.instrumentation"] as Set
+                ["io.opentelemetry.javaagent", "io.opentelemetry", "io.opentelemetry.instrumentation", "io.opentelemetry.javaagent.instrumentation"] as Set
             )
+            dependencies.add("io.opentelemetry:opentelemetry-bom:1.14.0")
+            dependencies.add("io.opentelemetry:opentelemetry-bom-alpha:1.14.0-alpha")
      }
 }

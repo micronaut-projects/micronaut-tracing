@@ -3,9 +3,9 @@ plugins {
 }
 
 dependencies {
-    api platform (libs.opentelemetry.bom)
-    api platform (libs.opentelemetry.bom.alpha)
-    api platform (libs.opentelemetry.instrumentation.bom.alpha)
+    api platform (libs.boms.opentelemetry)
+    api platform (libs.boms.opentelemetry.alpha)
+    api platform (libs.boms.opentelemetry.instrumentation.alpha)
     api mn.micronaut.runtime
     api mn.micronaut.http.client
     api projects.tracingAnnotation

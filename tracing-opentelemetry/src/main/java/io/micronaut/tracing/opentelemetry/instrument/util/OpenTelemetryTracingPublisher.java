@@ -31,17 +31,17 @@ import org.reactivestreams.Subscription;
  * A reactive streams publisher that traces.
  *
  * @param <T> the type of element signaled
- * @param <REQ> the type of request element
+ * @param <R> the type of request element
  * @author Nemanja Mikic
  * @since 4.1.0
  */
 @SuppressWarnings("PublisherImplementation")
-public class TracingPublisher<T, REQ> implements Publishers.MicronautPublisher<T> {
+public class OpenTelemetryTracingPublisher<T, R> implements Publishers.MicronautPublisher<T> {
 
     protected final Publisher<T> publisher;
-    private final Instrumenter<REQ, Object> instrumenter;
+    private final Instrumenter<R, Object> instrumenter;
     @Nullable
-    private final REQ request;
+    private final R request;
     private final TracingObserver<T> observer;
 
     /**
@@ -50,9 +50,9 @@ public class TracingPublisher<T, REQ> implements Publishers.MicronautPublisher<T
      * @param request the request object
      * @param observer the tracing observer
      */
-    public TracingPublisher(Publisher<T> publisher,
-                            Instrumenter<REQ, Object> instrumenter,
-                            @Nullable REQ request, TracingObserver<T> observer) {
+    public OpenTelemetryTracingPublisher(Publisher<T> publisher,
+                                         Instrumenter<R, Object> instrumenter,
+                                         @Nullable R request, TracingObserver<T> observer) {
         this.publisher = publisher;
         this.instrumenter = instrumenter;
         this.request = request;

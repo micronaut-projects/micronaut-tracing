@@ -58,7 +58,7 @@ public class TracingCorePublisher<T> extends TracingPublisher<T> implements Core
     public TracingCorePublisher(CorePublisher<T> publisher,
                                 Tracer tracer,
                                 String operationName,
-                                TracingObserver tracingObserver) {
+                                TracingObserver<T> tracingObserver) {
         super(publisher, tracer, operationName, tracingObserver);
     }
 
@@ -84,7 +84,7 @@ public class TracingCorePublisher<T> extends TracingPublisher<T> implements Core
      */
     public TracingCorePublisher(CorePublisher<T> publisher,
                                 Tracer tracer,
-                                TracingObserver tracingObserver) {
+                                TracingObserver<T> tracingObserver) {
         super(publisher, tracer, tracingObserver);
     }
 
@@ -112,7 +112,7 @@ public class TracingCorePublisher<T> extends TracingPublisher<T> implements Core
     public TracingCorePublisher(CorePublisher<T> publisher,
                                 Tracer tracer,
                                 SpanBuilder spanBuilder,
-                                TracingObserver tracingObserver) {
+                                TracingObserver<T>tracingObserver) {
         super(publisher, tracer, spanBuilder, tracingObserver);
     }
 
@@ -146,7 +146,7 @@ public class TracingCorePublisher<T> extends TracingPublisher<T> implements Core
                                 Tracer tracer,
                                 SpanBuilder spanBuilder,
                                 boolean isSingle,
-                                TracingObserver tracingObserver) {
+                                TracingObserver<T> tracingObserver) {
         super(publisher, tracer, spanBuilder, isSingle, tracingObserver);
     }
 

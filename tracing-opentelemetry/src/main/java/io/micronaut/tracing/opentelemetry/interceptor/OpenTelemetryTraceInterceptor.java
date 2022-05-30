@@ -31,7 +31,7 @@ import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import io.micronaut.tracing.opentelemetry.instrument.util.TracingObserver;
-import io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisher;
+import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryTracingPublisher;
 import io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisherUtils;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
@@ -55,7 +55,7 @@ import java.util.concurrent.CompletionStage;
 @Singleton
 @Requires(beans = Tracer.class)
 @InterceptorBean({ContinueSpan.class, NewSpan.class})
-public class TraceInterceptor implements MethodInterceptor<Object, Object> {
+public class OpenTelemetryTraceInterceptor implements MethodInterceptor<Object, Object> {
 
     private final Instrumenter<ClassAndMethod, Object> instrumenter;
 
@@ -64,7 +64,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
      *
      * @param instrumenter the ClassAndMethod Instrumenter
      */
-    public TraceInterceptor(@Named("micronautCodeTelemetryInstrumenter") Instrumenter<ClassAndMethod, Object> instrumenter) {
+    public OpenTelemetryTraceInterceptor(@Named("micronautCodeTelemetryInstrumenter") Instrumenter<ClassAndMethod, Object> instrumenter) {
         this.instrumenter = instrumenter;
     }
 
@@ -102,7 +102,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                 switch (interceptedMethod.resultType()) {
                     case PUBLISHER:
                         Publisher<?> publisher = interceptedMethod.interceptResultAsPublisher();
-                        if (publisher instanceof TracingPublisher) {
+                        if (publisher instanceof OpenTelemetryTracingPublisher) {
                             return publisher;
                         }
                         ClassAndMethod classAndMethod = ClassAndMethod.create(context.getDeclaringType(), context.getMethodName());
@@ -111,13 +111,13 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
 
                                 @Override
                                 public void doOnSubscribe(@NonNull Context openTelemetryContext) {
-                                    tagArguments(context, openTelemetryContext);
+                                    tagArguments(context);
                                 }
 
                             }));
                     case COMPLETION_STAGE:
                     case SYNCHRONOUS:
-                        tagArguments(context, currentContext);
+                        tagArguments(context);
                         try {
                             return context.proceed();
                         } catch (RuntimeException e) {
@@ -145,13 +145,13 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                 switch (interceptedMethod.resultType()) {
                     case PUBLISHER:
                         Publisher<?> publisher = interceptedMethod.interceptResultAsPublisher();
-                        if (publisher instanceof TracingPublisher) {
+                        if (publisher instanceof OpenTelemetryTracingPublisher) {
                             return publisher;
                         }
                         return interceptedMethod.handleResult(TracingPublisherUtils.createTracingPublisher(publisher, instrumenter, classAndMethod, new TracingObserver() {
                             @Override
                             public void doOnSubscribe(@NonNull Context openTelemetryContext) {
-                                tagArguments(context, openTelemetryContext);
+                                tagArguments(context);
                                 }
                             }));
                     case COMPLETION_STAGE:
@@ -160,7 +160,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                         }
                         Context newContext = instrumenter.start(currentContext, classAndMethod);
                         try (Scope ignored = newContext.makeCurrent()) {
-                            tagArguments(context, newContext);
+                            tagArguments(context);
                             try {
                                 CompletionStage<?> completionStage = interceptedMethod.interceptResultAsCompletionStage();
                                 if (completionStage != null) {
@@ -182,7 +182,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
                         }
                         newContext = instrumenter.start(currentContext, classAndMethod);
                         try (Scope ignored = newContext.makeCurrent()) {
-                            tagArguments(context, newContext);
+                            tagArguments(context);
                             try {
                                 return context.proceed();
                             } catch (RuntimeException e) {
@@ -199,8 +199,7 @@ public class TraceInterceptor implements MethodInterceptor<Object, Object> {
         }
     }
 
-    private void tagArguments(MethodInvocationContext<Object, Object> context,
-                              Context openTelemetryContext) {
+    private void tagArguments(MethodInvocationContext<Object, Object> context) {
         Argument<?>[] arguments = context.getArguments();
         Object[] parameterValues = context.getParameterValues();
         for (int i = 0; i < arguments.length; i++) {

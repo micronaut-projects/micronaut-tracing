@@ -112,7 +112,7 @@ public class TracingCorePublisher<T> extends TracingPublisher<T> implements Core
     public TracingCorePublisher(CorePublisher<T> publisher,
                                 Tracer tracer,
                                 SpanBuilder spanBuilder,
-                                TracingObserver<T>tracingObserver) {
+                                TracingObserver<T> tracingObserver) {
         super(publisher, tracer, spanBuilder, tracingObserver);
     }
 

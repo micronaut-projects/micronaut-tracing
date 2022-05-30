@@ -20,6 +20,8 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import reactor.core.CorePublisher;
 import reactor.core.CoreSubscriber;
+import reactor.core.publisher.Operators;
+import reactor.util.context.Context;
 
 /**
  * A reactor publisher that traces.
@@ -44,5 +46,28 @@ public class TracingCorePublisher<T, REQ> extends TracingPublisher<T, REQ> imple
     @Override
     public void subscribe(CoreSubscriber<? super T> subscriber) {
         subscribe((Subscriber) subscriber);
+    }
+
+    @Override
+    protected void doSubscribe(Subscriber<? super T> actual, io.opentelemetry.context.Context context) {
+        CoreSubscriber<? super T> coreActual = Operators.toCoreSubscriber(actual);
+        publisher.subscribe(new TracingCoreSubscriber(actual, context,  coreActual.currentContext()));
+    }
+
+    private final class TracingCoreSubscriber extends TracingSubscriber implements CoreSubscriber<T> {
+
+        private final Context context;
+
+        public TracingCoreSubscriber(Subscriber<? super T> actual,
+                                     io.opentelemetry.context.Context openTelemetryContext,
+                                     Context context) {
+            super(actual, openTelemetryContext);
+            this.context = context;
+        }
+
+        @Override
+        public Context currentContext() {
+            return context;
+        }
     }
 }

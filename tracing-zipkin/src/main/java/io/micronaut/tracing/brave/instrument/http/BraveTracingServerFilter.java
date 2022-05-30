@@ -33,6 +33,7 @@ import io.micronaut.tracing.instrument.http.TracingExclusionsConfiguration;
 import io.opentracing.Tracer;
 import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
+import reactor.core.CorePublisher;
 
 import java.util.function.Predicate;
 
@@ -87,13 +88,27 @@ public class BraveTracingServerFilter implements HttpServerFilter {
     @Override
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request,
                                                       ServerFilterChain chain) {
+
+        Publisher<MutableHttpResponse<?>> requestPublisher = chain.proceed(request);
+
         if (shouldExclude(request.getPath())) {
-            return chain.proceed(request);
+            return requestPublisher;
         }
         HttpServerRequest httpServerRequest = mapRequest(request);
         Span span = serverHandler.handleReceive(httpServerRequest);
+
+        if (requestPublisher instanceof CorePublisher) {
+            return new HttpServerTracingCorePublisher(
+                requestPublisher,
+                request,
+                serverHandler,
+                httpTracing,
+                openTracer,
+                span);
+        }
+
         return new HttpServerTracingPublisher(
-                chain.proceed(request),
+                requestPublisher,
                 request,
                 serverHandler,
                 httpTracing,

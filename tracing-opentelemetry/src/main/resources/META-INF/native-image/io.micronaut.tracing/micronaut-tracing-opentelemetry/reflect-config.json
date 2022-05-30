@@ -1,0 +1,30 @@
+[
+  {
+    "name":"io.opentelemetry.exporter.jaeger.JaegerGrpcSpanExporter"
+  },
+  {
+    "name":"io.opentelemetry.exporter.zipkin.ZipkinSpanExporter"
+  },
+  {
+    "name":"io.opentelemetry.exporter.logging.LoggingSpanExporter"
+  },
+  {
+    "name":"io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter"
+  },
+  {
+    "name":"io.opentelemetry.internal.shaded.jctools.queues.MpscArrayQueueConsumerIndexField",
+    "fields":[{"name":"consumerIndex"}]
+  },
+  {
+    "name":"io.opentelemetry.internal.shaded.jctools.queues.MpscArrayQueueProducerIndexField",
+    "fields":[{"name":"producerIndex"}]
+  },
+  {
+    "name":"io.opentelemetry.internal.shaded.jctools.queues.MpscArrayQueueProducerLimitField",
+    "fields":[{"name":"producerLimit"}]
+  },
+  {
+    "name":"io.opentelemetry.sdk.metrics.SdkMeterProviderBuilder",
+    "methods":[{"name":"setExemplarFilter","parameterTypes":["io.opentelemetry.sdk.metrics.internal.exemplar.ExemplarFilter"] }]
+  }
+]

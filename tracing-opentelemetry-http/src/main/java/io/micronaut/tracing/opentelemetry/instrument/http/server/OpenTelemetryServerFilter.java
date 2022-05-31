@@ -27,6 +27,7 @@ import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryF
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryObserver;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryPublisherUtils;
+import io.micronaut.tracing.opentelemetry.interceptor.OpenTelemetryTraceInterceptor;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
@@ -83,8 +84,9 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
 
         return OpenTelemetryPublisherUtils.createOpenTelemetryPublisher(requestPublisher, instrumenter, newContext, request, new OpenTelemetryObserver<MutableHttpResponse<?>>() {
             @Override
-            public void doOnError(@NonNull Throwable throwable, @NonNull Context span) {
+            public void doOnError(@NonNull Throwable throwable, @NonNull Context openTelemetryContext) {
                 request.setAttribute(CONTINUE, true);
+                OpenTelemetryPublisherUtils.logError(openTelemetryContext, throwable);
             }
         });
     }

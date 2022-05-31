@@ -89,9 +89,9 @@ public interface OpenTelemetryObserver<T> {
      * For subclasses to override and implement custom on-error behaviour.
      *
      * @param throwable the error
-     * @param span      the span
+     * @param openTelemetryContext the {@link Context}
      */
-    default void doOnError(@NonNull Throwable throwable, @NonNull Context span) {
+    default void doOnError(@NonNull Throwable throwable, @NonNull Context openTelemetryContext) {
         // no-op
     }
 }

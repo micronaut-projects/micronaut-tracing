@@ -73,16 +73,6 @@ public class OpenTelemetryTraceInterceptor implements MethodInterceptor<Object, 
         return InterceptPhase.TRACE.getPosition();
     }
 
-    /**
-     * Logs an error to the span.
-     *
-     * @param context the span
-     * @param e       the error
-     */
-    public static void logError(Context context, Throwable e) {
-        Span.fromContext(context).recordException(e);
-    }
-
     @Nullable
     @SuppressWarnings("unchecked")
     @Override
@@ -116,7 +106,7 @@ public class OpenTelemetryTraceInterceptor implements MethodInterceptor<Object, 
 
                                 }));
                         } catch (RuntimeException e) {
-                                logError(currentContext, e);
+                                OpenTelemetryPublisherUtils.logError(currentContext, e);
                                 throw e;
                         }
                     case COMPLETION_STAGE:
@@ -125,7 +115,7 @@ public class OpenTelemetryTraceInterceptor implements MethodInterceptor<Object, 
                         try {
                             return context.proceed();
                         } catch (RuntimeException e) {
-                            logError(currentContext, e);
+                            OpenTelemetryPublisherUtils.logError(currentContext, e);
                             throw e;
                         }
                     default:
@@ -165,7 +155,7 @@ public class OpenTelemetryTraceInterceptor implements MethodInterceptor<Object, 
                                 }
                             }));
                         }  catch (RuntimeException e) {
-                            logError(newContext, e);
+                            OpenTelemetryPublisherUtils.logError(newContext, e);
                             instrumenter.end(newContext, classAndMethod, null, e);
                             throw e;
                         }
@@ -178,7 +168,7 @@ public class OpenTelemetryTraceInterceptor implements MethodInterceptor<Object, 
                                     ClassAndMethod finalClassAndMethod = classAndMethod;
                                     completionStage = completionStage.whenComplete((o, throwable) -> {
                                         if (throwable != null) {
-                                            logError(newContext, throwable);
+                                            OpenTelemetryPublisherUtils.logError(newContext, throwable);
                                             instrumenter.end(newContext, finalClassAndMethod, null, throwable);
                                         } else {
                                             instrumenter.end(newContext, finalClassAndMethod, o, null);
@@ -187,7 +177,7 @@ public class OpenTelemetryTraceInterceptor implements MethodInterceptor<Object, 
                                 }
                                 return interceptedMethod.handleResult(completionStage);
                             } catch (RuntimeException e) {
-                                logError(newContext, e);
+                                OpenTelemetryPublisherUtils.logError(newContext, e);
                                 instrumenter.end(newContext, classAndMethod, null, e);
                                 throw e;
                             }
@@ -200,7 +190,7 @@ public class OpenTelemetryTraceInterceptor implements MethodInterceptor<Object, 
                                 instrumenter.end(newContext, classAndMethod, response, null);
                                 return response;
                             } catch (RuntimeException e) {
-                                logError(newContext, e);
+                                OpenTelemetryPublisherUtils.logError(newContext, e);
                                 instrumenter.end(newContext, classAndMethod, null, e);
                                 throw e;
                             }

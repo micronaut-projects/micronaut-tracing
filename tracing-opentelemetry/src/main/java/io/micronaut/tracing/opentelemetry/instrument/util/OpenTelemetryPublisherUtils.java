@@ -16,6 +16,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.util;
 
 import io.micronaut.core.annotation.Nullable;
+import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import org.reactivestreams.Publisher;
@@ -74,6 +75,16 @@ public final class OpenTelemetryPublisherUtils {
             return new OpenTelemetryCorePublisher<>(publisher, instrumenter, context, request, (OpenTelemetryObserver<T>) OpenTelemetryObserver.NO_OP);
         }
         return new OpenTelemetryPublisher<>(publisher, instrumenter, context, request, (OpenTelemetryObserver<T>) OpenTelemetryObserver.NO_OP);
+    }
+
+    /**
+     * Logs an error to the span.
+     *
+     * @param context the span
+     * @param e       the error
+     */
+    public static void logError(Context context, Throwable e) {
+        Span.fromContext(context).recordException(e);
     }
 
 }

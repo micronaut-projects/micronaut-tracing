@@ -1,3 +1,4 @@
+
 [
   {
     "type": "io.micronaut.tracing.annotation.ContinueSpan",
@@ -43,5 +44,30 @@
     "type": "io.micronaut.tracing.annotation.SpanTag",
     "member": "Implemented interface java.lang.annotation.Annotation",
     "reason": "Type has moved to micronaut-tracing-annotation"
+  },
+  {
+    "type": "io.micronaut.tracing.instrument.util.TracingPublisherUtils",
+    "member": "Class io.micronaut.tracing.instrument.util.TracingPublisherUtils",
+    "reason": "Created private constructor because TracingPublisherUtils has only static methods"
+  },
+  {
+    "type": "io.micronaut.tracing.instrument.util.TracingPublisherUtils",
+    "member": "Constructor io.micronaut.tracing.instrument.util.TracingPublisherUtils()",
+    "reason": "Created private constructor because TracingPublisherUtils has only static methods"
+  },
+  {
+    "type": "io.micronaut.tracing.instrument.http.AbstractOpenTracingFilter",
+    "member": "Constructor io.micronaut.tracing.instrument.http.AbstractOpenTracingFilter(io.opentracing.Tracer)",
+    "reason": "AbstractOpenTracingFilter is meant for inheritance constructor is changed to protected"
+  },
+  {
+    "type": "io.micronaut.tracing.instrument.http.AbstractOpenTracingFilter",
+    "member": "Constructor io.micronaut.tracing.instrument.http.AbstractOpenTracingFilter(io.opentracing.Tracer,java.util.function.Predicate)",
+    "reason": "AbstractOpenTracingFilter is meant for inheritance constructor is changed to protected"
+  },
+  {
+    "type": "io.micronaut.tracing.instrument.http.AbstractOpenTracingFilter",
+    "member": "Class io.micronaut.tracing.instrument.http.AbstractOpenTracingFilter",
+    "reason": "AbstractOpenTracingFilter is meant for inheritance inside package and class is changed to protected"
   }
 ]

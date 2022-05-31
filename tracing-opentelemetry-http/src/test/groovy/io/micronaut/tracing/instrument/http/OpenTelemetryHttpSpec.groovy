@@ -30,6 +30,7 @@ import reactor.util.function.Tuple2
 import reactor.util.function.Tuples
 import spock.lang.AutoCleanup
 import spock.lang.Specification
+import spock.util.concurrent.PollingConditions
 
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
@@ -113,6 +114,7 @@ class OpenTelemetryHttpSpec extends Specification {
     void 'test error #desc, path=#path'() {
         def context = embeddedServer.getApplicationContext()
         def testExporter = context.getBean(InMemorySpanExporter)
+        def conditions = new PollingConditions(timeout: 10)
 
         when:
         HttpResponse<String> response = reactorHttpClient.toBlocking().exchange(path, String)
@@ -120,10 +122,11 @@ class OpenTelemetryHttpSpec extends Specification {
         then:
         def e = thrown(HttpClientResponseException)
         e.message == "Internal Server Error"
-        testExporter.finishedSpanItems.size() == 2
-        testExporter.finishedSpanItems.events.any {it.size() > 0 && it.get(0).name == "exception"}
-        testExporter.finishedSpanItems.stream().allMatch( it -> it.status.statusCode == StatusCode.ERROR)
-
+        conditions.eventually {
+            testExporter.finishedSpanItems.size() == 2
+            testExporter.finishedSpanItems.events.any { it.size() > 0 && it.get(0).name == "exception" }
+            testExporter.finishedSpanItems.stream().allMatch(span -> span.status.statusCode == StatusCode.ERROR)
+        }
         cleanup:
         testExporter.reset()
         where:

@@ -47,7 +47,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     private final SpanBuilder spanBuilder;
     private final Span parentSpan;
     private final boolean isSingle;
-    private final TracingObserver tracingObserver;
+    private final TracingObserver<T> tracingObserver;
 
     /**
      * Creates a new tracing publisher for the given arguments.
@@ -59,7 +59,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
                             String operationName) {
-        this(publisher, tracer, tracer.buildSpan(operationName), TracingObserver.NO_OP);
+        this(publisher, tracer, tracer.buildSpan(operationName), (TracingObserver<T>) TracingObserver.NO_OP);
     }
 
     /**
@@ -73,7 +73,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
                             String operationName,
-                            @NonNull TracingObserver tracingObserver) {
+                            @NonNull TracingObserver<T> tracingObserver) {
         this(publisher, tracer, tracer.buildSpan(operationName), tracingObserver);
     }
 
@@ -85,7 +85,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      * @param tracer    the tracer
      */
     public TracingPublisher(Publisher<T> publisher, Tracer tracer) {
-        this(publisher, tracer, (SpanBuilder) null, TracingObserver.NO_OP);
+        this(publisher, tracer, (SpanBuilder) null, (TracingObserver<T>) TracingObserver.NO_OP);
     }
 
     /**
@@ -98,7 +98,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
-                            @NonNull TracingObserver tracingObserver) {
+                            @NonNull TracingObserver<T> tracingObserver) {
         this(publisher, tracer, (SpanBuilder) null, tracingObserver);
     }
 
@@ -112,7 +112,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
                             SpanBuilder spanBuilder) {
-        this(publisher, tracer, spanBuilder, Publishers.isSingle(publisher.getClass()), TracingObserver.NO_OP);
+        this(publisher, tracer, spanBuilder, Publishers.isSingle(publisher.getClass()), (TracingObserver<T>) TracingObserver.NO_OP);
     }
 
     /**
@@ -126,7 +126,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
                             SpanBuilder spanBuilder,
-                            @NonNull TracingObserver tracingObserver) {
+                            @NonNull TracingObserver<T> tracingObserver) {
         this(publisher, tracer, spanBuilder, Publishers.isSingle(publisher.getClass()), tracingObserver);
     }
 
@@ -143,7 +143,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
                             Tracer tracer,
                             SpanBuilder spanBuilder,
                             boolean isSingle) {
-        this(publisher, tracer, spanBuilder, isSingle, TracingObserver.NO_OP);
+        this(publisher, tracer, spanBuilder, isSingle, (TracingObserver<T>) TracingObserver.NO_OP);
     }
 
     /**
@@ -159,7 +159,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
                             SpanBuilder spanBuilder,
-                            boolean isSingle, @NonNull TracingObserver tracingObserver) {
+                            boolean isSingle, @NonNull TracingObserver<T> tracingObserver) {
         this.publisher = publisher;
         this.tracer = tracer;
         this.spanBuilder = spanBuilder;

@@ -25,40 +25,40 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @Internal
-enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<MutableHttpRequest<?>, HttpResponse<?>> {
+enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<MutableHttpRequest<Object>, HttpResponse<Object>> {
 
     INSTANCE;
 
     @Override
-    public String method(MutableHttpRequest<?> request) {
+    public String method(MutableHttpRequest<Object> request) {
         return request.getMethodName();
     }
 
     @Override
-    public String url(MutableHttpRequest<?> request) {
+    public String url(MutableHttpRequest<Object> request) {
         return request.getUri().toString();
     }
 
     @Override
-    public List<String> requestHeader(MutableHttpRequest<?> request, String name) {
+    public List<String> requestHeader(MutableHttpRequest<Object> request, String name) {
         return request.getHeaders().getAll(name);
     }
 
     @Override
-    public Long requestContentLength(MutableHttpRequest<?> request, @Nullable HttpResponse<?> response) {
+    public Long requestContentLength(MutableHttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
         return request.getContentLength();
     }
 
     @Override
     @Nullable
-    public Long requestContentLengthUncompressed(MutableHttpRequest<?> request, @Nullable HttpResponse<?> response) {
+    public Long requestContentLengthUncompressed(MutableHttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
         return null;
     }
 
     @Override
     @SuppressWarnings("UnnecessaryDefaultInEnumSwitch")
     @Nullable
-    public String flavor(MutableHttpRequest<?> request, @Nullable HttpResponse<?> response) {
+    public String flavor(MutableHttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
         switch (request.getHttpVersion()) {
             case HTTP_1_0:
                 return SemanticAttributes.HttpFlavorValues.HTTP_1_0;
@@ -72,23 +72,23 @@ enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<M
     }
 
     @Override
-    public Integer statusCode(MutableHttpRequest<?> request, HttpResponse<?> response) {
+    public Integer statusCode(MutableHttpRequest<Object> request, HttpResponse<Object> response) {
         return response.code();
     }
 
     @Override
-    public Long responseContentLength(MutableHttpRequest<?> request, HttpResponse<?> response) {
+    public Long responseContentLength(MutableHttpRequest<Object> request, HttpResponse<Object> response) {
         return response.getContentLength();
     }
 
     @Override
     @Nullable
-    public Long responseContentLengthUncompressed(MutableHttpRequest<?> request, HttpResponse<?> response) {
+    public Long responseContentLengthUncompressed(MutableHttpRequest<Object> request, HttpResponse<Object> response) {
         return null;
     }
 
     @Override
-    public List<String> responseHeader(MutableHttpRequest<?> request, HttpResponse<?> response, String name) {
+    public List<String> responseHeader(MutableHttpRequest<Object> request, HttpResponse<Object> response, String name) {
         return response.getHeaders().getAll(name);
     }
 

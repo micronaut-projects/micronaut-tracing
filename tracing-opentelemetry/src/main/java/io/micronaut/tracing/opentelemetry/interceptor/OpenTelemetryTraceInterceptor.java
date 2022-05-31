@@ -30,9 +30,9 @@ import io.micronaut.core.util.StringUtils;
 import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
-import io.micronaut.tracing.opentelemetry.instrument.util.TracingObserver;
-import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryTracingPublisher;
-import io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisherUtils;
+import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryObserver;
+import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryPublisher;
+import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryPublisherUtils;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
@@ -93,28 +93,32 @@ public class OpenTelemetryTraceInterceptor implements MethodInterceptor<Object, 
         if (!isContinue && !isNew) {
             return context.proceed();
         }
-        Context currentContext = Context.current();
 
+        Context currentContext = Context.current();
 
         if (isContinue) {
             InterceptedMethod interceptedMethod = InterceptedMethod.of(context);
             try {
                 switch (interceptedMethod.resultType()) {
                     case PUBLISHER:
-                        Publisher<?> publisher = interceptedMethod.interceptResultAsPublisher();
-                        if (publisher instanceof OpenTelemetryTracingPublisher) {
-                            return publisher;
+                        try {
+                            Publisher<?> publisher = interceptedMethod.interceptResultAsPublisher();
+                            if (publisher instanceof OpenTelemetryPublisher) {
+                                return publisher;
+                            }
+                            return interceptedMethod.handleResult(
+                                OpenTelemetryPublisherUtils.createOpenTelemetryPublisher(publisher, null, currentContext, null, new OpenTelemetryObserver() {
+
+                                    @Override
+                                    public void doOnSubscribe(@NonNull Context openTelemetryContext) {
+                                        tagArguments(context);
+                                    }
+
+                                }));
+                        } catch (RuntimeException e) {
+                                logError(currentContext, e);
+                                throw e;
                         }
-                        ClassAndMethod classAndMethod = ClassAndMethod.create(context.getDeclaringType(), context.getMethodName());
-                        return interceptedMethod.handleResult(
-                            TracingPublisherUtils.createTracingPublisher(publisher, null, classAndMethod, new TracingObserver() {
-
-                                @Override
-                                public void doOnSubscribe(@NonNull Context openTelemetryContext) {
-                                    tagArguments(context);
-                                }
-
-                            }));
                     case COMPLETION_STAGE:
                     case SYNCHRONOUS:
                         tagArguments(context);
@@ -142,51 +146,62 @@ public class OpenTelemetryTraceInterceptor implements MethodInterceptor<Object, 
 
             InterceptedMethod interceptedMethod = InterceptedMethod.of(context);
             try {
+                if (!instrumenter.shouldStart(currentContext, classAndMethod)) {
+                    return context.proceed();
+                }
+                final Context newContext = instrumenter.start(currentContext, classAndMethod);
+
                 switch (interceptedMethod.resultType()) {
                     case PUBLISHER:
-                        Publisher<?> publisher = interceptedMethod.interceptResultAsPublisher();
-                        if (publisher instanceof OpenTelemetryTracingPublisher) {
-                            return publisher;
-                        }
-                        return interceptedMethod.handleResult(TracingPublisherUtils.createTracingPublisher(publisher, instrumenter, classAndMethod, new TracingObserver() {
-                            @Override
-                            public void doOnSubscribe(@NonNull Context openTelemetryContext) {
-                                tagArguments(context);
+                        try (Scope ignored = newContext.makeCurrent()) {
+                            Publisher<?> publisher = interceptedMethod.interceptResultAsPublisher();
+                            if (publisher instanceof OpenTelemetryPublisher) {
+                                return publisher;
+                            }
+                            return interceptedMethod.handleResult(OpenTelemetryPublisherUtils.createOpenTelemetryPublisher(publisher, instrumenter, newContext, classAndMethod, new OpenTelemetryObserver() {
+                                @Override
+                                public void doOnSubscribe(@NonNull Context openTelemetryContext) {
+                                    tagArguments(context);
                                 }
                             }));
-                    case COMPLETION_STAGE:
-                        if (!instrumenter.shouldStart(currentContext, classAndMethod)) {
-                            return context.proceed();
+                        }  catch (RuntimeException e) {
+                            logError(newContext, e);
+                            instrumenter.end(newContext, classAndMethod, null, e);
+                            throw e;
                         }
-                        Context newContext = instrumenter.start(currentContext, classAndMethod);
+                    case COMPLETION_STAGE:
                         try (Scope ignored = newContext.makeCurrent()) {
                             tagArguments(context);
                             try {
                                 CompletionStage<?> completionStage = interceptedMethod.interceptResultAsCompletionStage();
                                 if (completionStage != null) {
+                                    ClassAndMethod finalClassAndMethod = classAndMethod;
                                     completionStage = completionStage.whenComplete((o, throwable) -> {
                                         if (throwable != null) {
                                             logError(newContext, throwable);
+                                            instrumenter.end(newContext, finalClassAndMethod, null, throwable);
+                                        } else {
+                                            instrumenter.end(newContext, finalClassAndMethod, o, null);
                                         }
                                     });
                                 }
                                 return interceptedMethod.handleResult(completionStage);
                             } catch (RuntimeException e) {
                                 logError(newContext, e);
+                                instrumenter.end(newContext, classAndMethod, null, e);
                                 throw e;
                             }
                         }
                     case SYNCHRONOUS:
-                        if (!instrumenter.shouldStart(currentContext, classAndMethod)) {
-                            return context.proceed();
-                        }
-                        newContext = instrumenter.start(currentContext, classAndMethod);
                         try (Scope ignored = newContext.makeCurrent()) {
                             tagArguments(context);
                             try {
-                                return context.proceed();
+                                Object response = context.proceed();
+                                instrumenter.end(newContext, classAndMethod, response, null);
+                                return response;
                             } catch (RuntimeException e) {
                                 logError(newContext, e);
+                                instrumenter.end(newContext, classAndMethod, null, e);
                                 throw e;
                             }
                         }

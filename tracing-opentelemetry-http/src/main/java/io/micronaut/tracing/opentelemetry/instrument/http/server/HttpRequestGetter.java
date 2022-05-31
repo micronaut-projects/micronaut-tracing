@@ -21,17 +21,17 @@ import io.micronaut.http.HttpRequest;
 import io.opentelemetry.context.propagation.TextMapGetter;
 
 @Internal
-enum HttpRequestGetter implements TextMapGetter<HttpRequest<?>> {
+enum HttpRequestGetter implements TextMapGetter<HttpRequest<Object>> {
     INSTANCE;
 
     @Override
-    public Iterable<String> keys(HttpRequest<?> request) {
+    public Iterable<String> keys(HttpRequest<Object> request) {
         return request.getHeaders().names();
     }
 
     @Override
     @Nullable
-    public String get(@Nullable HttpRequest<?> request, String key) {
+    public String get(@Nullable HttpRequest<Object> request, String key) {
         if (request == null) {
             return null;
         }

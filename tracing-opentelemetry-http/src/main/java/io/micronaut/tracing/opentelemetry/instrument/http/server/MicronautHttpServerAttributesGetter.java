@@ -16,6 +16,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -27,56 +28,56 @@ import java.util.List;
 import java.util.Optional;
 
 @Internal
-enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<HttpRequest<?>, HttpResponse<?>> {
+enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<HttpRequest<Object>, HttpResponse<Object>> {
 
     INSTANCE;
 
     @Override
-    public String method(HttpRequest<?> request) {
+    public String method(HttpRequest<Object> request) {
         return request.getMethodName();
     }
 
     @Override
-    public List<String> requestHeader(HttpRequest<?> request, String name) {
+    public List<String> requestHeader(HttpRequest<Object> request, String name) {
         return request.getHeaders().getAll(name);
     }
 
     @Override
-    public Long requestContentLength(HttpRequest<?> request, @Nullable HttpResponse<?> response) {
+    public Long requestContentLength(HttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
         return request.getContentLength();
     }
 
     @Override
     @Nullable
-    public Long requestContentLengthUncompressed(HttpRequest<?> request, @Nullable HttpResponse<?> response) {
+    public Long requestContentLengthUncompressed(HttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
         return null;
     }
 
     @Override
-    public Integer statusCode(HttpRequest<?> request, HttpResponse<?> response) {
+    public Integer statusCode(HttpRequest<Object> request, HttpResponse<Object> response) {
         return response.code();
     }
 
     @Override
     @Nullable
-    public Long responseContentLength(HttpRequest<?> request, HttpResponse<?> response) {
+    public Long responseContentLength(HttpRequest<Object> request, HttpResponse<Object> response) {
         return response.getContentLength();
     }
 
     @Override
     @Nullable
-    public Long responseContentLengthUncompressed(HttpRequest<?> request, HttpResponse<?> response) {
+    public Long responseContentLengthUncompressed(HttpRequest<Object> request, HttpResponse<Object> response) {
         return null;
     }
 
     @Override
-    public List<String> responseHeader(HttpRequest<?> request, HttpResponse<?> response, String name) {
+    public List<String> responseHeader(HttpRequest<Object> request, HttpResponse<Object> response, String name) {
         return response.getHeaders().getAll(name);
     }
 
     @Override
     @Nullable
-    public String flavor(HttpRequest<?> request) {
+    public String flavor(HttpRequest<Object> request) {
         switch (request.getHttpVersion()) {
             case HTTP_1_0:
                 return SemanticAttributes.HttpFlavorValues.HTTP_1_0;
@@ -90,10 +91,10 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     }
 
     @Override
-    public String target(HttpRequest<?> request) {
+    public String target(HttpRequest<Object> request) {
         String requestPath = request.getPath();
         String queryString = request.getUri().getRawQuery();
-        if (queryString != null && !queryString.isEmpty()) {
+        if (StringUtils.isNotEmpty(queryString)) {
             return requestPath + '?' + queryString;
         }
         return requestPath;
@@ -101,19 +102,19 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
 
     @Override
     @Nullable
-    public String route(HttpRequest<?> request) {
+    public String route(HttpRequest<Object> request) {
         Optional<Object> routeInfo = request.getAttribute(HttpAttributes.ROUTE_INFO);
         return routeInfo.map(Object::toString).orElse(null);
     }
 
     @Override
-    public String scheme(HttpRequest<?> request) {
+    public String scheme(HttpRequest<Object> request) {
         return request.getUri().getScheme();
     }
 
     @Override
     @Nullable
-    public String serverName(HttpRequest<?> request) {
+    public String serverName(HttpRequest<Object> request) {
         return request.getServerName();
     }
 

@@ -20,11 +20,11 @@ import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.context.propagation.TextMapSetter;
 
 @Internal
-enum HttpRequestSetter implements TextMapSetter<MutableHttpRequest<?>> {
+enum HttpRequestSetter implements TextMapSetter<MutableHttpRequest<Object>> {
     INSTANCE;
 
     @Override
-    public void set(MutableHttpRequest<?> httpRequest, String key, String value) {
+    public void set(MutableHttpRequest<Object> httpRequest, String key, String value) {
         httpRequest.header(key, value);
     }
 }

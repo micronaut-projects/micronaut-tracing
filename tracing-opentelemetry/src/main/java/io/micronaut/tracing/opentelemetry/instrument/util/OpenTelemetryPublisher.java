@@ -26,7 +26,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-
 /**
  * A reactive streams publisher that traces.
  *
@@ -36,37 +35,35 @@ import org.reactivestreams.Subscription;
  * @since 4.1.0
  */
 @SuppressWarnings("PublisherImplementation")
-public class OpenTelemetryTracingPublisher<T, R> implements Publishers.MicronautPublisher<T> {
+public class OpenTelemetryPublisher<T, R> implements Publishers.MicronautPublisher<T> {
 
     protected final Publisher<T> publisher;
     private final Instrumenter<R, Object> instrumenter;
     @Nullable
     private final R request;
-    private final TracingObserver<T> observer;
+    private final OpenTelemetryObserver<T> observer;
+    private final Context parentContext;
 
     /**
      * @param publisher      the target publisher
      * @param instrumenter   the instrumenter
+     * @param parentContext the context from a parent
      * @param request the request object
      * @param observer the tracing observer
      */
-    public OpenTelemetryTracingPublisher(Publisher<T> publisher,
-                                         Instrumenter<R, Object> instrumenter,
-                                         @Nullable R request, TracingObserver<T> observer) {
+    public OpenTelemetryPublisher(Publisher<T> publisher,
+                                  Instrumenter<R, Object> instrumenter,
+                                  Context parentContext,
+                                  @Nullable R request, OpenTelemetryObserver<T> observer) {
         this.publisher = publisher;
         this.instrumenter = instrumenter;
         this.request = request;
         this.observer = observer;
+        this.parentContext = parentContext;
     }
 
     @Override
     public void subscribe(Subscriber<? super T> actual) {
-        Context parentContext = Context.current();
-
-        if (instrumenter != null && instrumenter.shouldStart(parentContext, request)) {
-            parentContext = instrumenter.start(parentContext, request);
-        }
-
         try (Scope ignored = parentContext.makeCurrent()) {
             doSubscribe(actual, parentContext);
         }

@@ -174,7 +174,7 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>io.opentelemetry.instrumentation.api.instrumenter.Instrumenter&lt;io.micronaut.http.HttpRequest&lt;?&gt;,io.micronaut.http.HttpResponse&lt;?&gt;&gt;</code></td>
+<td class="colFirst"><code>io.opentelemetry.instrumentation.api.instrumenter.Instrumenter&lt;io.micronaut.http.HttpRequest&lt;java.lang.Object&gt;,io.micronaut.http.HttpResponse&lt;java.lang.Object&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../../io/micronaut/tracing/opentelemetry/instrument/http/server/MicronautHttpServerTelemetryFactory.html#instrumenter-io.opentelemetry.api.OpenTelemetry-java.util.List-">instrumenter</a></span>(io.opentelemetry.api.OpenTelemetry&nbsp;openTelemetry,
             java.util.List&lt;io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor&lt;io.micronaut.http.HttpRequest&lt;?&gt;,io.micronaut.http.HttpResponse&lt;?&gt;&gt;&gt;&nbsp;extractors)</code>
 <div class="block">Builds the http server Open Telemetry instrumenter.</div>
@@ -228,9 +228,9 @@ extends java.lang.Object</pre>
 <pre>@Prototype
  @Requires(beans=io.opentelemetry.api.OpenTelemetry.class)
  @Named(value="micronautHttpServerTelemetryInstrumenter")
-public&nbsp;io.opentelemetry.instrumentation.api.instrumenter.Instrumenter&lt;io.micronaut.http.HttpRequest&lt;?&gt;,io.micronaut.http.HttpResponse&lt;?&gt;&gt;&nbsp;instrumenter(io.opentelemetry.api.OpenTelemetry&nbsp;openTelemetry,
-                                                                                                                                                                                                                                                                                       <a href="../../../../../../../io/micronaut/tracing/opentelemetry/instrument/http/server/MicronautHttpServerTelemetryFactory.Server.html" title="annotation in io.micronaut.tracing.opentelemetry.instrument.http.server">@MicronautHttpServerTelemetryFactory.Server</a>
-                                                                                                                                                                                                                                                                                       java.util.List&lt;io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor&lt;io.micronaut.http.HttpRequest&lt;?&gt;,io.micronaut.http.HttpResponse&lt;?&gt;&gt;&gt;&nbsp;extractors)</pre>
+public&nbsp;io.opentelemetry.instrumentation.api.instrumenter.Instrumenter&lt;io.micronaut.http.HttpRequest&lt;java.lang.Object&gt;,io.micronaut.http.HttpResponse&lt;java.lang.Object&gt;&gt;&nbsp;instrumenter(io.opentelemetry.api.OpenTelemetry&nbsp;openTelemetry,
+                                                                                                                                                                                                                                                                                                                     <a href="../../../../../../../io/micronaut/tracing/opentelemetry/instrument/http/server/MicronautHttpServerTelemetryFactory.Server.html" title="annotation in io.micronaut.tracing.opentelemetry.instrument.http.server">@MicronautHttpServerTelemetryFactory.Server</a>
+                                                                                                                                                                                                                                                                                                                     java.util.List&lt;io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor&lt;io.micronaut.http.HttpRequest&lt;?&gt;,io.micronaut.http.HttpResponse&lt;?&gt;&gt;&gt;&nbsp;extractors)</pre>
 <div class="block">Builds the http server Open Telemetry instrumenter.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>

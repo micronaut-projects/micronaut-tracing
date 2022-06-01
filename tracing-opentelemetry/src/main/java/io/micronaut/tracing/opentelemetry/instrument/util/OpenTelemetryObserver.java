@@ -33,29 +33,6 @@ public interface OpenTelemetryObserver<T> {
     OpenTelemetryObserver<?> NO_OP = new OpenTelemetryObserver<Object>() { };
 
     /**
-     * Designed for subclasses to override if the current active span is to be
-     * continued by this publisher. False by default. This only has effects if
-     * no spanBuilder was defined.
-     *
-     * @return true, if the current span should be continued by this publisher
-     * @since 4.0.2
-     */
-    default boolean isContinued() {
-        return false;
-    }
-
-    /**
-     * Designed for subclasses to override if the span needs to be finished
-     * upon error. True by default.
-     *
-     * @return true, if the active span needs to be finished on error
-     * @since 4.0.2
-     */
-    default boolean isFinishOnError() {
-        return true;
-    }
-
-    /**
      * For subclasses to override and implement custom behaviour when an item is emitted.
      *
      * @param object  The object

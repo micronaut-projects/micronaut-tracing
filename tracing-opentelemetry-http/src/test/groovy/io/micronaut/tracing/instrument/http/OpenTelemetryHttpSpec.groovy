@@ -15,14 +15,17 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.http.context.ServerRequestContext
 import io.micronaut.reactor.http.client.ReactorHttpClient
 import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.rxjava2.http.client.RxHttpClient
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
 import io.micronaut.tracing.annotation.SpanTag
+import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.extension.annotations.SpanAttribute
 import io.opentelemetry.extension.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
+import io.reactivex.Single
 import jakarta.inject.Inject
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -44,24 +47,39 @@ class OpenTelemetryHttpSpec extends Specification {
     String TRACING_ID_IN_SPAN = "http.request.header.x_trackingid"
 
     @AutoCleanup
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
+    private ApplicationContext context
+
+    @AutoCleanup
+    ReactorHttpClient reactorHttpClient
+
+    private PollingConditions conditions = new PollingConditions()
+    private EmbeddedServer embeddedServer
+    private InMemorySpanExporter exporter;
+
+    void setup() {
+        context = ApplicationContext.builder(
             'otel.http.client.request-headers': [TRACING_ID],
             'otel.http.client.response-headers': [TRACING_ID],
             'otel.http.server.request-headers': [TRACING_ID],
             'otel.http.server.response-headers': [TRACING_ID],
-            'micronaut.application.name': 'test-app'
-    ])
+            'micronaut.application.name': 'test-app',
+            'otel.exclusions[0]': '.*exclude.*'
+        ).start()
 
-    @AutoCleanup
-    ReactorHttpClient reactorHttpClient = ReactorHttpClient.create(embeddedServer.URL)
+        embeddedServer = context.getBean(EmbeddedServer).start()
+        reactorHttpClient = ReactorHttpClient.create(embeddedServer.URL)
+        exporter = context.getBean(InMemorySpanExporter)
+    }
 
     void 'test map WithSpan annotation'() {
         int count = 1
-        // 1x Server POST 2x Server GET 2x Client GET, 2x Method call with NewSpan  = 4
-        int spanNumbers = 7
+        // 1x Server POST 2x Server GET 2x Client GET, 3x Method call with NewSpan
+        int clientSpanCount = 2
+        int serverSpanCount = 3
+        int internalSpanCount = 3
+
+        int spanNumbers = clientSpanCount + serverSpanCount + internalSpanCount
         def spanNumbersOfRequests = 5
-        def context = embeddedServer.getApplicationContext()
-        def testExporter = context.getBean(InMemorySpanExporter)
 
         expect:
         List<Tuple2> result = Flux.range(1, count)
@@ -79,43 +97,72 @@ class OpenTelemetryHttpSpec extends Specification {
         for (Tuple2 t : result) {
             assert t.getT1() == t.getT2()
         }
+        conditions.eventually {
+            exporter.finishedSpanItems.size() == count * spanNumbers
+            exporter.finishedSpanItems.kind.stream().filter(x -> x == SpanKind.INTERNAL).collect().size() == internalSpanCount
+            exporter.finishedSpanItems.kind.stream().filter(x -> x == SpanKind.SERVER).collect().size() == serverSpanCount
+            exporter.finishedSpanItems.kind.stream().filter(x -> x == SpanKind.CLIENT).collect().size() == clientSpanCount
 
-        testExporter.finishedSpanItems.size() == count * spanNumbers
+            exporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-attribute"))
+            !exporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-no-withspan"))
+            exporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-with-withspan"))
+            exporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "privateMethodTestAttribute"))
 
-        testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-attribute"))
-        !testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-no-withspan"))
-        testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-with-withspan"))
-        testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "privateMethodTestAttribute"))
+            // test if newspan has appended name
+            exporter.finishedSpanItems.name.any(x -> x.contains("#test-withspan-mapping"))
 
-        // test if newspan has appended name
-        testExporter.finishedSpanItems.name.any(x -> x.contains("#test-withspan-mapping"))
-
-        testExporter.getFinishedSpanItems().attributes.stream().filter(x -> x.asMap().keySet().any(y-> y.key == TRACING_ID_IN_SPAN)).collect().size() == spanNumbersOfRequests * count
-
+            exporter.getFinishedSpanItems().attributes.stream().filter(x -> x.asMap().keySet().any(y -> y.key == TRACING_ID_IN_SPAN)).collect().size() == spanNumbersOfRequests * count
+        }
         cleanup:
-        testExporter.reset()
+        exporter.reset()
     }
 
     void 'test context propagation'() {
-        def context = embeddedServer.getApplicationContext()
-        def testExporter = context.getBean(InMemorySpanExporter)
-
         when:
         HttpResponse<String> response = reactorHttpClient.toBlocking().exchange('/propagate/context', String)
 
         then:
-        response
-        response.body() == "contains micronaut.http.server.request: true, size: 1"
+        conditions.eventually {
+            response
+            response.body() == "contains micronaut.http.server.request: true, size: 1"
+        }
+        cleanup:
+        exporter.reset()
+    }
+
+    void 'test openTelemetry rxjava2'() {
+        def serverSpanCount = 2
+        def clientSpanCount = 1
+        def internalSpanCount = 1
+
+        when:
+        HttpResponse<String> response = reactorHttpClient.toBlocking().exchange('/rxjava2/test', String)
+
+        then:
+        conditions.eventually {
+            response
+            exporter.finishedSpanItems.size() == internalSpanCount + serverSpanCount + clientSpanCount
+        }
 
         cleanup:
-        testExporter.reset()
+        exporter.reset()
+    }
+
+    void 'test exclude endpoint'() {
+        when:
+        HttpResponse<String> response = reactorHttpClient.toBlocking().exchange('/exclude/test', String)
+
+        then:
+        conditions.eventually {
+            response
+            exporter.getFinishedSpanItems().size() == 0
+        }
+
+        cleanup:
+        exporter.reset()
     }
 
     void 'test error #desc, path=#path'() {
-        def context = embeddedServer.getApplicationContext()
-        def testExporter = context.getBean(InMemorySpanExporter)
-        def conditions = new PollingConditions(timeout: 10)
-
         when:
         HttpResponse<String> response = reactorHttpClient.toBlocking().exchange(path, String)
 
@@ -123,19 +170,21 @@ class OpenTelemetryHttpSpec extends Specification {
         def e = thrown(HttpClientResponseException)
         e.message == "Internal Server Error"
         conditions.eventually {
-            testExporter.finishedSpanItems.size() == 2
-            testExporter.finishedSpanItems.events.any { it.size() > 0 && it.get(0).name == "exception" }
-            testExporter.finishedSpanItems.stream().allMatch(span -> span.status.statusCode == StatusCode.ERROR)
+            exporter.finishedSpanItems.size() == spanCount
+            exporter.finishedSpanItems.events.any { it.size() > 0 && it.get(0).name == "exception" }
+            exporter.finishedSpanItems.stream().allMatch(span -> span.status.statusCode == StatusCode.ERROR)
         }
         cleanup:
-        testExporter.reset()
+        exporter.reset()
         where:
-        path                                | desc
-        '/error/publisher'                  | 'inside publisher'
-        '/error/mono'                       | 'propagated through publisher'
-        '/error/sync'                       | 'inside normal function'
-        '/error/completionStage'            | 'inside completionStage'
-        '/error/completionStagePropagation' | 'propagated through  completionStage'
+        path                                      | spanCount | desc
+        '/error/publisher'                        | 2         | 'inside publisher'
+        '/error/publisherErrorContinueSpan'       | 1         | 'inside continueSpan publisher'
+        '/error/mono'                             | 2         | 'propagated through publisher'
+        '/error/sync'                             | 2         | 'inside normal function'
+        '/error/completionStage'                  | 2         | 'inside completionStage'
+        '/error/completionStagePropagation'       | 2         | 'propagated through  completionStage'
+        '/error/completionStageErrorContinueSpan' | 1         | 'inside normal method continueSpan'
     }
 
     @Introspected
@@ -191,7 +240,12 @@ class OpenTelemetryHttpSpec extends Specification {
 
         @WithSpan("test-withspan-mapping")
         CompletionStage<Void> methodWithSpan(@SpanTag("tracing-annotation-span-tag-with-withspan") String tracingId) {
-            return CompletableFuture.runAsync(() -> {return tracingId});
+            return CompletableFuture.runAsync(() -> {return normalFunctionWithNewSpan(tracingId)});
+        }
+
+        @NewSpan
+        String normalFunctionWithNewSpan(String tracingId) {
+            return tracingId
         }
     }
 
@@ -210,12 +264,22 @@ class OpenTelemetryHttpSpec extends Specification {
     }
 
     @Controller('/error')
-    static  class ErrorController {
+    static class ErrorController {
 
         @Get("/publisher")
         @WithSpan
         Mono<Void> publisher() {
             throw new RuntimeException("publisher")
+        }
+
+        @Get("/publisherErrorContinueSpan")
+        Mono<Void> publisherErrorContinueSpan() {
+            return Mono.from(continueSpanPublisher())
+        }
+
+        @ContinueSpan
+        Mono<Void> continueSpanPublisher() {
+            throw new RuntimeException("publisherErrorContinueSpan")
         }
 
         @Get("/mono")
@@ -241,6 +305,50 @@ class OpenTelemetryHttpSpec extends Specification {
         CompletionStage<Void> completionStagePropagation (){
             return CompletableFuture.runAsync( ()-> { throw new RuntimeException("completionStage")})
         }
+
+        @Get("/completionStageErrorContinueSpan")
+        CompletionStage<Void> completionStageErrorContinueSpan () {
+            throwAnError()
+            return null
+        }
+
+        @ContinueSpan
+        void throwAnError() {
+            throw new RuntimeException("throwAnError")
+        }
+    }
+
+    @Controller('/exclude')
+    static class ExcludeController {
+
+        @Get("/test")
+        void excludeTest() {}
+    }
+
+    @Controller('/rxjava2')
+    static class RxJava2 {
+
+        @Inject
+        @Client("/")
+        RxHttpClient rxHttpClient
+
+        @Get("/test")
+        Single<String> test() {
+            return Single.fromPublisher(
+                    rxHttpClient.retrieve(HttpRequest
+                            .GET("/rxjava2/test2"), String)
+            )
+        }
+
+        @NewSpan
+        @Get("/test2")
+        Single<String> test2() {
+            dummyMethodThatWillNotProduceSpan()
+            return Single.just("test2")
+        }
+
+        void dummyMethodThatWillNotProduceSpan() {}
+
     }
 
 }

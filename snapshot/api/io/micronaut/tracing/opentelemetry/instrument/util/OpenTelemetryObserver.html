@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":18,"i1":18,"i2":18,"i3":18,"i4":18,"i5":18};
+var methods = {"i0":18,"i1":18,"i2":18,"i3":18};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -176,20 +176,6 @@ var activeTableTab = "activeTableTab";
 <div class="block">For subclasses to override and implement custom on-subscribe behaviour.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>default boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html#isContinued--">isContinued</a></span>()</code>
-<div class="block">Designed for subclasses to override if the current active span is to be
- continued by this publisher.</div>
-</td>
-</tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>default boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html#isFinishOnError--">isFinishOnError</a></span>()</code>
-<div class="block">Designed for subclasses to override if the span needs to be finished
- upon error.</div>
-</td>
-</tr>
 </table>
 </li>
 </ul>
@@ -223,41 +209,6 @@ var activeTableTab = "activeTableTab";
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="isContinued--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isContinued</h4>
-<pre>default&nbsp;boolean&nbsp;isContinued()</pre>
-<div class="block">Designed for subclasses to override if the current active span is to be
- continued by this publisher. False by default. This only has effects if
- no spanBuilder was defined.</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>true, if the current span should be continued by this publisher</dd>
-<dt><span class="simpleTagLabel">Since:</span></dt>
-<dd>4.0.2</dd>
-</dl>
-</li>
-</ul>
-<a name="isFinishOnError--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isFinishOnError</h4>
-<pre>default&nbsp;boolean&nbsp;isFinishOnError()</pre>
-<div class="block">Designed for subclasses to override if the span needs to be finished
- upon error. True by default.</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>true, if the active span needs to be finished on error</dd>
-<dt><span class="simpleTagLabel">Since:</span></dt>
-<dd>4.0.2</dd>
-</dl>
-</li>
-</ul>
 <a name="doOnNext-java.lang.Object-io.opentelemetry.context.Context-">
 <!--   -->
 </a><a name="doOnNext-T-io.opentelemetry.context.Context-">

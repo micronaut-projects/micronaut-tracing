@@ -25,15 +25,15 @@ import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.NetTr
 
 @SuppressWarnings("rawtypes")
 @Internal
-final class MicronautHttpNetServerAttributesGetter extends InetSocketAddressNetServerAttributesGetter<HttpRequest<?>> {
+final class MicronautHttpNetServerAttributesGetter extends InetSocketAddressNetServerAttributesGetter<HttpRequest<Object>> {
 
     @Override
-    public InetSocketAddress getAddress(HttpRequest<?> request) {
+    public InetSocketAddress getAddress(HttpRequest<Object> request) {
         return request.getRemoteAddress();
     }
 
     @Override
-    public String transport(HttpRequest<?> request) {
+    public String transport(HttpRequest<Object> request) {
         return IP_TCP;
     }
 }

@@ -28,6 +28,10 @@ import reactor.core.CorePublisher;
  */
 public final class TracingPublisherUtils {
 
+    private TracingPublisherUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * Creates a new tracing publisher for the given arguments.
      *

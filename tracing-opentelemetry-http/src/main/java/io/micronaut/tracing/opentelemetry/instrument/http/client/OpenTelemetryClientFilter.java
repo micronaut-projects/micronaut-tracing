@@ -23,7 +23,7 @@ import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
 import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
-import io.micronaut.tracing.opentelemetry.instrument.util.TracingPublisherUtils;
+import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryPublisherUtils;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import jakarta.inject.Named;
@@ -40,7 +40,7 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTele
 @Filter(CLIENT_PATH)
 public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter implements HttpClientFilter {
 
-    private final Instrumenter<MutableHttpRequest<?>, HttpResponse<?>> instrumenter;
+    private final Instrumenter<MutableHttpRequest<?>, Object> instrumenter;
 
     /**
      * Initialize the open tracing client filter with tracer and exclusion configuration.
@@ -48,7 +48,7 @@ public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter imple
      * @param exclusionsConfig The {@link OpenTelemetryExclusionsConfiguration}
      * @param instrumenter The {@link OpenTelemetryHttpClientConfig}
      */
-    public OpenTelemetryClientFilter(@Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig, @Named("micronautHttpClientTelemetryInstrumenter") Instrumenter<MutableHttpRequest<?>, HttpResponse<?>> instrumenter) {
+    public OpenTelemetryClientFilter(@Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig, @Named("micronautHttpClientTelemetryInstrumenter") Instrumenter<MutableHttpRequest<?>, Object> instrumenter) {
         super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
         this.instrumenter = instrumenter;
     }
@@ -68,7 +68,9 @@ public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter imple
             return requestPublisher;
         }
 
-        return TracingPublisherUtils.createTracingPublisher(requestPublisher, instrumenter, request);
+        Context newContext = instrumenter.start(parentContext, request);
+
+        return OpenTelemetryPublisherUtils.createOpenTelemetryPublisher(requestPublisher, instrumenter, newContext, request);
 
     }
 }

@@ -21,7 +21,6 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTelemetryHttpClientConfig;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
@@ -70,10 +69,10 @@ public final class MicronautHttpServerTelemetryFactory {
     @Prototype
     @Requires(beans = OpenTelemetry.class)
     @Named("micronautHttpServerTelemetryInstrumenter")
-    public Instrumenter<HttpRequest<?>, HttpResponse<?>> instrumenter(OpenTelemetry openTelemetry, @Server List<AttributesExtractor<HttpRequest<?>, HttpResponse<?>>> extractors) {
+    public Instrumenter<HttpRequest<Object>, HttpResponse<Object>> instrumenter(OpenTelemetry openTelemetry, @Server List<AttributesExtractor<HttpRequest<?>, HttpResponse<?>>> extractors) {
         MicronautHttpServerAttributesGetter httpAttributesGetter = MicronautHttpServerAttributesGetter.INSTANCE;
 
-        InstrumenterBuilder<HttpRequest<?>, HttpResponse<?>> builder =
+        InstrumenterBuilder<HttpRequest<Object>, HttpResponse<Object>> builder =
             Instrumenter.builder(openTelemetry, INSTRUMENTATION_NAME,
                 HttpSpanNameExtractor.create(httpAttributesGetter));
 
@@ -88,13 +87,13 @@ public final class MicronautHttpServerTelemetryFactory {
 
     /**
      * Builds the HttpServerAttributesExtractor.
-     * @param openTelemetryHttpServerConfig the {@link OpenTelemetryHttpClientConfig}
+     * @param openTelemetryHttpServerConfig the {@link OpenTelemetryHttpServerConfig}
      * @return the {@link HttpServerAttributesExtractor}
      */
     @Prototype
     @Server
-    HttpServerAttributesExtractor<HttpRequest<?>, HttpResponse<?>> httpServerAttributesExtractor(@Nullable OpenTelemetryHttpServerConfig openTelemetryHttpServerConfig) {
-        HttpServerAttributesExtractorBuilder<HttpRequest<?>, HttpResponse<?>> httpAttributesExtractorBuilder =
+    HttpServerAttributesExtractor<HttpRequest<Object>, HttpResponse<Object>> httpServerAttributesExtractor(@Nullable OpenTelemetryHttpServerConfig openTelemetryHttpServerConfig) {
+        HttpServerAttributesExtractorBuilder<HttpRequest<Object>, HttpResponse<Object>> httpAttributesExtractorBuilder =
             HttpServerAttributesExtractor.builder(MicronautHttpServerAttributesGetter.INSTANCE);
 
         if (openTelemetryHttpServerConfig != null) {
@@ -110,7 +109,7 @@ public final class MicronautHttpServerTelemetryFactory {
      */
     @Prototype
     @Server
-    NetServerAttributesExtractor<HttpRequest<?>, HttpResponse<?>> netServerAttributesExtractor() {
+    NetServerAttributesExtractor<HttpRequest<Object>, HttpResponse<Object>> netServerAttributesExtractor() {
         return NetServerAttributesExtractor.create(new MicronautHttpNetServerAttributesGetter());
     }
 

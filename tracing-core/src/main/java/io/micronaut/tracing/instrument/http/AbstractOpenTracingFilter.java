@@ -60,7 +60,7 @@ public abstract class AbstractOpenTracingFilter implements HttpFilter {
      *
      * @param tracer the tracer
      */
-    public AbstractOpenTracingFilter(Tracer tracer) {
+    protected AbstractOpenTracingFilter(Tracer tracer) {
         this(tracer, null);
     }
 
@@ -71,7 +71,7 @@ public abstract class AbstractOpenTracingFilter implements HttpFilter {
      * @param tracer            the tracer
      * @param pathExclusionTest the predicate for excluding URI paths from tracing
      */
-    public AbstractOpenTracingFilter(Tracer tracer,
+    protected AbstractOpenTracingFilter(Tracer tracer,
                                      @Nullable Predicate<String> pathExclusionTest) {
         this.tracer = tracer;
         this.pathExclusionTest = pathExclusionTest;

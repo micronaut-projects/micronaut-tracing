@@ -11,6 +11,7 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Header
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.http.context.ServerRequestContext
 import io.micronaut.reactor.http.client.ReactorHttpClient
 import io.micronaut.runtime.server.EmbeddedServer
@@ -18,6 +19,7 @@ import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
 import io.micronaut.tracing.annotation.SpanTag
+import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.extension.annotations.SpanAttribute
 import io.opentelemetry.extension.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
@@ -27,8 +29,11 @@ import reactor.core.publisher.Mono
 import reactor.util.function.Tuple2
 import reactor.util.function.Tuples
 import spock.lang.AutoCleanup
-import spock.lang.Shared
 import spock.lang.Specification
+import spock.util.concurrent.PollingConditions
+
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionStage
 
 import static io.micronaut.scheduling.TaskExecutors.IO
 
@@ -80,6 +85,8 @@ class OpenTelemetryHttpSpec extends Specification {
         testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-attribute"))
         !testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-no-withspan"))
         testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-with-withspan"))
+        testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "privateMethodTestAttribute"))
+
         // test if newspan has appended name
         testExporter.finishedSpanItems.name.any(x -> x.contains("#test-withspan-mapping"))
 
@@ -90,12 +97,45 @@ class OpenTelemetryHttpSpec extends Specification {
     }
 
     void 'test context propagation'() {
+        def context = embeddedServer.getApplicationContext()
+        def testExporter = context.getBean(InMemorySpanExporter)
+
         when:
         HttpResponse<String> response = reactorHttpClient.toBlocking().exchange('/propagate/context', String)
 
         then:
         response
         response.body() == "contains micronaut.http.server.request: true, size: 1"
+
+        cleanup:
+        testExporter.reset()
+    }
+
+    void 'test error #desc, path=#path'() {
+        def context = embeddedServer.getApplicationContext()
+        def testExporter = context.getBean(InMemorySpanExporter)
+        def conditions = new PollingConditions(timeout: 10)
+
+        when:
+        HttpResponse<String> response = reactorHttpClient.toBlocking().exchange(path, String)
+
+        then:
+        def e = thrown(HttpClientResponseException)
+        e.message == "Internal Server Error"
+        conditions.eventually {
+            testExporter.finishedSpanItems.size() == 2
+            testExporter.finishedSpanItems.events.any { it.size() > 0 && it.get(0).name == "exception" }
+            testExporter.finishedSpanItems.stream().allMatch(span -> span.status.statusCode == StatusCode.ERROR)
+        }
+        cleanup:
+        testExporter.reset()
+        where:
+        path                                | desc
+        '/error/publisher'                  | 'inside publisher'
+        '/error/mono'                       | 'propagated through publisher'
+        '/error/sync'                       | 'inside normal function'
+        '/error/completionStage'            | 'inside completionStage'
+        '/error/completionStagePropagation' | 'propagated through  completionStage'
     }
 
     @Introspected
@@ -127,6 +167,7 @@ class OpenTelemetryHttpSpec extends Specification {
         Mono<String> test(@SpanAttribute("tracing-annotation-span-attribute")
                           @Header("X-TrackingId") String tracingId) {
             LOG.debug("test")
+            privateMethodTest(tracingId)
             return Mono.from(
                     reactorHttpClient.retrieve(HttpRequest
                             .GET("/annotations/test2")
@@ -134,17 +175,23 @@ class OpenTelemetryHttpSpec extends Specification {
             )
         }
 
+        @ContinueSpan
+        void privateMethodTest(@SpanAttribute("privateMethodTestAttribute") String traceId) {
+
+        }
+
         @ExecuteOn(IO)
         @Get("/test2")
         Mono<String> test2(@SpanTag("tracing-annotation-span-tag-no-withspan")
                            @Header("X-TrackingId") String tracingId) {
             LOG.debug("test2")
-            return methodWithSpan(tracingId)
+            methodWithSpan(tracingId).toCompletableFuture().get()
+            return Mono.just(tracingId)
         }
 
         @WithSpan("test-withspan-mapping")
-        Mono<String> methodWithSpan(@SpanTag("tracing-annotation-span-tag-with-withspan") String tracingId) {
-            return Mono.just(tracingId)
+        CompletionStage<Void> methodWithSpan(@SpanTag("tracing-annotation-span-tag-with-withspan") String tracingId) {
+            return CompletableFuture.runAsync(() -> {return tracingId});
         }
     }
 
@@ -161,4 +208,39 @@ class OpenTelemetryHttpSpec extends Specification {
             }) as Mono<String>
         }
     }
+
+    @Controller('/error')
+    static  class ErrorController {
+
+        @Get("/publisher")
+        @WithSpan
+        Mono<Void> publisher() {
+            throw new RuntimeException("publisher")
+        }
+
+        @Get("/mono")
+        @WithSpan
+        Mono<Void> mono() {
+            return Mono.error(new RuntimeException("publisher"))
+        }
+
+        @Get("/sync")
+        @WithSpan
+        void sync() {
+            throw new RuntimeException("sync")
+        }
+
+        @Get("/completionStage")
+        @WithSpan
+        CompletionStage<Void> completionStage (){
+            throw new RuntimeException("completionStage")
+        }
+
+        @Get("/completionStagePropagation")
+        @WithSpan
+        CompletionStage<Void> completionStagePropagation (){
+            return CompletableFuture.runAsync( ()-> { throw new RuntimeException("completionStage")})
+        }
+    }
+
 }

@@ -122,12 +122,12 @@ class AnnotationMappingSpec extends Specification {
 
         @WithSpan("test-withspan-mapping")
         Mono<String> methodWithSpan(@SpanTag("tracing-annotation-span-tag-with-withspan") String tracingId) {
-            return Mono.from(methodContinueSpan(tracingId))
+            return Mono.just(methodContinueSpan(tracingId))
         }
 
         @ContinueSpan
-        Mono<String> methodContinueSpan(@SpanTag("tracing-annotation-span-tag-continue-span") String tracingId) {
-            return Mono.just(tracingId)
+        String methodContinueSpan(@SpanTag("tracing-annotation-span-tag-continue-span") String tracingId) {
+            return tracingId
         }
     }
 }

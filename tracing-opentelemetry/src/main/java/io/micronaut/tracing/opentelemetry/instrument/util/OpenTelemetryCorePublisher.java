@@ -31,16 +31,17 @@ import reactor.util.context.Context;
  * @author Nemanja Mikic
  * @since 4.1.0
  */
-public class OpenTelemetryTracingCorePublisher<T, R> extends OpenTelemetryTracingPublisher<T, R> implements CorePublisher<T> {
+public class OpenTelemetryCorePublisher<T, R> extends OpenTelemetryPublisher<T, R> implements CorePublisher<T> {
 
     /**
-     * @param publisher      the target publisher
-     * @param instrumenter   the instrumenter
+     * @param publisher the target publisher
+     * @param instrumenter the instrumenter
+     * @param parentContext the context from a parent
      * @param request the request object
      * @param observer the tracing observer
      */
-    public OpenTelemetryTracingCorePublisher(Publisher<T> publisher, Instrumenter<R, Object> instrumenter, R request, TracingObserver<T> observer) {
-        super(publisher, instrumenter, request, observer);
+    public OpenTelemetryCorePublisher(Publisher<T> publisher, Instrumenter<R, Object> instrumenter, io.opentelemetry.context.Context parentContext, R request, OpenTelemetryObserver<T> observer) {
+        super(publisher, instrumenter, parentContext, request, observer);
     }
 
     @Override
@@ -56,18 +57,18 @@ public class OpenTelemetryTracingCorePublisher<T, R> extends OpenTelemetryTracin
 
     private final class TracingCoreSubscriber extends TracingSubscriber implements CoreSubscriber<T> {
 
-        private final Context coreSubscriberContext;
+        private final Context reactorContext;
 
         public TracingCoreSubscriber(Subscriber<? super T> actual,
                                      io.opentelemetry.context.Context openTelemetryContext,
-                                     Context context) {
+                                     Context reactorContext) {
             super(actual, openTelemetryContext);
-            this.coreSubscriberContext = context;
+            this.reactorContext = reactorContext;
         }
 
         @Override
         public Context currentContext() {
-            return coreSubscriberContext;
+            return reactorContext;
         }
     }
 }

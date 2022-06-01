@@ -42,7 +42,7 @@ public abstract class AbstractOpenTelemetryFilter implements HttpFilter {
      *
      * @param pathExclusionTest for excluding URI paths from tracing
      */
-    public AbstractOpenTelemetryFilter(@Nullable Predicate<String> pathExclusionTest) {
+    protected AbstractOpenTelemetryFilter(@Nullable Predicate<String> pathExclusionTest) {
         this.pathExclusionTest = pathExclusionTest;
     }
 

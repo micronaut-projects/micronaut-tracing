@@ -27,17 +27,17 @@ import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.NetTr
 
 @Internal
 final class MicronautHttpNetClientAttributesGetter
-    extends InetSocketAddressNetClientAttributesGetter<MutableHttpRequest<?>, HttpResponse<?>> {
+    extends InetSocketAddressNetClientAttributesGetter<MutableHttpRequest<Object>, HttpResponse<Object>> {
 
     @Override
-    public InetSocketAddress getAddress(MutableHttpRequest<?> request,
-                                        @Nullable HttpResponse<?> response) {
+    public InetSocketAddress getAddress(MutableHttpRequest<Object> request,
+                                        @Nullable HttpResponse<Object> response) {
         return request.getRemoteAddress();
     }
 
     @Override
-    public String transport(MutableHttpRequest<?> request,
-                            @Nullable HttpResponse<?> response) {
+    public String transport(MutableHttpRequest<Object> request,
+                            @Nullable HttpResponse<Object> response) {
         return IP_TCP;
     }
 }

@@ -60,18 +60,11 @@ public class DefaultOpenTelemetryFactory {
                 Map.Entry::getValue
         ));
 
-        if (!otel.containsKey(SERVICE_NAME_KEY)) {
-            otel.put(SERVICE_NAME_KEY, applicationConfiguration.getName().orElse(""));
-        }
-        if (!otel.containsKey(DEFAULT_TRACES_EXPORTER)) {
-            otel.put(DEFAULT_TRACES_EXPORTER, NONE);
-        }
-        if (!otel.containsKey(DEFAULT_METRICS_EXPORTER)) {
-            otel.put(DEFAULT_METRICS_EXPORTER, NONE);
-        }
-        if (!otel.containsKey(DEFAULT_LOGS_EXPORTER)) {
-            otel.put(DEFAULT_LOGS_EXPORTER, NONE);
-        }
+        otel.putIfAbsent(SERVICE_NAME_KEY, applicationConfiguration.getName().orElse(""));
+        otel.putIfAbsent(DEFAULT_TRACES_EXPORTER, NONE);
+        otel.putIfAbsent(DEFAULT_METRICS_EXPORTER, NONE);
+        otel.putIfAbsent(DEFAULT_LOGS_EXPORTER, NONE);
+
         return AutoConfiguredOpenTelemetrySdk.builder()
             .setResultAsGlobal(true)
             .addPropertiesSupplier(() -> otel)

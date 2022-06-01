@@ -25,12 +25,12 @@ import io.opentelemetry.context.Context;
  * @author Nemanja Mikic
  * @since 4.1.0
  */
-public interface TracingObserver<T> {
+public interface OpenTelemetryObserver<T> {
 
     /**
      * No op observer.
      */
-    TracingObserver<?> NO_OP = new TracingObserver<Object>() { };
+    OpenTelemetryObserver<?> NO_OP = new OpenTelemetryObserver<Object>() { };
 
     /**
      * Designed for subclasses to override if the current active span is to be
@@ -89,9 +89,9 @@ public interface TracingObserver<T> {
      * For subclasses to override and implement custom on-error behaviour.
      *
      * @param throwable the error
-     * @param span      the span
+     * @param openTelemetryContext the {@link Context}
      */
-    default void doOnError(@NonNull Throwable throwable, @NonNull Context span) {
+    default void doOnError(@NonNull Throwable throwable, @NonNull Context openTelemetryContext) {
         // no-op
     }
 }

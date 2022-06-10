@@ -18,10 +18,14 @@ package io.micronaut.tracing;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.MapFormat;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
+import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
+import io.opentelemetry.sdk.trace.IdGenerator;
+import io.opentelemetry.sdk.trace.SpanProcessor;
 import jakarta.inject.Singleton;
 
 import java.util.Map;
@@ -42,18 +46,23 @@ public class DefaultOpenTelemetryFactory {
     private static final String DEFAULT_TRACES_EXPORTER = "otel.traces.exporter";
     private static final String DEFAULT_METRICS_EXPORTER = "otel.metrics.exporter";
     private static final String DEFAULT_LOGS_EXPORTER = "otel.logs.exporter";
+    private static final String REGISTER_GLOBAL = "otel.register.global";
     private static final String NONE = "none";
 
     /**
      * The OpenTelemetry bean with default values.
      * @param applicationConfiguration the {@link ApplicationConfiguration}
      * @param otelConfig the configuration values for the opentelemetry autoconfigure
+     * @param idGenerator the {@link IdGenerator}
+     * @param spanProcessor the {@link SpanProcessor}
      * @return the OpenTelemetry bean with default values
      */
     @Singleton
     @Primary
     protected OpenTelemetry defaultOpenTelemetry(ApplicationConfiguration applicationConfiguration,
-                                                 @Property(name = "otel") @MapFormat(transformation = FLAT) Map<String, String> otelConfig) {
+                                                 @Property(name = "otel") @MapFormat(transformation = FLAT) Map<String, String> otelConfig,
+                                                 @Nullable IdGenerator idGenerator,
+                                                 @Nullable SpanProcessor spanProcessor) {
 
         Map<String, String> otel = otelConfig.entrySet().stream().collect(Collectors.toMap(
                 e -> "otel." + e.getKey(),
@@ -65,10 +74,24 @@ public class DefaultOpenTelemetryFactory {
         otel.putIfAbsent(DEFAULT_METRICS_EXPORTER, NONE);
         otel.putIfAbsent(DEFAULT_LOGS_EXPORTER, NONE);
 
-        return AutoConfiguredOpenTelemetrySdk.builder()
-            .setResultAsGlobal(true)
-            .addPropertiesSupplier(() -> otel)
-            .build().getOpenTelemetrySdk();
+        AutoConfiguredOpenTelemetrySdkBuilder sdk = AutoConfiguredOpenTelemetrySdk.builder()
+            .addPropertiesSupplier(() -> otel);
+
+        sdk.setResultAsGlobal(Boolean.parseBoolean(otel.getOrDefault(REGISTER_GLOBAL, "true")));
+
+        sdk.addTracerProviderCustomizer((tracerProviderBuilder, ignored) -> {
+            if (idGenerator != null) {
+                tracerProviderBuilder.setIdGenerator(idGenerator);
+            }
+            if (spanProcessor != null) {
+                tracerProviderBuilder.addSpanProcessor(spanProcessor);
+            }
+            return tracerProviderBuilder;
+            }
+        );
+
+        return sdk.build().getOpenTelemetrySdk();
+
     }
 
 }

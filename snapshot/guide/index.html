@@ -748,6 +748,50 @@ This can be achieved by adding a list of regular expression patterns to your con
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_id_generator">ID Generator</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Some custom vendor may require the span traceId in different format from the default one. You can specify an <a href="https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk/trace/src/main/java/io/opentelemetry/sdk/trace/IdGenerator.java">ID Generator</a> by creating it in some factory. For an example AWS X-Ray requires their format for generating ids.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Factory
+public class AwsFactory {
+
+    /** Creates a custom IdGenerator for OpenTelemetry */
+    @Singleton
+    IdGenerator idGenerator() {
+        return AwsXrayIdGenerator.getInstance();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <a href="https://github.com/open-telemetry/opentelemetry-java-contrib/blob/main/aws-xray/src/main/java/io/opentelemetry/contrib/awsxray/AwsXrayIdGenerator.java">AwsXrayIdGenerator</a> is available by adding the next dependency inside your project:</p>
+</div>
+<div class="paragraph">
+<p>        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry.contrib:opentelemetry-aws-xray:1.14.0")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry.contrib&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-aws-xray&lt;/artifactId&gt;
+    &lt;version&gt;1.14.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p>To successfully export traces to the AWS X-Ray you have to run <a href="https://github.com/aws-observability/aws-otel-collector">AWS Open Telemetry Collector</a> that will periodically send traces to the AWS.</p>
+</div>
+</div>
+</div>
 
 <h2 id="http"><a class="anchor" href="#http"></a>5.1 HTTP Server and Client</h2>
 

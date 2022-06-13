@@ -154,8 +154,10 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>protected io.opentelemetry.api.OpenTelemetry</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../io/micronaut/tracing/DefaultOpenTelemetryFactory.html#defaultOpenTelemetry-io.micronaut.runtime.ApplicationConfiguration-java.util.Map-">defaultOpenTelemetry</a></span>(io.micronaut.runtime.ApplicationConfiguration&nbsp;applicationConfiguration,
-                    java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;otelConfig)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../io/micronaut/tracing/DefaultOpenTelemetryFactory.html#defaultOpenTelemetry-io.micronaut.runtime.ApplicationConfiguration-java.util.Map-io.opentelemetry.sdk.trace.IdGenerator-io.opentelemetry.sdk.trace.SpanProcessor-">defaultOpenTelemetry</a></span>(io.micronaut.runtime.ApplicationConfiguration&nbsp;applicationConfiguration,
+                    java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;otelConfig,
+                    io.opentelemetry.sdk.trace.IdGenerator&nbsp;idGenerator,
+                    io.opentelemetry.sdk.trace.SpanProcessor&nbsp;spanProcessor)</code>
 <div class="block">The OpenTelemetry bean with default values.</div>
 </td>
 </tr>
@@ -198,7 +200,7 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="defaultOpenTelemetry-io.micronaut.runtime.ApplicationConfiguration-java.util.Map-">
+<a name="defaultOpenTelemetry-io.micronaut.runtime.ApplicationConfiguration-java.util.Map-io.opentelemetry.sdk.trace.IdGenerator-io.opentelemetry.sdk.trace.SpanProcessor-">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -208,12 +210,18 @@ extends java.lang.Object</pre>
  @Primary
 protected&nbsp;io.opentelemetry.api.OpenTelemetry&nbsp;defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration&nbsp;applicationConfiguration,
                                                                                        @Property(name="otel") @MapFormat(transformation=FLAT)
-                                                                                       java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;otelConfig)</pre>
+                                                                                       java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;otelConfig,
+                                                                                       @Nullable
+                                                                                       io.opentelemetry.sdk.trace.IdGenerator&nbsp;idGenerator,
+                                                                                       @Nullable
+                                                                                       io.opentelemetry.sdk.trace.SpanProcessor&nbsp;spanProcessor)</pre>
 <div class="block">The OpenTelemetry bean with default values.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>applicationConfiguration</code> - the <code>ApplicationConfiguration</code></dd>
 <dd><code>otelConfig</code> - the configuration values for the opentelemetry autoconfigure</dd>
+<dd><code>idGenerator</code> - the <code>IdGenerator</code></dd>
+<dd><code>spanProcessor</code> - the <code>SpanProcessor</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the OpenTelemetry bean with default values</dd>
 </dl>

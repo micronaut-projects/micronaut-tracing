@@ -16,37 +16,23 @@
 package io.micronaut.tracing.instrument.util;
 
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Primary;
-import io.micronaut.context.annotation.Replaces;
-import io.micronaut.tracing.DefaultOpenTelemetryFactory;
-import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
-import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.IdGenerator;
+import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import jakarta.inject.Singleton;
 
-/**
- * Registers an OpenTelemetry bean.
- *
- * @author Nemanja Mikic
- * @since 4.1.0
- */
 @Factory
-@Replaces(factory = DefaultOpenTelemetryFactory.class)
 public class TestDefaultOpenTelemetryFactory {
 
-    /**
-     * @return the OpenTelemetry bean with default values
-     */
     @Singleton
-    @Primary
-    OpenTelemetry defaultOpenTelemetry(InMemorySpanExporter spanExporter) {
-        return OpenTelemetrySdk.builder()
-            .setTracerProvider(SdkTracerProvider.builder()
-                .addSpanProcessor(SimpleSpanProcessor.create(spanExporter))
-                .build()
-            ).build();
+    SpanProcessor spanProcessor(InMemorySpanExporter spanExporter) {
+        return SimpleSpanProcessor.create(spanExporter);
+    }
+
+    @Singleton
+    IdGenerator idGenerator() {
+        return IdGenerator.random();
     }
 
     @Singleton

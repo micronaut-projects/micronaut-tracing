@@ -16,35 +16,17 @@
 package io.micronaut.tracing.instrument.util;
 
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Primary;
-import io.micronaut.context.annotation.Replaces;
-import io.micronaut.tracing.DefaultOpenTelemetryFactory;
-import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
-import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import jakarta.inject.Singleton;
 
-/**
- * Registers an OpenTelemetry bean for test.
- *
- */
 @Factory
-@Replaces(factory = DefaultOpenTelemetryFactory.class)
 public class TestDefaultOpenTelemetryFactory {
 
-    /**
-     * @return the OpenTelemetry bean with default values
-     */
     @Singleton
-    @Primary
-    OpenTelemetry defaultOpenTelemetry(InMemorySpanExporter inMemorySpanExporter) {
-        return OpenTelemetrySdk.builder()
-            .setTracerProvider(SdkTracerProvider.builder()
-                .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter))
-                .build()
-            ).build();
+    SpanProcessor spanProcessor(InMemorySpanExporter spanExporter) {
+        return SimpleSpanProcessor.create(spanExporter);
     }
 
     @Singleton

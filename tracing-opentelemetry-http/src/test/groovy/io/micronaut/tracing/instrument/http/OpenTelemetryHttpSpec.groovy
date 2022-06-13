@@ -53,8 +53,11 @@ class OpenTelemetryHttpSpec extends Specification {
     ReactorHttpClient reactorHttpClient
 
     private PollingConditions conditions = new PollingConditions()
+
+    @AutoCleanup
     private EmbeddedServer embeddedServer
-    private InMemorySpanExporter exporter;
+
+    private InMemorySpanExporter exporter
 
     void setup() {
         context = ApplicationContext.builder(
@@ -62,6 +65,7 @@ class OpenTelemetryHttpSpec extends Specification {
             'otel.http.client.response-headers': [TRACING_ID],
             'otel.http.server.request-headers': [TRACING_ID],
             'otel.http.server.response-headers': [TRACING_ID],
+            'otel.register.global':false,
             'micronaut.application.name': 'test-app',
             'otel.exclusions[0]': '.*exclude.*'
         ).start()

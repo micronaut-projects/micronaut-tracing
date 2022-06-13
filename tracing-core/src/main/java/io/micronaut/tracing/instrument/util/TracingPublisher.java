@@ -19,7 +19,7 @@ import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.http.MutableHttpResponse;
-import io.micronaut.tracing.interceptor.TraceInterceptor;
+import io.micronaut.tracing.interceptor.AbstractTraceInterceptor;
 import io.opentracing.Scope;
 import io.opentracing.ScopeManager;
 import io.opentracing.Span;
@@ -269,7 +269,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     }
 
     private void onError(Throwable t, Span span) {
-        TraceInterceptor.logError(span, t);
+        AbstractTraceInterceptor.logError(span, t);
         doOnError(t, span);
     }
 

@@ -6,7 +6,8 @@ The Micronaut Open Telemetry module uses https://github.com/open-telemetry/opent
 - otel.service.name = value of the application.name
 
 == OpenTelemetry annotations
-The pkg:tracing.opentelemetry-annotation[] package contains transformers and mappers that enables usage of Open Telemetry annotations.
+
+The pkg:tracing.opentelemetry.processing[] package contains transformers and mappers that enables usage of Open Telemetry annotations.
 
 To enable Open telemetry annotations you have to add next annotation processor in your dependency block:
 dependency:micronaut-tracing-opentelemetry-annotation[scope="annotationProcessor", version="{version}", groupId="io.micronaut.tracing"]

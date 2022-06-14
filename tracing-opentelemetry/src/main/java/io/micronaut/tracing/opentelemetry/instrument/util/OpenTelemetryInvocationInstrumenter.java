@@ -17,6 +17,7 @@ package io.micronaut.tracing.opentelemetry.instrument.util;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.scheduling.instrument.InvocationInstrumenter;
 import io.micronaut.scheduling.instrument.ReactiveInvocationInstrumenterFactory;
 import io.opentelemetry.api.trace.Tracer;
@@ -41,6 +42,7 @@ public final class OpenTelemetryInvocationInstrumenter implements ReactiveInvoca
         return newTracingInvocationInstrumenter();
     }
 
+    @Nullable
     public InvocationInstrumenter newTracingInvocationInstrumenter() {
         final Context activeContext = ContextStorage.get().current();
         if (activeContext == null) {

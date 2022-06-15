@@ -86,7 +86,7 @@ class AnnotationMappingSpec extends Specification {
 
         expect:
 
-        warehouseClient.order(Map.of("testOrderKey","testOrderValue"))
+        warehouseClient.order(Collections.singletonMap("testOrderKey", "testOrderValue"))
         warehouseClient.getItemCount("testItemCount", 10) == 10
         conditions.eventually {
             testExporter.finishedSpanItems.size() == 1

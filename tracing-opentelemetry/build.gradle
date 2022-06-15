@@ -18,6 +18,7 @@ dependencies {
 
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor
+    compileOnly libs.managed.opentelemetry.contrib.aws.xray
 
     testAnnotationProcessor projects.tracingOpentelemetryAnnotation
 
@@ -26,6 +27,8 @@ dependencies {
 
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
+
+    testImplementation libs.managed.opentelemetry.contrib.aws.xray
 }
 
 // TODO temporarily disable binary compatibility checks

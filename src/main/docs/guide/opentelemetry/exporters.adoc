@@ -1,0 +1,22 @@
+In your project you can specify exporters that you want to use. The default one is set to "none" value which means by default there are no exporter registered. The available values are defined on the https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md[Open Telemetry Autoconfigure SDK documentation].
+
+For each exporter that you want to use you have to specify it inside configuration, and you have to add required dependency:
+
+- Otlp exporter:
+dependency:opentelemetry-exporter-otlp[scope="implementation", groupId="io.opentelemetry"]
+- Zipkin exporter:
+dependency:opentelemetry-exporter-zipkin[scope="implementation", groupId="io.opentelemetry"]
+- logging exporter:
+dependency:opentelemetry-exporter-logging[scope="implementation", groupId="io.opentelemetry"]
+- Jaeger exporter:
+dependency:opentelemetry-exporter-jaeger[scope="implementation", groupId="io.opentelemetry"]
+
+Example configuration for the Zipkin exporter:
+
+.application.yml
+[source,yaml]
+----
+otel:
+  traces:
+    exporter: zipkin
+----

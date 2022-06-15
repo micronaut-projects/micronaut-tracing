@@ -15,20 +15,25 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
+import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
+import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryPublisherUtils;
+import io.micronaut.tracing.opentelemetry.interceptor.AbstractOpenTelemetryTraceInterceptor;
 import io.opentelemetry.context.Context;
+import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import jakarta.inject.Named;
 import org.reactivestreams.Publisher;
 
+import static io.micronaut.http.HttpAttributes.INVOCATION_CONTEXT;
 import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTelemetryClientFilter.CLIENT_PATH;
 
 /**
@@ -70,7 +75,21 @@ public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter imple
 
         Context newContext = instrumenter.start(parentContext, request);
 
+        try (Scope ignored = newContext.makeCurrent()) {
+            handleContinueSpan(request);
+        }
+
         return OpenTelemetryPublisherUtils.createOpenTelemetryPublisher(requestPublisher, instrumenter, newContext, request);
 
+    }
+
+    private void handleContinueSpan(MutableHttpRequest<?> request) {
+        Object invocationContext = request.getAttribute(INVOCATION_CONTEXT).orElse(null);
+        if (invocationContext instanceof MethodInvocationContext) {
+            MethodInvocationContext<?, ?> context = (MethodInvocationContext<?, ?>) invocationContext;
+            if (context.hasAnnotation(ContinueSpan.class)) {
+                AbstractOpenTelemetryTraceInterceptor.tagArguments(context);
+            }
+        }
     }
 }

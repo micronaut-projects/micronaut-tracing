@@ -5,4 +5,7 @@ The Micronaut Open Telemetry module uses https://github.com/open-telemetry/opent
 - otel.logs.exporte = none
 - otel.service.name = value of the application.name
 
+== OpenTelemetry annotations
+
+The pkg:tracing.opentelemetry.processing[] package contains transformers and mappers that enables usage of Open Telemetry annotations.
 

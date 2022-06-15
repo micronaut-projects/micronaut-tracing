@@ -5,11 +5,7 @@ import io.micronaut.context.ApplicationContext
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
-import io.micronaut.http.annotation.Body
-import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Header
-import io.micronaut.http.annotation.Post
+import io.micronaut.http.annotation.*
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.http.context.ServerRequestContext
@@ -20,6 +16,7 @@ import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
 import io.micronaut.tracing.annotation.SpanTag
+import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.extension.annotations.SpanAttribute
@@ -191,6 +188,28 @@ class OpenTelemetryHttpSpec extends Specification {
         '/error/completionStageErrorContinueSpan' | 1         | 'inside normal method continueSpan'
     }
 
+    void 'client with tracing annotations'() {
+        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
+        def warehouseClient = embeddedServer.applicationContext.getBean(WarehouseClient)
+        def serverSpanCount = 2
+        def clientSpanCount = 2
+        def internalSpanCount = 1
+
+        expect:
+
+        warehouseClient.order(Collections.singletonMap("testOrderKey", "testOrderValue"))
+        warehouseClient.getItemCount("testItemCount", 10) == 10
+        conditions.eventually {
+            testExporter.finishedSpanItems.size() == serverSpanCount + clientSpanCount + internalSpanCount
+            testExporter.finishedSpanItems.name.contains("WarehouseClient.order")
+            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("warehouse.order")) == "{testOrderKey=testOrderValue}")
+            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("upc")) == "10")
+        }
+
+        cleanup:
+        testExporter.reset()
+    }
+
     @Introspected
     static class SomeBody {
     }
@@ -352,6 +371,35 @@ class OpenTelemetryHttpSpec extends Specification {
         }
 
         void dummyMethodThatWillNotProduceSpan() {}
+
+    }
+
+    @Controller("/client")
+    static class ClientController {
+
+        @Get("/count")
+        int getItemCount(@QueryValue String store, @SpanTag @QueryValue int upc) {
+            return upc
+        }
+
+
+        @Post("/order")
+        void order(@SpanTag("warehouse.order") Map<String, ?> json) {
+
+        }
+
+    }
+
+    @Client("/client")
+    static interface WarehouseClient {
+
+        @Get("/count")
+        @ContinueSpan
+        int getItemCount(@QueryValue String store, @SpanTag @QueryValue int upc);
+
+        @Post("/order")
+        @NewSpan
+        void order(@SpanTag("warehouse.order") Map<String, ?> json);
 
     }
 

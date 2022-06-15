@@ -290,7 +290,7 @@
 <ul class="blockList">
 <li class="blockList">
 <table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
-<caption><span>io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/TraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">TraceInterceptor</a></span><span class="tabEnd">&nbsp;</span></caption>
+<caption><span>io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th scope="col">Constant Field</th>
@@ -298,18 +298,46 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a name="io.micronaut.tracing.interceptor.TraceInterceptor.CLASS_TAG">
+<td class="colFirst"><a name="io.micronaut.tracing.interceptor.AbstractTraceInterceptor.CLASS_TAG">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="io/micronaut/tracing/interceptor/TraceInterceptor.html#CLASS_TAG">CLASS_TAG</a></code></td>
+<td><code><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#CLASS_TAG">CLASS_TAG</a></code></td>
 <td class="colLast"><code>"class"</code></td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a name="io.micronaut.tracing.interceptor.TraceInterceptor.METHOD_TAG">
+<td class="colFirst"><a name="io.micronaut.tracing.interceptor.AbstractTraceInterceptor.HYSTRIX_ANNOTATION">
+<!--   -->
+</a><code>protected&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#HYSTRIX_ANNOTATION">HYSTRIX_ANNOTATION</a></code></td>
+<td class="colLast"><code>"io.micronaut.configuration.hystrix.annotation.HystrixCommand"</code></td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a name="io.micronaut.tracing.interceptor.AbstractTraceInterceptor.METHOD_TAG">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="io/micronaut/tracing/interceptor/TraceInterceptor.html#METHOD_TAG">METHOD_TAG</a></code></td>
+<td><code><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#METHOD_TAG">METHOD_TAG</a></code></td>
 <td class="colLast"><code>"method"</code></td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a name="io.micronaut.tracing.interceptor.AbstractTraceInterceptor.TAG_HYSTRIX_COMMAND">
+<!--   -->
+</a><code>protected&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#TAG_HYSTRIX_COMMAND">TAG_HYSTRIX_COMMAND</a></code></td>
+<td class="colLast"><code>"hystrix.command"</code></td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a name="io.micronaut.tracing.interceptor.AbstractTraceInterceptor.TAG_HYSTRIX_GROUP">
+<!--   -->
+</a><code>protected&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#TAG_HYSTRIX_GROUP">TAG_HYSTRIX_GROUP</a></code></td>
+<td class="colLast"><code>"hystrix.group"</code></td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a name="io.micronaut.tracing.interceptor.AbstractTraceInterceptor.TAG_HYSTRIX_THREAD_POOL">
+<!--   -->
+</a><code>protected&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#TAG_HYSTRIX_THREAD_POOL">TAG_HYSTRIX_THREAD_POOL</a></code></td>
+<td class="colLast"><code>"hystrix.threadPool"</code></td>
 </tr>
 </tbody>
 </table>

@@ -12,7 +12,9 @@
 <div class="indexContainer">
 <ul>
 <li><a href="io/micronaut/tracing/opentelemetry/instrument/http/AbstractOpenTelemetryFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http">AbstractOpenTelemetryFilter</a></li>
+<li><a href="io/micronaut/tracing/opentelemetry/interceptor/AbstractOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">AbstractOpenTelemetryTraceInterceptor</a></li>
 <li><a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.instrument.http">AbstractOpenTracingFilter</a></li>
+<li><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></li>
 <li><a href="io/micronaut/tracing/brave/AsyncReporterConfiguration.html" title="class in io.micronaut.tracing.brave">AsyncReporterConfiguration</a></li>
 <li><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration</a></li>
 <li><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.HttpClientSenderConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.HttpClientSenderConfiguration</a></li>
@@ -22,6 +24,8 @@
 <li><a href="io/micronaut/tracing/brave/BraveTracingInvocationInstrumenter.html" title="class in io.micronaut.tracing.brave">BraveTracingInvocationInstrumenter</a></li>
 <li><a href="io/micronaut/tracing/brave/instrument/http/BraveTracingServerFilter.html" title="class in io.micronaut.tracing.brave.instrument.http">BraveTracingServerFilter</a></li>
 <li><a href="io/micronaut/tracing/annotation/ContinueSpan.html" title="annotation in io.micronaut.tracing.annotation">ContinueSpan</a></li>
+<li><a href="io/micronaut/tracing/interceptor/ContinueSpanInterceptor.html" title="class in io.micronaut.tracing.interceptor">ContinueSpanInterceptor</a></li>
+<li><a href="io/micronaut/tracing/opentelemetry/interceptor/ContinueSpanOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">ContinueSpanOpenTelemetryTraceInterceptor</a></li>
 <li><a href="io/micronaut/tracing/DefaultOpenTelemetryFactory.html" title="class in io.micronaut.tracing">DefaultOpenTelemetryFactory</a></li>
 <li><a href="io/micronaut/tracing/DefaultTelemetryTracer.html" title="class in io.micronaut.tracing">DefaultTelemetryTracer</a></li>
 <li><a href="io/micronaut/tracing/DefaultTracer.html" title="class in io.micronaut.tracing">DefaultTracer</a></li>
@@ -45,6 +49,8 @@
 <li><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/MicronautHttpServerTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">MicronautHttpServerTelemetryFactory</a></li>
 <li><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/MicronautHttpServerTelemetryFactory.Server.html" title="annotation in io.micronaut.tracing.opentelemetry.instrument.http.server">MicronautHttpServerTelemetryFactory.Server</a></li>
 <li><a href="io/micronaut/tracing/annotation/NewSpan.html" title="annotation in io.micronaut.tracing.annotation">NewSpan</a></li>
+<li><a href="io/micronaut/tracing/opentelemetry/interceptor/NewSpanOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">NewSpanOpenTelemetryTraceInterceptor</a></li>
+<li><a href="io/micronaut/tracing/interceptor/NewSpanTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">NewSpanTraceInterceptor</a></li>
 <li><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/OpenTelemetryClientFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client">OpenTelemetryClientFilter</a></li>
 <li><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryCorePublisher</a></li>
 <li><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryExclusionsConfiguration</a></li>
@@ -55,7 +61,6 @@
 <li><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher</a></li>
 <li><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisherUtils.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisherUtils</a></li>
 <li><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryServerFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">OpenTelemetryServerFilter</a></li>
-<li><a href="io/micronaut/tracing/opentelemetry/interceptor/OpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">OpenTelemetryTraceInterceptor</a></li>
 <li><a href="io/micronaut/tracing/instrument/http/OpenTracingClientFilter.html" title="class in io.micronaut.tracing.instrument.http">OpenTracingClientFilter</a></li>
 <li><a href="io/micronaut/tracing/instrument/util/OpenTracingInvocationInstrumenter.html" title="class in io.micronaut.tracing.instrument.util">OpenTracingInvocationInstrumenter</a></li>
 <li><a href="io/micronaut/tracing/instrument/http/OpenTracingServerFilter.html" title="class in io.micronaut.tracing.instrument.http">OpenTracingServerFilter</a></li>
@@ -63,7 +68,6 @@
 <li><a href="io/micronaut/tracing/brave/log/Slf4jCurrentTraceContextFactory.html" title="class in io.micronaut.tracing.brave.log">Slf4jCurrentTraceContextFactory</a></li>
 <li><a href="io/micronaut/tracing/opentelemetry/processing/SpanAttributeAnnotationMapper.html" title="class in io.micronaut.tracing.opentelemetry.processing">SpanAttributeAnnotationMapper</a></li>
 <li><a href="io/micronaut/tracing/annotation/SpanTag.html" title="annotation in io.micronaut.tracing.annotation">SpanTag</a></li>
-<li><a href="io/micronaut/tracing/interceptor/TraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">TraceInterceptor</a></li>
 <li><a href="io/micronaut/tracing/instrument/http/TraceRequestAttributes.html" title="enum in io.micronaut.tracing.instrument.http">TraceRequestAttributes</a></li>
 <li><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingCorePublisher</a></li>
 <li><a href="io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http">TracingExclusionsConfiguration</a></li>

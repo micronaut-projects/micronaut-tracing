@@ -81,6 +81,15 @@
 <div class="block">Configure tracer in the filter for span creation and propagation across
  arbitrary transports.</div>
 </dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/interceptor/AbstractOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor"><span class="typeNameLink">AbstractOpenTelemetryTraceInterceptor</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/interceptor/package-summary.html">io.micronaut.tracing.opentelemetry.interceptor</a></dt>
+<dd>
+<div class="block">Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
+ using the Open Telemetry API.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/interceptor/AbstractOpenTelemetryTraceInterceptor.html#AbstractOpenTelemetryTraceInterceptor-io.opentelemetry.instrumentation.api.instrumenter.Instrumenter-">AbstractOpenTelemetryTraceInterceptor(Instrumenter&lt;ClassAndMethod, Object&gt;)</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.interceptor.<a href="io/micronaut/tracing/opentelemetry/interceptor/AbstractOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">AbstractOpenTelemetryTraceInterceptor</a></dt>
+<dd>
+<div class="block">Initialize the interceptor with tracer and conversion service.</div>
+</dd>
 <dt><a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.instrument.http"><span class="typeNameLink">AbstractOpenTracingFilter</span></a> - Class in <a href="io/micronaut/tracing/instrument/http/package-summary.html">io.micronaut.tracing.instrument.http</a></dt>
 <dd>
 <div class="block">Abstract filter used for Open Tracing based HTTP tracing.</div>
@@ -93,6 +102,15 @@
 <dd>
 <div class="block">Configure tracer in the filter for span creation and propagation across
  arbitrary transports.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor"><span class="typeNameLink">AbstractTraceInterceptor</span></a> - Class in <a href="io/micronaut/tracing/interceptor/package-summary.html">io.micronaut.tracing.interceptor</a></dt>
+<dd>
+<div class="block">Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
+ using the Open Tracing API.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#AbstractTraceInterceptor-io.opentracing.Tracer-">AbstractTraceInterceptor(Tracer)</a></span> - Constructor for class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></dt>
+<dd>
+<div class="block">Initialize the interceptor with tracer and conversion service.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/processing/SpanAttributeAnnotationMapper.html#annotationType--">annotationType()</a></span> - Method in class io.micronaut.tracing.opentelemetry.processing.<a href="io/micronaut/tracing/opentelemetry/processing/SpanAttributeAnnotationMapper.html" title="class in io.micronaut.tracing.opentelemetry.processing">SpanAttributeAnnotationMapper</a></dt>
 <dd>&nbsp;</dd>
@@ -176,7 +194,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/sender/HttpClientSender.html#check--">check()</a></span> - Method in class io.micronaut.tracing.brave.sender.<a href="io/micronaut/tracing/brave/sender/HttpClientSender.html" title="class in io.micronaut.tracing.brave.sender">HttpClientSender</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/TraceInterceptor.html#CLASS_TAG">CLASS_TAG</a></span> - Static variable in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/TraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">TraceInterceptor</a></dt>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#CLASS_TAG">CLASS_TAG</a></span> - Static variable in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#CLIENT_PATH">CLIENT_PATH</a></span> - Static variable in class io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.instrument.http">AbstractOpenTracingFilter</a></dt>
 <dd>&nbsp;</dd>
@@ -205,6 +223,24 @@
 <dt><a href="io/micronaut/tracing/annotation/ContinueSpan.html" title="annotation in io.micronaut.tracing.annotation"><span class="typeNameLink">ContinueSpan</span></a> - Annotation Type in <a href="io/micronaut/tracing/annotation/package-summary.html">io.micronaut.tracing.annotation</a></dt>
 <dd>
 <div class="block">Indicates that the current span should be continued.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/interceptor/ContinueSpanInterceptor.html" title="class in io.micronaut.tracing.interceptor"><span class="typeNameLink">ContinueSpanInterceptor</span></a> - Class in <a href="io/micronaut/tracing/interceptor/package-summary.html">io.micronaut.tracing.interceptor</a></dt>
+<dd>
+<div class="block">Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
+ using the Open Tracing API.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/ContinueSpanInterceptor.html#ContinueSpanInterceptor-io.opentracing.Tracer-">ContinueSpanInterceptor(Tracer)</a></span> - Constructor for class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/ContinueSpanInterceptor.html" title="class in io.micronaut.tracing.interceptor">ContinueSpanInterceptor</a></dt>
+<dd>
+<div class="block">Initialize the interceptor with tracer and conversion service.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/interceptor/ContinueSpanOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor"><span class="typeNameLink">ContinueSpanOpenTelemetryTraceInterceptor</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/interceptor/package-summary.html">io.micronaut.tracing.opentelemetry.interceptor</a></dt>
+<dd>
+<div class="block">Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
+ using the Open Telemetry API.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/interceptor/ContinueSpanOpenTelemetryTraceInterceptor.html#ContinueSpanOpenTelemetryTraceInterceptor-io.opentelemetry.instrumentation.api.instrumenter.Instrumenter-">ContinueSpanOpenTelemetryTraceInterceptor(Instrumenter&lt;ClassAndMethod, Object&gt;)</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.interceptor.<a href="io/micronaut/tracing/opentelemetry/interceptor/ContinueSpanOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">ContinueSpanOpenTelemetryTraceInterceptor</a></dt>
+<dd>
+<div class="block">Initialize the interceptor with tracer and conversion service.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisherUtils.html#createOpenTelemetryPublisher-org.reactivestreams.Publisher-io.opentelemetry.instrumentation.api.instrumenter.Instrumenter-io.opentelemetry.context.Context-R-io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryObserver-">createOpenTelemetryPublisher(Publisher&lt;T&gt;, Instrumenter&lt;R, Object&gt;, Context, R, OpenTelemetryObserver&lt;T&gt;)</a></span> - Static method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisherUtils.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisherUtils</a></dt>
 <dd>
@@ -394,9 +430,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/http/OpenTracingServerFilter.html#getOrder--">getOrder()</a></span> - Method in class io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/OpenTracingServerFilter.html" title="class in io.micronaut.tracing.instrument.http">OpenTracingServerFilter</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/TraceInterceptor.html#getOrder--">getOrder()</a></span> - Method in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/TraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">TraceInterceptor</a></dt>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#getOrder--">getOrder()</a></span> - Method in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/interceptor/OpenTelemetryTraceInterceptor.html#getOrder--">getOrder()</a></span> - Method in class io.micronaut.tracing.opentelemetry.interceptor.<a href="io/micronaut/tracing/opentelemetry/interceptor/OpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">OpenTelemetryTraceInterceptor</a></dt>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/NewSpanTraceInterceptor.html#getOrder--">getOrder()</a></span> - Method in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/NewSpanTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">NewSpanTraceInterceptor</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/interceptor/AbstractOpenTelemetryTraceInterceptor.html#getOrder--">getOrder()</a></span> - Method in class io.micronaut.tracing.opentelemetry.interceptor.<a href="io/micronaut/tracing/opentelemetry/interceptor/AbstractOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">AbstractOpenTelemetryTraceInterceptor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.SamplerConfiguration.html#getProbability--">getProbability()</a></span> - Method in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.SamplerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.SamplerConfiguration</a></dt>
 <dd>
@@ -472,6 +510,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/instrument/http/HttpTracingFactory.html#HttpTracingFactory--">HttpTracingFactory()</a></span> - Constructor for class io.micronaut.tracing.brave.instrument.http.<a href="io/micronaut/tracing/brave/instrument/http/HttpTracingFactory.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpTracingFactory</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#HYSTRIX_ANNOTATION">HYSTRIX_ANNOTATION</a></span> - Static variable in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <a name="I:I">
 <!--   -->
@@ -486,9 +526,15 @@
 <dd>
 <div class="block">Builds the code Open Telemetry instrumenter.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/TraceInterceptor.html#intercept-io.micronaut.aop.MethodInvocationContext-">intercept(MethodInvocationContext&lt;Object, Object&gt;)</a></span> - Method in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/TraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">TraceInterceptor</a></dt>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/interceptor/AbstractOpenTelemetryTraceInterceptor.html#instrumenter">instrumenter</a></span> - Variable in class io.micronaut.tracing.opentelemetry.interceptor.<a href="io/micronaut/tracing/opentelemetry/interceptor/AbstractOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">AbstractOpenTelemetryTraceInterceptor</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/interceptor/OpenTelemetryTraceInterceptor.html#intercept-io.micronaut.aop.MethodInvocationContext-">intercept(MethodInvocationContext&lt;Object, Object&gt;)</a></span> - Method in class io.micronaut.tracing.opentelemetry.interceptor.<a href="io/micronaut/tracing/opentelemetry/interceptor/OpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">OpenTelemetryTraceInterceptor</a></dt>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/ContinueSpanInterceptor.html#intercept-io.micronaut.aop.MethodInvocationContext-">intercept(MethodInvocationContext&lt;Object, Object&gt;)</a></span> - Method in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/ContinueSpanInterceptor.html" title="class in io.micronaut.tracing.interceptor">ContinueSpanInterceptor</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/NewSpanTraceInterceptor.html#intercept-io.micronaut.aop.MethodInvocationContext-">intercept(MethodInvocationContext&lt;Object, Object&gt;)</a></span> - Method in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/NewSpanTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">NewSpanTraceInterceptor</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/interceptor/ContinueSpanOpenTelemetryTraceInterceptor.html#intercept-io.micronaut.aop.MethodInvocationContext-">intercept(MethodInvocationContext&lt;Object, Object&gt;)</a></span> - Method in class io.micronaut.tracing.opentelemetry.interceptor.<a href="io/micronaut/tracing/opentelemetry/interceptor/ContinueSpanOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">ContinueSpanOpenTelemetryTraceInterceptor</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/interceptor/NewSpanOpenTelemetryTraceInterceptor.html#intercept-io.micronaut.aop.MethodInvocationContext-">intercept(MethodInvocationContext&lt;Object, Object&gt;)</a></span> - Method in class io.micronaut.tracing.opentelemetry.interceptor.<a href="io/micronaut/tracing/opentelemetry/interceptor/NewSpanOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">NewSpanOpenTelemetryTraceInterceptor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/sender/HttpClientSender.Builder.html#invocationInstrumenterFactories-java.util.List-">invocationInstrumenterFactories(List&lt;InvocationInstrumenterFactory&gt;)</a></span> - Method in class io.micronaut.tracing.brave.sender.<a href="io/micronaut/tracing/brave/sender/HttpClientSender.Builder.html" title="class in io.micronaut.tracing.brave.sender">HttpClientSender.Builder</a></dt>
 <dd>
@@ -624,7 +670,7 @@
 <dl>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/http/TraceRequestAttributes.html#length--">length()</a></span> - Method in enum io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/TraceRequestAttributes.html" title="enum in io.micronaut.tracing.instrument.http">TraceRequestAttributes</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/TraceInterceptor.html#logError-io.opentracing.Span-java.lang.Throwable-">logError(Span, Throwable)</a></span> - Static method in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/TraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">TraceInterceptor</a></dt>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#logError-io.opentracing.Span-java.lang.Throwable-">logError(Span, Throwable)</a></span> - Static method in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></dt>
 <dd>
 <div class="block">Logs an error to the span.</div>
 </dd>
@@ -654,7 +700,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/sender/HttpClientSender.html#messageSizeInBytes-java.util.List-">messageSizeInBytes(List&lt;byte[]&gt;)</a></span> - Method in class io.micronaut.tracing.brave.sender.<a href="io/micronaut/tracing/brave/sender/HttpClientSender.html" title="class in io.micronaut.tracing.brave.sender">HttpClientSender</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/TraceInterceptor.html#METHOD_TAG">METHOD_TAG</a></span> - Static variable in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/TraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">TraceInterceptor</a></dt>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#METHOD_TAG">METHOD_TAG</a></span> - Static variable in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/MicronautCodeTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">MicronautCodeTelemetryFactory</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a></dt>
 <dd>
@@ -707,6 +753,24 @@
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#newSpan-io.micronaut.http.HttpRequest-io.opentracing.SpanContext-">newSpan(HttpRequest&lt;?&gt;, SpanContext)</a></span> - Method in class io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.instrument.http">AbstractOpenTracingFilter</a></dt>
 <dd>
 <div class="block">Creates a new span for the given request and span context.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/interceptor/NewSpanOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor"><span class="typeNameLink">NewSpanOpenTelemetryTraceInterceptor</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/interceptor/package-summary.html">io.micronaut.tracing.opentelemetry.interceptor</a></dt>
+<dd>
+<div class="block">Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
+ using the Open Telemetry API.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/interceptor/NewSpanOpenTelemetryTraceInterceptor.html#NewSpanOpenTelemetryTraceInterceptor-io.opentelemetry.instrumentation.api.instrumenter.Instrumenter-">NewSpanOpenTelemetryTraceInterceptor(Instrumenter&lt;ClassAndMethod, Object&gt;)</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.interceptor.<a href="io/micronaut/tracing/opentelemetry/interceptor/NewSpanOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">NewSpanOpenTelemetryTraceInterceptor</a></dt>
+<dd>
+<div class="block">Initialize the interceptor with tracer and conversion service.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/interceptor/NewSpanTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor"><span class="typeNameLink">NewSpanTraceInterceptor</span></a> - Class in <a href="io/micronaut/tracing/interceptor/package-summary.html">io.micronaut.tracing.interceptor</a></dt>
+<dd>
+<div class="block">Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
+ using the Open Tracing API.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/NewSpanTraceInterceptor.html#NewSpanTraceInterceptor-io.opentracing.Tracer-">NewSpanTraceInterceptor(Tracer)</a></span> - Constructor for class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/NewSpanTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">NewSpanTraceInterceptor</a></dt>
+<dd>
+<div class="block">Initialize the interceptor with tracer and conversion service.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/BraveTracingInvocationInstrumenter.html#newTracingInvocationInstrumenter--">newTracingInvocationInstrumenter()</a></span> - Method in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracingInvocationInstrumenter.html" title="class in io.micronaut.tracing.brave">BraveTracingInvocationInstrumenter</a></dt>
 <dd>&nbsp;</dd>
@@ -816,15 +880,6 @@
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryServerFilter.html#OpenTelemetryServerFilter-io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration-io.opentelemetry.instrumentation.api.instrumenter.Instrumenter-">OpenTelemetryServerFilter(OpenTelemetryExclusionsConfiguration, Instrumenter&lt;HttpRequest&lt;?&gt;, Object&gt;)</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.http.server.<a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryServerFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">OpenTelemetryServerFilter</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/interceptor/OpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor"><span class="typeNameLink">OpenTelemetryTraceInterceptor</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/interceptor/package-summary.html">io.micronaut.tracing.opentelemetry.interceptor</a></dt>
-<dd>
-<div class="block">Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
- using the Open Telemetry API.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/interceptor/OpenTelemetryTraceInterceptor.html#OpenTelemetryTraceInterceptor-io.opentelemetry.instrumentation.api.instrumenter.Instrumenter-">OpenTelemetryTraceInterceptor(Instrumenter&lt;ClassAndMethod, Object&gt;)</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.interceptor.<a href="io/micronaut/tracing/opentelemetry/interceptor/OpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">OpenTelemetryTraceInterceptor</a></dt>
-<dd>
-<div class="block">Initialize the interceptor with tracer and conversion service.</div>
-</dd>
 <dt><a href="io/micronaut/tracing/instrument/http/OpenTracingClientFilter.html" title="class in io.micronaut.tracing.instrument.http"><span class="typeNameLink">OpenTracingClientFilter</span></a> - Class in <a href="io/micronaut/tracing/instrument/http/package-summary.html">io.micronaut.tracing.instrument.http</a></dt>
 <dd>
 <div class="block">An HTTP client instrumentation filter that uses Open Tracing.</div>
@@ -863,6 +918,8 @@
 <dd>
 <div class="block">The path to use.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#populateTags-io.micronaut.aop.MethodInvocationContext-java.util.Optional-io.opentracing.Span-">populateTags(MethodInvocationContext&lt;Object, Object&gt;, Optional&lt;String&gt;, Span)</a></span> - Method in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/AsyncReporterConfiguration.html#PREFIX">PREFIX</a></span> - Static variable in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/AsyncReporterConfiguration.html" title="class in io.micronaut.tracing.brave">AsyncReporterConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.HttpClientSenderConfiguration.html#PREFIX">PREFIX</a></span> - Static variable in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.HttpClientSenderConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.HttpClientSenderConfiguration</a></dt>
@@ -1095,22 +1152,25 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#TAG_HTTP_STATUS_CODE">TAG_HTTP_STATUS_CODE</a></span> - Static variable in class io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.instrument.http">AbstractOpenTracingFilter</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#TAG_HYSTRIX_COMMAND">TAG_HYSTRIX_COMMAND</a></span> - Static variable in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#TAG_HYSTRIX_GROUP">TAG_HYSTRIX_GROUP</a></span> - Static variable in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#TAG_HYSTRIX_THREAD_POOL">TAG_HYSTRIX_THREAD_POOL</a></span> - Static variable in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#TAG_METHOD">TAG_METHOD</a></span> - Static variable in class io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.instrument.http">AbstractOpenTracingFilter</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#TAG_PATH">TAG_PATH</a></span> - Static variable in class io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.instrument.http">AbstractOpenTracingFilter</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#tagArguments-io.opentracing.Span-io.micronaut.aop.MethodInvocationContext-">tagArguments(Span, MethodInvocationContext&lt;Object, Object&gt;)</a></span> - Method in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/interceptor/AbstractOpenTelemetryTraceInterceptor.html#tagArguments-io.micronaut.aop.MethodInvocationContext-">tagArguments(MethodInvocationContext&lt;?, ?&gt;)</a></span> - Static method in class io.micronaut.tracing.opentelemetry.interceptor.<a href="io/micronaut/tracing/opentelemetry/interceptor/AbstractOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">AbstractOpenTelemetryTraceInterceptor</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/http/TraceRequestAttributes.html#toString--">toString()</a></span> - Method in enum io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/TraceRequestAttributes.html" title="enum in io.micronaut.tracing.instrument.http">TraceRequestAttributes</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/interceptor/TraceInterceptor.html" title="class in io.micronaut.tracing.interceptor"><span class="typeNameLink">TraceInterceptor</span></a> - Class in <a href="io/micronaut/tracing/interceptor/package-summary.html">io.micronaut.tracing.interceptor</a></dt>
-<dd>
-<div class="block">Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
- using the Open Tracing API.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/TraceInterceptor.html#TraceInterceptor-io.opentracing.Tracer-">TraceInterceptor(Tracer)</a></span> - Constructor for class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/TraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">TraceInterceptor</a></dt>
-<dd>
-<div class="block">Initialize the interceptor with tracer and conversion service.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#tracer">tracer</a></span> - Variable in class io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.instrument.http">AbstractOpenTracingFilter</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#tracer">tracer</a></span> - Variable in class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/instrument/http/TraceRequestAttributes.html" title="enum in io.micronaut.tracing.instrument.http"><span class="typeNameLink">TraceRequestAttributes</span></a> - Enum in <a href="io/micronaut/tracing/instrument/http/package-summary.html">io.micronaut.tracing.instrument.http</a></dt>
 <dd>

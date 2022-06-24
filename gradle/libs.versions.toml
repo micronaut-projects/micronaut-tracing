@@ -15,9 +15,11 @@ managed-opentracing-grpc = '0.2.3'
 managed-protobuf = '0.8.18'
 managed-zipkin-reporter = '2.16.3'
 managed-opentelemetry-contrib-aws-xray = '1.14.0'
+managed-opentelemetry-gcp-trace = '0.22.0-alpha'
 
 [libraries]
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
+managed-opentelemetry-gcp-trace = { module = 'com.google.cloud.opentelemetry:exporter-auto', version.ref = 'managed-opentelemetry-gcp-trace'}
 
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
 grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'grpc' }

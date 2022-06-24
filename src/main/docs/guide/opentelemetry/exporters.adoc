@@ -2,14 +2,16 @@ In your project you can specify exporters that you want to use. The default one 
 
 For each exporter that you want to use you have to specify it inside configuration, and you have to add required dependency:
 
-- Otlp exporter:
+- OpenTelemetry Protocol exporter: `otlp`
 dependency:opentelemetry-exporter-otlp[scope="implementation", groupId="io.opentelemetry"]
-- Zipkin exporter:
-dependency:opentelemetry-exporter-zipkin[scope="implementation", groupId="io.opentelemetry"]
-- logging exporter:
+- Logging exporter: `logging`
 dependency:opentelemetry-exporter-logging[scope="implementation", groupId="io.opentelemetry"]
-- Jaeger exporter:
+- Jaeger exporter: `jaeger`
 dependency:opentelemetry-exporter-jaeger[scope="implementation", groupId="io.opentelemetry"]
+- Google Cloud Trace: `google_cloud_trace`
+dependency:exporter-auto[scope="implementation", groupId="com.google.cloud.opentelemetry"]
+- Zipkin exporter: `zipkin`
+dependency:opentelemetry-exporter-zipkin[scope="implementation", groupId="io.opentelemetry"]
 
 Example configuration for the Zipkin exporter:
 

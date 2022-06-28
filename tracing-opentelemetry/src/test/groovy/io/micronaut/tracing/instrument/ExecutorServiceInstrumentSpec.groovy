@@ -10,7 +10,8 @@ class ExecutorServiceInstrumentSpec extends Specification {
     @Shared
     @AutoCleanup
     ApplicationContext applicationContext = ApplicationContext.run(
-            (IExecutorServiceImpl.PROP): true
+            (IExecutorServiceImpl.PROP): true,
+            "spec.name": "ExecutorServiceInstrumentSpec"
     )
 
     void "test that sub interfaces for executor service are not instrumented"() {

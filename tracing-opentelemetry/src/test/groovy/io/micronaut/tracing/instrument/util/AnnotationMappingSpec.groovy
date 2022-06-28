@@ -2,6 +2,7 @@ package io.micronaut.tracing.instrument.util
 
 import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
+import io.micronaut.context.annotation.Requires
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.annotation.*
@@ -34,7 +35,8 @@ class AnnotationMappingSpec extends Specification {
     @Shared
     @AutoCleanup
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
-            'micronaut.application.name': 'test-app'
+            'micronaut.application.name': 'test-app',
+            'spec.name': 'AnnotationMappingSpec'
     ])
 
     @Shared
@@ -103,6 +105,7 @@ class AnnotationMappingSpec extends Specification {
     static class SomeBody {
     }
 
+    @Requires(property = "spec.name", value = "AnnotationMappingSpec")
     @Controller("/annotations")
     static class TestController {
 
@@ -151,6 +154,7 @@ class AnnotationMappingSpec extends Specification {
         }
     }
 
+    @Requires(property = "spec.name", value = "AnnotationMappingSpec")
     @Controller("/client")
     static class ClientController {
 
@@ -167,6 +171,7 @@ class AnnotationMappingSpec extends Specification {
 
     }
 
+    @Requires(property = "spec.name", value = "AnnotationMappingSpec")
     @Client("/client")
     static interface WarehouseClient {
 

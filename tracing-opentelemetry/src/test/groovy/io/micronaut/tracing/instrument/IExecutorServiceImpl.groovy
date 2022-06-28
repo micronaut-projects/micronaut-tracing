@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit
 
 import static io.micronaut.core.util.StringUtils.TRUE
 
+@Requires(property = "spec.name", value = "ExecutorServiceInstrumentSpec")
 @Singleton
 @Named("custom")
 @Requires(property = PROP, value = TRUE)

@@ -16,12 +16,14 @@
 package io.micronaut.tracing.instrument.util;
 
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Requires;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import io.opentelemetry.sdk.trace.IdGenerator;
 import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import jakarta.inject.Singleton;
 
+@Requires(property = "spec.name", value = "AnnotationMappingSpec")
 @Factory
 public class TestDefaultOpenTelemetryFactory {
 

@@ -14,16 +14,8 @@
  * limitations under the License.
  */
 /**
- * Classes related with OpenTelemetry integration.
- * @see <a href="https://opentelemetry.io">OpenTelemetry</a>
- * @author Nemanja Mikic
- * @since 4.1.0
+ * Configuration for the Micronaut framework integration with OpenTelemetry.
+ * @author Sergio del Amo
+ * @since 4.2.0
  */
-@Requires(property = OpenTelemetryConfigurationProperties.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
-@Configuration
-package io.micronaut.tracing.opentelemetry;
-
-import io.micronaut.context.annotation.Configuration;
-import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.util.StringUtils;
-import io.micronaut.tracing.opentelemetry.conf.OpenTelemetryConfigurationProperties;
+package io.micronaut.tracing.opentelemetry.conf;

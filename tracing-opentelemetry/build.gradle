@@ -19,6 +19,8 @@ dependencies {
     implementation(platform(libs.boms.aws.java.sdk.v2))
     compileOnly(libs.opentelemetry.aws.sdk)
     compileOnly(libs.awssdk.core)
+    testImplementation(libs.opentelemetry.aws.sdk)
+    testImplementation(libs.awssdk.core)
 
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor

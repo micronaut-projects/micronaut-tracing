@@ -1,0 +1,16 @@
+In your project you can specify propagators that you want to use. The default one is set to "tracecontext, baggage". The available values are defined on the https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md[Open Telemetry Autoconfigure SDK documentation].
+
+To use https://docs.aws.amazon.com/xray/latest/devguide/xray-concepts.html#xray-concepts-tracingheader[AWS X-Ray] propagator inside your application you have to add next dependency in your project:
+
+dependency:opentelemetry-extension-aws[scope="implementation", groupId="io.opentelemetry"]
+
+And the "xray" has to be added inside configuration file.
+
+.application.yml
+[source,yaml]
+----
+otel:
+  traces:
+    exporter: otlp
+  propagators: tracecontext, baggage, xray
+----

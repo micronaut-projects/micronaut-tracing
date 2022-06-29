@@ -4,7 +4,11 @@ releaseHistory: Release History
 jaeger: Tracing with Jaeger
 zipkin: Tracing with Zipkin
 opentelemetry:
-  title: Tracing with Open Telemetry
+  title: Tracing with OpenTelemetry
+  annotations: OpenTelemetry Annotations
+  exporters: OpenTelemetry Exporters
+  propagators: OpenTelemetry Propagators
+  idgenerator: ID Generator
   http: HTTP Server and Client
   grpc: gRPC Server and Client
 repository: Repository

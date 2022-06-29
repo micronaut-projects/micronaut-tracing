@@ -13,32 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing.instrument.util;
+package io.micronaut.tracing.opentelemetry.idgenerator.xray;
 
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
-import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
+import io.opentelemetry.contrib.awsxray.AwsXrayIdGenerator;
 import io.opentelemetry.sdk.trace.IdGenerator;
-import io.opentelemetry.sdk.trace.SpanProcessor;
-import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import jakarta.inject.Singleton;
 
-@Requires(property = "spec.name", value = "AnnotationMappingSpec")
+/**
+ * Registers an instance of {@link AwsXrayIdGenerator#getInstance()} as a Singleton of type {@link IdGenerator}.
+ * @author Sergio del Amo
+ * @since 4.2.0
+ */
+@Requires(classes = AwsXrayIdGenerator.class)
 @Factory
-public class TestDefaultOpenTelemetryFactory {
+public class AwsXrayIdGeneratorFactory {
 
-    @Singleton
-    SpanProcessor spanProcessor(InMemorySpanExporter spanExporter) {
-        return SimpleSpanProcessor.create(spanExporter);
-    }
-
+    /**
+     * Creates a custom ID Generator for AWS XRay using {@link AwsXrayIdGenerator#getInstance()}.
+     * @return An instance of {@link AwsXrayIdGenerator}.
+     */
+    @Replaces(IdGenerator.class)
     @Singleton
     IdGenerator idGenerator() {
-        return IdGenerator.random();
-    }
-
-    @Singleton
-    InMemorySpanExporter inMemorySpanExporter() {
-        return InMemorySpanExporter.create();
+        return AwsXrayIdGenerator.getInstance();
     }
 }

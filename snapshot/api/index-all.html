@@ -286,6 +286,10 @@
 <dd>
 <div class="block">The default enable value.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html#DEFAULT_ENABLED">DEFAULT_ENABLED</a></span> - Static variable in class io.micronaut.tracing.opentelemetry.conf.<a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html" title="class in io.micronaut.tracing.opentelemetry.conf">OpenTelemetryConfigurationProperties</a></dt>
+<dd>
+<div class="block">The default enable value.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/sender/HttpClientSender.Builder.html#DEFAULT_PATH">DEFAULT_PATH</a></span> - Static variable in class io.micronaut.tracing.brave.sender.<a href="io/micronaut/tracing/brave/sender/HttpClientSender.Builder.html" title="class in io.micronaut.tracing.brave.sender">HttpClientSender.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html#DEFAULT_SAMPLER_PROBABILITY">DEFAULT_SAMPLER_PROBABILITY</a></span> - Static variable in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration</a></dt>
@@ -592,7 +596,11 @@
 </dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/package-summary.html">io.micronaut.tracing.opentelemetry</a> - package io.micronaut.tracing.opentelemetry</dt>
 <dd>
-<div class="block">Default tracer.</div>
+<div class="block">Classes related with OpenTelemetry integration.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/conf/package-summary.html">io.micronaut.tracing.opentelemetry.conf</a> - package io.micronaut.tracing.opentelemetry.conf</dt>
+<dd>
+<div class="block">Configuration for the Micronaut framework integration with OpenTelemetry.</div>
 </dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/idgenerator/xray/package-summary.html">io.micronaut.tracing.opentelemetry.idgenerator.xray</a> - package io.micronaut.tracing.opentelemetry.idgenerator.xray</dt>
 <dd>
@@ -626,6 +634,8 @@
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html#isEnabled--">isEnabled()</a></span> - Method in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html#isEnabled--">isEnabled()</a></span> - Method in class io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html#isEnabled--">isEnabled()</a></span> - Method in class io.micronaut.tracing.opentelemetry.conf.<a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html" title="class in io.micronaut.tracing.opentelemetry.conf">OpenTelemetryConfigurationProperties</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html#isExpandExceptionLogs--">isExpandExceptionLogs()</a></span> - Method in class io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration</a></dt>
 <dd>&nbsp;</dd>
@@ -842,6 +852,16 @@
 <dd>
 <div class="block">Initialize the open tracing client filter with tracer and exclusion configuration.</div>
 </dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfiguration.html" title="interface in io.micronaut.tracing.opentelemetry.conf"><span class="typeNameLink">OpenTelemetryConfiguration</span></a> - Interface in <a href="io/micronaut/tracing/opentelemetry/conf/package-summary.html">io.micronaut.tracing.opentelemetry.conf</a></dt>
+<dd>
+<div class="block">Configuration for OpenTelemetry.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html" title="class in io.micronaut.tracing.opentelemetry.conf"><span class="typeNameLink">OpenTelemetryConfigurationProperties</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/conf/package-summary.html">io.micronaut.tracing.opentelemetry.conf</a></dt>
+<dd>
+<div class="block"><code>ConfigurationProperties</code> implementation of <a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfiguration.html" title="interface in io.micronaut.tracing.opentelemetry.conf"><code>OpenTelemetryConfiguration</code></a>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html#OpenTelemetryConfigurationProperties--">OpenTelemetryConfigurationProperties()</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.conf.<a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html" title="class in io.micronaut.tracing.opentelemetry.conf">OpenTelemetryConfigurationProperties</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">OpenTelemetryCorePublisher</span></a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="type parameter in OpenTelemetryCorePublisher">T</a>,<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="type parameter in OpenTelemetryCorePublisher">R</a>&gt; - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a></dt>
 <dd>
 <div class="block">A reactor publisher that traces.</div>
@@ -946,6 +966,8 @@
 <dd>
 <div class="block">The configuration prefix.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html#PREFIX">PREFIX</a></span> - Static variable in class io.micronaut.tracing.opentelemetry.conf.<a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html" title="class in io.micronaut.tracing.opentelemetry.conf">OpenTelemetryConfigurationProperties</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/OpenTelemetryHttpClientConfig.html#PREFIX">PREFIX</a></span> - Static variable in class io.micronaut.tracing.opentelemetry.instrument.http.client.<a href="io/micronaut/tracing/opentelemetry/instrument/http/client/OpenTelemetryHttpClientConfig.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client">OpenTelemetryHttpClientConfig</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryHttpServerConfig.html#PREFIX">PREFIX</a></span> - Static variable in class io.micronaut.tracing.opentelemetry.instrument.http.server.<a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryHttpServerConfig.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">OpenTelemetryHttpServerConfig</a></dt>
@@ -1019,6 +1041,10 @@
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html#setEnabled-boolean-">setEnabled(boolean)</a></span> - Method in class io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration</a></dt>
 <dd>
 <div class="block">Enable/disable Jaeger.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html#setEnabled-boolean-">setEnabled(boolean)</a></span> - Method in class io.micronaut.tracing.opentelemetry.conf.<a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html" title="class in io.micronaut.tracing.opentelemetry.conf">OpenTelemetryConfigurationProperties</a></dt>
+<dd>
+<div class="block">Sets whether the OpenTelemetry integration is enabled.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html#setErrorParser-brave.ErrorParser-">setErrorParser(ErrorParser)</a></span> - Method in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration</a></dt>
 <dd>&nbsp;</dd>

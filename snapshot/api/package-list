@@ -10,6 +10,7 @@ io.micronaut.tracing.instrument.util
 io.micronaut.tracing.interceptor
 io.micronaut.tracing.jaeger
 io.micronaut.tracing.opentelemetry
+io.micronaut.tracing.opentelemetry.conf
 io.micronaut.tracing.opentelemetry.idgenerator.xray
 io.micronaut.tracing.opentelemetry.instrument.http
 io.micronaut.tracing.opentelemetry.instrument.http.client

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * HTTP Tracing.
+ * Utility classes for OpenTelemetry Instrumentation.
  *
  * @author Nemanja Mikic
  * @since 4.1.0

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 /**
- * Method Interceptors for {@link o.micronaut.tracing.annotation.NewSpan} and {@link o.micronaut.tracing.annotation.ContinueSpan} annotations.
+ * Classes related with X-Ray integration.
  *
- * @author Nemanja Mikic
- * @since 4.1.0
+ * @author Sergio del Amo
+ * @since 4.2.0
  */
-package io.micronaut.tracing.opentelemetry.interceptor;
+package io.micronaut.tracing.opentelemetry.xray;

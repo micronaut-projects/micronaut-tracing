@@ -19,7 +19,7 @@ import io.micronaut.core.annotation.NonNull;
 import io.opentelemetry.context.Context;
 
 /**
- * The tracing observer.
+ * OpenTelemetry observer.
  *
  * @param <T> The publisher's type
  * @author Nemanja Mikic

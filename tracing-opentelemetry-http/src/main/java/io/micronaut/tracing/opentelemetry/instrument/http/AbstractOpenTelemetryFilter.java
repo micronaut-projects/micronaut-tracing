@@ -22,7 +22,7 @@ import io.opentelemetry.api.trace.Span;
 import java.util.function.Predicate;
 
 /**
- * Abstract filter used for Open Tracing based HTTP tracing.
+ * Abstract filter used for OpenTelemetry based HTTP tracing.
  *
  * @author Nemanja Mikic
  * @since 4.1.0

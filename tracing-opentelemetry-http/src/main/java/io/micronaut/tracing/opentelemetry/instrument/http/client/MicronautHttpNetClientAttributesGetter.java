@@ -18,20 +18,20 @@ package io.micronaut.tracing.opentelemetry.instrument.http.client;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
-import io.opentelemetry.instrumentation.api.instrumenter.net.InetSocketAddressNetClientAttributesGetter;
+import io.opentelemetry.instrumentation.api.instrumenter.net.NetClientAttributesGetter;
 
 import javax.annotation.Nullable;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
+import static io.micronaut.http.HttpAttributes.SERVICE_ID;
 import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.NetTransportValues.IP_TCP;
 
 @Internal
 final class MicronautHttpNetClientAttributesGetter
-    extends InetSocketAddressNetClientAttributesGetter<MutableHttpRequest<Object>, HttpResponse<Object>> {
+    implements NetClientAttributesGetter<MutableHttpRequest<Object>, HttpResponse<Object>> {
 
-    @Override
-    public InetSocketAddress getAddress(MutableHttpRequest<Object> request,
-                                        @Nullable HttpResponse<Object> response) {
+    public InetSocketAddress getAddress(MutableHttpRequest<Object> request) {
         return request.getRemoteAddress();
     }
 
@@ -39,5 +39,34 @@ final class MicronautHttpNetClientAttributesGetter
     public String transport(MutableHttpRequest<Object> request,
                             @Nullable HttpResponse<Object> response) {
         return IP_TCP;
+    }
+
+    @Override
+    public String peerName(MutableHttpRequest<Object> request,
+                           @Nullable HttpResponse<Object> response) {
+
+        String serviceId = request.getAttribute(SERVICE_ID).orElse("/").toString();
+        if (!serviceId.contains("/")) {
+            return serviceId;
+        }
+
+        return getAddress(request).getHostString();
+    }
+
+    @Override
+    public Integer peerPort(MutableHttpRequest<Object> request,
+                            @Nullable HttpResponse<Object> response) {
+        return getAddress(request).getPort();
+    }
+
+    @Override
+    public String peerIp(MutableHttpRequest<Object> request,
+                         @Nullable HttpResponse<Object> response) {
+        InetSocketAddress address = getAddress(request);
+        InetAddress remoteAddress = address.getAddress();
+        if (remoteAddress != null) {
+            return remoteAddress.getHostAddress();
+        }
+        return null;
     }
 }

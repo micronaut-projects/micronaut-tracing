@@ -74,7 +74,7 @@
 <dl>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/http/AbstractOpenTelemetryFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http"><span class="typeNameLink">AbstractOpenTelemetryFilter</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/http/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.http</a></dt>
 <dd>
-<div class="block">Abstract filter used for Open Tracing based HTTP tracing.</div>
+<div class="block">Abstract filter used for OpenTelemetry based HTTP tracing.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/http/AbstractOpenTelemetryFilter.html#AbstractOpenTelemetryFilter-java.util.function.Predicate-">AbstractOpenTelemetryFilter(Predicate&lt;String&gt;)</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.http.<a href="io/micronaut/tracing/opentelemetry/instrument/http/AbstractOpenTelemetryFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http">AbstractOpenTelemetryFilter</a></dt>
 <dd>
@@ -614,14 +614,18 @@
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a> - package io.micronaut.tracing.opentelemetry.instrument.util</dt>
 <dd>
-<div class="block">HTTP Tracing.</div>
+<div class="block">Utility classes for OpenTelemetry Instrumentation.</div>
 </dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/interceptor/package-summary.html">io.micronaut.tracing.opentelemetry.interceptor</a> - package io.micronaut.tracing.opentelemetry.interceptor</dt>
 <dd>
-<div class="block">HTTP Tracing.</div>
+<div class="block">Method Interceptors for <code>o.micronaut.tracing.annotation.NewSpan</code> and <code>o.micronaut.tracing.annotation.ContinueSpan</code> annotations.</div>
 </dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/processing/package-summary.html">io.micronaut.tracing.opentelemetry.processing</a> - package io.micronaut.tracing.opentelemetry.processing</dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/xray/package-summary.html">io.micronaut.tracing.opentelemetry.xray</a> - package io.micronaut.tracing.opentelemetry.xray</dt>
+<dd>
+<div class="block">Classes related with X-Ray integration.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingObserver.html#isContinued--">isContinued()</a></span> - Method in interface io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a></dt>
 <dd>
 <div class="block">Designed for subclasses to override if the current active span is to be
@@ -826,6 +830,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html#onComplete--">onComplete()</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher.TracingSubscriber</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/xray/SdkClientBuilderListener.html#onCreated-io.micronaut.context.event.BeanCreatedEvent-">onCreated(BeanCreatedEvent&lt;SdkClientBuilder&lt;?, ?&gt;&gt;)</a></span> - Method in class io.micronaut.tracing.opentelemetry.xray.<a href="io/micronaut/tracing/opentelemetry/xray/SdkClientBuilderListener.html" title="class in io.micronaut.tracing.opentelemetry.xray">SdkClientBuilderListener</a></dt>
+<dd>
+<div class="block">Add an OpenTelemetry execution interceptor to <code>SdkClientBuilder</code>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.TracingSubscriber.html#onError-java.lang.Throwable-">onError(Throwable)</a></span> - Method in class io.micronaut.tracing.brave.instrument.http.<a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingPublisher.TracingSubscriber</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html#onError-java.lang.Throwable-">onError(Throwable)</a></span> - Method in class io.micronaut.tracing.instrument.util.<a href="io/micronaut/tracing/instrument/util/TracingPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher.TracingSubscriber</a></dt>
@@ -892,7 +900,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">OpenTelemetryObserver</span></a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html" title="type parameter in OpenTelemetryObserver">T</a>&gt; - Interface in <a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a></dt>
 <dd>
-<div class="block">The tracing observer.</div>
+<div class="block">OpenTelemetry observer.</div>
 </dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">OpenTelemetryPublisher</span></a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="type parameter in OpenTelemetryPublisher">T</a>,<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="type parameter in OpenTelemetryPublisher">R</a>&gt; - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a></dt>
 <dd>
@@ -1006,6 +1014,12 @@
 <dd>
 <div class="block">Default constructor.</div>
 </dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/xray/SdkClientBuilderListener.html" title="class in io.micronaut.tracing.opentelemetry.xray"><span class="typeNameLink">SdkClientBuilderListener</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/xray/package-summary.html">io.micronaut.tracing.opentelemetry.xray</a></dt>
+<dd>
+<div class="block">Configures a Tracing Interceptor for all sdk client builders.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/xray/SdkClientBuilderListener.html#SdkClientBuilderListener-io.micronaut.context.BeanProvider-">SdkClientBuilderListener(BeanProvider&lt;OpenTelemetry&gt;)</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.xray.<a href="io/micronaut/tracing/opentelemetry/xray/SdkClientBuilderListener.html" title="class in io.micronaut.tracing.opentelemetry.xray">SdkClientBuilderListener</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/sender/HttpClientSender.html#sendSpans-java.util.List-">sendSpans(List&lt;byte[]&gt;)</a></span> - Method in class io.micronaut.tracing.brave.sender.<a href="io/micronaut/tracing/brave/sender/HttpClientSender.html" title="class in io.micronaut.tracing.brave.sender">HttpClientSender</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/sender/HttpClientSender.Builder.html#server-java.net.URI-">server(URI)</a></span> - Method in class io.micronaut.tracing.brave.sender.<a href="io/micronaut/tracing/brave/sender/HttpClientSender.Builder.html" title="class in io.micronaut.tracing.brave.sender">HttpClientSender.Builder</a></dt>

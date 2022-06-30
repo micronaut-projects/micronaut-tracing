@@ -104,7 +104,9 @@
         
         <div class="toc-item" style="margin-left:10px" id="toc-item-http"><a href="#http"><strong>5.5</strong><span>HTTP Server and Client</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-grpc"><a href="#grpc"><strong>5.6</strong><span>gRPC Server and Client</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>5.6</strong><span>AWS SDK Instrumentation</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-grpc"><a href="#grpc"><strong>5.7</strong><span>gRPC Server and Client</span></a></div>
         
         <div class="toc-item" style="margin-left:0px" id="toc-item-repository"><a href="#repository"><strong>6</strong><span>Repository</span></a></div>
         
@@ -905,7 +907,59 @@ This can be achieved by adding a list of regular expression patterns to your con
 </div>
 </div>
 
-<h2 id="grpc"><a class="anchor" href="#grpc"></a>5.6 gRPC Server and Client</h2>
+<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>5.6 AWS SDK Instrumentation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/awsSdkInstrumentation.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Include the following dependency to instrument the <a href="https://aws-otel.github.io/docs/getting-started/java-sdk/trace-manual-instr#instrumenting-the-aws-sdk">AWS SDK</a>:</p>
+</div>
+<div class="paragraph">
+<p>        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry.instrumentation&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-aws-sdk-2.2&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p>Additionally, include <a href="https://micronaut-projects.github.io/micronaut-aws/latest/guide/#sdkv2">Micronaut AWS SDK v2</a> dependency:</p>
+</div>
+<div class="paragraph">
+<p>        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.aws:micronaut-aws-sdk-v2")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.aws&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-aws-sdk-v2&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p><code>micronaut-aws-sdk-v2</code> dependency creates a bean of type <code>SdkClientBuilder</code>. To instrument the AWS SDK, Micronaut OpenTelemetry registers a tracing interceptor
+via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.</p>
+</div>
+
+<h2 id="grpc"><a class="anchor" href="#grpc"></a>5.7 gRPC Server and Client</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/grpc.adoc"'>

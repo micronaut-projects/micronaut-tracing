@@ -18,3 +18,4 @@ io.micronaut.tracing.opentelemetry.instrument.http.server
 io.micronaut.tracing.opentelemetry.instrument.util
 io.micronaut.tracing.opentelemetry.interceptor
 io.micronaut.tracing.opentelemetry.processing
+io.micronaut.tracing.opentelemetry.xray

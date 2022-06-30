@@ -15,12 +15,12 @@
  */
 package io.micronaut.tracing.opentelemetry.xray;
 
+import io.micronaut.context.BeanProvider;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.BeanCreatedEvent;
 import io.micronaut.context.event.BeanCreatedEventListener;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.awssdk.v2_2.AwsSdkTelemetry;
-import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +39,13 @@ import software.amazon.awssdk.core.client.builder.SdkClientBuilder;
 public class SdkClientBuilderListener implements BeanCreatedEventListener<SdkClientBuilder<?, ?>> {
     private static final Logger LOG = LoggerFactory.getLogger(SdkClientBuilderListener.class);
 
-    private final Provider<OpenTelemetry> openTelemetry;
+    private final BeanProvider<OpenTelemetry> openTelemetry;
 
     /**
      *
      * @param openTelemetry OpenTelemetry
      */
-    public SdkClientBuilderListener(Provider<OpenTelemetry> openTelemetry) {
+    public SdkClientBuilderListener(BeanProvider<OpenTelemetry> openTelemetry) {
         this.openTelemetry = openTelemetry;
     }
 

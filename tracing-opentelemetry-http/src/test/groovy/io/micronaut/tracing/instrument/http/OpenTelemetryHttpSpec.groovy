@@ -208,6 +208,7 @@ class OpenTelemetryHttpSpec extends Specification {
             testExporter.finishedSpanItems.name.contains("WarehouseClient.order")
             testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("warehouse.order")) == "{testOrderKey=testOrderValue}")
             testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("upc")) == "10")
+            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("net.peer.name")) == "localhost")
         }
 
         cleanup:
@@ -222,7 +223,7 @@ class OpenTelemetryHttpSpec extends Specification {
 
         expect:
 
-        warehouseClient.order(Map.of("testOrderKey", "testOrderValue"))
+        warehouseClient.order(Collections.singletonMap("testOrderKey", "testOrderValue"))
         conditions.eventually {
             testExporter.finishedSpanItems.size() == serverSpanCount + clientSpanCount
             testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("warehouse.order")) == "{testOrderKey=testOrderValue}")

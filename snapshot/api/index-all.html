@@ -296,7 +296,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/sender/HttpClientSender.Builder.html#DEFAULT_SERVER_URL">DEFAULT_SERVER_URL</a></span> - Static variable in class io.micronaut.tracing.brave.sender.<a href="io/micronaut/tracing/brave/sender/HttpClientSender.Builder.html" title="class in io.micronaut.tracing.brave.sender">HttpClientSender.Builder</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/DefaultOpenTelemetryFactory.html#defaultOpenTelemetry-io.micronaut.runtime.ApplicationConfiguration-java.util.Map-io.opentelemetry.sdk.trace.IdGenerator-io.opentelemetry.sdk.trace.SpanProcessor-">defaultOpenTelemetry(ApplicationConfiguration, Map&lt;String, String&gt;, IdGenerator, SpanProcessor)</a></span> - Method in class io.micronaut.tracing.opentelemetry.<a href="io/micronaut/tracing/opentelemetry/DefaultOpenTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry">DefaultOpenTelemetryFactory</a></dt>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/DefaultOpenTelemetryFactory.html#defaultOpenTelemetry-io.micronaut.runtime.ApplicationConfiguration-java.util.Map-io.opentelemetry.sdk.trace.IdGenerator-io.opentelemetry.sdk.trace.SpanProcessor-io.micronaut.tracing.opentelemetry.ResourceProvider-">defaultOpenTelemetry(ApplicationConfiguration, Map&lt;String, String&gt;, IdGenerator, SpanProcessor, ResourceProvider)</a></span> - Method in class io.micronaut.tracing.opentelemetry.<a href="io/micronaut/tracing/opentelemetry/DefaultOpenTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry">DefaultOpenTelemetryFactory</a></dt>
 <dd>
 <div class="block">The OpenTelemetry bean with default values.</div>
 </dd>
@@ -997,6 +997,12 @@
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html#resolveSpanName-io.micronaut.http.HttpRequest-">resolveSpanName(HttpRequest&lt;?&gt;)</a></span> - Method in class io.micronaut.tracing.instrument.http.<a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.instrument.http">AbstractOpenTracingFilter</a></dt>
 <dd>
 <div class="block">Resolve the span name to use for the request.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/ResourceProvider.html#resource--">resource()</a></span> - Method in interface io.micronaut.tracing.opentelemetry.<a href="io/micronaut/tracing/opentelemetry/ResourceProvider.html" title="interface in io.micronaut.tracing.opentelemetry">ResourceProvider</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/ResourceProvider.html" title="interface in io.micronaut.tracing.opentelemetry"><span class="typeNameLink">ResourceProvider</span></a> - Interface in <a href="io/micronaut/tracing/opentelemetry/package-summary.html">io.micronaut.tracing.opentelemetry</a></dt>
+<dd>
+<div class="block">API to provide a Resource to be attached to all Spans created by Tracers.</div>
 </dd>
 </dl>
 <a name="I:S">

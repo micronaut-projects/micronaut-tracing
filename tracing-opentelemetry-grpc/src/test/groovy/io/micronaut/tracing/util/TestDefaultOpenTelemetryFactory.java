@@ -18,7 +18,7 @@ package io.micronaut.tracing.util;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Replaces;
-import io.micronaut.tracing.DefaultOpenTelemetryFactory;
+import io.micronaut.tracing.opentelemetry.DefaultOpenTelemetryFactory;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing;
+package io.micronaut.tracing.opentelemetry;
 
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;

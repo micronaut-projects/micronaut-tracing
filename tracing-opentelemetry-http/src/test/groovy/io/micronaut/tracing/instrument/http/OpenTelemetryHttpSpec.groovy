@@ -54,10 +54,14 @@ class OpenTelemetryHttpSpec extends Specification {
     @AutoCleanup
     private EmbeddedServer embeddedServer
 
+    @AutoCleanup
+    private EmbeddedServer dummy = ApplicationContext.builder().start().getBean(EmbeddedServer).start()
+
     private InMemorySpanExporter exporter
 
     void setup() {
         context = ApplicationContext.builder(
+            'micronaut.http.services.correctspanname.url': "http://localhost:${dummy.port}",
             'otel.http.client.request-headers': [TRACING_ID],
             'otel.http.client.response-headers': [TRACING_ID],
             'otel.http.server.request-headers': [TRACING_ID],
@@ -204,6 +208,26 @@ class OpenTelemetryHttpSpec extends Specification {
             testExporter.finishedSpanItems.name.contains("WarehouseClient.order")
             testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("warehouse.order")) == "{testOrderKey=testOrderValue}")
             testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("upc")) == "10")
+            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("net.peer.name")) == "localhost")
+        }
+
+        cleanup:
+        testExporter.reset()
+    }
+
+    void 'client with tracing annotations that contains id inside annotation'() {
+        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
+        def warehouseClient = embeddedServer.applicationContext.getBean(WarehouseClientWithId)
+        def serverSpanCount = 1
+        def clientSpanCount = 1
+
+        expect:
+
+        warehouseClient.order(Collections.singletonMap("testOrderKey", "testOrderValue"))
+        conditions.eventually {
+            testExporter.finishedSpanItems.size() == serverSpanCount + clientSpanCount
+            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("warehouse.order")) == "{testOrderKey=testOrderValue}")
+            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("net.peer.name")) == "correctspanname")
         }
 
         cleanup:
@@ -396,6 +420,15 @@ class OpenTelemetryHttpSpec extends Specification {
         @Get("/count")
         @ContinueSpan
         int getItemCount(@QueryValue String store, @SpanTag @QueryValue int upc);
+
+        @Post("/order")
+        @NewSpan
+        void order(@SpanTag("warehouse.order") Map<String, ?> json);
+
+    }
+
+    @Client(id = "correctspanname")
+    static interface WarehouseClientWithId {
 
         @Post("/order")
         @NewSpan

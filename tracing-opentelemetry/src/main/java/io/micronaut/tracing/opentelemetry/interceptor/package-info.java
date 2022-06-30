@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Method Interceptors for {@link o.micronaut.tracing.annotation.NewSpan} and {@link o.micronaut.tracing.annotation.ContinueSpan} annotations.
+ * Method Interceptors for {@link io.micronaut.tracing.annotation.NewSpan} and {@link io.micronaut.tracing.annotation.ContinueSpan} annotations.
  *
  * @author Nemanja Mikic
  * @since 4.1.0

@@ -19,6 +19,7 @@ import io.micronaut.context.BeanProvider;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.BeanCreatedEvent;
 import io.micronaut.context.event.BeanCreatedEventListener;
+import io.micronaut.core.annotation.Internal;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.awssdk.v2_2.AwsSdkTelemetry;
 import jakarta.inject.Singleton;
@@ -33,6 +34,7 @@ import software.amazon.awssdk.core.client.builder.SdkClientBuilder;
  * @author Sergio del Amo
  * @since 4.2.0
  */
+@Internal
 @Requires(classes = AwsSdkTelemetry.class)
 @Requires(classes = SdkClientBuilder.class)
 @Singleton

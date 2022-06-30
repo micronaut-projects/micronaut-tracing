@@ -1,0 +1,10 @@
+Include the following dependency to instrument the https://aws-otel.github.io/docs/getting-started/java-sdk/trace-manual-instr#instrumenting-the-aws-sdk[AWS SDK]:
+
+dependency:opentelemetry-aws-sdk-2.2[groupId=io.opentelemetry.instrumentation,scope=compile]
+
+Additionally, include https://micronaut-projects.github.io/micronaut-aws/latest/guide/#sdkv2[Micronaut AWS SDK v2] dependency:
+
+dependency:micronaut-aws-sdk-v2[groupId=io.micronaut.aws,scope=compile]
+
+`micronaut-aws-sdk-v2` dependency creates a bean of type `SdkClientBuilder`. To instrument the AWS SDK, Micronaut OpenTelemetry registers a tracing interceptor
+via a bean creation listener for the bean of type `SdkClientBuilder`.

@@ -10,6 +10,7 @@ opentelemetry:
   propagators: OpenTelemetry Propagators
   idgenerator: ID Generator
   http: HTTP Server and Client
-  awsSdkInstrumentation: AWS SDK Instrumentation
   grpc: gRPC Server and Client
+  awsSdkInstrumentation: AWS SDK Instrumentation
+  awsResourceDetectors: AWS Resource Detectors  
 repository: Repository

@@ -16,7 +16,6 @@
 package io.micronaut.tracing.opentelemetry;
 
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.MapFormat;
@@ -59,7 +58,6 @@ public class DefaultOpenTelemetryFactory {
      * @return the OpenTelemetry bean with default values
      */
     @Singleton
-    @Primary
     protected OpenTelemetry defaultOpenTelemetry(ApplicationConfiguration applicationConfiguration,
                                                  @Property(name = "otel") @MapFormat(transformation = FLAT) Map<String, String> otelConfig,
                                                  @Nullable IdGenerator idGenerator,

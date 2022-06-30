@@ -207,14 +207,13 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>defaultOpenTelemetry</h4>
 <pre>@Singleton
- @Primary
 protected&nbsp;io.opentelemetry.api.OpenTelemetry&nbsp;defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration&nbsp;applicationConfiguration,
-                                                                                       @Property(name="otel") @MapFormat(transformation=FLAT)
-                                                                                       java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;otelConfig,
-                                                                                       @Nullable
-                                                                                       io.opentelemetry.sdk.trace.IdGenerator&nbsp;idGenerator,
-                                                                                       @Nullable
-                                                                                       io.opentelemetry.sdk.trace.SpanProcessor&nbsp;spanProcessor)</pre>
+                                                                             @Property(name="otel") @MapFormat(transformation=FLAT)
+                                                                             java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;otelConfig,
+                                                                             @Nullable
+                                                                             io.opentelemetry.sdk.trace.IdGenerator&nbsp;idGenerator,
+                                                                             @Nullable
+                                                                             io.opentelemetry.sdk.trace.SpanProcessor&nbsp;spanProcessor)</pre>
 <div class="block">The OpenTelemetry bean with default values.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>

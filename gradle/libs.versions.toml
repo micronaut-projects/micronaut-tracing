@@ -16,8 +16,6 @@ managed-protobuf = '0.8.18'
 managed-zipkin-reporter = '2.16.3'
 managed-opentelemetry-contrib-aws-xray = '1.15.0'
 managed-opentelemetry-gcp-trace = '0.22.0-alpha'
-managed-aws-java-sdk-v2 = '2.17.196'
-
 
 [libraries]
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
@@ -52,11 +50,12 @@ opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemet
 
 awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
 
+micronaut-aws-bom = { module = 'io.micronaut.aws:micronaut-aws-bom' }
+
 # BOMs
 boms-opentelemetry = { module = 'io.opentelemetry:opentelemetry-bom', version.ref = 'managed-opentelemetry' }
 boms-opentelemetry-alpha = { module = 'io.opentelemetry:opentelemetry-bom-alpha', version.ref = 'managed-opentelemetry-alpha' }
 boms-opentelemetry-instrumentation-alpha = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha', version.ref = 'managed-opentelemetry-instrumentation-alpha' }
-boms-aws-java-sdk-v2 = { module = 'software.amazon.awssdk:bom', version.ref = 'managed-aws-java-sdk-v2' }
 
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }

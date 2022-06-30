@@ -56,6 +56,7 @@ public class DefaultOpenTelemetryFactory {
      * @param otelConfig the configuration values for the opentelemetry autoconfigure
      * @param idGenerator the {@link IdGenerator}
      * @param spanProcessor the {@link SpanProcessor}
+     * @param resourceProvider Resource Provider
      * @return the OpenTelemetry bean with default values
      */
     @Singleton
@@ -63,7 +64,8 @@ public class DefaultOpenTelemetryFactory {
     protected OpenTelemetry defaultOpenTelemetry(ApplicationConfiguration applicationConfiguration,
                                                  @Property(name = "otel") @MapFormat(transformation = FLAT) Map<String, String> otelConfig,
                                                  @Nullable IdGenerator idGenerator,
-                                                 @Nullable SpanProcessor spanProcessor) {
+                                                 @Nullable SpanProcessor spanProcessor,
+                                                 @Nullable ResourceProvider resourceProvider) {
 
         Map<String, String> otel = otelConfig.entrySet().stream().collect(Collectors.toMap(
                 e -> "otel." + e.getKey(),
@@ -86,6 +88,9 @@ public class DefaultOpenTelemetryFactory {
             }
             if (spanProcessor != null) {
                 tracerProviderBuilder.addSpanProcessor(spanProcessor);
+            }
+            if (resourceProvider != null) {
+                tracerProviderBuilder.setResource(resourceProvider.resource());
             }
             return tracerProviderBuilder;
             }

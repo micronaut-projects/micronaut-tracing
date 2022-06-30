@@ -22,6 +22,8 @@ dependencies {
 
     testAnnotationProcessor projects.tracingOpentelemetryAnnotation
 
+    testImplementation(libs.opentelemetry.sdk.extension.aws)
+
     testImplementation mn.reactor
     testImplementation mn.micronaut.reactor.http.client
 

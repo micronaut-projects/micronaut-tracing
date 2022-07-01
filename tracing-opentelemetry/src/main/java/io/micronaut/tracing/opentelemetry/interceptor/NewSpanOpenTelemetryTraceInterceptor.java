@@ -43,7 +43,7 @@ import java.util.concurrent.CompletionStage;
  * using the Open Telemetry API.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 @Singleton
 @Requires(beans = Tracer.class)

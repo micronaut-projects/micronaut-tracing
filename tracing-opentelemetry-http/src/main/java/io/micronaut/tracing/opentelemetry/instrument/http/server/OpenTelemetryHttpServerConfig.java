@@ -26,7 +26,7 @@ import java.util.List;
  * Stores http Open Telemetry Http server configuration.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 @ConfigurationProperties(value = OpenTelemetryHttpServerConfig.PREFIX)
 public class OpenTelemetryHttpServerConfig {

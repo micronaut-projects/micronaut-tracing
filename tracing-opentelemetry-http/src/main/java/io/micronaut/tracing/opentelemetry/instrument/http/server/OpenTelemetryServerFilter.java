@@ -39,7 +39,7 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTele
  * An HTTP server instrumentation filter that uses Open Telemetry.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 @Filter(SERVER_PATH)
 @Requires(beans = Tracer.class)

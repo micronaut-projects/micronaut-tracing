@@ -17,6 +17,6 @@
  * Method Interceptors for {@link io.micronaut.tracing.annotation.NewSpan} and {@link io.micronaut.tracing.annotation.ContinueSpan} annotations.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 package io.micronaut.tracing.opentelemetry.interceptor;

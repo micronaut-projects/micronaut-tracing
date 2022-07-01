@@ -31,7 +31,7 @@ import jakarta.inject.Named;
  * using the Open Telemetry API.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 public abstract class AbstractOpenTelemetryTraceInterceptor implements MethodInterceptor<Object, Object> {
 

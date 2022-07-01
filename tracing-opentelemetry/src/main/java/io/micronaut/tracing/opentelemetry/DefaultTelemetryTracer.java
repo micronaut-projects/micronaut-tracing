@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
  * Creates a default NoopTracer if no other tracer is present.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 @Factory
 public class DefaultTelemetryTracer {

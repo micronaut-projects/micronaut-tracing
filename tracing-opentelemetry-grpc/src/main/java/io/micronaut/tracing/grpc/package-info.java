@@ -17,8 +17,8 @@
  * HTTP Tracing.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
- */
+ * @since 4.2.0
+*/
 @Requires(classes = {OpenTelemetry.class, GrpcTelemetry.class})
 @Requires(beans = OpenTelemetry.class)
 package io.micronaut.tracing.grpc;

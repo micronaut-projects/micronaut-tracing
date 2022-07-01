@@ -44,13 +44,8 @@ final class MicronautHttpNetClientAttributesGetter
     @Override
     public String peerName(MutableHttpRequest<Object> request,
                            @Nullable HttpResponse<Object> response) {
-
-        String serviceId = request.getAttribute(SERVICE_ID).orElse("/").toString();
-        if (!serviceId.contains("/")) {
-            return serviceId;
-        }
-
-        return getAddress(request).getHostString();
+        return request.getAttribute(SERVICE_ID, String.class)
+            .orElseGet(() -> getAddress(request).getHostString());
     }
 
     @Override

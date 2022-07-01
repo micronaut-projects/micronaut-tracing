@@ -23,7 +23,7 @@ import io.opentelemetry.context.Context;
  *
  * @param <T> The publisher's type
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 public interface OpenTelemetryObserver<T> {
 

@@ -28,7 +28,7 @@ import java.util.List;
  * Adds {@link SpanTag} to {@link SpanAttribute}.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 public class SpanAttributeAnnotationMapper implements TypedAnnotationMapper<SpanAttribute> {
 

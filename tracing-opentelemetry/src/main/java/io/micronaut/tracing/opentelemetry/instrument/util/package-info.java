@@ -17,6 +17,6 @@
  * Utility classes for OpenTelemetry Instrumentation.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 package io.micronaut.tracing.opentelemetry.instrument.util;

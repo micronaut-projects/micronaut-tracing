@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 /**
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 @ConfigurationProperties(OpenTelemetryExclusionsConfiguration.PREFIX)
 public class OpenTelemetryExclusionsConfiguration {

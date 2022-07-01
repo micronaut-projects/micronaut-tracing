@@ -29,7 +29,7 @@ import reactor.util.context.Context;
  * @param <T> the type of element signaled
  * @param <R> the type of request element
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 public class OpenTelemetryCorePublisher<T, R> extends OpenTelemetryPublisher<T, R> implements CorePublisher<T> {
 

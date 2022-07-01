@@ -25,7 +25,7 @@ import java.util.function.Predicate;
  * Abstract filter used for OpenTelemetry based HTTP tracing.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 public abstract class AbstractOpenTelemetryFilter implements HttpFilter {
 

@@ -30,7 +30,7 @@ import jakarta.inject.Singleton;
  * Tracing invocation instrumenter for OpenTelemetry.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 @Singleton
 @Requires(beans = Tracer.class)

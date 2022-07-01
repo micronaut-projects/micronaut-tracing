@@ -32,7 +32,7 @@ import org.reactivestreams.Subscription;
  * @param <T> the type of element signaled
  * @param <R> the type of request element
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 @SuppressWarnings("PublisherImplementation")
 public class OpenTelemetryPublisher<T, R> implements Publishers.MicronautPublisher<T> {

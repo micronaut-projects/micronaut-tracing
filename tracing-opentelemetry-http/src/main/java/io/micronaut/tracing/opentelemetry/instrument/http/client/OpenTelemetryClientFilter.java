@@ -40,7 +40,7 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTele
  * An HTTP client instrumentation filter that uses Open Telemetry.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 @Filter(CLIENT_PATH)
 public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter implements HttpClientFilter {

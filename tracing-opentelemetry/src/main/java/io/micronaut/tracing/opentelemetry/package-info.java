@@ -17,7 +17,7 @@
  * Classes related with OpenTelemetry integration.
  * @see <a href="https://opentelemetry.io">OpenTelemetry</a>
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 @Requires(property = OpenTelemetryConfigurationProperties.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @Configuration

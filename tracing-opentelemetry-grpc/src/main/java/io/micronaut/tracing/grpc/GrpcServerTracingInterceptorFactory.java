@@ -27,7 +27,7 @@ import jakarta.inject.Singleton;
  * Builds the server Tracing interceptors.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 @Factory
 public class GrpcServerTracingInterceptorFactory {

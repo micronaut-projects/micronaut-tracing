@@ -29,7 +29,7 @@ import java.util.List;
  * Adds interceptor binding to {@link WithSpan} and adds {@link NewSpan} to it.
  *
  * @author Nemanja Mikic
- * @since 4.1.0
+ * @since 4.2.0
  */
 public class WithSpanAnnotationTransformer implements TypedAnnotationTransformer<WithSpan> {
 

@@ -2,7 +2,7 @@
 brave-instrumentation = '5.13.10'
 brave-opentracing = '1.0.0'
 jaeger = '1.8.1'
-kotlin = '1.7.0'
+kotlin = '1.7.10'
 kotlin-coroutines = '1.6.3'
 opentracing = '0.33.0'
 zipkin-reporter = '2.16.3'

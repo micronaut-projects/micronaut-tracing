@@ -14,7 +14,7 @@ managed-opentracing = '0.33.0'
 managed-opentracing-grpc = '0.2.3'
 managed-protobuf = '0.8.19'
 managed-zipkin-reporter = '2.16.3'
-managed-opentelemetry-contrib-aws-xray = '1.15.0'
+managed-opentelemetry-contrib-aws-xray = '1.16.0'
 managed-opentelemetry-gcp-trace = '0.22.0-alpha'
 
 [libraries]

@@ -20,6 +20,9 @@ import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.uri.UriMatchTemplate;
+import io.micronaut.web.router.UriRoute;
+import io.micronaut.web.router.UriRouteMatch;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerAttributesGetter;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 
@@ -104,7 +107,13 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     @Nullable
     public String route(HttpRequest<Object> request) {
         Optional<Object> routeInfo = request.getAttribute(HttpAttributes.ROUTE_INFO);
-        return routeInfo.map(Object::toString).orElse(null);
+        return routeInfo
+            .filter(ri -> ri instanceof UriRouteMatch)
+            .map(ri -> (UriRouteMatch) ri)
+            .map(UriRouteMatch::getRoute)
+            .map(UriRoute::getUriMatchTemplate)
+            .map(UriMatchTemplate::toPathString)
+            .orElse(null);
     }
 
     @Override

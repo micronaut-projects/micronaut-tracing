@@ -33,13 +33,8 @@ class HttpClientResetForTestSpec extends Specification {
     @AutoCleanup
     ReactorHttpClient reactorHttpClient = ReactorHttpClient.create(embeddedServer.URL)
 
-    private PollingConditions conditions = new PollingConditions()
 
-    void 'test map WithSpan annotation'() {
-        int count = 1
-        // 2x Method call 1x NewSpan, 1x WithSpan  = 2
-        int spanNumbers = 2
-        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
+    void 'test pre destroy resetForTest'() {
         String tracingId = UUID.randomUUID()
 
         expect:
@@ -48,9 +43,6 @@ class HttpClientResetForTestSpec extends Specification {
                 .header("X-TrackingId", tracingId)
         def resp = reactorHttpClient.toBlocking().retrieve(request)
         resp == tracingId
-
-        cleanup:
-        testExporter.reset()
     }
 
     @Controller("/test")

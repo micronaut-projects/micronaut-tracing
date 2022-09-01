@@ -2,9 +2,3 @@ plugins {
     id 'io.micronaut.build.internal.tracing-base'
 }
 
-tasks.withType(Test) {
-    testLogging {
-        showStandardStreams = true
-        exceptionFormat = 'full'
-    }
-}

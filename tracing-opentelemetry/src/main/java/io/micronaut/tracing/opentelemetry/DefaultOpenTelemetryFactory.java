@@ -17,15 +17,18 @@ package io.micronaut.tracing.opentelemetry;
 
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.context.env.Environment;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.MapFormat;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.runtime.ApplicationConfiguration;
+import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
 import io.opentelemetry.sdk.trace.IdGenerator;
 import io.opentelemetry.sdk.trace.SpanProcessor;
+import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
 import java.util.Map;
@@ -96,6 +99,13 @@ public class DefaultOpenTelemetryFactory {
 
         return sdk.build().getOpenTelemetrySdk();
 
+    }
+
+    @PreDestroy
+    void resetForTest(Environment environment) {
+        if (environment.getActiveNames().contains(Environment.TEST)) {
+            GlobalOpenTelemetry.resetForTest();
+        }
     }
 
 }

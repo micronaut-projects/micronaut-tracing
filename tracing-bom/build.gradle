@@ -9,7 +9,7 @@ micronautBom {
                 "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha",
                 ["io.opentelemetry.javaagent", "io.opentelemetry", "io.opentelemetry.instrumentation", "io.opentelemetry.javaagent.instrumentation"] as Set
             )
-            dependencies.add("io.opentelemetry:opentelemetry-bom:1.15.0")
+            dependencies.add("io.opentelemetry:opentelemetry-bom:1.18.0")
             dependencies.add("io.opentelemetry:opentelemetry-bom-alpha:1.15.0-alpha")
      }
 }

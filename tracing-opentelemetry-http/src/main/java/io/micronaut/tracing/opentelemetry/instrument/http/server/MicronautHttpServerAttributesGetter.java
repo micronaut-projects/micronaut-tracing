@@ -108,7 +108,7 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     public String route(HttpRequest<Object> request) {
         Optional<Object> routeInfo = request.getAttribute(HttpAttributes.ROUTE_INFO);
         return routeInfo
-            .filter(ri -> ri instanceof UriRouteMatch)
+            .filter(UriRouteMatch.class::isInstance)
             .map(ri -> (UriRouteMatch) ri)
             .map(UriRouteMatch::getRoute)
             .map(UriRoute::getUriMatchTemplate)

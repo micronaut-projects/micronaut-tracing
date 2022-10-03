@@ -25,7 +25,6 @@ import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 
 @Internal
 enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<HttpRequest<Object>, HttpResponse<Object>> {

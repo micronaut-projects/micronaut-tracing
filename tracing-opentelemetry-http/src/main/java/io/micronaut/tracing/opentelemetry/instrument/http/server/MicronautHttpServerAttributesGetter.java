@@ -20,6 +20,8 @@ import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerAttributesGetter;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 
@@ -54,6 +56,9 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
 
     @Override
     public Integer statusCode(HttpRequest<Object> request, HttpResponse<Object> response) {
+        if (response.code() >= 400) {
+            Span.current().setStatus(StatusCode.ERROR);
+        }
         return response.code();
     }
 

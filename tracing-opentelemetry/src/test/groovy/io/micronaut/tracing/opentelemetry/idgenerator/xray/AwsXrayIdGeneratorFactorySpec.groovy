@@ -11,7 +11,7 @@ import io.opentelemetry.contrib.awsxray.AwsXrayIdGenerator
 class AwsXrayIdGeneratorFactorySpec  extends Specification {
 
     @Inject
-    BeanContext beanContext;
+    BeanContext beanContext
 
     void "if you have the class AwsXrayIdGenerator a custom IdGenerator is registered"() {
         expect:

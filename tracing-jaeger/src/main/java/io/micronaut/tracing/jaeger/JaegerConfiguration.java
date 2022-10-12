@@ -119,7 +119,7 @@ public class JaegerConfiguration implements Toggleable {
     }
 
     /**
-     * @return the Jaeger <code>Configuration</code>
+     * @return the Jaeger {@code Configuration}
      */
     public Configuration getConfiguration() {
         return configuration;
@@ -218,7 +218,7 @@ public class JaegerConfiguration implements Toggleable {
         protected SamplerConfiguration configuration = SamplerConfiguration.fromEnv();
 
         /**
-         * @return the <code>SamplerConfiguration</code>
+         * @return the {@code SamplerConfiguration}
          */
         public SamplerConfiguration getSamplerConfiguration() {
             return configuration;

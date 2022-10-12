@@ -10,7 +10,7 @@ dependencies {
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
     api mn.micronaut.runtime
     api projects.tracingAnnotation
-    api libs.opentelemetry.extension.annotations
+    api libs.opentelemetry.instrumentation.annotations
 
     testImplementation mn.micronaut.inject.java.test
     testImplementation mn.micronaut.inject.groovy.test

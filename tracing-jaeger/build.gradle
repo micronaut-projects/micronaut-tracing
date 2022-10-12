@@ -4,6 +4,8 @@ plugins {
 
 dependencies {
     api projects.tracingCore
-    api libs.jaeger
+    api(libs.jaeger) {
+        exclude group: "org.jetbrains", module: "annotations"
+    }
     testImplementation mn.reactor
 }

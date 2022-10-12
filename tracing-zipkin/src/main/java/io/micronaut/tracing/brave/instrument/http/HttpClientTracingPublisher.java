@@ -54,8 +54,8 @@ class HttpClientTracingPublisher implements Publishers.MicronautPublisher<HttpRe
     /**
      * @param publisher     the response publisher
      * @param request       an extended version of request that allows mutating
-     * @param clientHandler the standardize way to instrument client
-     * @param httpTracing   <code>HttpTracing</code>
+     * @param clientHandler the standardized way to instrument client
+     * @param httpTracing   {@code HttpTracing}
      */
     HttpClientTracingPublisher(Publisher<? extends HttpResponse<?>> publisher,
                                MutableHttpRequest<?> request,

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A <code>ServiceInstanceList</code> for Zipkin.
+ * A {@code ServiceInstanceList} for Zipkin.
  *
  * @author graemerocher
  * @since 1.0
@@ -40,7 +40,7 @@ public class ZipkinServiceInstanceList implements ServiceInstanceList {
     private final HttpClientSenderConfiguration configuration;
 
     /**
-     * Create a <code>ServiceInstanceList</code> for Zipkin with existing configuration.
+     * Create a {@code ServiceInstanceList} for Zipkin with existing configuration.
      *
      * @param configuration used to configure HTTP trace sending under the {@code tracing.zipkin.http} namespace.
      */

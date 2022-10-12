@@ -16,12 +16,12 @@
 package io.micronaut.tracing.opentelemetry.instrument.util;
 
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.async.publisher.Publishers;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
-import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -96,7 +96,7 @@ public class OpenTelemetryPublisher<T, R> implements Publishers.MicronautPublish
         }
 
         @Override
-        public void onSubscribe(@NotNull Subscription s) {
+        public void onSubscribe(@NonNull Subscription s) {
             try (Scope ignored = context.makeCurrent()) {
                 observer.doOnSubscribe(context);
                 actual.onSubscribe(s);

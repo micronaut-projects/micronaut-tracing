@@ -16,12 +16,12 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientAttributesGetter;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 @Internal
@@ -35,28 +35,26 @@ enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<M
     }
 
     @Override
-    public String url(MutableHttpRequest<Object> request) {
-        return request.getUri().toString();
-    }
-
-    @Override
     public List<String> requestHeader(MutableHttpRequest<Object> request, String name) {
         return request.getHeaders().getAll(name);
     }
 
     @Override
-    public Long requestContentLength(MutableHttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
-        return request.getContentLength();
+    public Integer statusCode(MutableHttpRequest<Object> request, HttpResponse<Object> response, @Nullable Throwable error) {
+        return response.code();
     }
 
     @Override
-    @Nullable
-    public Long requestContentLengthUncompressed(MutableHttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
-        return null;
+    public List<String> responseHeader(MutableHttpRequest<Object> request, HttpResponse<Object> response, String name) {
+        return response.getHeaders().getAll(name);
     }
 
     @Override
-    @SuppressWarnings("UnnecessaryDefaultInEnumSwitch")
+    public String url(MutableHttpRequest<Object> request) {
+        return request.getUri().toString();
+    }
+
+    @Override
     @Nullable
     public String flavor(MutableHttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
         switch (request.getHttpVersion()) {
@@ -70,26 +68,4 @@ enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<M
                 return null;
         }
     }
-
-    @Override
-    public Integer statusCode(MutableHttpRequest<Object> request, HttpResponse<Object> response) {
-        return response.code();
-    }
-
-    @Override
-    public Long responseContentLength(MutableHttpRequest<Object> request, HttpResponse<Object> response) {
-        return response.getContentLength();
-    }
-
-    @Override
-    @Nullable
-    public Long responseContentLengthUncompressed(MutableHttpRequest<Object> request, HttpResponse<Object> response) {
-        return null;
-    }
-
-    @Override
-    public List<String> responseHeader(MutableHttpRequest<Object> request, HttpResponse<Object> response, String name) {
-        return response.getHeaders().getAll(name);
-    }
-
 }

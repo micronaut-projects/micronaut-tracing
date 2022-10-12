@@ -39,10 +39,10 @@ import jakarta.inject.Singleton;
 public class HttpTracingFactory {
 
     /**
-     * The <code>HttpTracing</code> bean.
+     * The {@code HttpTracing} bean.
      *
-     * @param tracing the <code>Tracing</code> bean
-     * @return the <code>HttpTracing</code> bean
+     * @param tracing the {@code Tracing} bean
+     * @return the {@code HttpTracing} bean
      */
     @Singleton
     @Requires(missingBeans = HttpTracing.class)
@@ -51,10 +51,10 @@ public class HttpTracingFactory {
     }
 
     /**
-     * The <code>HttpClientHandler</code> bean.
+     * The {@code HttpClientHandler} bean.
      *
-     * @param httpTracing the <code>HttpTracing</code> bean
-     * @return the <code>HttpClientHandler</code> bean
+     * @param httpTracing the {@code HttpTracing} bean
+     * @return the {@code HttpClientHandler} bean
      */
     @Singleton
     HttpClientHandler<HttpClientRequest, HttpClientResponse> httpClientHandler(HttpTracing httpTracing) {
@@ -62,10 +62,10 @@ public class HttpTracingFactory {
     }
 
     /**
-     * The <code>HttpServerHandler</code> bean.
+     * The {@code HttpServerHandler} bean.
      *
-     * @param httpTracing the <code>HttpTracing</code> bean
-     * @return the <code>HttpServerHandler</code> bean
+     * @param httpTracing the {@code HttpTracing} bean
+     * @return the {@code HttpServerHandler} bean
      */
     @Singleton
     HttpServerHandler<HttpServerRequest, HttpServerResponse> httpServerHandler(HttpTracing httpTracing) {

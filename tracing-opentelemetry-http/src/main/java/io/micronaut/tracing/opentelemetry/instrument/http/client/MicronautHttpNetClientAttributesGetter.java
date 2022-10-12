@@ -15,21 +15,19 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
+import java.net.InetSocketAddress;
+
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.instrumentation.api.instrumenter.net.NetClientAttributesGetter;
-
-import javax.annotation.Nullable;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 
 import static io.micronaut.http.HttpAttributes.SERVICE_ID;
 import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.NetTransportValues.IP_TCP;
 
 @Internal
-final class MicronautHttpNetClientAttributesGetter
-    implements NetClientAttributesGetter<MutableHttpRequest<Object>, HttpResponse<Object>> {
+final class MicronautHttpNetClientAttributesGetter implements NetClientAttributesGetter<MutableHttpRequest<Object>, HttpResponse<Object>> {
 
     public InetSocketAddress getAddress(MutableHttpRequest<Object> request) {
         return request.getRemoteAddress();
@@ -53,16 +51,5 @@ final class MicronautHttpNetClientAttributesGetter
     public Integer peerPort(MutableHttpRequest<Object> request,
                             @Nullable HttpResponse<Object> response) {
         return getAddress(request).getPort();
-    }
-
-    @Override
-    public String peerIp(MutableHttpRequest<Object> request,
-                         @Nullable HttpResponse<Object> response) {
-        InetSocketAddress address = getAddress(request);
-        InetAddress remoteAddress = address.getAddress();
-        if (remoteAddress != null) {
-            return remoteAddress.getHostAddress();
-        }
-        return null;
     }
 }

@@ -43,7 +43,7 @@ public class HttpServerTracingCorePublisher extends HttpServerTracingPublisher i
      * @param publisher     the response publisher
      * @param request       an extended version of request that allows mutating
      * @param serverHandler the standard way to instrument client
-     * @param httpTracing   <code>HttpTracing</code>
+     * @param httpTracing   {@code HttpTracing}
      * @param openTracer    the Open Tracing instance
      * @param initialSpan   the initial span
      */
@@ -66,9 +66,9 @@ public class HttpServerTracingCorePublisher extends HttpServerTracingPublisher i
 
         private final Context context;
 
-        public TracingCoreSubscriber(Subscriber<? super MutableHttpResponse<?>> actual,
-                                     Span span,
-                                     Context context) {
+        private TracingCoreSubscriber(Subscriber<? super MutableHttpResponse<?>> actual,
+                                      Span span,
+                                      Context context) {
             super(span, actual);
             this.context = context;
         }

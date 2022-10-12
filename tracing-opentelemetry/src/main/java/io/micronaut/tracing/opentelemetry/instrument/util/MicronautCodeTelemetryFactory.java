@@ -24,7 +24,7 @@ import io.opentelemetry.instrumentation.api.instrumenter.InstrumenterBuilder;
 import io.opentelemetry.instrumentation.api.instrumenter.code.CodeAttributesGetter;
 import io.opentelemetry.instrumentation.api.instrumenter.code.CodeSpanNameExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientMetrics;
-import io.opentelemetry.instrumentation.api.util.ClassAndMethod;
+import io.opentelemetry.instrumentation.api.instrumenter.util.ClassAndMethod;
 import jakarta.inject.Named;
 
 /**
@@ -52,6 +52,6 @@ public final class MicronautCodeTelemetryFactory {
             openTelemetry, INSTRUMENTATION_NAME, CodeSpanNameExtractor.create(classAndMethodAttributesGetter));
 
         return builder.addOperationMetrics(HttpClientMetrics.get())
-            .newInstrumenter();
+            .buildInstrumenter();
     }
 }

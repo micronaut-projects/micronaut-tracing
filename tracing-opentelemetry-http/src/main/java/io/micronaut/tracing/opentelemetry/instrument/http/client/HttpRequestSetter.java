@@ -24,7 +24,9 @@ enum HttpRequestSetter implements TextMapSetter<MutableHttpRequest<Object>> {
     INSTANCE;
 
     @Override
-    public void set(MutableHttpRequest<Object> httpRequest, String key, String value) {
-        httpRequest.header(key, value);
+    public void set(MutableHttpRequest<Object> request, String key, String value) {
+        if (request != null) {
+            request.header(key, value);
+        }
     }
 }

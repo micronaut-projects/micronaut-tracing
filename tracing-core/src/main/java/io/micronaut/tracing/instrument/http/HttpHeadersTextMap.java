@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A <code>TextMap</code> implementations for the headers.
+ * A {@code TextMap} implementations for the headers.
  *
  * @author graemerocher
  * @since 1.0

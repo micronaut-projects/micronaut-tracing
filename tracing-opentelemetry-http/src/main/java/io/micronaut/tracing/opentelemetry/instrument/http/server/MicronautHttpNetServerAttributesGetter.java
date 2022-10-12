@@ -16,6 +16,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.opentelemetry.instrumentation.api.instrumenter.net.InetSocketAddressNetServerAttributesGetter;
 
@@ -28,12 +29,29 @@ import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.NetTr
 final class MicronautHttpNetServerAttributesGetter extends InetSocketAddressNetServerAttributesGetter<HttpRequest<Object>> {
 
     @Override
-    public InetSocketAddress getAddress(HttpRequest<Object> request) {
-        return request.getRemoteAddress();
+    public String transport(HttpRequest<Object> request) {
+        return IP_TCP;
+    }
+
+    @Nullable
+    @Override
+    public String hostName(HttpRequest<Object> request) {
+        return request.getServerAddress().getHostName();
     }
 
     @Override
-    public String transport(HttpRequest<Object> request) {
-        return IP_TCP;
+    public Integer hostPort(HttpRequest<Object> request) {
+        return request.getServerAddress().getPort();
+    }
+
+    @Nullable
+    @Override
+    protected InetSocketAddress getPeerSocketAddress(HttpRequest<Object> request) {
+        return null;
+    }
+
+    @Override
+    protected InetSocketAddress getHostSocketAddress(HttpRequest<Object> request) {
+        return request.getRemoteAddress();
     }
 }

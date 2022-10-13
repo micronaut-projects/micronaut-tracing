@@ -18,12 +18,11 @@ package io.micronaut.tracing.opentelemetry;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Tracer;
 import jakarta.inject.Singleton;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Creates a default NoopTracer if no other tracer is present.
@@ -41,14 +40,14 @@ public class DefaultTelemetryTracer {
     }
 
     /**
-     * Creates a default {@link Tracer} if no other <code>Tracer</code> is present.
+     * Creates a default {@link Tracer} if no other {@code Tracer} is present.
      * @param openTelemetry the openTelemetry
-     * @return no-op <code>Tracer</code>
+     * @return no-op {@code Tracer}
      */
     @Singleton
     @Primary
     @Requires(missingBeans = Tracer.class)
-    Tracer defaultTracer(@NotNull OpenTelemetry openTelemetry) {
+    Tracer defaultTracer(@NonNull OpenTelemetry openTelemetry) {
         return openTelemetry.getTracer(applicationName);
     }
 

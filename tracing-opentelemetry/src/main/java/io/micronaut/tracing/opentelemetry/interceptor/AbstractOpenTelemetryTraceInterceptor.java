@@ -23,11 +23,11 @@ import io.micronaut.core.type.Argument;
 import io.micronaut.tracing.annotation.SpanTag;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
-import io.opentelemetry.instrumentation.api.util.ClassAndMethod;
+import io.opentelemetry.instrumentation.api.instrumenter.util.ClassAndMethod;
 import jakarta.inject.Named;
 
 /**
- * Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
+ * Implements tracing logic for {@code ContinueSpan} and {@code NewSpan}
  * using the Open Telemetry API.
  *
  * @author Nemanja Mikic

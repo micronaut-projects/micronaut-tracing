@@ -10,15 +10,19 @@ class WithSpanAnnotationTransformerSpec extends AbstractTypeElementSpec {
         def context = buildContext('test.Test', '''
 package test;
 
-@jakarta.inject.Singleton
+import io.opentelemetry.instrumentation.annotations.WithSpan;
+
+import jakarta.inject.Singleton;
+
+@Singleton
 class Test {
 
-    @io.opentelemetry.extension.annotations.WithSpan("foo")
+    @WithSpan("foo")
     public void test() {
     }
 }
 ''')
-        def bean = context.getBean(context.classLoader.loadClass( "test.Test"))
+        def bean = context.getBean(context.classLoader.loadClass("test.Test"))
 
         expect:
         bean instanceof Intercepted

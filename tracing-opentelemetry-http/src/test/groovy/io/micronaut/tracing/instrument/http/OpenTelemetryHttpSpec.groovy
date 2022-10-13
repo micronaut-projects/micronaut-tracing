@@ -19,8 +19,8 @@ import io.micronaut.tracing.annotation.SpanTag
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
-import io.opentelemetry.extension.annotations.SpanAttribute
-import io.opentelemetry.extension.annotations.WithSpan
+import io.opentelemetry.instrumentation.annotations.SpanAttribute
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import io.reactivex.Single
 import jakarta.inject.Inject
@@ -304,7 +304,7 @@ class OpenTelemetryHttpSpec extends Specification {
 
         @WithSpan("test-withspan-mapping")
         CompletionStage<Void> methodWithSpan(@SpanTag("tracing-annotation-span-tag-with-withspan") String tracingId) {
-            return CompletableFuture.runAsync(() -> {return normalFunctionWithNewSpan(tracingId)});
+            return CompletableFuture.runAsync(() -> {return normalFunctionWithNewSpan(tracingId)})
         }
 
         @NewSpan

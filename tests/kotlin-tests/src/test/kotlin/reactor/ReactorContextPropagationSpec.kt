@@ -30,7 +30,6 @@ import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.context.Context
-import reactor.util.function.Tuple2
 import reactor.util.function.Tuples
 import java.util.UUID
 
@@ -44,10 +43,10 @@ class ReactorContextPropagationSpec {
         )
         val client = embeddedServer.applicationContext.getBean(HttpClient::class.java)
 
-        val result: MutableList<Tuple2<String, String>> = Flux.range(1, 100)
+        val result = Flux.range(1, 100)
                 .flatMap {
                     val tracingId = UUID.randomUUID().toString()
-                    val get = HttpRequest.POST<Any>("http://localhost:${embeddedServer.port}/trigger", NameRequestBody("sss-" + tracingId))
+                    val get = HttpRequest.POST<Any>("http://localhost:${embeddedServer.port}/trigger", NameRequestBody("sss-$tracingId"))
                             .header("X-TrackingId", tracingId)
                     Mono.from(client.retrieve(get, String::class.java))
                             .map { Tuples.of(it as String, tracingId) }
@@ -55,7 +54,7 @@ class ReactorContextPropagationSpec {
                 .collectList()
                 .block()
 
-        for (t in result) {
+        for (t in result!!) {
             assert(t.t1 == t.t2)
         }
 

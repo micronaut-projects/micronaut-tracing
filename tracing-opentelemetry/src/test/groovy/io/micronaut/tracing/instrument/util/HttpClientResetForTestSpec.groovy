@@ -10,17 +10,15 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Header
 import io.micronaut.http.annotation.Produces
 import io.micronaut.http.client.HttpClient
-import io.micronaut.reactor.http.client.ReactorHttpClient
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
-import io.opentelemetry.extension.annotations.SpanAttribute
-import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
+import io.opentelemetry.api.logs.GlobalLoggerProvider
+import io.opentelemetry.instrumentation.annotations.SpanAttribute
 import reactor.core.publisher.Mono
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.util.concurrent.PollingConditions
 
 import static io.micronaut.scheduling.TaskExecutors.IO
 
@@ -37,6 +35,10 @@ class HttpClientResetForTestSpec extends Specification {
     @Shared
     @AutoCleanup
     HttpClient httpClient = HttpClient.create(embeddedServer.URL)
+
+    def cleanup() {
+        GlobalLoggerProvider.resetForTest()
+    }
 
     void 'test pre destroy resetForTest'() {
         given:

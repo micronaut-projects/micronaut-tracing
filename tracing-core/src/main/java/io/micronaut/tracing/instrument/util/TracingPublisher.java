@@ -163,7 +163,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
         this.publisher = publisher;
         this.tracer = tracer;
         this.spanBuilder = spanBuilder;
-        this.parentSpan = tracer.activeSpan();
+        parentSpan = tracer.activeSpan();
         this.isSingle = isSingle;
         this.tracingObserver = tracingObserver;
         if (parentSpan != null && spanBuilder != null) {
@@ -296,11 +296,11 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
         public void onSubscribe(Subscription s) {
             if (scopeManager.activeSpan() != span) {
                 try (Scope ignored = scopeManager.activate(span)) {
-                    TracingPublisher.this.doOnSubscribe(span);
+                    doOnSubscribe(span);
                     actual.onSubscribe(s);
                 }
             } else {
-                TracingPublisher.this.doOnSubscribe(span);
+                doOnSubscribe(span);
                 actual.onSubscribe(s);
             }
         }
@@ -323,11 +323,11 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
                     }
 
                 }
-                TracingPublisher.this.doOnNext(object, span);
+                doOnNext(object, span);
                 actual.onNext(object);
                 if (isSingle) {
                     finished = true;
-                    TracingPublisher.this.doOnFinish(span);
+                    doOnFinish(span);
                 }
             } finally {
                 if (finishAfterNext) {
@@ -353,7 +353,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
         public void onComplete() {
             try (Scope ignored = scopeManager.activeSpan() != span ? scopeManager.activate(span) : NoopScope.INSTANCE) {
                 actual.onComplete();
-                TracingPublisher.this.doOnFinish(span);
+                doOnFinish(span);
             } finally {
                 if (!finished && finishOnClose) {
                     span.finish();

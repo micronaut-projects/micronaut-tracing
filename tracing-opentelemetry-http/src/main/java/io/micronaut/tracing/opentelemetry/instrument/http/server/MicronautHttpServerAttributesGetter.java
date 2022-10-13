@@ -16,6 +16,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
@@ -23,7 +24,6 @@ import io.micronaut.http.HttpResponse;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerAttributesGetter;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 @Internal
@@ -42,31 +42,8 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     }
 
     @Override
-    public Long requestContentLength(HttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
-        return request.getContentLength();
-    }
-
-    @Override
-    @Nullable
-    public Long requestContentLengthUncompressed(HttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
-        return null;
-    }
-
-    @Override
-    public Integer statusCode(HttpRequest<Object> request, HttpResponse<Object> response) {
+    public Integer statusCode(HttpRequest<Object> request, HttpResponse<Object> response, @Nullable Throwable error) {
         return response.code();
-    }
-
-    @Override
-    @Nullable
-    public Long responseContentLength(HttpRequest<Object> request, HttpResponse<Object> response) {
-        return response.getContentLength();
-    }
-
-    @Override
-    @Nullable
-    public Long responseContentLengthUncompressed(HttpRequest<Object> request, HttpResponse<Object> response) {
-        return null;
     }
 
     @Override

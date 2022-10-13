@@ -54,7 +54,7 @@ import static zipkin2.CheckResult.OK;
 import static zipkin2.codec.Encoding.JSON;
 
 /**
- * A <code>Sender</code> implementation that uses Micronaut's <code>HttpClient</code>.
+ * A {@code Sender} implementation that uses Micronaut's {@code HttpClient}.
  *
  * @author graemerocher
  * @since 1.0
@@ -250,7 +250,7 @@ public final class HttpClientSender extends Sender {
     }
 
     /**
-     * Constructs the <code>HttpClientSender</code>.
+     * Constructs the {@code HttpClientSender}.
      */
     public static class Builder {
 
@@ -373,7 +373,7 @@ public final class HttpClientSender extends Sender {
         }
 
         /**
-         * Constructs a <code>HttpClientSender</code>.
+         * Constructs a {@code HttpClientSender}.
          *
          * @param loadBalancerResolver resolver capable of resolving references
          *                             to services into a concrete load-balancer

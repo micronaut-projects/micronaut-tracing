@@ -32,7 +32,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import java.io.Closeable;
-import java.io.IOException;
 
 /**
  * Registers a Jaeger tracer based on the Jaeger configuration.
@@ -129,7 +128,7 @@ public class JaegerTracerFactory implements Closeable {
     }
 
     /**
-     * Adds a Jaeger-based Open Tracing <code>Tracer</code>.
+     * Adds a Jaeger-based Open Tracing {@code Tracer}.
      *
      * @param tracerBuilder the builder
      * @return the tracer
@@ -145,7 +144,7 @@ public class JaegerTracerFactory implements Closeable {
 
     @Override
     @PreDestroy
-    public void close() throws IOException {
+    public void close() {
         configuration.getConfiguration().closeTracer();
     }
 

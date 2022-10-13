@@ -18,7 +18,7 @@ package io.micronaut.tracing.instrument.http;
 import io.micronaut.core.annotation.NonNull;
 
 /**
- * Constants used to store <code>Span</code>s in instrumented request attributes.
+ * Constants used to store {@code Span}s in instrumented request attributes.
  *
  * @author graemerocher
  * @since 1.0

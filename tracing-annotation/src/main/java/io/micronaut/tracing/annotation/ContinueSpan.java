@@ -35,7 +35,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Retention(RUNTIME)
 @Inherited
-@Target(value = {METHOD, ANNOTATION_TYPE})
+@Target({METHOD, ANNOTATION_TYPE})
 @InterceptorBinding
 public @interface ContinueSpan {
 }

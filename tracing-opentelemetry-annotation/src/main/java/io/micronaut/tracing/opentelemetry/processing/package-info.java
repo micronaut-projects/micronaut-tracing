@@ -15,8 +15,8 @@
  */
 /**
  * Classes related to annotation mapping.
- * {@link io.opentelemetry.extension.annotations.SpanAttribute} to {@link io.micronaut.tracing.annotation.SpanTag}.
- * {@link io.opentelemetry.extension.annotations.WithSpan} to {@link io.micronaut.tracing.annotation.NewSpan}.
+ * {@link io.opentelemetry.instrumentation.annotations.SpanAttribute} to {@link io.micronaut.tracing.annotation.SpanTag}.
+ * {@link io.opentelemetry.instrumentation.annotations.WithSpan} to {@link io.micronaut.tracing.annotation.NewSpan}.
  * @author Sergio del Amo
  * @since 4.2.0
  */

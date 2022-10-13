@@ -18,12 +18,12 @@ package io.micronaut.tracing.instrument.kotlin;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.bind.binders.HttpCoroutineContextFactory;
 import io.micronaut.tracing.instrument.util.TracingInvocationInstrumenterFactory;
 import jakarta.inject.Singleton;
 import kotlin.coroutines.CoroutineContext;
 import kotlinx.coroutines.ThreadContextElement;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,7 +46,7 @@ final class HttpCoroutineTracingDispatcherFactory implements HttpCoroutineContex
         this.instrumenters = instrumenters;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public CoroutineTracingDispatcher create() {
         return new CoroutineTracingDispatcher(instrumenters.stream()

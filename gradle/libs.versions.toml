@@ -1,21 +1,22 @@
 [versions]
-managed-brave-instrumentation = '5.14.0'
+managed-brave-instrumentation = '5.14.1'
 managed-brave-opentracing = '1.0.0'
 managed-jaeger = '1.8.1'
-kotlin = '1.7.10'
+kotlin = '1.7.20'
 kotlin-coroutines = '1.6.4'
-grpc = '1.49.0'
-protobuf = '3.21.6'
+grpc = '1.49.2'
+protobuf = '3.21.7'
 micronaut-docs = '2.0.0'
-managed-opentelemetry = '1.18.0'
-managed-opentelemetry-alpha = '1.15.0-alpha'
-managed-opentelemetry-instrumentation-alpha = '1.15.0-alpha'
+managed-opentelemetry = '1.19.0'
+managed-opentelemetry-alpha = '1.19.0-alpha'
+managed-opentelemetry-instrumentation-alpha = '1.19.0-alpha'
 managed-opentracing = '0.33.0'
 managed-opentracing-grpc = '0.2.3'
-managed-protobuf = '0.8.19'
+managed-protobuf = '0.9.1'
 managed-zipkin-reporter = '2.16.3'
-managed-opentelemetry-contrib-aws-xray = '1.17.0'
-managed-opentelemetry-gcp-trace = '0.22.0-alpha'
+managed-opentelemetry-contrib-aws-xray = '1.18.0'
+managed-opentelemetry-contrib-aws-resources = '1.18.0'
+managed-opentelemetry-gcp-trace = '0.23.0-alpha'
 
 [libraries]
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
@@ -42,11 +43,11 @@ opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api' }
 opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk' }
 opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing' }
 opentelemetry-sdk-extension-aws = { module = 'io.opentelemetry:opentelemetry-sdk-extension-aws' }
-opentelemetry-extension-annotations = { module = 'io.opentelemetry:opentelemetry-extension-annotations' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure' }
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api' }
 opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6'}
 opentelemetry-instrumentation-api-semconv = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv' }
+opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrumentation: opentelemetry-instrumentation-annotations' }
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 
 awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }

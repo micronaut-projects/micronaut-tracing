@@ -14,8 +14,9 @@ import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
 import io.micronaut.tracing.annotation.SpanTag
 import io.opentelemetry.api.common.AttributeKey
-import io.opentelemetry.extension.annotations.SpanAttribute
-import io.opentelemetry.extension.annotations.WithSpan
+import io.opentelemetry.api.logs.GlobalLoggerProvider
+import io.opentelemetry.instrumentation.annotations.SpanAttribute
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
 import reactor.core.publisher.Flux
@@ -44,6 +45,10 @@ class AnnotationMappingSpec extends Specification {
     ReactorHttpClient reactorHttpClient = ReactorHttpClient.create(embeddedServer.URL)
 
     private PollingConditions conditions = new PollingConditions()
+
+    def cleanup() {
+        GlobalLoggerProvider.resetForTest()
+    }
 
     void 'test map WithSpan annotation'() {
         int count = 1

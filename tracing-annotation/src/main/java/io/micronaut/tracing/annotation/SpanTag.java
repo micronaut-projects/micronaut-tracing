@@ -33,7 +33,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Retention(RUNTIME)
 @Inherited
-@Target(value = {PARAMETER, ANNOTATION_TYPE})
+@Target({PARAMETER, ANNOTATION_TYPE})
 public @interface SpanTag {
 
     /**

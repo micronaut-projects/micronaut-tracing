@@ -234,6 +234,23 @@ class OpenTelemetryHttpSpec extends Specification {
         testExporter.reset()
     }
 
+    void 'test error 404'() {
+        when:
+        def route = '/error/notFoundRoute'
+        HttpResponse<String> response = reactorHttpClient.toBlocking().exchange(route, String)
+
+        then:
+        def e = thrown(HttpClientResponseException)
+        e.message == "Not Found"
+        conditions.eventually {
+            exporter.finishedSpanItems.size() == 1
+            exporter.finishedSpanItems[0].name == "GET - " + route
+            exporter.finishedSpanItems[0].status.statusCode == StatusCode.ERROR
+        }
+        cleanup:
+        exporter.reset()
+    }
+
     @Introspected
     static class SomeBody {
     }

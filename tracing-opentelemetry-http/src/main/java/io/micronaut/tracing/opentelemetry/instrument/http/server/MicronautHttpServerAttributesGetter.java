@@ -25,7 +25,6 @@ import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 
 @Internal
 enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<HttpRequest<Object>, HttpResponse<Object>> {
@@ -103,8 +102,9 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     @Override
     @Nullable
     public String route(HttpRequest<Object> request) {
-        Optional<Object> routeInfo = request.getAttribute(HttpAttributes.ROUTE_INFO);
-        return routeInfo.map(Object::toString).orElse(null);
+        String route = request.getAttribute(HttpAttributes.URI_TEMPLATE).map(Object::toString)
+            .orElse(request.getUri().toString());
+        return request.getMethodName() + " - " + route;
     }
 
     @Override

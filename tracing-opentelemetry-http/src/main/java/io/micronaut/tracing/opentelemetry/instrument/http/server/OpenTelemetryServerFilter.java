@@ -88,7 +88,7 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
             @Override
             public void doOnNext(MutableHttpResponse<?> object, Context context) {
                 OpenTelemetryObserver.super.doOnNext(object, context);
-                if (object.status().getCode() >= 400 ){
+                if (object.status().getCode() >= 400) {
                     Span.current().setStatus(StatusCode.ERROR);
                 }
             }

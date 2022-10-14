@@ -24,7 +24,9 @@ dependencies {
 
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor
-    compileOnly libs.managed.opentelemetry.contrib.aws.xray
+    compileOnly(libs.managed.opentelemetry.contrib.aws.xray) {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
 
     testAnnotationProcessor projects.tracingOpentelemetryAnnotation
 
@@ -37,7 +39,9 @@ dependencies {
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
 
-    testImplementation libs.managed.opentelemetry.contrib.aws.xray
+    testImplementation(libs.managed.opentelemetry.contrib.aws.xray) {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
 }
 
 // TODO temporarily disable binary compatibility checks

@@ -3,6 +3,7 @@ package io.micronaut.tracing.instrument.http
 import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import io.micronaut.core.annotation.Introspected
+import io.micronaut.core.annotation.Nullable
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.*
@@ -251,6 +252,36 @@ class OpenTelemetryHttpSpec extends Specification {
         exporter.reset()
     }
 
+    void 'route match template is added as route attribute'() {
+        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
+        def warehouseClient = embeddedServer.applicationContext.getBean(WarehouseClient)
+
+        expect:
+
+        warehouseClient.order(UUID.randomUUID())
+        conditions.eventually {
+            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("http.route")) == "/client/order/{orderId}")
+        }
+
+        cleanup:
+        testExporter.reset()
+    }
+
+    void 'query variables are not included in route template attribute'() {
+        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
+        def warehouseClient = embeddedServer.applicationContext.getBean(WarehouseClient)
+
+        expect:
+
+        warehouseClient.order(UUID.randomUUID(), UUID.randomUUID())
+        conditions.eventually {
+            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("http.route")) == "/client/order/{orderId}")
+        }
+
+        cleanup:
+        testExporter.reset()
+    }
+
     @Introspected
     static class SomeBody {
     }
@@ -429,6 +460,12 @@ class OpenTelemetryHttpSpec extends Specification {
 
         }
 
+        @Get("/order/{orderId}")
+        void order(@PathVariable("orderId") UUID orderId, @Nullable @QueryValue("customerId") UUID customerId) {
+
+        }
+
+
     }
 
     @Client("/client")
@@ -441,6 +478,12 @@ class OpenTelemetryHttpSpec extends Specification {
         @Post("/order")
         @NewSpan
         void order(@SpanTag("warehouse.order") Map<String, ?> json);
+
+        @Get("/order/{orderId}")
+        void order(UUID orderId);
+
+        @Get("/order/{orderId}?customerId={customerId}")
+        void order(UUID orderId, UUID customerId);
 
     }
 

@@ -284,12 +284,15 @@ public&nbsp;void&nbsp;setScopeManager(@Nullable
 <li class="blockList">
 <h4>close</h4>
 <pre>@PreDestroy
-public&nbsp;void&nbsp;close()</pre>
+public&nbsp;void&nbsp;close()
+                       throws java.io.IOException</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>close</code>&nbsp;in interface&nbsp;<code>java.io.Closeable</code></dd>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>close</code>&nbsp;in interface&nbsp;<code>java.lang.AutoCloseable</code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
 </dl>
 </li>
 </ul>

@@ -1,21 +1,24 @@
 [versions]
-managed-brave-instrumentation = '5.13.10'
-managed-brave-opentracing = '1.0.0'
+managed-brave-instrumentation = '5.14.1'
+managed-opentelemetry = '1.19.0'
+managed-opentelemetry-alpha = '1.19.0-alpha'
+managed-opentelemetry-instrumentation-alpha = '1.19.0-alpha'
+managed-opentelemetry-contrib-aws-xray = '1.18.0'
+managed-opentelemetry-contrib-aws-resources = '1.18.0'
+managed-opentelemetry-gcp-trace = '0.23.0-alpha'
+managed-protobuf = '0.9.1'
+managed-zipkin-reporter = '2.16.3'
+
 managed-jaeger = '1.8.1'
-kotlin = '1.7.10'
-kotlin-coroutines = '1.6.4'
-grpc = '1.48.1'
-protobuf = '3.21.4'
-micronaut-docs = '2.0.0'
-managed-opentelemetry = '1.16.0'
-managed-opentelemetry-alpha = '1.15.0-alpha'
-managed-opentelemetry-instrumentation-alpha = '1.15.0-alpha'
 managed-opentracing = '0.33.0'
 managed-opentracing-grpc = '0.2.3'
-managed-protobuf = '0.8.19'
-managed-zipkin-reporter = '2.16.3'
-managed-opentelemetry-contrib-aws-xray = '1.16.0'
-managed-opentelemetry-gcp-trace = '0.22.0-alpha'
+managed-brave-opentracing = '1.0.0'
+
+kotlin = '1.7.20'
+kotlin-coroutines = '1.6.4'
+grpc = '1.50.0'
+protobuf = '3.21.7'
+micronaut-docs = '2.0.0'
 
 [libraries]
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
@@ -36,17 +39,17 @@ opentracing-grpc = { module = 'io.opentracing.contrib:opentracing-grpc', version
 opentracing-util = { module = 'io.opentracing:opentracing-util', version.ref = 'managed-opentracing' }
 protoc = { module = 'com.google.protobuf:protoc', version.ref = 'protobuf' }
 protoc-grpc = { module = 'io.grpc:protoc-gen-grpc-java', version.ref = 'grpc' }
-zipkin-brave-instrumentation = { module = 'io.zipkin.brave:brave-instrumentation-http', version.ref = 'managed-brave-instrumentation' }
-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter', version.ref = 'managed-zipkin-reporter' }
+brave-instrumentation-http = { module = 'io.zipkin.brave:brave-instrumentation-http' }
+zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter' }
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api' }
 opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk' }
 opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing' }
 opentelemetry-sdk-extension-aws = { module = 'io.opentelemetry:opentelemetry-sdk-extension-aws' }
-opentelemetry-extension-annotations = { module = 'io.opentelemetry:opentelemetry-extension-annotations' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure' }
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api' }
 opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6'}
 opentelemetry-instrumentation-api-semconv = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv' }
+opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrumentation: opentelemetry-instrumentation-annotations' }
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 
 awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
@@ -57,6 +60,8 @@ micronaut-aws-bom = { module = 'io.micronaut.aws:micronaut-aws-bom' }
 boms-opentelemetry = { module = 'io.opentelemetry:opentelemetry-bom', version.ref = 'managed-opentelemetry' }
 boms-opentelemetry-alpha = { module = 'io.opentelemetry:opentelemetry-bom-alpha', version.ref = 'managed-opentelemetry-alpha' }
 boms-opentelemetry-instrumentation-alpha = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha', version.ref = 'managed-opentelemetry-instrumentation-alpha' }
+boms-brave = { module = 'io.zipkin.brave:brave-bom', version.ref = 'managed-brave-instrumentation' }
+boms-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter-bom', version.ref = 'managed-zipkin-reporter' }
 
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }

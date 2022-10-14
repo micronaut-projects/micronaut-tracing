@@ -13,7 +13,7 @@ dependencies {
     api projects.tracingAnnotation
     api projects.tracingOpentelemetry
     api libs.opentelemetry.api
-    api libs.opentelemetry.extension.annotations
+    api libs.opentelemetry.instrumentation.annotations
     api libs.opentelemetry.instrumentation.api
     api libs.opentelemetry.instrumentation.grpc
 

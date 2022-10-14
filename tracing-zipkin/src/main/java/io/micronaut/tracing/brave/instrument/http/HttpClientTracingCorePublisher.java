@@ -41,8 +41,8 @@ class HttpClientTracingCorePublisher extends HttpClientTracingPublisher implemen
     /**
      * @param publisher     the response publisher
      * @param request       an extended version of request that allows mutating
-     * @param clientHandler the standardize way to instrument client
-     * @param httpTracing   <code>HttpTracing</code>
+     * @param clientHandler the standardized way to instrument client
+     * @param httpTracing   {@code HttpTracing}
      */
     HttpClientTracingCorePublisher(Publisher<? extends HttpResponse<?>> publisher, MutableHttpRequest<?> request, HttpClientHandler<HttpClientRequest, HttpClientResponse> clientHandler, HttpTracing httpTracing) {
         super(publisher, request, clientHandler, httpTracing);
@@ -63,9 +63,9 @@ class HttpClientTracingCorePublisher extends HttpClientTracingPublisher implemen
 
         private final Context context;
 
-        public TracingCoreSubscriber(Subscriber<? super HttpResponse<?>> actual,
-                                     Span span,
-                                     Context context) {
+        private TracingCoreSubscriber(Subscriber<? super HttpResponse<?>> actual,
+                                      Span span,
+                                      Context context) {
             super(actual, span);
             this.context = context;
         }

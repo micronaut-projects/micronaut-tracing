@@ -11,7 +11,7 @@ dependencies {
     api projects.tracingAnnotation
     api projects.tracingOpentelemetryAnnotation
     api libs.opentelemetry.api
-    api libs.opentelemetry.extension.annotations
+    api libs.opentelemetry.instrumentation.annotations
     api libs.opentelemetry.instrumentation.api
     api libs.opentelemetry.instrumentation.api.semconv
     api libs.opentelemetry.autoconfigure
@@ -28,6 +28,7 @@ dependencies {
 
     testAnnotationProcessor projects.tracingOpentelemetryAnnotation
 
+//    testImplementation(libs.opentelemetry.contrib.aws.resources)
     testImplementation(libs.opentelemetry.sdk.extension.aws)
 
     testImplementation mn.reactor

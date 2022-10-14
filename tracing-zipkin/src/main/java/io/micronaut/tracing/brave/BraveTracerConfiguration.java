@@ -41,7 +41,7 @@ import static io.micronaut.core.util.StringUtils.TRUE;
  * @author graemerocher
  * @since 1.0
  */
-@Requires(classes = {Tracing.class})
+@Requires(classes = Tracing.class)
 @Requires(property = BraveTracerConfiguration.PREFIX + ".enabled", value = TRUE)
 @ConfigurationProperties(BraveTracerConfiguration.PREFIX)
 public class BraveTracerConfiguration implements Toggleable {
@@ -61,7 +61,7 @@ public class BraveTracerConfiguration implements Toggleable {
     private boolean enabled = DEFAULT_ENABLED;
 
     /**
-     * Constructs a new <code>BraveTracerConfiguration</code>.
+     * Constructs a new {@code BraveTracerConfiguration}.
      *
      * @param configuration the application configuration
      */
@@ -165,7 +165,7 @@ public class BraveTracerConfiguration implements Toggleable {
      */
     @ConfigurationProperties("http")
     @Requires(property = HttpClientSenderConfiguration.PREFIX)
-    @Requires(classes = {Tracing.class})
+    @Requires(classes = Tracing.class)
     public static class HttpClientSenderConfiguration extends HttpClientConfiguration {
 
         public static final String PREFIX = BraveTracerConfiguration.PREFIX + ".http";
@@ -216,7 +216,7 @@ public class BraveTracerConfiguration implements Toggleable {
         }
 
         /**
-         * Sets the sampler probability used by the default <code>CountingSampler</code>.
+         * Sets the sampler probability used by the default {@code CountingSampler}.
          * A value of 1.0 indicates to sample all requests.
          * A value of 0.1 indicates to sample 10% of requests.
          *

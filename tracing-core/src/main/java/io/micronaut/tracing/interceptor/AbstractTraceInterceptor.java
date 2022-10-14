@@ -33,7 +33,7 @@ import static io.opentracing.log.Fields.ERROR_OBJECT;
 import static io.opentracing.log.Fields.MESSAGE;
 
 /**
- * Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
+ * Implements tracing logic for {@code ContinueSpan} and {@code NewSpan}
  * using the Open Tracing API.
  *
  * @author graemerocher

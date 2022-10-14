@@ -24,7 +24,6 @@ import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.StringUtils;
-import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.instrument.util.TracingObserver;
 import io.micronaut.tracing.instrument.util.TracingPublisher;
@@ -39,7 +38,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 /**
- * Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
+ * Implements tracing logic for {@code ContinueSpan} and {@code NewSpan}
  * using the Open Tracing API.
  *
  * @author graemerocher

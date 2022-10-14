@@ -2,7 +2,7 @@ The Micronaut Open Telemetry module uses https://github.com/open-telemetry/opent
 
 - otel.traces.exporter = none
 - otel.metrics.exporter = none
-- otel.logs.exporte = none
+- otel.logs.exporter = none
 - otel.service.name = value of the application.name
 
 == OpenTelemetry annotations

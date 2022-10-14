@@ -16,14 +16,17 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.uri.UriMatchTemplate;
+import io.micronaut.web.router.UriRoute;
+import io.micronaut.web.router.UriRouteMatch;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerAttributesGetter;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,31 +46,8 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     }
 
     @Override
-    public Long requestContentLength(HttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
-        return request.getContentLength();
-    }
-
-    @Override
-    @Nullable
-    public Long requestContentLengthUncompressed(HttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
-        return null;
-    }
-
-    @Override
-    public Integer statusCode(HttpRequest<Object> request, HttpResponse<Object> response) {
+    public Integer statusCode(HttpRequest<Object> request, HttpResponse<Object> response, @Nullable Throwable error) {
         return response.code();
-    }
-
-    @Override
-    @Nullable
-    public Long responseContentLength(HttpRequest<Object> request, HttpResponse<Object> response) {
-        return response.getContentLength();
-    }
-
-    @Override
-    @Nullable
-    public Long responseContentLengthUncompressed(HttpRequest<Object> request, HttpResponse<Object> response) {
-        return null;
     }
 
     @Override
@@ -103,8 +83,18 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     @Override
     @Nullable
     public String route(HttpRequest<Object> request) {
-        Optional<Object> routeInfo = request.getAttribute(HttpAttributes.ROUTE_INFO);
-        return routeInfo.map(Object::toString).orElse(null);
+        Optional<Object> routeInfo = request.getAttribute(HttpAttributes.ROUTE_INFO)
+            .filter(UriRouteMatch.class::isInstance)
+            .map(ri -> (UriRouteMatch) ri)
+            .map(UriRouteMatch::getRoute)
+            .map(UriRoute::getUriMatchTemplate)
+            .map(UriMatchTemplate::toPathString);
+        if (routeInfo.isPresent()) {
+            return routeInfo.get().toString();
+        }
+        String route = request.getAttribute(HttpAttributes.URI_TEMPLATE).map(Object::toString)
+            .orElse(request.getUri().toString());
+        return request.getMethodName() + " - " + route;
     }
 
     @Override

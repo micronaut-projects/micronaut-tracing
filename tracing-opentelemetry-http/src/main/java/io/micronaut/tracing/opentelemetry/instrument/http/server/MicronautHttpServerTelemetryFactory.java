@@ -82,7 +82,7 @@ public final class MicronautHttpServerTelemetryFactory {
             .setSpanStatusExtractor(HttpSpanStatusExtractor.create(httpAttributesGetter))
             .addOperationMetrics(HttpServerMetrics.get())
             .addContextCustomizer(HttpRouteHolder.get())
-            .newServerInstrumenter(HttpRequestGetter.INSTANCE);
+            .buildServerInstrumenter(HttpRequestGetter.INSTANCE);
     }
 
     /**

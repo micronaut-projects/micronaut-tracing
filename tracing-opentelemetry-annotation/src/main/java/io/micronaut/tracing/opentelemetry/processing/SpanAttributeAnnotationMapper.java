@@ -19,7 +19,7 @@ import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.inject.annotation.TypedAnnotationMapper;
 import io.micronaut.inject.visitor.VisitorContext;
 import io.micronaut.tracing.annotation.SpanTag;
-import io.opentelemetry.extension.annotations.SpanAttribute;
+import io.opentelemetry.instrumentation.annotations.SpanAttribute;
 
 import java.util.Collections;
 import java.util.List;

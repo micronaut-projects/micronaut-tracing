@@ -59,9 +59,9 @@ public class OpenTelemetryCorePublisher<T, R> extends OpenTelemetryPublisher<T, 
 
         private final Context reactorContext;
 
-        public TracingCoreSubscriber(Subscriber<? super T> actual,
-                                     io.opentelemetry.context.Context openTelemetryContext,
-                                     Context reactorContext) {
+        private TracingCoreSubscriber(Subscriber<? super T> actual,
+                                      io.opentelemetry.context.Context openTelemetryContext,
+                                      Context reactorContext) {
             super(actual, openTelemetryContext);
             this.reactorContext = reactorContext;
         }

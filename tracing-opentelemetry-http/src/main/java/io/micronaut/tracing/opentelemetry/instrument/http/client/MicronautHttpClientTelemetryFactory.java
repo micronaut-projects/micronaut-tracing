@@ -25,18 +25,20 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.instrumenter.InstrumenterBuilder;
-import io.opentelemetry.instrumentation.api.instrumenter.PeerServiceAttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientAttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientAttributesExtractorBuilder;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientMetrics;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanNameExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanStatusExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.net.NetClientAttributesExtractor;
+import io.opentelemetry.instrumentation.api.instrumenter.net.PeerServiceAttributesExtractor;
+
 import jakarta.inject.Named;
 import jakarta.inject.Qualifier;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
+import java.util.Collections;
 import java.util.List;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -79,7 +81,7 @@ public class MicronautHttpClientTelemetryFactory {
             .addOperationMetrics(HttpClientMetrics.get());
         builder.addAttributesExtractors(extractors);
 
-        return builder.newClientInstrumenter(HttpRequestSetter.INSTANCE);
+        return builder.buildClientInstrumenter(HttpRequestSetter.INSTANCE);
     }
 
     /**
@@ -90,7 +92,7 @@ public class MicronautHttpClientTelemetryFactory {
     @Client
     @Prototype
     PeerServiceAttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> peerServiceAttributesExtractor(MicronautHttpNetClientAttributesGetter micronautHttpNetClientAttributesGetter) {
-        return PeerServiceAttributesExtractor.create(micronautHttpNetClientAttributesGetter);
+        return PeerServiceAttributesExtractor.create(micronautHttpNetClientAttributesGetter, Collections.emptyMap());
     }
 
     /**

@@ -28,7 +28,7 @@ import zipkin2.reporter.Sender;
 import java.util.stream.Collectors;
 
 /**
- * Factory that creates a Zipkin <code>Sender</code> based on <code>HttpClientSenderConfiguration</code>.
+ * Factory that creates a Zipkin {@code Sender} based on {@code HttpClientSenderConfiguration}.
  *
  * @author graemerocher
  * @since 1.0

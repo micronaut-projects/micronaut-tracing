@@ -32,9 +32,9 @@ import jakarta.inject.Singleton;
 public class DefaultTracer {
 
     /**
-     * Creates a default {@link io.opentracing.noop.NoopTracer} if no other <code>Tracer</code> is present.
+     * Creates a default {@link io.opentracing.noop.NoopTracer} if no other {@code Tracer} is present.
      *
-     * @return no-op <code>Tracer</code>
+     * @return no-op {@code Tracer}
      */
     @Singleton
     @Primary

@@ -58,9 +58,9 @@ public class BraveTracingServerFilter implements HttpServerFilter {
     private final Predicate<String> pathExclusionTest;
 
     /**
-     * @param httpTracing   the <code>HttpTracing</code> instance
+     * @param httpTracing   the {@code HttpTracing} instance
      * @param openTracer    the Open Tracing instance
-     * @param serverHandler the <code>HttpServerHandler</code> instance
+     * @param serverHandler the {@code HttpServerHandler} instance
      */
     public BraveTracingServerFilter(HttpTracing httpTracing,
                                     Tracer openTracer,
@@ -69,9 +69,9 @@ public class BraveTracingServerFilter implements HttpServerFilter {
     }
 
     /**
-     * @param httpTracing             the <code>HttpTracing</code> instance
+     * @param httpTracing             the {@code HttpTracing} instance
      * @param openTracer              the Open Tracing instance
-     * @param serverHandler           the <code>HttpServerHandler</code> instance
+     * @param serverHandler           the {@code HttpServerHandler} instance
      * @param exclusionsConfiguration the {@link TracingExclusionsConfiguration}
      */
     @Inject

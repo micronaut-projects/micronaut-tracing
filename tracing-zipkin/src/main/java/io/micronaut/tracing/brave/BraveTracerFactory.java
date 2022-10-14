@@ -37,13 +37,13 @@ import zipkin2.reporter.brave.ZipkinSpanHandler;
 import static zipkin2.reporter.Reporter.NOOP;
 
 /**
- * Builds a <code>Tracer</code> for Brave using <code>BraveTracer</code>.
+ * Builds a {@code Tracer} for Brave using {@code BraveTracer}.
  *
  * @author graemerocher
  * @since 1.0
  */
 @Factory
-@Requires(beans = {BraveTracerConfiguration.class})
+@Requires(beans = BraveTracerConfiguration.class)
 public class BraveTracerFactory {
 
     private final BraveTracerConfiguration configuration;
@@ -56,10 +56,10 @@ public class BraveTracerFactory {
     }
 
     /**
-     * The <code>Tracing</code> bean.
+     * The {@code Tracing} bean.
      *
-     * @param reporter an optional <code>Reporter</code>
-     * @return the <code>Tracing</code> bean
+     * @param reporter an optional {@code Reporter}
+     * @return the {@code Tracing} bean
      */
     @Bean(preDestroy = "close")
     @Singleton
@@ -72,10 +72,10 @@ public class BraveTracerFactory {
     }
 
     /**
-     * The <code>SpanCustomizer</code> bean.
+     * The {@code SpanCustomizer} bean.
      *
-     * @param tracing the <code>Tracing</code> bean
-     * @return the <code>SpanCustomizer</code> bean
+     * @param tracing the {@code Tracing} bean
+     * @return the {@code SpanCustomizer} bean
      */
     @Singleton
     @Requires(beans = Tracing.class)
@@ -85,10 +85,10 @@ public class BraveTracerFactory {
     }
 
     /**
-     * The Open Tracing <code>Tracer</code> bean.
+     * The Open Tracing {@code Tracer} bean.
      *
-     * @param tracing the <code>Tracing</code> bean
-     * @return the Open Tracing <code>Tracer</code> bean
+     * @param tracing the {@code Tracing} bean
+     * @return the Open Tracing {@code Tracer} bean
      */
     @Singleton
     @Requires(classes = {BraveTracer.class, Tracer.class})
@@ -100,11 +100,11 @@ public class BraveTracerFactory {
     }
 
     /**
-     * A <code>Reporter</code> that is configured if no other is present and
-     * <code>AsyncReporterConfiguration</code> is enabled.
+     * A {@code Reporter} that is configured if no other is present and
+     * {@code AsyncReporterConfiguration} is enabled.
      *
      * @param configuration the configuration
-     * @return the <code>AsyncReporter</code> bean
+     * @return the {@code AsyncReporter} bean
      */
     @Prototype
     @Requires(beans = AsyncReporterConfiguration.class)

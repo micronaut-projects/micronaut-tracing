@@ -28,7 +28,7 @@ import java.util.List;
  * @author Nemanja Mikic
  * @since 4.2.0
  */
-@ConfigurationProperties(value = OpenTelemetryHttpClientConfig.PREFIX)
+@ConfigurationProperties(OpenTelemetryHttpClientConfig.PREFIX)
 public class OpenTelemetryHttpClientConfig {
     public static final String PREFIX = "otel.http.client";
 

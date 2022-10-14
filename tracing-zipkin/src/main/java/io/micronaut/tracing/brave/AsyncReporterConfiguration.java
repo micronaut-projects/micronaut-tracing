@@ -41,7 +41,7 @@ public class AsyncReporterConfiguration {
     private final AsyncReporter.Builder builder;
 
     /**
-     * Create a configuration for async reporting on <code>zipkin2.Span</code> instances.
+     * Create a configuration for async reporting on {@code zipkin2.Span} instances.
      *
      * @param configuration BraveTracer configuration
      * @param sender        for sending list of spans to a transport such as HTTP or Kafka

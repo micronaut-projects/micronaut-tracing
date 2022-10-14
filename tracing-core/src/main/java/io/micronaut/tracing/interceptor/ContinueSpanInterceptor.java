@@ -31,7 +31,7 @@ import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 
 /**
- * Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
+ * Implements tracing logic for {@code ContinueSpan} and {@code NewSpan}
  * using the Open Tracing API.
  *
  * @author graemerocher

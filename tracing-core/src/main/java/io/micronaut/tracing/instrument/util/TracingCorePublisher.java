@@ -168,11 +168,11 @@ public class TracingCorePublisher<T> extends TracingPublisher<T> implements Core
 
         private final Context context;
 
-        public TracingCoreSubscriber(ScopeManager scopeManager,
-                                     Span span,
-                                     Subscriber<? super T> actual,
-                                     boolean finishOnClose,
-                                     Context context) {
+        private TracingCoreSubscriber(ScopeManager scopeManager,
+                                      Span span,
+                                      Subscriber<? super T> actual,
+                                      boolean finishOnClose,
+                                      Context context) {
             super(scopeManager, span, actual, finishOnClose);
             this.context = context;
         }

@@ -30,7 +30,7 @@ import org.slf4j.MDC;
  * entries to MDC context "X-B3-TraceId", "X-B3-ParentSpanId", "X-B3-SpanId" and
  * "X-B3-Sampled"
  * <p>
- * Forked from https://github.com/spring-cloud/spring-cloud-sleuth/blob/master/spring-cloud-sleuth-core/src/main/java/org/springframework/cloud/sleuth/log/Slf4jScopeDecorator.java
+ * Forked from <a href="https://github.com/spring-cloud/spring-cloud-sleuth/blob/master/spring-cloud-sleuth-core/src/main/java/org/springframework/cloud/sleuth/log/Slf4jScopeDecorator.java">link</a>
  *
  * @author Marcin Grzejszczak
  * @author Graeme Rocher

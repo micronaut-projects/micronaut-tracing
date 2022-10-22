@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 original authors
+ * Copyright 2017-2020 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 /**
- * HTTP Tracing.
+ * Contains classes, interfaces and annotations that provide integration with Apache Kafka.
  *
- * @author Nemanja Mikic
- * @since 4.2.0
-*/
-@Requires(classes = {OpenTelemetry.class, GrpcTelemetry.class})
-@Requires(beans = OpenTelemetry.class)
-package io.micronaut.tracing.grpc;
+ * @author graemerocher
+ * @since 1.0
+ */
+@Configuration
+@Requires(property = KafkaTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
+@Requires(beans = {KafkaTelemetry.class, OpenTelemetry.class})
+package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
+import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.util.StringUtils;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.grpc.v1_6.GrpcTelemetry;
+import io.opentelemetry.instrumentation.kafkaclients.KafkaTelemetry;

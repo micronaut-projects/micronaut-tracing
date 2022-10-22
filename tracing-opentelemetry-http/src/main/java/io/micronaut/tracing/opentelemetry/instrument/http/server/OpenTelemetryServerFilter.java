@@ -83,7 +83,7 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
 
         Context newContext = instrumenter.start(parentContext, request);
 
-        return OpenTelemetryPublisherUtils.createOpenTelemetryPublisher(requestPublisher, instrumenter, newContext, request, new OpenTelemetryObserver<MutableHttpResponse<?>>() {
+        return OpenTelemetryPublisherUtils.createOpenTelemetryPublisher(requestPublisher, instrumenter, newContext, request, new OpenTelemetryObserver<>() {
 
             @Override
             public void doOnNext(MutableHttpResponse<?> object, Context context) {

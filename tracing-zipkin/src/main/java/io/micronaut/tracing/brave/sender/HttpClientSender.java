@@ -186,7 +186,7 @@ public final class HttpClientSender extends Sender {
         @Override
         public void enqueue(Callback<Void> callback) {
             Publisher<HttpResponse<ByteBuffer>> publisher = httpClient.exchange(prepareRequest());
-            publisher.subscribe(new Subscriber<HttpResponse<ByteBuffer>>() {
+            publisher.subscribe(new Subscriber<>() {
 
                 @Override
                 public void onSubscribe(Subscription s) {

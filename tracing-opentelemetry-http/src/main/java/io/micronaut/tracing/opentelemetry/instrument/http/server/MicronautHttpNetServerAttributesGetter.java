@@ -24,7 +24,6 @@ import java.net.InetSocketAddress;
 
 import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.NetTransportValues.IP_TCP;
 
-@SuppressWarnings("rawtypes")
 @Internal
 final class MicronautHttpNetServerAttributesGetter extends InetSocketAddressNetServerAttributesGetter<HttpRequest<Object>> {
 

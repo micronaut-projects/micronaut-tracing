@@ -47,7 +47,7 @@ class HttpHeadersTextMap implements TextMap {
     @Override
     public Iterator<Map.Entry<String, String>> iterator() {
         Iterator<Map.Entry<String, List<String>>> i = headers.iterator();
-        return new Iterator<Map.Entry<String, String>>() {
+        return new Iterator<>() {
 
             @Override
             public boolean hasNext() {
@@ -57,7 +57,7 @@ class HttpHeadersTextMap implements TextMap {
             @Override
             public Map.Entry<String, String> next() {
                 Map.Entry<String, List<String>> entry = i.next();
-                return new Map.Entry<String, String>() {
+                return new Map.Entry<>() {
 
                     @Override
                     public String getKey() {

@@ -29,7 +29,8 @@ public interface TracingObserver<T> {
     /**
      * No op observer.
      */
-    TracingObserver<?> NO_OP = new TracingObserver<Object>() { };
+    TracingObserver<?> NO_OP = new TracingObserver<>() {
+    };
 
     /**
      * Designed for subclasses to override if the current active span is to be

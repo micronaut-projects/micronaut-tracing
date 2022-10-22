@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 /**
- * Classes related to the creation of span objects on the every HTTP client request and client response.
+ * HTTP Tracing.
  *
- * @author Sergio del Amo
+ * @author Nemanja Mikic
  * @since 4.2.0
- */
-@Requires(classes = MutableHttpRequest.class)
-package io.micronaut.tracing.opentelemetry.instrument.http.client;
+*/
+@Requires(classes = {OpenTelemetry.class, GrpcTelemetry.class})
+@Requires(beans = OpenTelemetry.class)
+package io.micronaut.tracing.opentelemetry.instrument.grpc;
 
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.http.MutableHttpRequest;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.grpc.v1_6.GrpcTelemetry;

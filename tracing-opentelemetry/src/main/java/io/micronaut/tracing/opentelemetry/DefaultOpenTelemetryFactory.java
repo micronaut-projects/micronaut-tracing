@@ -15,6 +15,9 @@
  */
 package io.micronaut.tracing.opentelemetry;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
@@ -24,15 +27,16 @@ import io.micronaut.core.util.StringUtils;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
+import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.IdGenerator;
 import io.opentelemetry.sdk.trace.SpanProcessor;
+import io.opentelemetry.semconv.resource.attributes.ResourceAttributes;
+
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
-
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static io.micronaut.core.convert.format.MapFormat.MapTransformation.FLAT;
 
@@ -54,11 +58,13 @@ public class DefaultOpenTelemetryFactory {
 
     /**
      * The OpenTelemetry bean with default values.
+     *
      * @param applicationConfiguration the {@link ApplicationConfiguration}
      * @param otelConfig the configuration values for the opentelemetry autoconfigure
      * @param idGenerator the {@link IdGenerator}
      * @param spanProcessor the {@link SpanProcessor}
      * @param resourceProvider Resource Provider
+     *
      * @return the OpenTelemetry bean with default values
      */
     @Singleton
@@ -69,8 +75,8 @@ public class DefaultOpenTelemetryFactory {
                                                  @Nullable ResourceProvider resourceProvider) {
 
         Map<String, String> otel = otelConfig.entrySet().stream().collect(Collectors.toMap(
-                e -> "otel." + e.getKey(),
-                Map.Entry::getValue
+            e -> "otel." + e.getKey(),
+            Map.Entry::getValue
         ));
 
         otel.putIfAbsent(SERVICE_NAME_KEY, applicationConfiguration.getName().orElse(""));
@@ -79,28 +85,33 @@ public class DefaultOpenTelemetryFactory {
         otel.putIfAbsent(DEFAULT_LOGS_EXPORTER, NONE);
 
         AutoConfiguredOpenTelemetrySdkBuilder sdk = AutoConfiguredOpenTelemetrySdk.builder()
-            .addPropertiesSupplier(() -> otel);
-
-        sdk.setResultAsGlobal(Boolean.parseBoolean(otel.getOrDefault(REGISTER_GLOBAL, StringUtils.TRUE)));
-
-        sdk.addTracerProviderCustomizer((tracerProviderBuilder, ignored) -> {
-            if (idGenerator != null) {
-                tracerProviderBuilder.setIdGenerator(idGenerator);
-            }
-            if (spanProcessor != null) {
-                tracerProviderBuilder.addSpanProcessor(spanProcessor);
-            }
-            if (resourceProvider != null) {
-                tracerProviderBuilder.setResource(resourceProvider.resource());
-            }
-            return tracerProviderBuilder;
-            }
-        );
+            .setResultAsGlobal(Boolean.parseBoolean(otel.getOrDefault(REGISTER_GLOBAL, StringUtils.TRUE)))
+            .addPropertiesSupplier(() -> otel)
+            .addTracerProviderCustomizer((tracerProviderBuilder, ignored) -> {
+                    if (idGenerator != null) {
+                        tracerProviderBuilder.setIdGenerator(idGenerator);
+                    }
+                    if (spanProcessor != null) {
+                        tracerProviderBuilder.addSpanProcessor(spanProcessor);
+                    }
+                    if (resourceProvider != null) {
+                        tracerProviderBuilder.setResource(resourceProvider.resource());
+                    }
+                    if (applicationConfiguration.getName().isPresent()) {
+                        tracerProviderBuilder.setResource(Resource.create(Attributes.of(ResourceAttributes.SERVICE_NAME, applicationConfiguration.getName().get())));
+                    }
+                    return tracerProviderBuilder;
+                }
+            );
 
         return sdk.build().getOpenTelemetrySdk();
-
     }
 
+    /**
+     * Reset OpenTelemetry, if it's running in test mode.
+     *
+     * @param environment The environment
+     */
     @PreDestroy
     void resetForTest(Environment environment) {
         if (environment.getActiveNames().contains(Environment.TEST)) {

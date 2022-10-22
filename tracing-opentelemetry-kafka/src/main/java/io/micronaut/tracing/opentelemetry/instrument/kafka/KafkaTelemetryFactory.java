@@ -85,6 +85,13 @@ public class KafkaTelemetryFactory {
             .build();
     }
 
+    /**
+     * Add message headers as span attributes.
+     *
+     * @param attributes attributes builder
+     * @param headers kafka message headers
+     * @param kafkaTelemetryConfiguration kafka telemtry configuration
+     */
     void putAttributes(AttributesBuilder attributes, Headers headers, KafkaTelemetryConfiguration kafkaTelemetryConfiguration) {
         Set<String> capturedHeaders = kafkaTelemetryConfiguration.getCapturedHeaders();
         if (CollectionUtils.isEmpty(capturedHeaders) || capturedHeaders.size() == 1 && capturedHeaders.iterator().next().equals(StringUtils.EMPTY_STRING)) {

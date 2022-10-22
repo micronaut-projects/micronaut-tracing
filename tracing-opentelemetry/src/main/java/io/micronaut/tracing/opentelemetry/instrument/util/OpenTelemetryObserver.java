@@ -30,8 +30,7 @@ public interface OpenTelemetryObserver<T> {
     /**
      * No op observer.
      */
-    OpenTelemetryObserver<?> NO_OP = new OpenTelemetryObserver<>() {
-    };
+    OpenTelemetryObserver<?> NO_OP = new OpenTelemetryObserver<>() { };
 
     /**
      * For subclasses to override and implement custom behaviour when an item is emitted.

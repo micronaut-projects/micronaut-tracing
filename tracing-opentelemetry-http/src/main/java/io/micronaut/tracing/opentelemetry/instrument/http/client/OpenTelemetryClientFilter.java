@@ -85,8 +85,7 @@ public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter imple
 
     private void handleContinueSpan(MutableHttpRequest<?> request) {
         Object invocationContext = request.getAttribute(INVOCATION_CONTEXT).orElse(null);
-        if (invocationContext instanceof MethodInvocationContext) {
-            MethodInvocationContext<?, ?> context = (MethodInvocationContext<?, ?>) invocationContext;
+        if (invocationContext instanceof MethodInvocationContext<?, ?> context) {
             if (context.hasAnnotation(ContinueSpan.class)) {
                 AbstractOpenTelemetryTraceInterceptor.tagArguments(context);
             }

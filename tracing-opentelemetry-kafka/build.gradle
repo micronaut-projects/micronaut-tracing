@@ -5,15 +5,12 @@ plugins {
 dependencies {
     api platform (libs.boms.opentelemetry)
     api platform (libs.boms.opentelemetry.alpha)
+    api platform (libs.boms.opentelemetry.instrumentation)
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
-    api mn.micronaut.runtime
     api projects.tracingOpentelemetry
     api libs.opentelemetry.api
     api libs.opentelemetry.instrumentation.kafka
     api mn.micronaut.kafka
-
-    compileOnly libs.kotlinx.coroutines.core
-    compileOnly libs.kotlinx.coroutines.reactor
 
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing

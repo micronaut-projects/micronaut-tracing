@@ -27,13 +27,10 @@ import io.micronaut.core.util.StringUtils;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
-import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.IdGenerator;
 import io.opentelemetry.sdk.trace.SpanProcessor;
-import io.opentelemetry.semconv.resource.attributes.ResourceAttributes;
 
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
@@ -96,9 +93,6 @@ public class DefaultOpenTelemetryFactory {
                     }
                     if (resourceProvider != null) {
                         tracerProviderBuilder.setResource(resourceProvider.resource());
-                    }
-                    if (applicationConfiguration.getName().isPresent()) {
-                        tracerProviderBuilder.setResource(Resource.create(Attributes.of(ResourceAttributes.SERVICE_NAME, applicationConfiguration.getName().get())));
                     }
                     return tracerProviderBuilder;
                 }

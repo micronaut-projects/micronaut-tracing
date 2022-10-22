@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 /**
- * Contains classes, interfaces and annotations that provide integration with Apache Kafka.
+ * Contains configuration that provide integration with Kafka Opentelemetry.
  *
- * @author graemerocher
- * @since 1.0
+ * @since 5.0.0
  */
 @Configuration
 @Requires(property = KafkaTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
-@Requires(beans = {KafkaTelemetry.class, OpenTelemetry.class})
+@Requires(classes = Consumer.class)
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;
-import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.kafkaclients.KafkaTelemetry;
+
+import org.apache.kafka.clients.consumer.Consumer;

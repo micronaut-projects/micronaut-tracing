@@ -1,11 +1,12 @@
 plugins {
     id 'io.micronaut.build.internal.tracing-module'
-    alias libs.plugins.protobuf
+    alias libs.plugins.protobuf.gradle
 }
 
 dependencies {
     api platform (libs.boms.opentelemetry)
     api platform (libs.boms.opentelemetry.alpha)
+    api platform (libs.boms.opentelemetry.instrumentation)
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
     api mn.micronaut.runtime
     api projects.tracingAnnotation
@@ -17,25 +18,21 @@ dependencies {
     api libs.opentelemetry.autoconfigure
 
     implementation(platform(libs.micronaut.aws.bom))
-    compileOnly(libs.opentelemetry.aws.sdk)
-    compileOnly(libs.awssdk.core)
-    testImplementation(libs.opentelemetry.aws.sdk)
-    testImplementation(libs.awssdk.core)
-
-    compileOnly libs.kotlinx.coroutines.core
-    compileOnly libs.kotlinx.coroutines.reactor
+    implementation(mn.reactor)
+    compileOnly libs.opentelemetry.aws.sdk
+    compileOnly libs.awssdk.core
     compileOnly libs.managed.opentelemetry.contrib.aws.xray
     compileOnly libs.managed.opentelemetry.contrib.aws.resources
 
     testAnnotationProcessor projects.tracingOpentelemetryAnnotation
-
-    testImplementation(libs.opentelemetry.sdk.extension.aws)
 
     testImplementation mn.reactor
     testImplementation mn.micronaut.reactor.http.client
 
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
+    testImplementation libs.opentelemetry.aws.sdk
+    testImplementation libs.awssdk.core
 
     testImplementation libs.managed.opentelemetry.contrib.aws.xray
     testImplementation libs.managed.opentelemetry.contrib.aws.resources

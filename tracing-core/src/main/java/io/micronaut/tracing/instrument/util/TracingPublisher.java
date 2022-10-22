@@ -309,8 +309,7 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
         public void onNext(T object) {
             boolean finishAfterNext = isSingle && finishOnClose;
             try (Scope ignored = scopeManager.activeSpan() != span ? scopeManager.activate(span) : NoopScope.INSTANCE) {
-                if (object instanceof MutableHttpResponse) {
-                    MutableHttpResponse<?> response = (MutableHttpResponse<?>) object;
+                if (object instanceof MutableHttpResponse<?> response) {
                     Optional<?> body = response.getBody();
                     if (body.isPresent()) {
                         Object o = body.get();

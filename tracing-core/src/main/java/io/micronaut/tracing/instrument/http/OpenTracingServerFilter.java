@@ -95,11 +95,10 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
 
             @Override
             public void doOnNext(@NonNull Object object, @NonNull Span span) {
-                if (!(object instanceof HttpResponse)) {
+                if (!(object instanceof HttpResponse<?> response)) {
                     return;
                 }
 
-                HttpResponse<?> response = (HttpResponse<?>) object;
                 tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(response.getHeaders()));
                 setResponseTags(request, response, span);
             }

@@ -67,7 +67,7 @@
 <!--   -->
 </a></div>
 <!-- ========= END OF TOP NAVBAR ========= -->
-<div class="contentContainer"><a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<a href="#I:Z">Z</a>&nbsp;<a name="I:A">
+<div class="contentContainer"><a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:K">K</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<a href="#I:Z">Z</a>&nbsp;<a name="I:A">
 <!--   -->
 </a>
 <h2 class="title">A</h2>
@@ -111,6 +111,10 @@
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html#AbstractTraceInterceptor-io.opentracing.Tracer-">AbstractTraceInterceptor(Tracer)</a></span> - Constructor for class io.micronaut.tracing.interceptor.<a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></dt>
 <dd>
 <div class="block">Initialize the interceptor with tracer and conversion service.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html#ALL_HEADERS">ALL_HEADERS</a></span> - Static variable in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConfiguration</a></dt>
+<dd>
+<div class="block">Value to capture all headers as span attributes.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/processing/SpanAttributeAnnotationMapper.html#annotationType--">annotationType()</a></span> - Method in class io.micronaut.tracing.opentelemetry.processing.<a href="io/micronaut/tracing/opentelemetry/processing/SpanAttributeAnnotationMapper.html" title="class in io.micronaut.tracing.opentelemetry.processing">SpanAttributeAnnotationMapper</a></dt>
 <dd>&nbsp;</dd>
@@ -208,7 +212,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.HttpClientSenderConfiguration.html#clientSenderBuilder">clientSenderBuilder</a></span> - Variable in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.HttpClientSenderConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.HttpClientSenderConfiguration</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/grpc/GrpcClientTracingInterceptorFactory.html#clientTracingInterceptor-io.opentelemetry.api.OpenTelemetry-">clientTracingInterceptor(OpenTelemetry)</a></span> - Method in class io.micronaut.tracing.grpc.<a href="io/micronaut/tracing/grpc/GrpcClientTracingInterceptorFactory.html" title="class in io.micronaut.tracing.grpc">GrpcClientTracingInterceptorFactory</a></dt>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/grpc/GrpcClientTracingInterceptorFactory.html#clientTracingInterceptor-io.opentelemetry.api.OpenTelemetry-">clientTracingInterceptor(OpenTelemetry)</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.grpc.<a href="io/micronaut/tracing/opentelemetry/instrument/grpc/GrpcClientTracingInterceptorFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.grpc">GrpcClientTracingInterceptorFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/sender/HttpClientSender.html#close--">close()</a></span> - Method in class io.micronaut.tracing.brave.sender.<a href="io/micronaut/tracing/brave/sender/HttpClientSender.html" title="class in io.micronaut.tracing.brave.sender">HttpClientSender</a></dt>
 <dd>&nbsp;</dd>
@@ -424,6 +428,10 @@
 <dd>
 <div class="block">Creates builder.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html#getCapturedHeaders--">getCapturedHeaders()</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConfiguration</a></dt>
+<dd>
+<div class="block">List of headers, which you want to add as span attributes.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html#getConfiguration--">getConfiguration()</a></span> - Method in class io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.HttpClientSenderConfiguration.html#getConnectionPoolConfiguration--">getConnectionPoolConfiguration()</a></span> - Method in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.HttpClientSenderConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.HttpClientSenderConfiguration</a></dt>
@@ -468,17 +476,17 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html#getTracingBuilder--">getTracingBuilder()</a></span> - Method in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/grpc/GrpcClientTracingInterceptorFactory.html" title="class in io.micronaut.tracing.grpc"><span class="typeNameLink">GrpcClientTracingInterceptorFactory</span></a> - Class in <a href="io/micronaut/tracing/grpc/package-summary.html">io.micronaut.tracing.grpc</a></dt>
+<dt><a href="io/micronaut/tracing/opentelemetry/instrument/grpc/GrpcClientTracingInterceptorFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.grpc"><span class="typeNameLink">GrpcClientTracingInterceptorFactory</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/grpc/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.grpc</a></dt>
 <dd>
 <div class="block">Builds the client Tracing interceptors.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/grpc/GrpcClientTracingInterceptorFactory.html#GrpcClientTracingInterceptorFactory--">GrpcClientTracingInterceptorFactory()</a></span> - Constructor for class io.micronaut.tracing.grpc.<a href="io/micronaut/tracing/grpc/GrpcClientTracingInterceptorFactory.html" title="class in io.micronaut.tracing.grpc">GrpcClientTracingInterceptorFactory</a></dt>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/grpc/GrpcClientTracingInterceptorFactory.html#GrpcClientTracingInterceptorFactory--">GrpcClientTracingInterceptorFactory()</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.grpc.<a href="io/micronaut/tracing/opentelemetry/instrument/grpc/GrpcClientTracingInterceptorFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.grpc">GrpcClientTracingInterceptorFactory</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/grpc/GrpcServerTracingInterceptorFactory.html" title="class in io.micronaut.tracing.grpc"><span class="typeNameLink">GrpcServerTracingInterceptorFactory</span></a> - Class in <a href="io/micronaut/tracing/grpc/package-summary.html">io.micronaut.tracing.grpc</a></dt>
+<dt><a href="io/micronaut/tracing/opentelemetry/instrument/grpc/GrpcServerTracingInterceptorFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.grpc"><span class="typeNameLink">GrpcServerTracingInterceptorFactory</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/grpc/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.grpc</a></dt>
 <dd>
 <div class="block">Builds the server Tracing interceptors.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/grpc/GrpcServerTracingInterceptorFactory.html#GrpcServerTracingInterceptorFactory--">GrpcServerTracingInterceptorFactory()</a></span> - Constructor for class io.micronaut.tracing.grpc.<a href="io/micronaut/tracing/grpc/GrpcServerTracingInterceptorFactory.html" title="class in io.micronaut.tracing.grpc">GrpcServerTracingInterceptorFactory</a></dt>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/grpc/GrpcServerTracingInterceptorFactory.html#GrpcServerTracingInterceptorFactory--">GrpcServerTracingInterceptorFactory()</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.grpc.<a href="io/micronaut/tracing/opentelemetry/instrument/grpc/GrpcServerTracingInterceptorFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.grpc">GrpcServerTracingInterceptorFactory</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <a name="I:H">
@@ -574,10 +582,6 @@
 <dd>
 <div class="block">Brave tracing HTTP sender.</div>
 </dd>
-<dt><a href="io/micronaut/tracing/grpc/package-summary.html">io.micronaut.tracing.grpc</a> - package io.micronaut.tracing.grpc</dt>
-<dd>
-<div class="block">HTTP Tracing.</div>
-</dd>
 <dt><a href="io/micronaut/tracing/instrument/http/package-summary.html">io.micronaut.tracing.instrument.http</a> - package io.micronaut.tracing.instrument.http</dt>
 <dd>
 <div class="block">HTTP Tracing.</div>
@@ -606,6 +610,10 @@
 <dd>
 <div class="block">Classes related to <code>IdGenerator</code>.</div>
 </dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/instrument/grpc/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.grpc</a> - package io.micronaut.tracing.opentelemetry.instrument.grpc</dt>
+<dd>
+<div class="block">HTTP Tracing.</div>
+</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/http/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.http</a> - package io.micronaut.tracing.opentelemetry.instrument.http</dt>
 <dd>
 <div class="block">Classes related to the creation of span objects on the every HTTP server request, client request, server response and client response.</div>
@@ -617,6 +625,10 @@
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.http.server</a> - package io.micronaut.tracing.opentelemetry.instrument.http.server</dt>
 <dd>
 <div class="block">Classes related to the creation of span objects on the every HTTP server request and server response.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.kafka</a> - package io.micronaut.tracing.opentelemetry.instrument.kafka</dt>
+<dd>
+<div class="block">Contains configuration that provide integration with Kafka Opentelemetry.</div>
 </dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a> - package io.micronaut.tracing.opentelemetry.instrument.util</dt>
 <dd>
@@ -660,6 +672,10 @@
 <dd>
 <div class="block">Designed for subclasses to override if the span needs to be finished upon error.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html#isHeadersAsLists--">isHeadersAsLists()</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConfiguration</a></dt>
+<dd>
+<div class="block">If you want to set headers as lists, set "true".</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html#isZipkinSharedRpcSpan--">isZipkinSharedRpcSpan()</a></span> - Method in class io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration</a></dt>
 <dd>&nbsp;</dd>
 </dl>
@@ -697,6 +713,28 @@
 <div class="block">Registers a Jaeger tracer based on the Jaeger configuration.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/jaeger/JaegerTracerFactory.html#JaegerTracerFactory-io.micronaut.tracing.jaeger.JaegerConfiguration-">JaegerTracerFactory(JaegerConfiguration)</a></span> - Constructor for class io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerTracerFactory.html" title="class in io.micronaut.tracing.jaeger">JaegerTracerFactory</a></dt>
+<dd>&nbsp;</dd>
+</dl>
+<a name="I:K">
+<!--   -->
+</a>
+<h2 class="title">K</h2>
+<dl>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryFactory.html#kafkaTelemetry-io.opentelemetry.api.OpenTelemetry-io.micronaut.tracing.opentelemetry.instrument.kafka.KafkaTelemetryConfiguration-">kafkaTelemetry(OpenTelemetry, KafkaTelemetryConfiguration)</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryFactory</a></dt>
+<dd>
+<div class="block">Create the KafkaTelemetry bean.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka"><span class="typeNameLink">KafkaTelemetryConfiguration</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/kafka/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.kafka</a></dt>
+<dd>
+<div class="block">Configuration properties for KafkaTelemetry.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html#KafkaTelemetryConfiguration--">KafkaTelemetryConfiguration()</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka"><span class="typeNameLink">KafkaTelemetryFactory</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/kafka/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.kafka</a></dt>
+<dd>
+<div class="block">Opentelemetery Kafka tracing factory.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryFactory.html#KafkaTelemetryFactory--">KafkaTelemetryFactory()</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryFactory</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <a name="I:L">
@@ -838,6 +876,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html#onComplete--">onComplete()</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher.TracingSubscriber</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpentelemetryKafkaConsumerTracingInstrumentation.html#onCreated-io.micronaut.context.event.BeanCreatedEvent-">onCreated(BeanCreatedEvent&lt;Consumer&lt;?, ?&gt;&gt;)</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpentelemetryKafkaConsumerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">OpentelemetryKafkaConsumerTracingInstrumentation</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpentelemetryKafkaProducerTracingInstrumentation.html#onCreated-io.micronaut.context.event.BeanCreatedEvent-">onCreated(BeanCreatedEvent&lt;Producer&lt;?, ?&gt;&gt;)</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpentelemetryKafkaProducerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">OpentelemetryKafkaProducerTracingInstrumentation</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/xray/SdkClientBuilderListener.html#onCreated-io.micronaut.context.event.BeanCreatedEvent-">onCreated(BeanCreatedEvent&lt;SdkClientBuilder&lt;?, ?&gt;&gt;)</a></span> - Method in class io.micronaut.tracing.opentelemetry.xray.<a href="io/micronaut/tracing/opentelemetry/xray/SdkClientBuilderListener.html" title="class in io.micronaut.tracing.opentelemetry.xray">SdkClientBuilderListener</a></dt>
 <dd>
 <div class="block">Add an OpenTelemetry execution interceptor to <code>SdkClientBuilder</code>.</div>
@@ -906,6 +948,22 @@
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryInvocationInstrumenter.html#OpenTelemetryInvocationInstrumenter--">OpenTelemetryInvocationInstrumenter()</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryInvocationInstrumenter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryInvocationInstrumenter</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpentelemetryKafkaConsumerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka"><span class="typeNameLink">OpentelemetryKafkaConsumerTracingInstrumentation</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/kafka/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.kafka</a></dt>
+<dd>
+<div class="block">Kafka consumer tracing instrumentation using Opentelemetry.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpentelemetryKafkaConsumerTracingInstrumentation.html#OpentelemetryKafkaConsumerTracingInstrumentation-io.opentelemetry.instrumentation.kafkaclients.KafkaTelemetry-">OpentelemetryKafkaConsumerTracingInstrumentation(KafkaTelemetry)</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpentelemetryKafkaConsumerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">OpentelemetryKafkaConsumerTracingInstrumentation</a></dt>
+<dd>
+<div class="block">Default constructor.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpentelemetryKafkaProducerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka"><span class="typeNameLink">OpentelemetryKafkaProducerTracingInstrumentation</span></a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/kafka/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.kafka</a></dt>
+<dd>
+<div class="block">Kafka consumer tracing instrumentation using Opentelemetry.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpentelemetryKafkaProducerTracingInstrumentation.html#OpentelemetryKafkaProducerTracingInstrumentation-io.opentelemetry.instrumentation.kafkaclients.KafkaTelemetry-">OpentelemetryKafkaProducerTracingInstrumentation(KafkaTelemetry)</a></span> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpentelemetryKafkaProducerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">OpentelemetryKafkaProducerTracingInstrumentation</a></dt>
+<dd>
+<div class="block">Default constructor.</div>
+</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.util"><span class="typeNameLink">OpenTelemetryObserver</span></a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html" title="type parameter in OpenTelemetryObserver">T</a>&gt; - Interface in <a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a></dt>
 <dd>
 <div class="block">OpenTelemetry observer.</div>
@@ -988,6 +1046,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryHttpServerConfig.html#PREFIX">PREFIX</a></span> - Static variable in class io.micronaut.tracing.opentelemetry.instrument.http.server.<a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryHttpServerConfig.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">OpenTelemetryHttpServerConfig</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html#PREFIX">PREFIX</a></span> - Static variable in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConfiguration</a></dt>
+<dd>
+<div class="block">The default prefix used for Kafka Telemetry configuration.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html#PREFIX">PREFIX</a></span> - Static variable in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryExclusionsConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.html#publisher">publisher</a></span> - Variable in class io.micronaut.tracing.brave.instrument.http.<a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingPublisher</a></dt>
@@ -1044,10 +1106,14 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/http/AbstractOpenTelemetryFilter.html#SERVER_PATH">SERVER_PATH</a></span> - Static variable in class io.micronaut.tracing.opentelemetry.instrument.http.<a href="io/micronaut/tracing/opentelemetry/instrument/http/AbstractOpenTelemetryFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http">AbstractOpenTelemetryFilter</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="io/micronaut/tracing/grpc/GrpcServerTracingInterceptorFactory.html#serverTracingInterceptor-io.opentelemetry.api.OpenTelemetry-">serverTracingInterceptor(OpenTelemetry)</a></span> - Method in class io.micronaut.tracing.grpc.<a href="io/micronaut/tracing/grpc/GrpcServerTracingInterceptorFactory.html" title="class in io.micronaut.tracing.grpc">GrpcServerTracingInterceptorFactory</a></dt>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/grpc/GrpcServerTracingInterceptorFactory.html#serverTracingInterceptor-io.opentelemetry.api.OpenTelemetry-">serverTracingInterceptor(OpenTelemetry)</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.grpc.<a href="io/micronaut/tracing/opentelemetry/instrument/grpc/GrpcServerTracingInterceptorFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.grpc">GrpcServerTracingInterceptorFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/ZipkinServiceInstanceList.html#SERVICE_ID">SERVICE_ID</a></span> - Static variable in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/ZipkinServiceInstanceList.html" title="class in io.micronaut.tracing.brave">ZipkinServiceInstanceList</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html#setCapturedHeaders-java.util.Set-">setCapturedHeaders(Set&lt;String&gt;)</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConfiguration</a></dt>
+<dd>
+<div class="block">Setter for captured headers set.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html#setClock-brave.Clock-">setClock(Clock)</a></span> - Method in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html#setCodecConfiguration-io.jaegertracing.Configuration.CodecConfiguration-">setCodecConfiguration(Configuration.CodecConfiguration)</a></span> - Method in class io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration</a></dt>
@@ -1095,6 +1161,10 @@
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html#setExpandExceptionLogs-boolean-">setExpandExceptionLogs(boolean)</a></span> - Method in class io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration</a></dt>
 <dd>
 <div class="block">Whether to expand exception logs.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html#setHeadersAsLists-boolean-">setHeadersAsLists(boolean)</a></span> - Method in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConfiguration</a></dt>
+<dd>
+<div class="block">Setter for headersAsLists flag.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.SamplerConfiguration.html#setProbability-float-">setProbability(float)</a></span> - Method in class io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.SamplerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.SamplerConfiguration</a></dt>
 <dd>
@@ -1402,7 +1472,7 @@ the order they are declared.</div>
 <div class="block">Create a <code>ServiceInstanceList</code> for Zipkin with existing configuration.</div>
 </dd>
 </dl>
-<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<a href="#I:Z">Z</a>&nbsp;</div>
+<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:K">K</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<a href="#I:Z">Z</a>&nbsp;</div>
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
 <div class="bottomNav"><a name="navbar.bottom">
 <!--   -->

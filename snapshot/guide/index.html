@@ -106,9 +106,11 @@
         
         <div class="toc-item" style="margin-left:10px" id="toc-item-grpc"><a href="#grpc"><strong>5.6</strong><span>gRPC Server and Client</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>5.7</strong><span>AWS SDK Instrumentation</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-kafka"><a href="#kafka"><strong>5.7</strong><span>Kafka</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>5.8</strong><span>AWS Resource Detectors</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>5.8</strong><span>AWS SDK Instrumentation</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>5.9</strong><span>AWS Resource Detectors</span></a></div>
         
         <div class="toc-item" style="margin-left:0px" id="toc-item-repository"><a href="#repository"><strong>6</strong><span>Repository</span></a></div>
         
@@ -500,8 +502,8 @@ This can be achieved by adding a list of regular expression patterns to your con
     enabled: true
     http:
       urls:
-        - http://foo:9411
-        - http://bar:9411</code></pre>
+        - https://foo:9411
+        - https://bar:9411</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -638,7 +640,7 @@ This can be achieved by adding a list of regular expression patterns to your con
 </div></p>
 </div>
 <div class="paragraph">
-<p>The Open Tracing annotations that are defined inside the The <a href="../api/io/micronaut/tracing/annotation/package-summary.html">io.micronaut.tracing.annotation</a> package are also available for usage inside Open Telemetry.</p>
+<p>The Open Tracing annotations that are defined inside the <a href="../api/io/micronaut/tracing/annotation/package-summary.html">io.micronaut.tracing.annotation</a> package are also available for usage inside Open Telemetry.</p>
 </div>
 
 <h2 id="exporters"><a class="anchor" href="#exporters"></a>5.2 OpenTelemetry Exporters</h2>
@@ -936,7 +938,72 @@ This can be achieved by adding a list of regular expression patterns to your con
 </div></p>
 </div>
 
-<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>5.7 AWS SDK Instrumentation</h2>
+<h2 id="kafka"><a class="anchor" href="#kafka"></a>5.7 Kafka</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.5.x/src/main/docs/guide/opentelemetry/kafka.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To enable creating span objects on the every HTTP server request, client request, server response and client response you have to add next depedency:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-http")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-tracing-opentelemetry-http&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="sect1">
+<h2 id="_add_kafka_message_headers_into_request_spans">Add Kafka Message Headers into request spans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To enable creating span objects on the every Kafka message. You have to add next depedency:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-kafka")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-tracing-opentelemetry-kafka&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="listingblock">
+<div class="title">Adding Kafka Message Headers into request spans</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">otel:
+  instrumentation:
+    kafka:
+      # If you want to set headers as lists, set "true".
+      headers-as-lists: false
+      # List of headers, which you want to add as span attributes. By default, all headers
+      # will be added as span attributes. If you don't want to set any headers as attributes,
+      # just set it to `null` or an empty string.
+      captured-headers:
+        - myHeader1
+        - myHeader2</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>5.8 AWS SDK Instrumentation</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.5.x/src/main/docs/guide/opentelemetry/awsSdkInstrumentation.adoc"'>
@@ -988,7 +1055,7 @@ This can be achieved by adding a list of regular expression patterns to your con
 via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.</p>
 </div>
 
-<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>5.8 AWS Resource Detectors</h2>
+<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>5.9 AWS Resource Detectors</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.5.x/src/main/docs/guide/opentelemetry/awsResourceDetectors.adoc"'>
@@ -1027,12 +1094,14 @@ via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package io.micronaut.tracing.opentelemetry;
 
 import io.micronaut.core.annotation.NonNull;
+import io.opentelemetry.contrib.aws.resource.Ec2Resource;
 import io.opentelemetry.sdk.resources.Resource;
+
 import jakarta.inject.Singleton;
-import io.opentelemetry.sdk.extension.aws.resource.Ec2Resource;
 
 @Singleton
 public class AwsResourceProvider implements ResourceProvider {
+
     @Override
     @NonNull
     public Resource resource() {

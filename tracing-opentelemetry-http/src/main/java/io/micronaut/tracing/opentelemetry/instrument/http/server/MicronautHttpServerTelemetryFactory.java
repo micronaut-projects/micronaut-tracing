@@ -94,7 +94,7 @@ public final class MicronautHttpServerTelemetryFactory {
     @Server
     HttpServerAttributesExtractor<HttpRequest<Object>, HttpResponse<Object>> httpServerAttributesExtractor(@Nullable OpenTelemetryHttpServerConfig openTelemetryHttpServerConfig) {
         HttpServerAttributesExtractorBuilder<HttpRequest<Object>, HttpResponse<Object>> httpAttributesExtractorBuilder =
-            HttpServerAttributesExtractor.builder(MicronautHttpServerAttributesGetter.INSTANCE);
+            HttpServerAttributesExtractor.builder(MicronautHttpServerAttributesGetter.INSTANCE, new MicronautHttpNetServerAttributesGetter());
 
         if (openTelemetryHttpServerConfig != null) {
             httpAttributesExtractorBuilder.setCapturedRequestHeaders(openTelemetryHttpServerConfig.getRequestHeaders());

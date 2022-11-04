@@ -35,8 +35,7 @@ import software.amazon.awssdk.core.client.builder.SdkClientBuilder;
  * @since 4.2.0
  */
 @Internal
-@Requires(classes = AwsSdkTelemetry.class)
-@Requires(classes = SdkClientBuilder.class)
+@Requires(classes = {AwsSdkTelemetry.class, SdkClientBuilder.class})
 @Singleton
 public class SdkClientBuilderListener implements BeanCreatedEventListener<SdkClientBuilder<?, ?>> {
     private static final Logger LOG = LoggerFactory.getLogger(SdkClientBuilderListener.class);

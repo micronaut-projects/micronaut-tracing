@@ -11,6 +11,7 @@ opentelemetry:
   idgenerator: ID Generator
   http: HTTP Server and Client
   grpc: gRPC Server and Client
+  kafka: Kafka
   awsSdkInstrumentation: AWS SDK Instrumentation
-  awsResourceDetectors: AWS Resource Detectors  
+  awsResourceDetectors: AWS Resource Detectors
 repository: Repository

@@ -15,14 +15,14 @@
  */
 package io.micronaut.tracing.instrument.http;
 
-import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.util.CollectionUtils;
-
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.util.CollectionUtils;
 
 /**
  * @since 4.0

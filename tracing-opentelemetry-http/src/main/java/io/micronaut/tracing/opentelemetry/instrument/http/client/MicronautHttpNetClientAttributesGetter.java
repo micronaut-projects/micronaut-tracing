@@ -40,16 +40,14 @@ final class MicronautHttpNetClientAttributesGetter implements NetClientAttribute
     }
 
     @Override
-    public String peerName(MutableHttpRequest<Object> request,
-                           @Nullable HttpResponse<Object> response) {
+    public String peerName(MutableHttpRequest<Object> request) {
         return request.getAttribute(SERVICE_ID, String.class)
             .filter(serviceId -> !serviceId.contains("/"))
             .orElseGet(() -> getAddress(request).getHostString());
     }
 
     @Override
-    public Integer peerPort(MutableHttpRequest<Object> request,
-                            @Nullable HttpResponse<Object> response) {
+    public Integer peerPort(MutableHttpRequest<Object> request) {
         return getAddress(request).getPort();
     }
 }

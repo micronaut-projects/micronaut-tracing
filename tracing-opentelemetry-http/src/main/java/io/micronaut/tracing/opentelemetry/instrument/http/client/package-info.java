@@ -15,7 +15,12 @@
  */
 /**
  * Classes related to the creation of span objects on the every HTTP client request and client response.
+ *
  * @author Sergio del Amo
  * @since 4.2.0
  */
+@Requires(classes = MutableHttpRequest.class)
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
+
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.http.MutableHttpRequest;

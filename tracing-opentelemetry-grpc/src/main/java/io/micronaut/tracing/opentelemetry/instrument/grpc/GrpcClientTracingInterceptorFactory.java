@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing.grpc;
+package io.micronaut.tracing.opentelemetry.instrument.grpc;
 
 import io.grpc.ClientInterceptor;
 import io.micronaut.context.annotation.Factory;
@@ -22,7 +22,6 @@ import io.micronaut.core.annotation.NonNull;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.grpc.v1_6.GrpcTelemetry;
 import jakarta.inject.Singleton;
-
 
 /**
  * Builds the client Tracing interceptors.

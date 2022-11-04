@@ -1,0 +1,24 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api platform (libs.boms.opentelemetry)
+    api platform (libs.boms.opentelemetry.alpha)
+    api platform (libs.boms.opentelemetry.instrumentation)
+    api platform (libs.boms.opentelemetry.instrumentation.alpha)
+    api projects.tracingOpentelemetry
+    api libs.opentelemetry.api
+    api libs.opentelemetry.instrumentation.kafka
+    api mn.micronaut.kafka
+
+    testImplementation libs.opentelemetry.sdk
+    testImplementation libs.opentelemetry.sdk.testing
+}
+
+// TODO temporarily disable binary compatibility checks
+micronautBuild {
+    binaryCompatibility {
+        enabled = false
+    }
+}

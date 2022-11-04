@@ -3,4 +3,4 @@ The pkg:tracing.opentelemetry.processing[] package contains transformers and map
 To enable Open telemetry annotations you have to add next annotation processor in your dependency block:
 dependency:micronaut-tracing-opentelemetry-annotation[scope="annotationProcessor", version="{version}", groupId="io.micronaut.tracing"]
 
-The Open Tracing annotations that are defined inside the The pkg:tracing.annotation[] package are also available for usage inside Open Telemetry.
+The Open Tracing annotations that are defined inside the pkg:tracing.annotation[] package are also available for usage inside Open Telemetry.

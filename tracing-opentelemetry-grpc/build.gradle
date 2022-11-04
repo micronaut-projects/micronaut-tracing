@@ -1,11 +1,12 @@
 plugins {
     id 'io.micronaut.build.internal.tracing-module'
-    alias libs.plugins.protobuf
+    alias libs.plugins.protobuf.gradle
 }
 
 dependencies {
     api platform (libs.boms.opentelemetry)
     api platform (libs.boms.opentelemetry.alpha)
+    api platform (libs.boms.opentelemetry.instrumentation)
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
     api mn.micronaut.runtime
     api mn.micronaut.grpc.client.runtime
@@ -17,8 +18,7 @@ dependencies {
     api libs.opentelemetry.instrumentation.api
     api libs.opentelemetry.instrumentation.grpc
 
-    compileOnly libs.kotlinx.coroutines.core
-    compileOnly libs.kotlinx.coroutines.reactor
+    testCompileOnly libs.javax.annotation.api
 
     testImplementation mn.micronaut.grpc.server.runtime
     testImplementation libs.opentelemetry.sdk

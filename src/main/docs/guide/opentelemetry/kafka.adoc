@@ -1,0 +1,23 @@
+To enable creating span objects on the every HTTP server request, client request, server response and client response you have to add next depedency:
+dependency:micronaut-tracing-opentelemetry-http[scope="implementation", groupId="io.micronaut.tracing"]
+
+== Add Kafka Message Headers into request spans
+
+To enable creating span objects on the every Kafka message. You have to add next depedency:
+dependency:micronaut-tracing-opentelemetry-kafka[scope="implementation", groupId="io.micronaut.tracing"]
+
+.Adding Kafka Message Headers into request spans
+[source,yaml]
+----
+otel:
+  instrumentation:
+    kafka:
+      # If you want to set headers as lists, set "true".
+      headers-as-lists: false
+      # List of headers, which you want to add as span attributes. By default, all headers
+      # will be added as span attributes. If you don't want to set any headers as attributes,
+      # just set it to `null` or an empty string.
+      captured-headers:
+        - myHeader1
+        - myHeader2
+----

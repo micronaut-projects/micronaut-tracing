@@ -27,8 +27,8 @@ dependencies {
     testImplementation libs.grpc.protobuf
     testImplementation libs.grpc.stub
 
-    // For javax.annotation.Generated
-    testImplementation libs.javax.annotation.api
+    // For javax.annotation.Generated used by GRPC
+    testCompileOnly(libs.javax.annotation.api)
 }
 
 sourceSets {

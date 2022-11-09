@@ -36,13 +36,7 @@ dependencies {
 
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
+    testImplementation mn.micronaut.serde.jackson
 
     testImplementation libs.managed.opentelemetry.contrib.aws.xray
-}
-
-// TODO temporarily disable binary compatibility checks
-micronautBuild {
-    binaryCompatibility {
-        enabled = false
-    }
 }

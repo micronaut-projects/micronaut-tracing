@@ -56,6 +56,8 @@ awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
 
 micronaut-aws-bom = { module = 'io.micronaut.aws:micronaut-aws-bom' }
 
+javax-annotation-api = { module = "javax.annotation:javax.annotation-api" }
+
 # BOMs
 boms-opentelemetry = { module = 'io.opentelemetry:opentelemetry-bom', version.ref = 'managed-opentelemetry' }
 boms-opentelemetry-alpha = { module = 'io.opentelemetry:opentelemetry-bom-alpha', version.ref = 'managed-opentelemetry-alpha' }

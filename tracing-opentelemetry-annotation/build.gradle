@@ -11,17 +11,8 @@ dependencies {
     api mn.micronaut.runtime
     api projects.tracingAnnotation
     api libs.opentelemetry.instrumentation.annotations
+    implementation mn.micronaut.core.processor
 
     testImplementation mn.micronaut.inject.java.test
     testImplementation mn.micronaut.inject.groovy.test
-    if (!JavaVersion.current().isJava9Compatible()) {
-        testImplementation files(Jvm.current().toolsJar)
-    }
-}
-
-// TODO temporarily disable binary compatibility checks
-micronautBuild {
-    binaryCompatibility {
-        enabled = false
-    }
 }

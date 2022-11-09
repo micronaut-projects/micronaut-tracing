@@ -14,6 +14,7 @@ dependencies {
     compileOnly libs.kotlinx.coroutines.reactor
 
     testImplementation mn.reactor
+    testImplementation mn.micronaut.serde.jackson
     testImplementation "io.reactivex.rxjava2:rxjava"
     testImplementation mn.micronaut.rxjava2.http.client
     testImplementation mn.micronaut.reactor.http.client

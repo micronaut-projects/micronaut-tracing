@@ -23,6 +23,7 @@ dependencies {
     testImplementation mn.micronaut.reactor.http.client
     testImplementation "io.reactivex.rxjava2:rxjava"
     testImplementation mn.micronaut.rxjava2.http.client
+    testImplementation mn.micronaut.serde.jackson
 
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing

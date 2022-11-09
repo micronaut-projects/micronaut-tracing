@@ -15,6 +15,7 @@ import io.micronaut.http.client.HttpClient
 import io.micronaut.http.filter.HttpServerFilter
 import io.micronaut.http.filter.ServerFilterChain
 import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.serde.annotation.Serdeable
 import jakarta.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
@@ -146,5 +147,5 @@ suspend fun ServerFilterChain.next(request: HttpRequest<*>): MutableHttpResponse
     return proceed(request).asFlow().single()
 }
 
-@Introspected
+@Serdeable
 class NameRequestBody(val name: String)

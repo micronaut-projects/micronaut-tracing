@@ -21,6 +21,7 @@ dependencies {
     compileOnly libs.kotlinx.coroutines.reactor
 
     testImplementation mn.micronaut.grpc.server.runtime
+    testImplementation libs.javax.annotation
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
     testImplementation libs.opentracing.grpc

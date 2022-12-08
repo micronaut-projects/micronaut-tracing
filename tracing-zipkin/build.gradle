@@ -10,4 +10,6 @@ dependencies {
     api libs.brave.instrumentation.http
     api libs.zipkin.reporter
     api libs.brave.opentracing
+
+    testRuntimeOnly mnSerde.micronaut.serde.jackson
 }

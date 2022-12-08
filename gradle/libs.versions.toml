@@ -21,9 +21,21 @@ grpc = '1.50.0'
 protobuf = '3.21.7'
 micronaut-docs = '2.0.0'
 
+micronaut-aws = "4.0.0-SNAPSHOT"
+micronaut-grpc = '4.0.0-SNAPSHOT'
+micronaut-reactor = '3.0.0-SNAPSHOT'
+micronaut-rxjava2 = '2.0.0-SNAPSHOT'
+micronaut-serde = '2.0.0-SNAPSHOT'
+
 [libraries]
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
 managed-opentelemetry-gcp-trace = { module = 'com.google.cloud.opentelemetry:exporter-auto', version.ref = 'managed-opentelemetry-gcp-trace'}
+
+micronaut-aws = { module = 'io.micronaut.aws:micronaut-aws-bom', version.ref = 'micronaut-aws'}
+micronaut-grpc = { module = 'io.micronaut.grpc:micronaut-grpc-bom', version.ref = 'micronaut-grpc'}
+micronaut-reactor = { module = 'io.micronaut.reactor:micronaut-reactor-bom', version.ref = 'micronaut-reactor'}
+micronaut-rxjava2 = { module = 'io.micronaut.rxjava2:micronaut-rxjava2-bom', version.ref = 'micronaut-rxjava2'}
+micronaut-serde = { module = 'io.micronaut.serde:micronaut-serde-bom', version.ref = 'micronaut-serde'}
 
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
 grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'grpc' }
@@ -55,8 +67,6 @@ opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrum
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 
 awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
-
-micronaut-aws-bom = { module = 'io.micronaut.aws:micronaut-aws-bom' }
 
 # BOMs
 boms-opentelemetry = { module = 'io.opentelemetry:opentelemetry-bom', version.ref = 'managed-opentelemetry' }

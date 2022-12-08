@@ -6,7 +6,7 @@ dependencies {
     api platform (libs.boms.opentelemetry)
     api platform (libs.boms.opentelemetry.alpha)
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
-    api mn.micronaut.runtime
+    api mn.micronaut.core.processor
     api mn.micronaut.http.client
     api mn.micronaut.router
     api projects.tracingAnnotation
@@ -20,9 +20,9 @@ dependencies {
     compileOnly libs.kotlinx.coroutines.reactor
 
     testImplementation mn.reactor
-    testImplementation mn.micronaut.reactor.http.client
+    testImplementation mnReactor.micronaut.reactor.http.client
     testImplementation "io.reactivex.rxjava2:rxjava"
-    testImplementation mn.micronaut.rxjava2.http.client
+    testImplementation mnRxjava2.micronaut.rxjava2.http.client
 
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing

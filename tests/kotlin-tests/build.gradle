@@ -6,7 +6,7 @@ plugins {
 dependencies {
     api projects.tracingCore
     api mn.micronaut.http.client
-    api mn.micronaut.runtime
+    api mn.micronaut.core.processor
 
     api libs.kotlinx.coroutines.core
     api libs.kotlinx.coroutines.reactor
@@ -17,7 +17,7 @@ dependencies {
     testImplementation libs.kotlinx.coroutines.reactor
 
     testImplementation mn.micronaut.http.server.netty
-    testImplementation mn.micronaut.test.junit5
+    testImplementation mnTest.micronaut.test.junit5
     testImplementation libs.junit.jupiter.engine
 }
 

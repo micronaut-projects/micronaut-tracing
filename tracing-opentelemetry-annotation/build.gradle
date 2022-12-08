@@ -8,7 +8,7 @@ dependencies {
     api platform (libs.boms.opentelemetry)
     api platform (libs.boms.opentelemetry.alpha)
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
-    api mn.micronaut.runtime
+    api mn.micronaut.core.processor
     api projects.tracingAnnotation
     api libs.opentelemetry.instrumentation.annotations
 

@@ -8,4 +8,5 @@ dependencies {
         exclude group: "org.jetbrains", module: "annotations"
     }
     testImplementation mn.reactor
+    testRuntimeOnly mnSerde.micronaut.serde.jackson
 }

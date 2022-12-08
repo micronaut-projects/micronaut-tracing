@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api mn.micronaut.runtime
+    api mn.micronaut.core.processor
 }
 
 // TODO temporarily disable binary compatibility checks

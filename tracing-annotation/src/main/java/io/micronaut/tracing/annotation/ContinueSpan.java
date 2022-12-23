@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.annotation;
 
+import io.micronaut.aop.Around;
 import io.micronaut.aop.InterceptorBinding;
 
 import java.lang.annotation.Inherited;
@@ -36,6 +37,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Inherited
 @Target({METHOD, ANNOTATION_TYPE})
+@Around
 @InterceptorBinding
 public @interface ContinueSpan {
 }

@@ -94,7 +94,7 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
         }
         String route = request.getAttribute(HttpAttributes.URI_TEMPLATE).map(Object::toString)
             .orElse(request.getUri().toString());
-        return request.getMethodName() + " - " + route;
+        return route;
     }
 
     @Override

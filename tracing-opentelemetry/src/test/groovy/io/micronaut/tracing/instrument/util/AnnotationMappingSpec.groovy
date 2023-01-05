@@ -56,7 +56,7 @@ class AnnotationMappingSpec extends Specification {
         int spanNumbers = 2
         def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
 
-        expect:
+        when:
         List<Tuple2> result = Flux.range(1, count)
                 .flatMap {
                     String tracingId = UUID.randomUUID()
@@ -69,19 +69,23 @@ class AnnotationMappingSpec extends Specification {
                 }
                 .collectList()
                 .block()
+
+        then:
         for (Tuple2 t : result) {
             assert t.getT1() == t.getT2()
         }
 
-        testExporter.finishedSpanItems.size() == count * spanNumbers
+        conditions.eventually {
+            testExporter.finishedSpanItems.size() == count * spanNumbers
 
-        testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-attribute"))
-        !testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-no-withspan"))
-        testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-with-withspan"))
-        testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-continue-span"))
-        // test if newspan has appended name
-        testExporter.finishedSpanItems.name.any(x -> x.contains("#test-withspan-mapping"))
-        testExporter.finishedSpanItems.name.any(x -> x.contains("#enter"))
+            testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-attribute"))
+            !testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-no-withspan"))
+            testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-with-withspan"))
+            testExporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-continue-span"))
+            // test if newspan has appended name
+            testExporter.finishedSpanItems.name.any(x -> x.contains("#test-withspan-mapping"))
+            testExporter.finishedSpanItems.name.any(x -> x.contains("#enter"))
+        }
 
         cleanup:
         testExporter.reset()
@@ -91,10 +95,12 @@ class AnnotationMappingSpec extends Specification {
         def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
         def warehouseClient = embeddedServer.applicationContext.getBean(WarehouseClient)
 
-        expect:
-
+        when:
         warehouseClient.order(Collections.singletonMap("testOrderKey", "testOrderValue"))
-        warehouseClient.getItemCount("testItemCount", 10) == 10
+        def res = warehouseClient.getItemCount("testItemCount", 10)
+
+        then:
+        res == 10
         conditions.eventually {
             testExporter.finishedSpanItems.size() == 1
             testExporter.finishedSpanItems.get(0).name == "WarehouseClient.order"

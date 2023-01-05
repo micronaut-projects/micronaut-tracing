@@ -33,7 +33,7 @@ dependencies {
 //    testImplementation(libs.opentelemetry.contrib.aws.resources)
     testImplementation(libs.opentelemetry.sdk.extension.aws)
 
-    testImplementation mn.reactor
+    testImplementation mnReactor.micronaut.reactor
     testImplementation mnReactor.micronaut.reactor.http.client
 
     testImplementation libs.opentelemetry.sdk
@@ -41,7 +41,7 @@ dependencies {
 
     testImplementation libs.managed.opentelemetry.contrib.aws.xray
 
-    testRuntimeOnly mnSerde.micronaut.serde.jackson
+    testImplementation mnSerde.micronaut.serde.jackson
 }
 
 // TODO temporarily disable binary compatibility checks

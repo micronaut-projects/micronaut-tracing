@@ -18,6 +18,7 @@ package io.micronaut.tracing.instrument.util;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.async.publisher.Publishers;
+import io.micronaut.core.convert.ConversionService;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.tracing.interceptor.AbstractTraceInterceptor;
 import io.opentracing.Scope;
@@ -316,9 +317,9 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
                         Object o = body.get();
                         if (Publishers.isConvertibleToPublisher(o)) {
                             Class<?> type = o.getClass();
-                            Publisher<?> resultPublisher = Publishers.convertPublisher(o, Publisher.class);
+                            Publisher<?> resultPublisher = Publishers.convertPublisher(ConversionService.SHARED, o, Publisher.class);
                             Publisher<?> scopedPublisher = new ScopePropagationPublisher(resultPublisher, tracer, span);
-                            response.body(Publishers.convertPublisher(scopedPublisher, type));
+                            response.body(Publishers.convertPublisher(ConversionService.SHARED, scopedPublisher, type));
                         }
                     }
 

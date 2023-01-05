@@ -9,6 +9,7 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
+import io.opentracing.Tracer
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -46,7 +47,7 @@ class HttpTracingExclusionSpec extends Specification {
 
     void 'test basic HTTP tracing'() {
         expect:
-        context.containsBean(JaegerTracer)
+        context.containsBean(Tracer)
 
         when:
         HttpResponse<String> response = client.toBlocking().exchange('/traced/hello/John', String)
@@ -58,7 +59,7 @@ class HttpTracingExclusionSpec extends Specification {
 
     void 'test basic HTTP tracing - blocking controller method'() {
         expect:
-        context.containsBean(JaegerTracer)
+        context.containsBean(Tracer)
 
         when:
         HttpResponse<String> response = client.toBlocking().exchange('/traced/blocking/hello/John', String)
@@ -70,7 +71,7 @@ class HttpTracingExclusionSpec extends Specification {
 
     void 'test basic response reactive HTTP tracing'() {
         expect:
-        context.containsBean(JaegerTracer)
+        context.containsBean(Tracer)
 
         when:
         HttpResponse<String> response = client.toBlocking().exchange('/traced/response-reactive/John', String)

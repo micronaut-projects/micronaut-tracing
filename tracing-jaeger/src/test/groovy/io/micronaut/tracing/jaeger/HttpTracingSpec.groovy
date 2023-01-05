@@ -1,6 +1,7 @@
 package io.micronaut.tracing.jaeger
 
 import io.jaegertracing.internal.JaegerSpan
+import io.jaegertracing.internal.JaegerTracer
 import io.jaegertracing.internal.metrics.InMemoryMetricsFactory
 import io.jaegertracing.internal.reporters.InMemoryReporter
 import io.micronaut.context.ApplicationContext
@@ -65,6 +66,7 @@ class HttpTracingSpec extends Specification {
     void 'test basic HTTP tracing'() {
         expect:
         context.containsBean(Tracer)
+        context.getBean(Tracer) instanceof JaegerTracer
 
         when:
         HttpResponse<String> response = client.toBlocking().exchange('/traced/hello/John', String)
@@ -87,6 +89,7 @@ class HttpTracingSpec extends Specification {
     void 'test basic HTTP tracing - blocking controller method'() {
         expect:
         context.containsBean(Tracer)
+        context.getBean(Tracer) instanceof JaegerTracer
 
         when:
         HttpResponse<String> response = client.toBlocking().exchange('/traced/blocking/hello/John', String)
@@ -109,6 +112,7 @@ class HttpTracingSpec extends Specification {
     void 'test basic response reactive HTTP tracing'() {
         expect:
         context.containsBean(Tracer)
+        context.getBean(Tracer) instanceof JaegerTracer
 
         when:
         HttpResponse<String> response = client.toBlocking().exchange('/traced/response-reactive/John', String)
@@ -657,6 +661,7 @@ class HttpTracingSpec extends Specification {
     void 'test retried HTTP request - should contain tracing headers only once'() {
         expect:
         context.containsBean(Tracer)
+        context.getBean(Tracer) instanceof JaegerTracer
 
         when:
         def exchange = client.exchange('/traced/need-retry', String)

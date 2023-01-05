@@ -48,6 +48,7 @@ class HttpTracingExclusionSpec extends Specification {
     void 'test basic HTTP tracing'() {
         expect:
         context.containsBean(Tracer)
+        context.getBean(Tracer) instanceof JaegerTracer
 
         when:
         HttpResponse<String> response = client.toBlocking().exchange('/traced/hello/John', String)
@@ -60,6 +61,7 @@ class HttpTracingExclusionSpec extends Specification {
     void 'test basic HTTP tracing - blocking controller method'() {
         expect:
         context.containsBean(Tracer)
+        context.getBean(Tracer) instanceof JaegerTracer
 
         when:
         HttpResponse<String> response = client.toBlocking().exchange('/traced/blocking/hello/John', String)
@@ -72,6 +74,7 @@ class HttpTracingExclusionSpec extends Specification {
     void 'test basic response reactive HTTP tracing'() {
         expect:
         context.containsBean(Tracer)
+        context.getBean(Tracer) instanceof JaegerTracer
 
         when:
         HttpResponse<String> response = client.toBlocking().exchange('/traced/response-reactive/John', String)

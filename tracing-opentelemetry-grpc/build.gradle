@@ -27,6 +27,8 @@ dependencies {
     testImplementation libs.opentracing.grpc
     testImplementation libs.grpc.protobuf
     testImplementation libs.grpc.stub
+    testImplementation mnSerde.micronaut.serde.jackson
+
 }
 
 sourceSets {

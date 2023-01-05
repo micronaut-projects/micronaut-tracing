@@ -46,7 +46,8 @@ class MDCReactorSpec extends Specification {
     @Shared
     @AutoCleanup
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
-            'mdc.reactortest.enabled': 'true'
+            'mdc.reactortest.enabled': 'true',
+            'micronaut.http.client.read-timeout' : '30s'
     ])
 
     @Shared

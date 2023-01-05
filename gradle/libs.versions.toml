@@ -28,6 +28,7 @@ micronaut-grpc = '4.0.0-SNAPSHOT'
 micronaut-reactor = '3.0.0-SNAPSHOT'
 micronaut-rxjava2 = '2.0.0-SNAPSHOT'
 micronaut-serde = '2.0.0-SNAPSHOT'
+micronaut-kafka = '5.0.0-SNAPSHOT'
 
 [libraries]
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
@@ -39,8 +40,11 @@ micronaut-grpc = { module = 'io.micronaut.grpc:micronaut-grpc-bom', version.ref 
 micronaut-reactor = { module = 'io.micronaut.reactor:micronaut-reactor-bom', version.ref = 'micronaut-reactor'}
 micronaut-rxjava2 = { module = 'io.micronaut.rxjava2:micronaut-rxjava2-bom', version.ref = 'micronaut-rxjava2'}
 micronaut-serde = { module = 'io.micronaut.serde:micronaut-serde-bom', version.ref = 'micronaut-serde'}
+micronaut-kafka = { module = 'io.micronaut.kafka:micronaut-kafka-bom', version.ref = 'micronaut-kafka'}
 
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
+grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'grpc' }
+grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'grpc' }
 jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'managed-jaeger' }
 javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation' }
 junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
@@ -82,4 +86,4 @@ boms-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter-bom', ver
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }
 kotlinkapt = { id = 'org.jetbrains.kotlin.kapt', version.ref = 'kotlin' }
-protobuf-gradle = { id = 'com.google.protobuf', version.ref = 'managed-protobuf' }
+protobuf = { id = 'com.google.protobuf', version.ref = 'managed-protobuf' }

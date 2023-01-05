@@ -2,6 +2,7 @@ package io.micronaut.tracing.jaeger
 
 import io.jaegertracing.internal.JaegerTracer
 import io.micronaut.context.ApplicationContext
+import io.micronaut.runtime.server.EmbeddedServer
 import io.opentracing.Tracer
 import io.opentracing.noop.NoopTracer
 import spock.lang.Specification

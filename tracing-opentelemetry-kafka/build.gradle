@@ -10,7 +10,8 @@ dependencies {
     api projects.tracingOpentelemetry
     api libs.opentelemetry.api
     api libs.opentelemetry.instrumentation.kafka
-    api mn.micronaut.kafka
+    api mnKafka.micronaut.kafka.streams
+
 
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing

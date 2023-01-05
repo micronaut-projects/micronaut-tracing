@@ -2,7 +2,7 @@
 managed-brave-instrumentation = '5.14.1'
 managed-opentelemetry = '1.19.0'
 managed-opentelemetry-alpha = '1.19.0-alpha'
-managed-opentelemetry-instrumentation-alpha = '1.19.2-alpha'
+managed-opentelemetry-instrumentation-alpha = '1.19.0-alpha'
 managed-opentelemetry-contrib-aws-xray = '1.19.1'
 managed-opentelemetry-contrib-aws-resources = '1.19.1-alpha'
 managed-opentelemetry-gcp-trace = '0.23.0-alpha'

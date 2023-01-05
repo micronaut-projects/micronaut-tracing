@@ -2,11 +2,13 @@
 managed-brave-instrumentation = '5.14.1'
 managed-opentelemetry = '1.19.0'
 managed-opentelemetry-alpha = '1.19.0-alpha'
-managed-opentelemetry-instrumentation-alpha = '1.19.0-alpha'
+managed-opentelemetry-instrumentation = '1.19.2'
+managed-opentelemetry-instrumentation-alpha = '1.19.2-alpha'
 managed-opentelemetry-contrib-aws-xray = '1.19.1'
 managed-opentelemetry-contrib-aws-resources = '1.19.1-alpha'
 managed-opentelemetry-gcp-trace = '0.23.0-alpha'
 managed-protobuf = '0.9.1'
+managed-zipkin = '2.23.19'
 managed-zipkin-reporter = '2.16.3'
 
 managed-jaeger = '1.8.1'
@@ -17,8 +19,8 @@ managed-brave-opentracing = '1.0.0'
 javax-annotation = '1.3.2'
 kotlin = '1.7.20'
 kotlin-coroutines = '1.6.4'
-grpc = '1.50.0'
-protobuf = '3.21.7'
+grpc = '1.50.2'
+protobuf = '3.21.9'
 micronaut-docs = '2.0.0'
 
 micronaut-aws = "4.0.0-SNAPSHOT"
@@ -29,6 +31,7 @@ micronaut-serde = '2.0.0-SNAPSHOT'
 
 [libraries]
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
+managed-opentelemetry-contrib-aws-resources = { module = 'io.opentelemetry.contrib:opentelemetry-aws-resources', version.ref = 'managed-opentelemetry-contrib-aws-resources'}
 managed-opentelemetry-gcp-trace = { module = 'com.google.cloud.opentelemetry:exporter-auto', version.ref = 'managed-opentelemetry-gcp-trace'}
 
 micronaut-aws = { module = 'io.micronaut.aws:micronaut-aws-bom', version.ref = 'micronaut-aws'}
@@ -38,8 +41,6 @@ micronaut-rxjava2 = { module = 'io.micronaut.rxjava2:micronaut-rxjava2-bom', ver
 micronaut-serde = { module = 'io.micronaut.serde:micronaut-serde-bom', version.ref = 'micronaut-serde'}
 
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
-grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'grpc' }
-grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'grpc' }
 jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'managed-jaeger' }
 javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation' }
 junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
@@ -54,14 +55,16 @@ opentracing-util = { module = 'io.opentracing:opentracing-util', version.ref = '
 protoc = { module = 'com.google.protobuf:protoc', version.ref = 'protobuf' }
 protoc-grpc = { module = 'io.grpc:protoc-gen-grpc-java', version.ref = 'grpc' }
 brave-instrumentation-http = { module = 'io.zipkin.brave:brave-instrumentation-http' }
+zipkin = { module = 'io.zipkin.zipkin2:zipkin', version.ref = 'managed-zipkin' }
 zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter' }
+
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api' }
 opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk' }
 opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing' }
-opentelemetry-sdk-extension-aws = { module = 'io.opentelemetry:opentelemetry-sdk-extension-aws' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure' }
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api' }
 opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6'}
+opentelemetry-instrumentation-kafka = { module = 'io.opentelemetry.instrumentation:opentelemetry-kafka-clients-2.6'}
 opentelemetry-instrumentation-api-semconv = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv' }
 opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrumentation: opentelemetry-instrumentation-annotations' }
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
@@ -71,6 +74,7 @@ awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
 # BOMs
 boms-opentelemetry = { module = 'io.opentelemetry:opentelemetry-bom', version.ref = 'managed-opentelemetry' }
 boms-opentelemetry-alpha = { module = 'io.opentelemetry:opentelemetry-bom-alpha', version.ref = 'managed-opentelemetry-alpha' }
+boms-opentelemetry-instrumentation = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom', version.ref = 'managed-opentelemetry-instrumentation' }
 boms-opentelemetry-instrumentation-alpha = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha', version.ref = 'managed-opentelemetry-instrumentation-alpha' }
 boms-brave = { module = 'io.zipkin.brave:brave-bom', version.ref = 'managed-brave-instrumentation' }
 boms-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter-bom', version.ref = 'managed-zipkin-reporter' }
@@ -78,4 +82,4 @@ boms-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter-bom', ver
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }
 kotlinkapt = { id = 'org.jetbrains.kotlin.kapt', version.ref = 'kotlin' }
-protobuf = { id = 'com.google.protobuf', version.ref = 'managed-protobuf' }
+protobuf-gradle = { id = 'com.google.protobuf', version.ref = 'managed-protobuf' }

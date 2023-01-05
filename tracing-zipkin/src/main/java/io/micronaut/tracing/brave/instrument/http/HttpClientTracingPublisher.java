@@ -162,8 +162,6 @@ class HttpClientTracingPublisher implements Publishers.MicronautPublisher<HttpRe
         publisher.subscribe(new TracingHttpClientSubscriber(actual, span));
     }
 
-
-
     /**
      * The tracing subscriber.
      */
@@ -212,6 +210,4 @@ class HttpClientTracingPublisher implements Publishers.MicronautPublisher<HttpRe
             actual.onComplete();
         }
     }
-
-
 }

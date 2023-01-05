@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api platform (libs.boms.opentelemetry)
     api platform (libs.boms.opentelemetry.alpha)
+    api platform (libs.boms.opentelemetry.instrumentation)
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
     api mn.micronaut.context
     api mn.micronaut.core.processor

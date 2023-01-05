@@ -1,4 +1,4 @@
-package io.micronaut.tracing.instrument.grpc
+package io.micronaut.tracing.opentelemetry.instrument.grpc
 
 import io.grpc.Channel
 import io.grpc.examples.helloworld.GreeterGrpc

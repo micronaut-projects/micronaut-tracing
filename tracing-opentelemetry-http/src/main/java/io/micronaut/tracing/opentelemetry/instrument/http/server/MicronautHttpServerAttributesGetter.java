@@ -15,6 +15,9 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
+import java.util.List;
+import java.util.Optional;
+
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.StringUtils;
@@ -26,9 +29,6 @@ import io.micronaut.web.router.UriRoute;
 import io.micronaut.web.router.UriRouteMatch;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerAttributesGetter;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
-
-import java.util.List;
-import java.util.Optional;
 
 @Internal
 enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<HttpRequest<Object>, HttpResponse<Object>> {
@@ -81,7 +81,6 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     }
 
     @Override
-    @Nullable
     public String route(HttpRequest<Object> request) {
         Optional<Object> routeInfo = request.getAttribute(HttpAttributes.ROUTE_INFO)
             .filter(UriRouteMatch.class::isInstance)
@@ -100,12 +99,6 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     @Override
     public String scheme(HttpRequest<Object> request) {
         return request.getUri().getScheme();
-    }
-
-    @Override
-    @Nullable
-    public String serverName(HttpRequest<Object> request) {
-        return request.getServerName();
     }
 
 }

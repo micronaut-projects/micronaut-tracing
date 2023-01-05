@@ -61,8 +61,8 @@ tracing:
     enabled: true
     http:
       urls:
-        - http://foo:9411
-        - http://bar:9411
+        - https://foo:9411
+        - https://bar:9411
 ----
 
 TIP: In production, setting `TRACING_ZIPKIN_HTTP_URLS` environment variable with a comma-separated list of URLs also works.

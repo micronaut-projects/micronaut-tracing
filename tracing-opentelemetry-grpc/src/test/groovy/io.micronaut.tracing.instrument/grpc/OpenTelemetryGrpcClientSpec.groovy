@@ -13,6 +13,7 @@ import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import spock.lang.Specification
+import spock.util.concurrent.PollingConditions
 
 import static io.opentelemetry.api.trace.SpanKind.CLIENT
 import static io.opentelemetry.api.trace.SpanKind.SERVER
@@ -23,15 +24,21 @@ class OpenTelemetryGrpcClientSpec extends Specification {
     @Inject
     TestBean testBean
 
+    private PollingConditions conditions = new PollingConditions()
+
     @Inject
     InMemorySpanExporter exporter
 
     void "test opentelemetry gRPC"() {
-        expect:
+        when:
         testBean.sayHello("Fred") == "Hello Fred"
-        exporter.finishedSpanItems.size() == 2
-        exporter.finishedSpanItems.kind.contains(SERVER)
-        exporter.finishedSpanItems.kind.contains(CLIENT)
+
+        then:
+        conditions.eventually {
+            exporter.finishedSpanItems.size() == 2
+            exporter.finishedSpanItems.kind.contains(SERVER)
+            exporter.finishedSpanItems.kind.contains(CLIENT)
+        }
 
         cleanup:
         exporter.reset()

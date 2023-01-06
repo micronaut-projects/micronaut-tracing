@@ -99,8 +99,7 @@ public class KafkaTelemetryFactory {
             for (Header header : headers) {
                 processHeader(attributes, header, counterMap);
             }
-        }
-         else{
+        } else {
             applyHeaders(attributes, headers, kafkaTelemetryConfiguration);
         }
     }

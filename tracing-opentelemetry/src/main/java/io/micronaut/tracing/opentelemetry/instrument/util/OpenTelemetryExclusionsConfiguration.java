@@ -18,7 +18,6 @@ package io.micronaut.tracing.opentelemetry.instrument.util;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.core.annotation.Nullable;

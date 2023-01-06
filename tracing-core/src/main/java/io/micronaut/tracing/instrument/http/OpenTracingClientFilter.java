@@ -107,8 +107,7 @@ public class OpenTracingClientFilter extends AbstractOpenTracingFilter implement
 
             @Override
             public void doOnError(@NonNull Throwable error, @NonNull Span span) {
-                if (error instanceof HttpClientResponseException) {
-                    HttpClientResponseException e = (HttpClientResponseException) error;
+                if (error instanceof HttpClientResponseException e) {
                     HttpResponse<?> response = e.getResponse();
                     setResponseTags(request, response, span);
                 }

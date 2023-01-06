@@ -70,6 +70,7 @@ public class KafkaTelemetryFactory {
 
                 @Override
                 public void onEnd(AttributesBuilder attributes, Context context, ConsumerRecord<?, ?> consumerRecord, Void unused, Throwable error) {
+                    // do notting in the end
                 }
             })
             .addProducerAttributesExtractors(new AttributesExtractor<>() {
@@ -80,6 +81,7 @@ public class KafkaTelemetryFactory {
 
                 @Override
                 public void onEnd(AttributesBuilder attributes, Context context, ProducerRecord<?, ?> producerRecord, Void unused, Throwable error) {
+                    // do notting in the end
                 }
             })
             .build();
@@ -103,30 +105,35 @@ public class KafkaTelemetryFactory {
                 processHeader(attributes, header, counterMap);
             }
         } else {
+            applyHeaders(attributes, headers ,kafkaTelemetryConfiguration);
+        }
+    }
 
-            if (kafkaTelemetryConfiguration.isHeadersAsLists()) {
-                for (String headerName : capturedHeaders) {
-                    List<String> values = null;
-                    Iterable<Header> headersByName = headers.headers(headerName);
-                    for (Header header : headersByName) {
-                        if (values == null) {
-                            values = new ArrayList<>();
-                        }
-                        values.add(new String(header.value(), StandardCharsets.UTF_8));
+    private void applyHeaders(AttributesBuilder attributes, Headers headers, KafkaTelemetryConfiguration kafkaTelemetryConfiguration) {
+        Set<String> capturedHeaders = kafkaTelemetryConfiguration.getCapturedHeaders();
+
+        if (kafkaTelemetryConfiguration.isHeadersAsLists()) {
+            for (String headerName : capturedHeaders) {
+                List<String> values = null;
+                Iterable<Header> headersByName = headers.headers(headerName);
+                for (Header header : headersByName) {
+                    if (values == null) {
+                        values = new ArrayList<>();
                     }
-                    if (values != null) {
-                        attributes.put(ATTR_PREFIX + headerName, values.toArray(EMPTY_STRING_ARRAY));
-                    }
+                    values.add(new String(header.value(), StandardCharsets.UTF_8));
                 }
-            } else {
-                Map<String, Integer> counterMap = new HashMap<>();
-                for (String headerName : capturedHeaders) {
-                    Header header = headers.lastHeader(headerName);
-                    if (header == null) {
-                        continue;
-                    }
-                    processHeader(attributes, header, counterMap);
+                if (values != null) {
+                    attributes.put(ATTR_PREFIX + headerName, values.toArray(EMPTY_STRING_ARRAY));
                 }
+            }
+        } else {
+            Map<String, Integer> counterMap = new HashMap<>();
+            for (String headerName : capturedHeaders) {
+                Header header = headers.lastHeader(headerName);
+                if (header == null) {
+                    continue;
+                }
+                processHeader(attributes, header, counterMap);
             }
         }
     }

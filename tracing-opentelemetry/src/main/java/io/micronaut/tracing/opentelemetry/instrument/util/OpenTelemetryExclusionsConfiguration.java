@@ -68,7 +68,7 @@ public class OpenTelemetryExclusionsConfiguration {
 
         List<Pattern> patterns = exclusions.stream()
             .map(Pattern::compile)
-            .collect(Collectors.toList());
+            .toList();
         return uri -> patterns.stream().anyMatch(pattern -> pattern.matcher(uri).matches());
     }
 }

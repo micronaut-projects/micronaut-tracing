@@ -193,8 +193,7 @@ class HttpClientTracingPublisher implements Publishers.MicronautPublisher<HttpRe
         @Override
         public void onError(Throwable error) {
             try (SpanInScope ignored = tracer.withSpanInScope(span)) {
-                if (error instanceof HttpClientResponseException) {
-                    HttpClientResponseException e = (HttpClientResponseException) error;
+                if (error instanceof HttpClientResponseException e) {
                     clientHandler.handleReceive(mapResponse(request, e.getResponse(), error), span);
                 } else {
                     span.error(error);

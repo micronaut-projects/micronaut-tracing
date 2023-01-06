@@ -29,7 +29,6 @@ class MDCSpec2 extends Specification {
     @AutoCleanup
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
             'mdc.test2.enabled': true,
-            'micronaut.http.client.read-timeout' : '30s'
     ])
 
     @Shared

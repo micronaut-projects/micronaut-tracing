@@ -34,9 +34,7 @@ class ReactorRx2JavaSpec extends Specification {
 
     @Shared
     @AutoCleanup
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
-            'micronaut.http.client.read-timeout' : '30s'
-    ])
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
 
     @Shared
     @AutoCleanup

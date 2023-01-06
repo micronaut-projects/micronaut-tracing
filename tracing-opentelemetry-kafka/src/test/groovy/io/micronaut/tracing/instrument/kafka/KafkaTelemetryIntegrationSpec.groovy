@@ -22,7 +22,6 @@ class KafkaTelemetryIntegrationSpec extends Specification {
         EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
                 'kafka.enabled': 'true',
                 "kafka.bootstrap.servers": kafkaContainer.bootstrapServers,
-                'micronaut.http.client.read-timeout' : '30s'
         ])
         def context = embeddedServer.applicationContext
         TestKafkaClient testKafkaClient = context.getBean(TestKafkaClient)

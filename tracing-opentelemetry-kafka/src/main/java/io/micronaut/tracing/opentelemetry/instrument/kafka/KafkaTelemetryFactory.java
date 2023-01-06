@@ -62,7 +62,7 @@ public class KafkaTelemetryFactory {
     @Singleton
     public KafkaTelemetry kafkaTelemetry(OpenTelemetry openTelemetry, KafkaTelemetryConfiguration kafkaTelemetryConfiguration) {
         return KafkaTelemetry.builder(openTelemetry)
-            .addConsumerAttributesExtractors(new AttributesExtractor<ConsumerRecord<?, ?>, Void>() {
+            .addConsumerAttributesExtractors(new AttributesExtractor<>() {
                 @Override
                 public void onStart(AttributesBuilder attributes, Context parentContext, ConsumerRecord<?, ?> consumerRecord) {
                     putAttributes(attributes, consumerRecord.headers(), kafkaTelemetryConfiguration);
@@ -72,7 +72,7 @@ public class KafkaTelemetryFactory {
                 public void onEnd(AttributesBuilder attributes, Context context, ConsumerRecord<?, ?> consumerRecord, Void unused, Throwable error) {
                 }
             })
-            .addProducerAttributesExtractors(new AttributesExtractor<ProducerRecord<?, ?>, Void>() {
+            .addProducerAttributesExtractors(new AttributesExtractor<>() {
                 @Override
                 public void onStart(AttributesBuilder attributes, Context parentContext, ProducerRecord<?, ?> producerRecord) {
                     putAttributes(attributes, producerRecord.headers(), kafkaTelemetryConfiguration);

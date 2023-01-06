@@ -22,6 +22,7 @@ kotlin-coroutines = '1.6.4'
 grpc = '1.50.2'
 protobuf = '3.21.9'
 micronaut-docs = '2.0.0'
+testcontainers = '1.16.3'
 
 micronaut-aws = "4.0.0-SNAPSHOT"
 micronaut-grpc = '4.0.0-SNAPSHOT'
@@ -42,6 +43,8 @@ micronaut-rxjava2 = { module = 'io.micronaut.rxjava2:micronaut-rxjava2-bom', ver
 micronaut-serde = { module = 'io.micronaut.serde:micronaut-serde-bom', version.ref = 'micronaut-serde'}
 micronaut-kafka = { module = 'io.micronaut.kafka:micronaut-kafka-bom', version.ref = 'micronaut-kafka'}
 
+
+brave-instrumentation-http = { module = 'io.zipkin.brave:brave-instrumentation-http' }
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
 grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'grpc' }
 grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'grpc' }
@@ -58,7 +61,8 @@ opentracing-grpc = { module = 'io.opentracing.contrib:opentracing-grpc', version
 opentracing-util = { module = 'io.opentracing:opentracing-util', version.ref = 'managed-opentracing' }
 protoc = { module = 'com.google.protobuf:protoc', version.ref = 'protobuf' }
 protoc-grpc = { module = 'io.grpc:protoc-gen-grpc-java', version.ref = 'grpc' }
-brave-instrumentation-http = { module = 'io.zipkin.brave:brave-instrumentation-http' }
+testcontainers-kafka = { module = 'org.testcontainers:kafka', version.ref = 'testcontainers' }
+testcontainers-spock = { module = 'org.testcontainers:spock', version.ref = 'testcontainers' }
 zipkin = { module = 'io.zipkin.zipkin2:zipkin', version.ref = 'managed-zipkin' }
 zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter' }
 

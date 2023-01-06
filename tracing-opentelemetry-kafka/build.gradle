@@ -10,11 +10,15 @@ dependencies {
     api projects.tracingOpentelemetry
     api libs.opentelemetry.api
     api libs.opentelemetry.instrumentation.kafka
-    api mnKafka.micronaut.kafka.streams
+    api mnKafka.micronaut.kafka
+    api libs.opentelemetry.instrumentation.api.semconv
 
-
+    testImplementation mnSerde.micronaut.serde.jackson
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
+    testImplementation libs.testcontainers.kafka
+    testImplementation libs.testcontainers.spock
+
 }
 
 // TODO temporarily disable binary compatibility checks

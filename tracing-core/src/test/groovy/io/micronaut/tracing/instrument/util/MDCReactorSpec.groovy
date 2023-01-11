@@ -76,8 +76,8 @@ class MDCReactorSpec extends Specification {
     static class SomeBody {
     }
 
-    @Requires(property = 'mdc.reactortest.enabled')
     @Controller("/mdc")
+    @Requires(property = 'mdc.reactortest.enabled',  value = StringUtils.TRUE)
     static class MDCController {
 
         @Inject
@@ -141,7 +141,7 @@ class MDCReactorSpec extends Specification {
     }
 
     @Client("/mdc")
-    @Requires(property = 'mdc.reactortest.enabled')
+    @Requires(property = 'mdc.reactortest.enabled', value = StringUtils.TRUE)
     static interface MDCClient {
 
         @Get("/test2")
@@ -155,7 +155,7 @@ class MDCReactorSpec extends Specification {
     }
 
     @Filter(MATCH_ALL_PATTERN)
-    @Requires(property = 'mdc.reactortest.enabled')
+    @Requires(property = 'mdc.reactortest.enabled', value = StringUtils.TRUE)
     static class TracingHttpServerFilter implements HttpServerFilter {
 
         @Override
@@ -168,7 +168,7 @@ class MDCReactorSpec extends Specification {
     }
 
     @Filter("/mdc/test**")
-    @Requires(property = 'mdc.reactortest.enabled')
+    @Requires(property = 'mdc.reactortest.enabled', value = StringUtils.TRUE)
     static class TracingHttpClientFilter implements HttpClientFilter {
 
         @Override

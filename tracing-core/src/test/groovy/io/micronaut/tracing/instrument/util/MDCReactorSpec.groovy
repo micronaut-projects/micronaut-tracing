@@ -46,7 +46,9 @@ class MDCReactorSpec extends Specification {
 
     @Shared
     @AutoCleanup
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
+            'mdc.reactortest.enabled': StringUtils.TRUE,
+    ])
 
     @Shared
     @AutoCleanup
@@ -74,6 +76,7 @@ class MDCReactorSpec extends Specification {
     static class SomeBody {
     }
 
+    @Requires(property = 'mdc.reactortest.enabled')
     @Controller("/mdc")
     static class MDCController {
 
@@ -138,6 +141,7 @@ class MDCReactorSpec extends Specification {
     }
 
     @Client("/mdc")
+    @Requires(property = 'mdc.reactortest.enabled')
     static interface MDCClient {
 
         @Get("/test2")
@@ -151,6 +155,7 @@ class MDCReactorSpec extends Specification {
     }
 
     @Filter(MATCH_ALL_PATTERN)
+    @Requires(property = 'mdc.reactortest.enabled')
     static class TracingHttpServerFilter implements HttpServerFilter {
 
         @Override
@@ -163,6 +168,7 @@ class MDCReactorSpec extends Specification {
     }
 
     @Filter("/mdc/test**")
+    @Requires(property = 'mdc.reactortest.enabled')
     static class TracingHttpClientFilter implements HttpClientFilter {
 
         @Override

@@ -34,7 +34,7 @@ class MDCSpec extends Specification {
     @Shared
     @AutoCleanup
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
-            'mdc.test.enabled': true,
+            'mdc.test.enabled': true
     ])
 
     @Shared

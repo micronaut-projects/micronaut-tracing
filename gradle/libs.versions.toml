@@ -1,4 +1,10 @@
 [versions]
+micronaut = '4.0.0-SNAPSHOT'
+micronaut-test = '4.0.0-SNAPSHOT'
+micronaut-docs = '2.0.0'
+groovy = '4.0.6'
+spock = '2.3-groovy-4.0'
+
 managed-brave-instrumentation = '5.14.1'
 managed-opentelemetry = '1.19.0'
 managed-opentelemetry-alpha = '1.19.0-alpha'
@@ -21,7 +27,7 @@ kotlin = '1.7.20'
 kotlin-coroutines = '1.6.4'
 grpc = '1.50.2'
 protobuf = '3.21.9'
-micronaut-docs = '2.0.0'
+micronaut-doc = '1'
 testcontainers = '1.16.3'
 
 micronaut-aws = "4.0.0-SNAPSHOT"

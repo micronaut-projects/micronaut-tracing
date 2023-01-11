@@ -81,7 +81,6 @@ class TestController(private val someService: SomeService) {
     }
 }
 
-@Introspected
 @Serdeable
 class SomeBody(val name: String)
 
@@ -148,6 +147,5 @@ suspend fun ServerFilterChain.next(request: HttpRequest<*>): MutableHttpResponse
     return proceed(request).asFlow().single()
 }
 
-@Introspected
 @Serdeable
 class NameRequestBody(val name: String)

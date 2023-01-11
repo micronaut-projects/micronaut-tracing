@@ -5,10 +5,3 @@ plugins {
 dependencies {
     api mn.micronaut.core.processor
 }
-
-// TODO temporarily disable binary compatibility checks
-micronautBuild {
-    binaryCompatibility {
-        enabled = false
-    }
-}

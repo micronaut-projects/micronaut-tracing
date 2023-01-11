@@ -49,10 +49,3 @@ protobuf {
         all()*.plugins { grpc {} }
     }
 }
-
-// TODO temporarily disable binary compatibility checks
-micronautBuild {
-    binaryCompatibility {
-        enabled = false
-    }
-}

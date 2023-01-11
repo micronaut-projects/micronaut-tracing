@@ -4,6 +4,7 @@ import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Requires
 import io.micronaut.core.annotation.Introspected
+import io.micronaut.core.util.StringUtils
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MutableHttpRequest
@@ -45,9 +46,7 @@ class MDCReactorSpec extends Specification {
 
     @Shared
     @AutoCleanup
-    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
-            'mdc.reactortest.enabled': 'true',
-    ])
+    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
 
     @Shared
     @AutoCleanup
@@ -55,7 +54,7 @@ class MDCReactorSpec extends Specification {
 
     void "test MDC propagates"() {
         expect:
-        List<Tuple2> result = Flux.range(1, 2)
+        List<Tuple2> result = Flux.range(1, 100)
                 .flatMap {
                     String tracingId = UUID.randomUUID()
                     HttpRequest<Object> request = HttpRequest
@@ -76,7 +75,6 @@ class MDCReactorSpec extends Specification {
     }
 
     @Controller("/mdc")
-    @Requires(property = 'mdc.reactortest.enabled', value = "true")
     static class MDCController {
 
         @Inject
@@ -140,7 +138,6 @@ class MDCReactorSpec extends Specification {
     }
 
     @Client("/mdc")
-    @Requires(property = 'mdc.reactortest.enabled', value = "true")
     static interface MDCClient {
 
         @Get("/test2")
@@ -154,7 +151,6 @@ class MDCReactorSpec extends Specification {
     }
 
     @Filter(MATCH_ALL_PATTERN)
-    @Requires(property = 'mdc.reactortest.enabled', value = "true")
     static class TracingHttpServerFilter implements HttpServerFilter {
 
         @Override
@@ -167,7 +163,6 @@ class MDCReactorSpec extends Specification {
     }
 
     @Filter("/mdc/test**")
-    @Requires(property = 'mdc.reactortest.enabled', value = "true")
     static class TracingHttpClientFilter implements HttpClientFilter {
 
         @Override

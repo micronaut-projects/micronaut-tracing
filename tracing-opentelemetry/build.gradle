@@ -32,7 +32,6 @@ dependencies {
     testAnnotationProcessor projects.tracingOpentelemetryAnnotation
 
     testImplementation(libs.managed.opentelemetry.contrib.aws.resources)
-//    testImplementation(libs.opentelemetry.sdk.extension.aws)
 
     testImplementation mnReactor.micronaut.reactor
     testImplementation mnReactor.micronaut.reactor.http.client
@@ -43,11 +42,4 @@ dependencies {
     testImplementation libs.managed.opentelemetry.contrib.aws.xray
 
     testImplementation mnSerde.micronaut.serde.jackson
-}
-
-// TODO temporarily disable binary compatibility checks
-micronautBuild {
-    binaryCompatibility {
-        enabled = false
-    }
 }

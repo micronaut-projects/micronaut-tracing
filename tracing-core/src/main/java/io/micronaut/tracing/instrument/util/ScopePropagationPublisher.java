@@ -65,9 +65,21 @@ public class ScopePropagationPublisher<T> implements Publishers.MicronautPublish
             publisher.subscribe(new Subscriber<T>() {
                 @Override
                 public void onSubscribe(Subscription s) {
-                    try (Scope ignored = tracer.scopeManager().activate(span)) {
-                        actual.onSubscribe(s);
-                    }
+                    new Subscription() {
+                        @Override
+                        public void request(long n) {
+                            try (Scope ignored = tracer.scopeManager().activate(span)) {
+                                s.request(n);
+                            }
+                        }
+
+                        @Override
+                        public void cancel() {
+                            try (Scope ignored = tracer.scopeManager().activate(span)) {
+                                s.cancel();
+                            }
+                        }
+                    };
                 }
 
                 @Override

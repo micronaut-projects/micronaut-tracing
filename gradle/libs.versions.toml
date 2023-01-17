@@ -27,7 +27,6 @@ kotlin = '1.7.20'
 kotlin-coroutines = '1.6.4'
 grpc = '1.50.2'
 protobuf = '3.21.9'
-micronaut-doc = '1'
 testcontainers = '1.16.3'
 
 micronaut-aws = "4.0.0-SNAPSHOT"

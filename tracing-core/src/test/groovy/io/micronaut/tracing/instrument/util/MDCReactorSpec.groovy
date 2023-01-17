@@ -4,7 +4,6 @@ import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Requires
 import io.micronaut.core.annotation.Introspected
-import io.micronaut.core.util.StringUtils
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MutableHttpRequest
@@ -33,6 +32,7 @@ import reactor.core.publisher.Mono
 import reactor.util.function.Tuple2
 import reactor.util.function.Tuples
 import spock.lang.AutoCleanup
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -47,13 +47,14 @@ class MDCReactorSpec extends Specification {
     @Shared
     @AutoCleanup
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [
-            'mdc.reactortest.enabled': StringUtils.TRUE,
+            'mdc.reactortest.enabled': true
     ])
 
     @Shared
     @AutoCleanup
     HttpClient client = HttpClient.create(embeddedServer.URL)
 
+    @Ignore("https://github.com/micronaut-projects/micronaut-core/issues/8617")
     void "test MDC propagates"() {
         expect:
         List<Tuple2> result = Flux.range(1, 100)
@@ -77,7 +78,7 @@ class MDCReactorSpec extends Specification {
     }
 
     @Controller("/mdc")
-    @Requires(property = 'mdc.reactortest.enabled',  value = StringUtils.TRUE)
+    @Requires(property = 'mdc.reactortest.enabled')
     static class MDCController {
 
         @Inject
@@ -141,7 +142,7 @@ class MDCReactorSpec extends Specification {
     }
 
     @Client("/mdc")
-    @Requires(property = 'mdc.reactortest.enabled', value = StringUtils.TRUE)
+    @Requires(property = 'mdc.reactortest.enabled')
     static interface MDCClient {
 
         @Get("/test2")
@@ -155,7 +156,7 @@ class MDCReactorSpec extends Specification {
     }
 
     @Filter(MATCH_ALL_PATTERN)
-    @Requires(property = 'mdc.reactortest.enabled', value = StringUtils.TRUE)
+    @Requires(property = 'mdc.reactortest.enabled')
     static class TracingHttpServerFilter implements HttpServerFilter {
 
         @Override
@@ -168,7 +169,7 @@ class MDCReactorSpec extends Specification {
     }
 
     @Filter("/mdc/test**")
-    @Requires(property = 'mdc.reactortest.enabled', value = StringUtils.TRUE)
+    @Requires(property = 'mdc.reactortest.enabled')
     static class TracingHttpClientFilter implements HttpClientFilter {
 
         @Override

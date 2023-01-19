@@ -33,6 +33,7 @@ import reactor.util.function.Tuple2
 import reactor.util.function.Tuples
 import spock.lang.AutoCleanup
 import spock.lang.Ignore
+import spock.lang.PendingFeature
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -54,7 +55,7 @@ class MDCReactorSpec extends Specification {
     @AutoCleanup
     HttpClient client = HttpClient.create(embeddedServer.URL)
 
-    @Ignore("https://github.com/micronaut-projects/micronaut-core/issues/8617")
+    @PendingFeature(reason = "https://github.com/micronaut-projects/micronaut-core/issues/8617")
     void "test MDC propagates"() {
         expect:
         List<Tuple2> result = Flux.range(1, 100)

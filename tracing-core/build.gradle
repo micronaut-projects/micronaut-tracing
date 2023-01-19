@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api mn.micronaut.runtime
+    api mn.micronaut.core.processor
     api mn.micronaut.http.client
     api libs.opentracing
     api libs.opentracing.util
@@ -13,8 +13,9 @@ dependencies {
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor
 
-    testImplementation mn.reactor
+    testImplementation mnReactor.micronaut.reactor
     testImplementation "io.reactivex.rxjava2:rxjava"
-    testImplementation mn.micronaut.rxjava2.http.client
-    testImplementation mn.micronaut.reactor.http.client
+    testImplementation mnRxjava2.micronaut.rxjava2.http.client
+    testImplementation mnReactor.micronaut.reactor.http.client
+    testRuntimeOnly mnSerde.micronaut.serde.jackson
 }

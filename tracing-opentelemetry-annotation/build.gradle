@@ -9,7 +9,7 @@ dependencies {
     api platform (libs.boms.opentelemetry.alpha)
     api platform (libs.boms.opentelemetry.instrumentation)
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
-    api mn.micronaut.runtime
+    api mn.micronaut.core.processor
     api projects.tracingAnnotation
     api libs.opentelemetry.instrumentation.annotations
 
@@ -20,9 +20,3 @@ dependencies {
     }
 }
 
-// TODO temporarily disable binary compatibility checks
-micronautBuild {
-    binaryCompatibility {
-        enabled = false
-    }
-}

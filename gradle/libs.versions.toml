@@ -1,4 +1,10 @@
 [versions]
+micronaut = '4.0.0-SNAPSHOT'
+micronaut-test = '4.0.0-SNAPSHOT'
+micronaut-docs = '2.0.0'
+groovy = '4.0.6'
+spock = '2.3-groovy-4.0'
+
 managed-brave-instrumentation = '5.14.1'
 managed-opentelemetry = '1.19.0'
 managed-opentelemetry-alpha = '1.19.0-alpha'
@@ -21,37 +27,47 @@ kotlin = '1.7.20'
 kotlin-coroutines = '1.6.4'
 grpc = '1.50.2'
 protobuf = '3.21.9'
-micronaut-docs = '2.0.0'
+testcontainers = '1.16.3'
+
+micronaut-aws = "4.0.0-SNAPSHOT"
+micronaut-grpc = '4.0.0-SNAPSHOT'
+micronaut-reactor = '3.0.0-SNAPSHOT'
+micronaut-rxjava2 = '2.0.0-SNAPSHOT'
+micronaut-serde = '2.0.0-SNAPSHOT'
+micronaut-kafka = '5.0.0-SNAPSHOT'
 
 [libraries]
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
 managed-opentelemetry-contrib-aws-resources = { module = 'io.opentelemetry.contrib:opentelemetry-aws-resources', version.ref = 'managed-opentelemetry-contrib-aws-resources'}
 managed-opentelemetry-gcp-trace = { module = 'com.google.cloud.opentelemetry:exporter-auto', version.ref = 'managed-opentelemetry-gcp-trace'}
 
+micronaut-aws = { module = 'io.micronaut.aws:micronaut-aws-bom', version.ref = 'micronaut-aws'}
+micronaut-grpc = { module = 'io.micronaut.grpc:micronaut-grpc-bom', version.ref = 'micronaut-grpc'}
+micronaut-reactor = { module = 'io.micronaut.reactor:micronaut-reactor-bom', version.ref = 'micronaut-reactor'}
+micronaut-rxjava2 = { module = 'io.micronaut.rxjava2:micronaut-rxjava2-bom', version.ref = 'micronaut-rxjava2'}
+micronaut-serde = { module = 'io.micronaut.serde:micronaut-serde-bom', version.ref = 'micronaut-serde'}
+micronaut-kafka = { module = 'io.micronaut.kafka:micronaut-kafka-bom', version.ref = 'micronaut-kafka'}
+
+
+brave-instrumentation-http = { module = 'io.zipkin.brave:brave-instrumentation-http' }
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
+grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'grpc' }
+grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'grpc' }
 jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'managed-jaeger' }
+javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation' }
+junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
+kotlinx-coroutines-core = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-core', version.ref = 'kotlin-coroutines' }
+kotlinx-coroutines-reactor = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor', version.ref = 'kotlin-coroutines' }
+protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'protobuf' }
+protobuf-java-util = { module = 'com.google.protobuf:protobuf-java-util', version.ref = 'protobuf' }
+micronaut-docs-asciidoc-config-props = { module = 'io.micronaut.docs:micronaut-docs-asciidoc-config-props', version.ref = 'micronaut-docs' }
 opentracing = { module = 'io.opentracing:opentracing-api', version.ref = 'managed-opentracing' }
 opentracing-grpc = { module = 'io.opentracing.contrib:opentracing-grpc', version.ref = 'managed-opentracing-grpc' }
 opentracing-util = { module = 'io.opentracing:opentracing-util', version.ref = 'managed-opentracing' }
-
-junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine' }
-javax-annotation-api = { module = 'javax.annotation:javax.annotation-api' }
-kotlinx-coroutines-core = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-core', version.ref = 'kotlin-coroutines' }
-kotlinx-coroutines-reactor = { module = 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor', version.ref = 'kotlin-coroutines' }
-micronaut-docs-asciidoc-config-props = { module = 'io.micronaut.docs:micronaut-docs-asciidoc-config-props', version.ref = 'micronaut-docs' }
-
-protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'protobuf' }
-protobuf-java-util = { module = 'com.google.protobuf:protobuf-java-util', version.ref = 'protobuf' }
 protoc = { module = 'com.google.protobuf:protoc', version.ref = 'protobuf' }
-
-grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'grpc' }
-grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'grpc' }
 protoc-grpc = { module = 'io.grpc:protoc-gen-grpc-java', version.ref = 'grpc' }
-
-awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
-micronaut-aws-bom = { module = 'io.micronaut.aws:micronaut-aws-bom' }
-
-brave-instrumentation-http = { module = 'io.zipkin.brave:brave-instrumentation-http' }
+testcontainers-kafka = { module = 'org.testcontainers:kafka', version.ref = 'testcontainers' }
+testcontainers-spock = { module = 'org.testcontainers:spock', version.ref = 'testcontainers' }
 zipkin = { module = 'io.zipkin.zipkin2:zipkin', version.ref = 'managed-zipkin' }
 zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter' }
 
@@ -66,6 +82,8 @@ opentelemetry-instrumentation-api-semconv = { module = 'io.opentelemetry.instrum
 opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrumentation: opentelemetry-instrumentation-annotations' }
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 
+awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
+
 # BOMs
 boms-opentelemetry = { module = 'io.opentelemetry:opentelemetry-bom', version.ref = 'managed-opentelemetry' }
 boms-opentelemetry-alpha = { module = 'io.opentelemetry:opentelemetry-bom-alpha', version.ref = 'managed-opentelemetry-alpha' }
@@ -77,4 +95,4 @@ boms-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter-bom', ver
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }
 kotlinkapt = { id = 'org.jetbrains.kotlin.kapt', version.ref = 'kotlin' }
-protobuf-gradle = { id = 'com.google.protobuf', version.ref = 'managed-protobuf' }
+protobuf = { id = 'com.google.protobuf', version.ref = 'managed-protobuf' }

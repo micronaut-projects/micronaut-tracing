@@ -7,7 +7,7 @@ dependencies {
     api platform (libs.boms.opentelemetry.alpha)
     api platform (libs.boms.opentelemetry.instrumentation)
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
-    api mn.micronaut.runtime
+    api mn.micronaut.core.processor
     api mn.micronaut.http.client
     api mn.micronaut.router
     api projects.tracingAnnotation
@@ -17,17 +17,15 @@ dependencies {
     api libs.opentelemetry.instrumentation.api
     api libs.opentelemetry.instrumentation.api.semconv
 
-    testImplementation mn.reactor
-    testImplementation mn.micronaut.reactor.http.client
-    testImplementation mn.micronaut.rxjava2.http.client
+    compileOnly libs.kotlinx.coroutines.core
+    compileOnly libs.kotlinx.coroutines.reactor
+
+    testImplementation mnReactor.micronaut.reactor
+    testImplementation mnSerde.micronaut.serde.jackson
+    testImplementation mnReactor.micronaut.reactor.http.client
+    testImplementation "io.reactivex.rxjava2:rxjava"
+    testImplementation mnRxjava2.micronaut.rxjava2.http.client
 
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
-}
-
-// TODO temporarily disable binary compatibility checks
-micronautBuild {
-    binaryCompatibility {
-        enabled = false
-    }
 }

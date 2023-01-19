@@ -19,17 +19,17 @@ import io.micronaut.context.event.BeanCreatedEvent;
 import io.micronaut.context.event.BeanCreatedEventListener;
 import io.opentelemetry.instrumentation.kafkaclients.KafkaTelemetry;
 
-import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.consumer.Consumer;
 
 import jakarta.inject.Singleton;
 
 /**
- * Kafka consumer tracing instrumentation using Opentelemetry.
+ * Kafka consumer tracing instrumentation using OpenTelemetry.
  *
  * @since 5.0.0
  */
 @Singleton
-public class OpentelemetryKafkaProducerTracingInstrumentation implements BeanCreatedEventListener<Producer<?, ?>> {
+public class OpenTelemetryKafkaConsumerTracingInstrumentation implements BeanCreatedEventListener<Consumer<?, ?>> {
 
     private final KafkaTelemetry kafkaTelemetry;
 
@@ -38,12 +38,12 @@ public class OpentelemetryKafkaProducerTracingInstrumentation implements BeanCre
      *
      * @param kafkaTelemetry The kafka telemetry
      */
-    public OpentelemetryKafkaProducerTracingInstrumentation(KafkaTelemetry kafkaTelemetry) {
+    public OpenTelemetryKafkaConsumerTracingInstrumentation(KafkaTelemetry kafkaTelemetry) {
         this.kafkaTelemetry = kafkaTelemetry;
     }
 
     @Override
-    public Producer<?, ?> onCreated(BeanCreatedEvent<Producer<?, ?>> event) {
+    public Consumer<?, ?> onCreated(BeanCreatedEvent<Consumer<?, ?>> event) {
         return kafkaTelemetry.wrap(event.getBean());
     }
 }

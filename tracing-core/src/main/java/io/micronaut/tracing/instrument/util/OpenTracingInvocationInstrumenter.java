@@ -18,6 +18,7 @@ package io.micronaut.tracing.instrument.util;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.scheduling.instrument.InvocationInstrumenter;
+import io.micronaut.scheduling.instrument.InvocationInstrumenterFactory;
 import io.micronaut.scheduling.instrument.ReactiveInvocationInstrumenterFactory;
 import io.opentracing.Scope;
 import io.opentracing.Span;
@@ -35,7 +36,7 @@ import jakarta.inject.Singleton;
 @Requires(beans = Tracer.class)
 @Requires(missingBeans = TracingInvocationInstrumenterFactory.class)
 @Internal
-public class OpenTracingInvocationInstrumenter implements TracingInvocationInstrumenterFactory, ReactiveInvocationInstrumenterFactory {
+public class OpenTracingInvocationInstrumenter implements TracingInvocationInstrumenterFactory, ReactiveInvocationInstrumenterFactory, InvocationInstrumenterFactory {
 
     private final Tracer tracer;
 
@@ -62,5 +63,10 @@ public class OpenTracingInvocationInstrumenter implements TracingInvocationInstr
             Scope activeScope = tracer.scopeManager().activate(activeSpan);
             return cleanup -> activeScope.close();
         };
+    }
+
+    @Override
+    public InvocationInstrumenter newInvocationInstrumenter() {
+        return newTracingInvocationInstrumenter();
     }
 }

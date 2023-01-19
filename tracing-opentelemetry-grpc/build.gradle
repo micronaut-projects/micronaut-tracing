@@ -1,6 +1,6 @@
 plugins {
     id 'io.micronaut.build.internal.tracing-module'
-    alias libs.plugins.protobuf.gradle
+    alias libs.plugins.protobuf
 }
 
 dependencies {
@@ -8,9 +8,9 @@ dependencies {
     api platform (libs.boms.opentelemetry.alpha)
     api platform (libs.boms.opentelemetry.instrumentation)
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
-    api mn.micronaut.runtime
-    api mn.micronaut.grpc.client.runtime
-    api mn.micronaut.grpc.server.runtime
+    api mn.micronaut.core.processor
+    api mnGrpc.micronaut.grpc.client.runtime
+    api mnGrpc.micronaut.grpc.server.runtime
     api projects.tracingAnnotation
     api projects.tracingOpentelemetry
     api libs.opentelemetry.api
@@ -18,14 +18,17 @@ dependencies {
     api libs.opentelemetry.instrumentation.api
     api libs.opentelemetry.instrumentation.grpc
 
-    testCompileOnly libs.javax.annotation.api
+    testCompileOnly libs.javax.annotation
 
-    testImplementation mn.micronaut.grpc.server.runtime
+    testImplementation mn.micronaut.discovery.core
+    testImplementation libs.javax.annotation
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
     testImplementation libs.opentracing.grpc
     testImplementation libs.grpc.protobuf
     testImplementation libs.grpc.stub
+    testImplementation mnSerde.micronaut.serde.jackson
+
 }
 
 sourceSets {
@@ -44,12 +47,5 @@ protobuf {
     }
     generateProtoTasks {
         all()*.plugins { grpc {} }
-    }
-}
-
-// TODO temporarily disable binary compatibility checks
-micronautBuild {
-    binaryCompatibility {
-        enabled = false
     }
 }

@@ -245,7 +245,7 @@ class OpenTelemetryHttpSpec extends Specification {
         e.message == "Not Found"
         conditions.eventually {
             exporter.finishedSpanItems.size() == 1
-            exporter.finishedSpanItems[0].name == "GET - " + route
+            exporter.finishedSpanItems[0].name == route
             exporter.finishedSpanItems[0].status.statusCode == StatusCode.ERROR
         }
         cleanup:

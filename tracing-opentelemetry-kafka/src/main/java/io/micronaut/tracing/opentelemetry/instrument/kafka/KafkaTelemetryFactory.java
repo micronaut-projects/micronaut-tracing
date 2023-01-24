@@ -33,10 +33,13 @@ import io.opentelemetry.instrumentation.kafkaclients.KafkaTelemetry;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 
 import jakarta.inject.Singleton;
+
+import javax.annotation.Nullable;
 
 /**
  * Opentelemetery Kafka tracing factory.
@@ -72,14 +75,15 @@ public class KafkaTelemetryFactory {
                 public void onEnd(AttributesBuilder attributes, Context context, ConsumerRecord<?, ?> consumerRecord, Void unused, Throwable error) {
                 }
             })
-            .addProducerAttributesExtractors(new AttributesExtractor<ProducerRecord<?, ?>, Void>() {
+            .addProducerAttributesExtractors(new AttributesExtractor<ProducerRecord<?, ?>, RecordMetadata>() {
                 @Override
                 public void onStart(AttributesBuilder attributes, Context parentContext, ProducerRecord<?, ?> producerRecord) {
                     putAttributes(attributes, producerRecord.headers(), kafkaTelemetryConfiguration);
                 }
 
                 @Override
-                public void onEnd(AttributesBuilder attributes, Context context, ProducerRecord<?, ?> producerRecord, Void unused, Throwable error) {
+                public void onEnd(AttributesBuilder attributes, Context context, ProducerRecord<?, ?> producerRecord, @Nullable RecordMetadata recordMetadata, @Nullable Throwable error) {
+
                 }
             })
             .build();

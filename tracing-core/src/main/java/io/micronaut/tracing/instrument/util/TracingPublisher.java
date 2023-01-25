@@ -49,18 +49,21 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
     private final Span parentSpan;
     private final boolean isSingle;
     private final TracingObserver<T> tracingObserver;
+    private final ConversionService conversionService;
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher     the target publisher
-     * @param tracer        the tracer
-     * @param operationName the operation name that should be started
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param operationName     the operation name that should be started
+     * @param conversionService the {@code ConversionService} instance
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
-                            String operationName) {
-        this(publisher, tracer, tracer.buildSpan(operationName), (TracingObserver<T>) TracingObserver.NO_OP);
+                            String operationName,
+                            ConversionService conversionService) {
+        this(publisher, tracer, tracer.buildSpan(operationName), conversionService, (TracingObserver<T>) TracingObserver.NO_OP);
     }
 
     /**
@@ -69,24 +72,27 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      * @param publisher       the target publisher
      * @param tracer          the tracer
      * @param operationName   the operation name that should be started
+     * @param conversionService the {@code ConversionService} instance
      * @param tracingObserver the tracing observer
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
                             String operationName,
+                            ConversionService conversionService,
                             @NonNull TracingObserver<T> tracingObserver) {
-        this(publisher, tracer, tracer.buildSpan(operationName), tracingObserver);
+        this(publisher, tracer, tracer.buildSpan(operationName), conversionService, tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments. This constructor
      * will just add tracing of the existing span if it is present.
      *
-     * @param publisher the target publisher
-     * @param tracer    the tracer
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param conversionService the {@code ConversionService} instance
      */
-    public TracingPublisher(Publisher<T> publisher, Tracer tracer) {
-        this(publisher, tracer, (SpanBuilder) null, (TracingObserver<T>) TracingObserver.NO_OP);
+    public TracingPublisher(Publisher<T> publisher, Tracer tracer, ConversionService conversionService) {
+        this(publisher, tracer, (SpanBuilder) null, conversionService, (TracingObserver<T>) TracingObserver.NO_OP);
     }
 
     /**
@@ -95,25 +101,30 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      *
      * @param publisher       the target publisher
      * @param tracer          the tracer
+     * @param conversionService the {@code ConversionService} instance
      * @param tracingObserver the tracing observer
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
+                            ConversionService conversionService,
                             @NonNull TracingObserver<T> tracingObserver) {
-        this(publisher, tracer, (SpanBuilder) null, tracingObserver);
+        this(publisher, tracer, (SpanBuilder) null, conversionService, tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher   the target publisher
-     * @param tracer      the tracer
-     * @param spanBuilder the span builder that represents the span that will be
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param spanBuilder       the span builder that represents the span that will be
+     * @param conversionService the {@code ConversionService} instance
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
-                            SpanBuilder spanBuilder) {
-        this(publisher, tracer, spanBuilder, Publishers.isSingle(publisher.getClass()), (TracingObserver<T>) TracingObserver.NO_OP);
+                            SpanBuilder spanBuilder,
+                            ConversionService conversionService
+    ) {
+        this(publisher, tracer, spanBuilder, Publishers.isSingle(publisher.getClass()), conversionService, (TracingObserver<T>) TracingObserver.NO_OP);
     }
 
     /**
@@ -122,51 +133,59 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
      * @param publisher       the target publisher
      * @param tracer          the tracer
      * @param spanBuilder     the span builder that represents the span that will be
+     * @param conversionService the {@code ConversionService} instance
      * @param tracingObserver the tracing observer
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
                             SpanBuilder spanBuilder,
+                            ConversionService conversionService,
                             @NonNull TracingObserver<T> tracingObserver) {
-        this(publisher, tracer, spanBuilder, Publishers.isSingle(publisher.getClass()), tracingObserver);
+        this(publisher, tracer, spanBuilder, Publishers.isSingle(publisher.getClass()), conversionService, tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher   the target publisher
-     * @param tracer      the tracer
-     * @param spanBuilder the span builder that represents the span that will
-     *                    be created when the publisher is subscribed to
-     * @param isSingle    true if the publisher emits a single item
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param spanBuilder       the span builder that represents the span that will
+     *                          be created when the publisher is subscribed to
+     * @param isSingle          true if the publisher emits a single item
+     * @param conversionService the {@code ConversionService} instance
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
                             SpanBuilder spanBuilder,
-                            boolean isSingle) {
-        this(publisher, tracer, spanBuilder, isSingle, (TracingObserver<T>) TracingObserver.NO_OP);
+                            boolean isSingle,
+                            ConversionService conversionService) {
+        this(publisher, tracer, spanBuilder, isSingle, conversionService, (TracingObserver<T>) TracingObserver.NO_OP);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher       the target publisher
-     * @param tracer          the tracer
-     * @param spanBuilder     the span builder that represents the span that will
-     *                        be created when the publisher is subscribed to
-     * @param isSingle        true if the publisher emits a single item
-     * @param tracingObserver the tracing observer
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param spanBuilder       the span builder that represents the span that will
+     *                          be created when the publisher is subscribed to
+     * @param isSingle          true if the publisher emits a single item
+     * @param conversionService the {@code ConversionService} instance
+     * @param tracingObserver   the tracing observer
      */
     public TracingPublisher(Publisher<T> publisher,
                             Tracer tracer,
                             SpanBuilder spanBuilder,
-                            boolean isSingle, @NonNull TracingObserver<T> tracingObserver) {
+                            boolean isSingle,
+                            ConversionService conversionService,
+                            @NonNull TracingObserver<T> tracingObserver) {
         this.publisher = publisher;
         this.tracer = tracer;
         this.spanBuilder = spanBuilder;
         parentSpan = tracer.activeSpan();
         this.isSingle = isSingle;
         this.tracingObserver = tracingObserver;
+        this.conversionService = conversionService;
         if (parentSpan != null && spanBuilder != null) {
             spanBuilder.asChildOf(parentSpan);
         }
@@ -317,9 +336,9 @@ public class TracingPublisher<T> implements Publishers.MicronautPublisher<T> {
                         Object o = body.get();
                         if (Publishers.isConvertibleToPublisher(o)) {
                             Class<?> type = o.getClass();
-                            Publisher<?> resultPublisher = Publishers.convertPublisher(ConversionService.SHARED, o, Publisher.class);
+                            Publisher<?> resultPublisher = Publishers.convertPublisher(conversionService, o, Publisher.class);
                             Publisher<?> scopedPublisher = new ScopePropagationPublisher(resultPublisher, tracer, span);
-                            response.body(Publishers.convertPublisher(ConversionService.SHARED, scopedPublisher, type));
+                            response.body(Publishers.convertPublisher(conversionService, scopedPublisher, type));
                         }
                     }
 

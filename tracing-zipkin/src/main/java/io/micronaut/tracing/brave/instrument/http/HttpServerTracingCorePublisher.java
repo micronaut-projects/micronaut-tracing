@@ -20,6 +20,7 @@ import brave.http.HttpServerHandler;
 import brave.http.HttpServerRequest;
 import brave.http.HttpServerResponse;
 import brave.http.HttpTracing;
+import io.micronaut.core.convert.ConversionService;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MutableHttpResponse;
 import org.reactivestreams.Publisher;
@@ -47,8 +48,8 @@ public class HttpServerTracingCorePublisher extends HttpServerTracingPublisher i
      * @param openTracer    the Open Tracing instance
      * @param initialSpan   the initial span
      */
-    HttpServerTracingCorePublisher(Publisher<MutableHttpResponse<?>> publisher, HttpRequest<?> request, HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler, HttpTracing httpTracing, io.opentracing.Tracer openTracer, Span initialSpan) {
-        super(publisher, request, serverHandler, httpTracing, openTracer, initialSpan);
+    HttpServerTracingCorePublisher(Publisher<MutableHttpResponse<?>> publisher, HttpRequest<?> request, HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler, HttpTracing httpTracing, io.opentracing.Tracer openTracer, Span initialSpan, ConversionService conversionService) {
+        super(publisher, request, serverHandler, httpTracing, openTracer, initialSpan, conversionService);
     }
 
     @Override

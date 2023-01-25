@@ -23,6 +23,7 @@ import brave.http.HttpTracing;
 import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.convert.ConversionService;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
@@ -54,34 +55,40 @@ public class BraveTracingServerFilter implements HttpServerFilter {
     private final HttpTracing httpTracing;
     private final Tracer openTracer;
     private final HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler;
+
+    private final ConversionService conversionService;
     @Nullable
     private final Predicate<String> pathExclusionTest;
 
     /**
-     * @param httpTracing   the {@code HttpTracing} instance
-     * @param openTracer    the Open Tracing instance
-     * @param serverHandler the {@code HttpServerHandler} instance
+     * @param httpTracing       the {@code HttpTracing} instance
+     * @param openTracer        the Open Tracing instance
+     * @param serverHandler     the {@code HttpServerHandler} instance
+     * @param conversionService the {@code ConversionService} instance
      */
     public BraveTracingServerFilter(HttpTracing httpTracing,
                                     Tracer openTracer,
-                                    HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler) {
-        this(httpTracing, openTracer, serverHandler, null);
+                                    HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler, ConversionService conversionService) {
+        this(httpTracing, openTracer, serverHandler, conversionService, null);
     }
 
     /**
      * @param httpTracing             the {@code HttpTracing} instance
      * @param openTracer              the Open Tracing instance
      * @param serverHandler           the {@code HttpServerHandler} instance
+     * @param conversionService       the {@code ConversionService} instance
      * @param exclusionsConfiguration the {@link TracingExclusionsConfiguration}
      */
     @Inject
     public BraveTracingServerFilter(HttpTracing httpTracing,
                                     io.opentracing.Tracer openTracer,
                                     HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler,
+                                    ConversionService conversionService,
                                     @Nullable TracingExclusionsConfiguration exclusionsConfiguration) {
         this.httpTracing = httpTracing;
         this.openTracer = openTracer;
         this.serverHandler = serverHandler;
+        this.conversionService = conversionService;
         this.pathExclusionTest = exclusionsConfiguration == null ? null : exclusionsConfiguration.exclusionTest();
     }
 
@@ -104,16 +111,18 @@ public class BraveTracingServerFilter implements HttpServerFilter {
                 serverHandler,
                 httpTracing,
                 openTracer,
-                span);
+                span,
+                conversionService);
         }
 
         return new HttpServerTracingPublisher(
-                requestPublisher,
-                request,
-                serverHandler,
-                httpTracing,
-                openTracer,
-                span);
+            requestPublisher,
+            request,
+            serverHandler,
+            httpTracing,
+            openTracer,
+            span,
+            conversionService);
     }
 
     @Override

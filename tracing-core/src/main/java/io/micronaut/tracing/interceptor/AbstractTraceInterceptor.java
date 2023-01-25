@@ -20,6 +20,7 @@ import io.micronaut.aop.MethodInterceptor;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.AnnotationMetadata;
+import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.type.Argument;
 import io.micronaut.tracing.annotation.SpanTag;
 import io.opentracing.Span;
@@ -52,13 +53,17 @@ public abstract class AbstractTraceInterceptor implements MethodInterceptor<Obje
 
     protected final Tracer tracer;
 
+    protected final ConversionService conversionService;
+
     /**
      * Initialize the interceptor with tracer and conversion service.
      *
-     * @param tracer for span creation and propagation across arbitrary transports
+     * @param tracer            for span creation and propagation across arbitrary transports
+     * @param conversionService the {@code ConversionService} instance
      */
-    protected AbstractTraceInterceptor(Tracer tracer) {
+    protected AbstractTraceInterceptor(Tracer tracer, ConversionService conversionService) {
         this.tracer = tracer;
+        this.conversionService = conversionService;
     }
 
     @Override

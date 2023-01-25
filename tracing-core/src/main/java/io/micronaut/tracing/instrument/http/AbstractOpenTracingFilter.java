@@ -16,6 +16,7 @@
 package io.micronaut.tracing.instrument.http;
 
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.convert.ConversionService;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -52,16 +53,19 @@ public abstract class AbstractOpenTracingFilter implements HttpFilter {
 
     protected final Tracer tracer;
 
+    protected final ConversionService conversionService;
+
     @Nullable
     private final Predicate<String> pathExclusionTest;
 
     /**
      * Configure tracer in the filter for span creation and propagation across arbitrary transports.
      *
-     * @param tracer the tracer
+     * @param tracer            the tracer
+     * @param conversionService the {@code ConversionService} instance
      */
-    protected AbstractOpenTracingFilter(Tracer tracer) {
-        this(tracer, null);
+    protected AbstractOpenTracingFilter(Tracer tracer, ConversionService conversionService) {
+        this(tracer, conversionService, null);
     }
 
     /**
@@ -69,11 +73,14 @@ public abstract class AbstractOpenTracingFilter implements HttpFilter {
      * arbitrary transports.
      *
      * @param tracer            the tracer
+     * @param conversionService the {@code ConversionService} instance
      * @param pathExclusionTest the predicate for excluding URI paths from tracing
      */
     protected AbstractOpenTracingFilter(Tracer tracer,
-                                     @Nullable Predicate<String> pathExclusionTest) {
+                                        ConversionService conversionService,
+                                        @Nullable Predicate<String> pathExclusionTest) {
         this.tracer = tracer;
+        this.conversionService = conversionService;
         this.pathExclusionTest = pathExclusionTest;
     }
 

@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.instrument.util;
 
+import io.micronaut.core.convert.ConversionService;
 import io.opentracing.ScopeManager;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
@@ -37,68 +38,78 @@ public class TracingCorePublisher<T> extends TracingPublisher<T> implements Core
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher     the target publisher
-     * @param tracer        the tracer
-     * @param operationName the operation name that should be started
-     */
-    public TracingCorePublisher(CorePublisher<T> publisher,
-                                Tracer tracer,
-                                String operationName) {
-        super(publisher, tracer, operationName);
-    }
-
-    /**
-     * Creates a new tracing publisher for the given arguments.
-     *
-     * @param publisher       the target publisher
-     * @param tracer          the tracer
-     * @param operationName   the operation name that should be started
-     * @param tracingObserver the tracing observer
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param conversionService the {@code ConversionService} instance
+     * @param operationName     the operation name that should be started
      */
     public TracingCorePublisher(CorePublisher<T> publisher,
                                 Tracer tracer,
                                 String operationName,
-                                TracingObserver<T> tracingObserver) {
-        super(publisher, tracer, operationName, tracingObserver);
-    }
-
-    /**
-     * Creates a new tracing publisher for the given arguments. This constructor
-     * will just add tracing of the existing span if it is present.
-     *
-     * @param publisher the target publisher
-     * @param tracer    the tracer
-     */
-    public TracingCorePublisher(CorePublisher<T> publisher,
-                                Tracer tracer) {
-        super(publisher, tracer);
-    }
-
-    /**
-     * Creates a new tracing publisher for the given arguments. This constructor
-     * will just add tracing of the existing span if it is present.
-     *
-     * @param publisher       the target publisher
-     * @param tracer          the tracer
-     * @param tracingObserver the tracing observer
-     */
-    public TracingCorePublisher(CorePublisher<T> publisher,
-                                Tracer tracer,
-                                TracingObserver<T> tracingObserver) {
-        super(publisher, tracer, tracingObserver);
+                                ConversionService conversionService) {
+        super(publisher, tracer, operationName, conversionService);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher   the target publisher
-     * @param tracer      the tracer
-     * @param spanBuilder the span builder that represents the span that will be
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param operationName     the operation name that should be started
+     * @param conversionService the {@code ConversionService} instance
+     * @param tracingObserver   the tracing observer
      */
     public TracingCorePublisher(CorePublisher<T> publisher,
                                 Tracer tracer,
-                                SpanBuilder spanBuilder) {
-        super(publisher, tracer, spanBuilder);
+                                String operationName,
+                                ConversionService conversionService,
+                                TracingObserver<T> tracingObserver) {
+        super(publisher, tracer, operationName, conversionService, tracingObserver);
+    }
+
+    /**
+     * Creates a new tracing publisher for the given arguments. This constructor
+     * will just add tracing of the existing span if it is present.
+     *
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param conversionService the {@code ConversionService} instance
+     */
+    public TracingCorePublisher(CorePublisher<T> publisher,
+                                Tracer tracer,
+                                ConversionService conversionService) {
+        super(publisher, tracer, conversionService);
+    }
+
+    /**
+     * Creates a new tracing publisher for the given arguments. This constructor
+     * will just add tracing of the existing span if it is present.
+     *
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param conversionService the {@code ConversionService} instance
+     * @param tracingObserver   the tracing observer
+     */
+    public TracingCorePublisher(CorePublisher<T> publisher,
+                                Tracer tracer,
+                                ConversionService conversionService,
+                                TracingObserver<T> tracingObserver) {
+        super(publisher, tracer, conversionService, tracingObserver);
+    }
+
+    /**
+     * Creates a new tracing publisher for the given arguments.
+     *
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param spanBuilder       the span builder that represents the span that will be
+     * @param conversionService the {@code ConversionService} instance
+     */
+    public TracingCorePublisher(CorePublisher<T> publisher,
+                                Tracer tracer,
+                                SpanBuilder spanBuilder,
+                                ConversionService conversionService) {
+        super(publisher, tracer, spanBuilder, conversionService);
     }
 
     /**
@@ -107,29 +118,33 @@ public class TracingCorePublisher<T> extends TracingPublisher<T> implements Core
      * @param publisher       the target publisher
      * @param tracer          the tracer
      * @param spanBuilder     the span builder that represents the span that will be
+     * @param conversionService the {@code ConversionService} instance
      * @param tracingObserver the tracing observer
      */
     public TracingCorePublisher(CorePublisher<T> publisher,
                                 Tracer tracer,
                                 SpanBuilder spanBuilder,
+                                ConversionService conversionService,
                                 TracingObserver<T> tracingObserver) {
-        super(publisher, tracer, spanBuilder, tracingObserver);
+        super(publisher, tracer, spanBuilder, conversionService, tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher   the target publisher
-     * @param tracer      the tracer
-     * @param spanBuilder the span builder that represents the span that will
-     *                    be created when the publisher is subscribed to
-     * @param isSingle    true if the publisher emits a single item
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param spanBuilder       the span builder that represents the span that will
+     *                          be created when the publisher is subscribed to
+     * @param isSingle          true if the publisher emits a single item
+     * @param conversionService the {@code ConversionService} instance
      */
     public TracingCorePublisher(CorePublisher<T> publisher,
                                 Tracer tracer,
                                 SpanBuilder spanBuilder,
-                                boolean isSingle) {
-        super(publisher, tracer, spanBuilder, isSingle);
+                                boolean isSingle,
+                                ConversionService conversionService) {
+        super(publisher, tracer, spanBuilder, isSingle, conversionService);
     }
 
     /**
@@ -140,14 +155,16 @@ public class TracingCorePublisher<T> extends TracingPublisher<T> implements Core
      * @param spanBuilder     the span builder that represents the span that will
      *                        be created when the publisher is subscribed to
      * @param isSingle        true if the publisher emits a single item
+     * @param conversionService the {@code ConversionService} instance
      * @param tracingObserver the tracing observer
      */
     public TracingCorePublisher(CorePublisher<T> publisher,
                                 Tracer tracer,
                                 SpanBuilder spanBuilder,
                                 boolean isSingle,
+                                ConversionService conversionService,
                                 TracingObserver<T> tracingObserver) {
-        super(publisher, tracer, spanBuilder, isSingle, tracingObserver);
+        super(publisher, tracer, spanBuilder, isSingle, conversionService, tracingObserver);
     }
 
     @Override

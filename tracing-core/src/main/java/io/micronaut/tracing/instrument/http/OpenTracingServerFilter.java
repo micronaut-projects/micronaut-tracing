@@ -18,6 +18,7 @@ package io.micronaut.tracing.instrument.http;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.convert.ConversionService;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
@@ -57,22 +58,25 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
     /**
      * Creates an HTTP server instrumentation filter.
      *
-     * @param tracer for span creation and propagation across transport
+     * @param tracer            for span creation and propagation across transport
+     * @param conversionService the {@code ConversionService} instance
      */
-    public OpenTracingServerFilter(Tracer tracer) {
-        this(tracer, null);
+    public OpenTracingServerFilter(Tracer tracer, ConversionService conversionService) {
+        this(tracer, conversionService, null);
     }
 
     /**
      * Creates an HTTP server instrumentation filter.
      *
      * @param tracer           for span creation and propagation across transport
+     * @param conversionService the {@code ConversionService} instance
      * @param exclusionsConfig The {@link TracingExclusionsConfiguration}
      */
     @Inject
     public OpenTracingServerFilter(Tracer tracer,
+                                   ConversionService conversionService,
                                    @Nullable TracingExclusionsConfiguration exclusionsConfig) {
-        super(tracer, exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
+        super(tracer, conversionService, exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
     }
 
     @SuppressWarnings("unchecked")
@@ -85,7 +89,7 @@ public class OpenTracingServerFilter extends AbstractOpenTracingFilter implement
         }
 
         SpanBuilder spanBuilder = continued ? null : newSpan(request, initSpanContext(request));
-        return TracingPublisherUtils.createTracingPublisher(chain.proceed(request), tracer, spanBuilder, new TracingObserver() {
+        return TracingPublisherUtils.createTracingPublisher(chain.proceed(request), tracer, spanBuilder, conversionService, new TracingObserver() {
 
             @Override
             public void doOnSubscribe(@NonNull Span span) {

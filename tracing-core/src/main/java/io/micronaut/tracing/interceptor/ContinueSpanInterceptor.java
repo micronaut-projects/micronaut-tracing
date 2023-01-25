@@ -21,6 +21,7 @@ import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.convert.ConversionService;
 import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.instrument.util.TracingObserver;
 import io.micronaut.tracing.instrument.util.TracingPublisher;
@@ -45,10 +46,11 @@ public class ContinueSpanInterceptor extends AbstractTraceInterceptor {
     /**
      * Initialize the interceptor with tracer and conversion service.
      *
-     * @param tracer for span creation and propagation across arbitrary transports
+     * @param tracer            for span creation and propagation across arbitrary transports
+     * @param conversionService the {@code ConversionService} instance
      */
-    public ContinueSpanInterceptor(Tracer tracer) {
-        super(tracer);
+    public ContinueSpanInterceptor(Tracer tracer, ConversionService conversionService) {
+        super(tracer, conversionService);
     }
 
     @Nullable
@@ -59,7 +61,7 @@ public class ContinueSpanInterceptor extends AbstractTraceInterceptor {
         if (currentSpan == null) {
             return context.proceed();
         }
-        InterceptedMethod interceptedMethod = InterceptedMethod.of(context);
+        InterceptedMethod interceptedMethod = InterceptedMethod.of(context, conversionService);
         try {
             switch (interceptedMethod.resultType()) {
                 case PUBLISHER:
@@ -68,7 +70,7 @@ public class ContinueSpanInterceptor extends AbstractTraceInterceptor {
                         return publisher;
                     }
                     return interceptedMethod.handleResult(
-                        TracingPublisherUtils.createTracingPublisher(publisher, tracer, new TracingObserver() {
+                        TracingPublisherUtils.createTracingPublisher(publisher, tracer, conversionService, new TracingObserver() {
 
                             @Override
                             public void doOnSubscribe(@NonNull Span span) {

@@ -18,6 +18,7 @@ package io.micronaut.tracing.instrument.http;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.convert.ConversionService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.annotation.Filter;
@@ -51,22 +52,25 @@ import static io.opentracing.propagation.Format.Builtin.HTTP_HEADERS;
 public class OpenTracingClientFilter extends AbstractOpenTracingFilter implements HttpClientFilter {
 
     /**
-     * @param tracer the tracer for span creation and configuring across arbitrary transports
+     * @param tracer            the tracer for span creation and configuring across arbitrary transports
+     * @param conversionService the {@code ConversionService} instance
      */
-    public OpenTracingClientFilter(Tracer tracer) {
-        this(tracer, null);
+    public OpenTracingClientFilter(Tracer tracer, ConversionService conversionService) {
+        this(tracer, conversionService, null);
     }
 
     /**
      * Initialize the open tracing client filter with tracer and exclusion configuration.
      *
      * @param tracer           the tracer for span creation and configuring across arbitrary transports
+     * @param conversionService the {@code ConversionService} instance
      * @param exclusionsConfig The {@link TracingExclusionsConfiguration}
      */
     @Inject
     public OpenTracingClientFilter(Tracer tracer,
+                                   ConversionService conversionService,
                                    @Nullable TracingExclusionsConfiguration exclusionsConfig) {
-        super(tracer, exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
+        super(tracer, conversionService, exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
     }
 
     @SuppressWarnings("unchecked")
@@ -83,7 +87,7 @@ public class OpenTracingClientFilter extends AbstractOpenTracingFilter implement
         SpanContext activeContext = activeSpan == null ? null : activeSpan.context();
         SpanBuilder spanBuilder = newSpan(request, activeContext);
 
-        return TracingPublisherUtils.createTracingPublisher(requestPublisher, tracer, spanBuilder, true, new TracingObserver() {
+        return TracingPublisherUtils.createTracingPublisher(requestPublisher, tracer, spanBuilder, true, conversionService, new TracingObserver() {
 
             @Override
             public void doOnSubscribe(@NonNull Span span) {

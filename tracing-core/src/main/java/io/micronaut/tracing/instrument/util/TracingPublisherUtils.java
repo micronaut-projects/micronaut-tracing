@@ -16,6 +16,7 @@
 package io.micronaut.tracing.instrument.util;
 
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.convert.ConversionService;
 import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
 import org.reactivestreams.Publisher;
@@ -35,65 +36,71 @@ public final class TracingPublisherUtils {
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher       the target publisher
-     * @param tracer          the tracer
-     * @param tracingObserver the tracing observer
-     * @param <T>             the publisher's type
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param conversionService the {@code ConversionService} instance
+     * @param tracingObserver   the tracing observer
+     * @param <T>               the publisher's type
      * @return new instance
      */
     public static <T> TracingPublisher<T> createTracingPublisher(Publisher<T> publisher,
                                                                  Tracer tracer,
+                                                                 ConversionService conversionService,
                                                                  @NonNull TracingObserver<T> tracingObserver) {
 
         if (publisher instanceof CorePublisher) {
-            return new TracingCorePublisher<>((CorePublisher<T>) publisher, tracer, tracingObserver);
+            return new TracingCorePublisher<>((CorePublisher<T>) publisher, tracer, conversionService, tracingObserver);
         }
-        return new TracingPublisher<>(publisher, tracer, tracingObserver);
+        return new TracingPublisher<>(publisher, tracer, conversionService, tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher       the target publisher
-     * @param tracer          the tracer
-     * @param spanBuilder     the span builder that represents the span that will
-     *                        be created when the publisher is subscribed to
-     * @param tracingObserver the tracing observer
-     * @param <T>             the publisher's type
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param spanBuilder       the span builder that represents the span that will
+     *                          be created when the publisher is subscribed to
+     * @param conversionService the {@code ConversionService} instance
+     * @param tracingObserver   the tracing observer
+     * @param <T>               the publisher's type
      * @return new instance
      */
     public static <T> TracingPublisher<T> createTracingPublisher(Publisher<T> publisher,
                                                                  Tracer tracer,
                                                                  SpanBuilder spanBuilder,
+                                                                 ConversionService conversionService,
                                                                  @NonNull TracingObserver<T> tracingObserver) {
 
         if (publisher instanceof CorePublisher) {
-            return new TracingCorePublisher<>((CorePublisher<T>) publisher, tracer, spanBuilder, tracingObserver);
+            return new TracingCorePublisher<>((CorePublisher<T>) publisher, tracer, spanBuilder, conversionService, tracingObserver);
         }
-        return new TracingPublisher<>(publisher, tracer, spanBuilder, tracingObserver);
+        return new TracingPublisher<>(publisher, tracer, spanBuilder, conversionService, tracingObserver);
     }
 
     /**
      * Creates a new tracing publisher for the given arguments.
      *
-     * @param publisher       the target publisher
-     * @param tracer          the tracer
-     * @param spanBuilder     the span builder that represents the span that will
-     *                        be created when the publisher is subscribed to
-     * @param isSingle        true if the publisher emits a single item
-     * @param tracingObserver the tracing observer
-     * @param <T>             the publisher's type
+     * @param publisher         the target publisher
+     * @param tracer            the tracer
+     * @param spanBuilder       the span builder that represents the span that will
+     *                          be created when the publisher is subscribed to
+     * @param isSingle          true if the publisher emits a single item
+     * @param conversionService the {@code ConversionService} instance
+     * @param tracingObserver   the tracing observer
+     * @param <T>               the publisher's type
      * @return new instance
      */
     public static <T> TracingPublisher<T> createTracingPublisher(Publisher<T> publisher,
                                                                  Tracer tracer,
                                                                  SpanBuilder spanBuilder,
                                                                  boolean isSingle,
+                                                                 ConversionService conversionService,
                                                                  @NonNull TracingObserver<T> tracingObserver) {
 
         if (publisher instanceof CorePublisher) {
-            return new TracingCorePublisher<>((CorePublisher<T>) publisher, tracer, spanBuilder, isSingle, tracingObserver);
+            return new TracingCorePublisher<>((CorePublisher<T>) publisher, tracer, spanBuilder, isSingle, conversionService, tracingObserver);
         }
-        return new TracingPublisher<>(publisher, tracer, spanBuilder, isSingle, tracingObserver);
+        return new TracingPublisher<>(publisher, tracer, spanBuilder, isSingle, conversionService, tracingObserver);
     }
 }

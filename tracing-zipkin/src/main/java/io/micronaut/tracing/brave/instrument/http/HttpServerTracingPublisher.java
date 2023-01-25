@@ -24,6 +24,7 @@ import brave.http.HttpServerResponse;
 import brave.http.HttpTracing;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.async.publisher.Publishers;
+import io.micronaut.core.convert.ConversionService;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
@@ -53,6 +54,7 @@ public class HttpServerTracingPublisher implements Publishers.MicronautPublisher
     private final Tracer tracer;
     private final io.opentracing.Tracer openTracer;
     private final Span initialSpan;
+    private final ConversionService conversionService;
 
     /**
      * Construct a publisher to handle HTTP client request tracing.
@@ -69,13 +71,15 @@ public class HttpServerTracingPublisher implements Publishers.MicronautPublisher
                                HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler,
                                HttpTracing httpTracing,
                                io.opentracing.Tracer openTracer,
-                               Span initialSpan) {
+                               Span initialSpan,
+                               ConversionService conversionService) {
         this.publisher = publisher;
         this.request = request;
         this.initialSpan = initialSpan;
         this.serverHandler = serverHandler;
         this.openTracer = openTracer;
         tracer = httpTracing.tracing().tracer();
+        this.conversionService = conversionService;
     }
 
     @Override
@@ -180,14 +184,14 @@ public class HttpServerTracingPublisher implements Publishers.MicronautPublisher
                     Object o = body.get();
                     if (Publishers.isConvertibleToPublisher(o)) {
                         Class<?> type = o.getClass();
-                        Publisher<?> resultPublisher = Publishers.convertPublisher(o, Publisher.class);
+                        Publisher<?> resultPublisher = Publishers.convertPublisher(conversionService, o, Publisher.class);
                         Publisher<?> scopedPublisher = new ScopePropagationPublisher(
-                                resultPublisher,
-                                openTracer,
-                                openTracer.activeSpan()
+                            resultPublisher,
+                            openTracer,
+                            openTracer.activeSpan()
                         );
 
-                        response.body(Publishers.convertPublisher(scopedPublisher, type));
+                        response.body(Publishers.convertPublisher(conversionService, scopedPublisher, type));
                     }
                 }
 

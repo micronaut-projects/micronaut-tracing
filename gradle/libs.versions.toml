@@ -16,7 +16,7 @@ managed-opentracing = '0.33.0'
 managed-opentracing-grpc = '0.2.3'
 managed-brave-opentracing = '1.0.0'
 
-kotlin = '1.7.20'
+kotlin = '1.8.0'
 kotlin-coroutines = '1.6.4'
 grpc = '1.52.1'
 protobuf = '3.21.12'

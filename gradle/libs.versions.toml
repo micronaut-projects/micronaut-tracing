@@ -20,6 +20,7 @@ kotlin = '1.7.20'
 kotlin-coroutines = '1.6.4'
 grpc = '1.52.1'
 protobuf = '3.21.12'
+testcontainers = '1.16.3'
 micronaut-docs = '2.0.0'
 
 [libraries]
@@ -46,6 +47,8 @@ protoc = { module = 'com.google.protobuf:protoc', version.ref = 'protobuf' }
 grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'grpc' }
 grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'grpc' }
 protoc-grpc = { module = 'io.grpc:protoc-gen-grpc-java', version.ref = 'grpc' }
+testcontainers-kafka = { module = 'org.testcontainers:kafka', version.ref = 'testcontainers' }
+testcontainers-spock = { module = 'org.testcontainers:spock', version.ref = 'testcontainers' }
 
 awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
 micronaut-aws-bom = { module = 'io.micronaut.aws:micronaut-aws-bom' }

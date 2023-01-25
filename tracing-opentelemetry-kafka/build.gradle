@@ -14,6 +14,8 @@ dependencies {
 
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
+    testImplementation libs.testcontainers.kafka
+    testImplementation libs.testcontainers.spock
 }
 
 // TODO temporarily disable binary compatibility checks

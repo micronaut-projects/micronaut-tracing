@@ -71,6 +71,7 @@ public class KafkaTelemetryFactory {
 
                 @Override
                 public void onEnd(AttributesBuilder attributes, Context context, ConsumerRecord<?, ?> consumerRecord, Void unused, Throwable error) {
+                    // do notting in the end
                 }
             })
             .addProducerAttributesExtractors(new AttributesExtractor<ProducerRecord<?, ?>, RecordMetadata>() {
@@ -81,7 +82,7 @@ public class KafkaTelemetryFactory {
 
                 @Override
                 public void onEnd(AttributesBuilder attributes, Context context, ProducerRecord<?, ?> producerRecord, @Nullable RecordMetadata recordMetadata, @Nullable Throwable error) {
-
+                    // do notting in the end
                 }
             })
             .build();

@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.core.util.CollectionUtils;
-import io.micronaut.core.util.StringUtils;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.context.Context;
@@ -33,10 +31,13 @@ import io.opentelemetry.instrumentation.kafkaclients.KafkaTelemetry;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 
 import jakarta.inject.Singleton;
+
+import javax.annotation.Nullable;
 
 /**
  * Opentelemetery Kafka tracing factory.
@@ -70,16 +71,18 @@ public class KafkaTelemetryFactory {
 
                 @Override
                 public void onEnd(AttributesBuilder attributes, Context context, ConsumerRecord<?, ?> consumerRecord, Void unused, Throwable error) {
+                    // do notting in the end
                 }
             })
-            .addProducerAttributesExtractors(new AttributesExtractor<ProducerRecord<?, ?>, Void>() {
+            .addProducerAttributesExtractors(new AttributesExtractor<ProducerRecord<?, ?>, RecordMetadata>() {
                 @Override
                 public void onStart(AttributesBuilder attributes, Context parentContext, ProducerRecord<?, ?> producerRecord) {
                     putAttributes(attributes, producerRecord.headers(), kafkaTelemetryConfiguration);
                 }
 
                 @Override
-                public void onEnd(AttributesBuilder attributes, Context context, ProducerRecord<?, ?> producerRecord, Void unused, Throwable error) {
+                public void onEnd(AttributesBuilder attributes, Context context, ProducerRecord<?, ?> producerRecord, @Nullable RecordMetadata recordMetadata, @Nullable Throwable error) {
+                    // do notting in the end
                 }
             })
             .build();
@@ -94,39 +97,43 @@ public class KafkaTelemetryFactory {
      */
     void putAttributes(AttributesBuilder attributes, Headers headers, KafkaTelemetryConfiguration kafkaTelemetryConfiguration) {
         Set<String> capturedHeaders = kafkaTelemetryConfiguration.getCapturedHeaders();
-        if (CollectionUtils.isEmpty(capturedHeaders) || capturedHeaders.size() == 1 && capturedHeaders.iterator().next().equals(StringUtils.EMPTY_STRING)) {
-            return;
-        }
-        if (capturedHeaders.size() == 1 && capturedHeaders.iterator().next().equals(KafkaTelemetryConfiguration.ALL_HEADERS)) {
+        if (capturedHeaders.contains(KafkaTelemetryConfiguration.ALL_HEADERS)) {
             Map<String, Integer> counterMap = new HashMap<>();
             for (Header header : headers) {
                 processHeader(attributes, header, counterMap);
             }
         } else {
+            applyHeaders(attributes, headers, kafkaTelemetryConfiguration);
+        }
+    }
 
-            if (kafkaTelemetryConfiguration.isHeadersAsLists()) {
-                for (String headerName : capturedHeaders) {
-                    List<String> values = null;
-                    Iterable<Header> headersByName = headers.headers(headerName);
-                    for (Header header : headersByName) {
-                        if (values == null) {
-                            values = new ArrayList<>();
-                        }
-                        values.add(new String(header.value(), StandardCharsets.UTF_8));
-                    }
-                    if (values != null) {
-                        attributes.put(ATTR_PREFIX + headerName, values.toArray(EMPTY_STRING_ARRAY));
-                    }
-                }
-            } else {
-                Map<String, Integer> counterMap = new HashMap<>();
-                for (String headerName : capturedHeaders) {
-                    Header header = headers.lastHeader(headerName);
-                    if (header == null) {
-                        continue;
-                    }
+    private void applyHeaders(AttributesBuilder attributes, Headers headers, KafkaTelemetryConfiguration kafkaTelemetryConfiguration) {
+        Set<String> capturedHeaders = kafkaTelemetryConfiguration.getCapturedHeaders();
+        if (kafkaTelemetryConfiguration.isHeadersAsLists()) {
+            applyHeadersAsList(attributes, headers, capturedHeaders);
+        } else {
+            Map<String, Integer> counterMap = new HashMap<>();
+            for (String headerName : capturedHeaders) {
+                Header header = headers.lastHeader(headerName);
+                if (header != null) {
                     processHeader(attributes, header, counterMap);
                 }
+            }
+        }
+    }
+
+    private void applyHeadersAsList(AttributesBuilder attributes, Headers headers, Set<String> capturedHeaders) {
+        for (String headerName : capturedHeaders) {
+            List<String> values = null;
+            Iterable<Header> headersByName = headers.headers(headerName);
+            for (Header header : headersByName) {
+                if (values == null) {
+                    values = new ArrayList<>();
+                }
+                values.add(new String(header.value(), StandardCharsets.UTF_8));
+            }
+            if (values != null) {
+                attributes.put(ATTR_PREFIX + headerName, values.toArray(EMPTY_STRING_ARRAY));
             }
         }
     }

@@ -19,3 +19,7 @@ dependencies {
     testImplementation mnReactor.micronaut.reactor.http.client
     testRuntimeOnly mnSerde.micronaut.serde.jackson
 }
+
+configurations {
+    internalJavadocClasspathElements.outgoing.artifact(tasks.named("compileKotlin").map { it.destinationDirectory })
+}

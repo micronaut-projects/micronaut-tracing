@@ -26,7 +26,7 @@ import jakarta.inject.Singleton;
 /**
  * Kafka consumer tracing instrumentation using Opentelemetry.
  *
- * @since 5.0.0
+ * @since 4.5.0
  */
 @Singleton
 public class OpentelemetryKafkaProducerTracingInstrumentation implements BeanCreatedEventListener<Producer<?, ?>> {

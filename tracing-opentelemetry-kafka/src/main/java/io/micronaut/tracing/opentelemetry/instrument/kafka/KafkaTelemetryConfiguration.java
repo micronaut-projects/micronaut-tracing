@@ -25,7 +25,7 @@ import io.micronaut.core.util.StringUtils;
 /**
  * Configuration properties for KafkaTelemetry.
  *
- * @since 5.0.0
+ * @since 4.5.0
  */
 @Requires(property = KafkaTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @ConfigurationProperties(KafkaTelemetryConfiguration.PREFIX)

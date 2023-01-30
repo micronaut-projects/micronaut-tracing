@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.core.util.StringUtils;
 import io.opentelemetry.api.OpenTelemetry;
@@ -33,6 +34,7 @@ import io.opentelemetry.instrumentation.kafkaclients.KafkaTelemetry;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 
@@ -41,7 +43,7 @@ import jakarta.inject.Singleton;
 /**
  * Opentelemetery Kafka tracing factory.
  *
- * @since 5.0.0
+ * @since 4.5.0
  */
 @Factory
 public class KafkaTelemetryFactory {
@@ -69,17 +71,19 @@ public class KafkaTelemetryFactory {
                 }
 
                 @Override
-                public void onEnd(AttributesBuilder attributes, Context context, ConsumerRecord<?, ?> consumerRecord, Void unused, Throwable error) {
+                public void onEnd(AttributesBuilder attributes, Context context, ConsumerRecord<?, ?> consumerRecord, @Nullable Void unused, @Nullable Throwable error) {
+                    // do notting in the end
                 }
             })
-            .addProducerAttributesExtractors(new AttributesExtractor<ProducerRecord<?, ?>, Void>() {
+            .addProducerAttributesExtractors(new AttributesExtractor<ProducerRecord<?, ?>, RecordMetadata>() {
                 @Override
                 public void onStart(AttributesBuilder attributes, Context parentContext, ProducerRecord<?, ?> producerRecord) {
                     putAttributes(attributes, producerRecord.headers(), kafkaTelemetryConfiguration);
                 }
 
                 @Override
-                public void onEnd(AttributesBuilder attributes, Context context, ProducerRecord<?, ?> producerRecord, Void unused, Throwable error) {
+                public void onEnd(AttributesBuilder attributes, Context context, ProducerRecord<?, ?> producerRecord, @Nullable RecordMetadata recordMetadata, @Nullable Throwable error) {
+                    // do notting in the end
                 }
             })
             .build();

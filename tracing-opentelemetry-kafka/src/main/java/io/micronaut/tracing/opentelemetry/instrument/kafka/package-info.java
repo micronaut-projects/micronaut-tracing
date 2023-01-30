@@ -16,7 +16,7 @@
 /**
  * Contains configuration that provide integration with Kafka Opentelemetry.
  *
- * @since 5.0.0
+ * @since 4.5.0
  */
 @Configuration
 @Requires(property = KafkaTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)

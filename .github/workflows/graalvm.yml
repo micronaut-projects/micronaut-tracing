@@ -24,9 +24,6 @@ jobs:
         include:
           - graalvm: 'dev'
             java: '19'
-        exclude:
-          - graalvm: 'dev'
-            java: '17'
     steps:
        # https://github.com/actions/virtual-environments/issues/709
       - name: Free disk space

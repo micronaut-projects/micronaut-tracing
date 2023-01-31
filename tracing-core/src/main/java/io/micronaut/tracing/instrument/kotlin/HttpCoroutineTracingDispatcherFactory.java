@@ -26,6 +26,7 @@ import kotlin.coroutines.CoroutineContext;
 import kotlinx.coroutines.ThreadContextElement;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -50,7 +51,8 @@ final class HttpCoroutineTracingDispatcherFactory implements HttpCoroutineContex
     @Override
     public CoroutineTracingDispatcher create() {
         return new CoroutineTracingDispatcher(instrumenters.stream()
-                .map(TracingInvocationInstrumenterFactory::newTracingInvocationInstrumenter)
-                .collect(Collectors.toList()));
+            .map(TracingInvocationInstrumenterFactory::newTracingInvocationInstrumenter)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList()));
     }
 }

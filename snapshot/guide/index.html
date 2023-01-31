@@ -3,7 +3,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
     <title>Micronaut Tracing</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8" />
     <link rel="stylesheet" href="../css/custom.css" type="text/css" media="screen, print" title="Style" charset="utf-8" />
@@ -107,11 +106,9 @@
         
         <div class="toc-item" style="margin-left:10px" id="toc-item-grpc"><a href="#grpc"><strong>5.6</strong><span>gRPC Server and Client</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-kafka"><a href="#kafka"><strong>5.7</strong><span>Kafka</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>5.7</strong><span>AWS SDK Instrumentation</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>5.8</strong><span>AWS SDK Instrumentation</span></a></div>
-        
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>5.9</strong><span>AWS Resource Detectors</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>5.8</strong><span>AWS Resource Detectors</span></a></div>
         
         <div class="toc-item" style="margin-left:0px" id="toc-item-repository"><a href="#repository"><strong>6</strong><span>Repository</span></a></div>
         
@@ -129,7 +126,7 @@
 <h1 id="introduction"><a class="anchor" href="#introduction"></a>1 Introduction</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/introduction.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/introduction.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -229,7 +226,7 @@ class HelloService {
 <h1 id="releaseHistory"><a class="anchor" href="#releaseHistory"></a>2 Release History</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/releaseHistory.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/releaseHistory.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -245,7 +242,7 @@ class HelloService {
 <h1 id="jaeger"><a class="anchor" href="#jaeger"></a>3 Tracing with Jaeger</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/jaeger.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/jaeger.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -395,7 +392,7 @@ This can be achieved by adding a list of regular expression patterns to your con
 <h1 id="zipkin"><a class="anchor" href="#zipkin"></a>4 Tracing with Zipkin</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/zipkin.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/zipkin.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -503,8 +500,8 @@ This can be achieved by adding a list of regular expression patterns to your con
     enabled: true
     http:
       urls:
-        - https://foo:9411
-        - https://bar:9411</code></pre>
+        - http://foo:9411
+        - http://bar:9411</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -573,7 +570,7 @@ This can be achieved by adding a list of regular expression patterns to your con
 <h1 id="opentelemetry"><a class="anchor" href="#opentelemetry"></a>5 Tracing with OpenTelemetry</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/opentelemetry.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -610,7 +607,7 @@ This can be achieved by adding a list of regular expression patterns to your con
 <h2 id="annotations"><a class="anchor" href="#annotations"></a>5.1 OpenTelemetry Annotations</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/annotations.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/opentelemetry/annotations.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -624,7 +621,7 @@ This can be achieved by adding a list of regular expression patterns to your con
         <div class="listingblock multi-language-sample">
 <div class="title"></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">annotationProcessor(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-annotation:5.0.0-SNAPSHOT")</span></code></pre>
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">annotationProcessor(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-annotation:4.4.1-SNAPSHOT")</span></code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -634,20 +631,20 @@ This can be achieved by adding a list of regular expression patterns to your con
     &lt;path&gt;
         &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
         &lt;artifactId&gt;micronaut-tracing-opentelemetry-annotation&lt;/artifactId&gt;
-        &lt;version&gt;5.0.0-SNAPSHOT&lt;/version&gt;
+        &lt;version&gt;4.4.1-SNAPSHOT&lt;/version&gt;
     &lt;/path&gt;
 &lt;/annotationProcessorPaths&gt;</code></pre>
 </div>
 </div></p>
 </div>
 <div class="paragraph">
-<p>The Open Tracing annotations that are defined inside the <a href="../api/io/micronaut/tracing/annotation/package-summary.html">io.micronaut.tracing.annotation</a> package are also available for usage inside Open Telemetry.</p>
+<p>The Open Tracing annotations that are defined inside the The <a href="../api/io/micronaut/tracing/annotation/package-summary.html">io.micronaut.tracing.annotation</a> package are also available for usage inside Open Telemetry.</p>
 </div>
 
 <h2 id="exporters"><a class="anchor" href="#exporters"></a>5.2 OpenTelemetry Exporters</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/exporters.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/opentelemetry/exporters.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -763,7 +760,7 @@ This can be achieved by adding a list of regular expression patterns to your con
 <h2 id="propagators"><a class="anchor" href="#propagators"></a>5.3 OpenTelemetry Propagators</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/propagators.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/opentelemetry/propagators.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -807,7 +804,7 @@ This can be achieved by adding a list of regular expression patterns to your con
 <h2 id="idgenerator"><a class="anchor" href="#idgenerator"></a>5.4 ID Generator</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/idgenerator.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/opentelemetry/idgenerator.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -845,7 +842,7 @@ For an example, AWS X-Ray requires a specific format for their tracing identifie
 <h2 id="http"><a class="anchor" href="#http"></a>5.5 HTTP Server and Client</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/http.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/opentelemetry/http.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -915,7 +912,7 @@ This can be achieved by adding a list of regular expression patterns to your con
 <h2 id="grpc"><a class="anchor" href="#grpc"></a>5.6 gRPC Server and Client</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/grpc.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/opentelemetry/grpc.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -939,75 +936,10 @@ This can be achieved by adding a list of regular expression patterns to your con
 </div></p>
 </div>
 
-<h2 id="kafka"><a class="anchor" href="#kafka"></a>5.7 Kafka</h2>
+<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>5.7 AWS SDK Instrumentation</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/kafka.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="paragraph">
-<p>To enable creating span objects on the every HTTP server request, client request, server response and client response you have to add next depedency:
-        <div class="listingblock multi-language-sample">
-<div class="title"></div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-http")</span></code></pre>
-</div>
-</div>
-<div class="listingblock multi-language-sample">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
-    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
-    &lt;artifactId&gt;micronaut-tracing-opentelemetry-http&lt;/artifactId&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div></p>
-</div>
-<div class="sect1">
-<h2 id="_add_kafka_message_headers_into_request_spans">Add Kafka Message Headers into request spans</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To enable creating span objects on the every Kafka message. You have to add next depedency:
-        <div class="listingblock multi-language-sample">
-<div class="title"></div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-kafka")</span></code></pre>
-</div>
-</div>
-<div class="listingblock multi-language-sample">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
-    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
-    &lt;artifactId&gt;micronaut-tracing-opentelemetry-kafka&lt;/artifactId&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div></p>
-</div>
-<div class="listingblock">
-<div class="title">Adding Kafka Message Headers into request spans</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">otel:
-  instrumentation:
-    kafka:
-      # If you want to set headers as lists, set "true".
-      headers-as-lists: false
-      # List of headers, which you want to add as span attributes. By default, all headers
-      # will be added as span attributes. If you don't want to set any headers as attributes,
-      # just set it to `null` or an empty string.
-      captured-headers:
-        - myHeader1
-        - myHeader2</code></pre>
-</div>
-</div>
-</div>
-</div>
-
-<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>5.8 AWS SDK Instrumentation</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/awsSdkInstrumentation.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/opentelemetry/awsSdkInstrumentation.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1056,10 +988,10 @@ This can be achieved by adding a list of regular expression patterns to your con
 via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.</p>
 </div>
 
-<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>5.9 AWS Resource Detectors</h2>
+<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>5.8 AWS Resource Detectors</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/awsResourceDetectors.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/opentelemetry/awsResourceDetectors.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1095,14 +1027,12 @@ via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package io.micronaut.tracing.opentelemetry;
 
 import io.micronaut.core.annotation.NonNull;
-import io.opentelemetry.contrib.aws.resource.Ec2Resource;
 import io.opentelemetry.sdk.resources.Resource;
-
 import jakarta.inject.Singleton;
+import io.opentelemetry.sdk.extension.aws.resource.Ec2Resource;
 
 @Singleton
 public class AwsResourceProvider implements ResourceProvider {
-
     @Override
     @NonNull
     public Resource resource() {
@@ -1116,7 +1046,7 @@ public class AwsResourceProvider implements ResourceProvider {
 <h1 id="repository"><a class="anchor" href="#repository"></a>6 Repository</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/repository.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/4.4.x/src/main/docs/guide/repository.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>

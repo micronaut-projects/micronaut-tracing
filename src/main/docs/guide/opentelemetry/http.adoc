@@ -8,7 +8,7 @@ It may be useful to exclude health-checks and other HTTP requests to your servic
 This can be achieved by adding a list of regular expression patterns to your configuration:
 
 .Filtering HTTP request spans
-[source,yaml]
+[configuration]
 ----
 otel:
   exclusions:
@@ -21,7 +21,7 @@ otel:
 If you want you can add additional Http Headers inside your span objects. You can specify different headers for client request, client response, server request and server response.
 
 .Adding HTTP Headers into request spans
-[source,yaml]
+[configuration]
 ----
 otel:
   http:

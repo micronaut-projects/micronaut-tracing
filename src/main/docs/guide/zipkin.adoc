@@ -29,8 +29,7 @@ dependency:micronaut-tracing-zipkin[groupId="io.micronaut.tracing"]
 
 Then enable ZipKin tracing in your configuration (potentially only your production configuration):
 
-.application.yml
-[source,yaml]
+[configuration]
 ----
 tracing:
   zipkin:
@@ -42,7 +41,7 @@ tracing:
 To send spans you configure a Zipkin sender. You can configure a api:tracing.brave.sender.HttpClientSender[] that sends Spans asynchronously using Micronaut's native HTTP client with the `tracing.zipkin.http.url` setting:
 
 .Configuring Multiple Zipkin Servers
-[source,yaml]
+[configuration]
 ----
 tracing:
   zipkin:
@@ -54,7 +53,7 @@ tracing:
 It is unlikely that sending spans to localhost will be suitable for production deployment, so you generally need to configure the location of one or more Zipkin servers for production:
 
 .Configuring Multiple Zipkin Servers
-[source,yaml]
+[configuration]
 ----
 tracing:
   zipkin:
@@ -76,7 +75,7 @@ There are many configuration options available for the Brave client that sends S
 Below is an example of customizing Zipkin configuration:
 
 .Customizing Zipkin Configuration
-[source,yaml]
+[configuration]
 ----
 tracing:
   zipkin:
@@ -94,7 +93,7 @@ It may be useful to exclude health-checks and other HTTP requests to your servic
 This can be achieved by adding a list of regular expression patterns to your configuration:
 
 .Filtering HTTP request spans
-[source,yaml]
+[configuration]
 ----
 tracing:
   zipkin:

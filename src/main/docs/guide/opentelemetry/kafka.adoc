@@ -7,17 +7,16 @@ To enable creating span objects on the every Kafka message. You have to add next
 dependency:micronaut-tracing-opentelemetry-kafka[scope="implementation", groupId="io.micronaut.tracing"]
 
 .Adding Kafka Message Headers into request spans
-[source,yaml]
+[configuration]
 ----
 otel:
   instrumentation:
     kafka:
-      # If you want to set headers as lists, set "true".
       headers-as-lists: false
-      # List of headers, which you want to add as span attributes. By default, all headers
-      # will be added as span attributes. If you don't want to set any headers as attributes,
-      # just set it to `null` or an empty string.
       captured-headers:
         - myHeader1
         - myHeader2
 ----
+
+- If you want to set headers as lists, set `headers-as-lists` to `true`.
+- `captured-headers` is the list of headers to add as span attributes. By default, all headers are added as span attributes. To set no headers as span attributes, specify `null` or an empty string.

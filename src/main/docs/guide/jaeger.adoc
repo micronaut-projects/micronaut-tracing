@@ -39,8 +39,7 @@ dependency:micronaut-tracing-jaeger[groupId="io.micronaut.tracing"]
 
 Then enable Jaeger tracing in your configuration (potentially only your production configuration):
 
-.application.yml
-[source,yaml]
+[configuration]
 ----
 tracing:
   jaeger:
@@ -56,7 +55,7 @@ There are many configuration options available for the Jaeger client that sends 
 Below is an example of customizing JaegerConfiguration configuration:
 
 .Customizing Jaeger Configuration
-[source,yaml]
+[configuration]
 ----
 tracing:
   jaeger:
@@ -80,7 +79,7 @@ It may be useful to exclude health-checks and other HTTP requests to your servic
 This can be achieved by adding a list of regular expression patterns to your configuration:
 
 .Filtering HTTP request spans
-[source,yaml]
+[configuration]
 ----
 tracing:
   jaeger:

@@ -6,8 +6,7 @@ dependency:opentelemetry-extension-aws[scope="implementation", groupId="io.opent
 
 And the "xray" has to be added inside configuration file.
 
-.application.yml
-[source,yaml]
+[configuration]
 ----
 otel:
   traces:

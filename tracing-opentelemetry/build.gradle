@@ -11,8 +11,8 @@ dependencies {
     api mn.micronaut.context
     api mn.micronaut.core.processor
     api mn.micronaut.core.reactive
-    api projects.tracingAnnotation
-    api projects.tracingOpentelemetryAnnotation
+    api projects.micronautTracingAnnotation
+    api projects.micronautTracingOpentelemetryAnnotation
     api libs.opentelemetry.api
     api libs.opentelemetry.instrumentation.annotations
     api libs.opentelemetry.instrumentation.api
@@ -29,7 +29,7 @@ dependencies {
     compileOnly libs.kotlinx.coroutines.reactor
     compileOnly libs.managed.opentelemetry.contrib.aws.xray
 
-    testAnnotationProcessor projects.tracingOpentelemetryAnnotation
+    testAnnotationProcessor projects.micronautTracingOpentelemetryAnnotation
 
     testImplementation(libs.managed.opentelemetry.contrib.aws.resources)
 

@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api projects.tracingCore
+    api projects.micronautTracingCore
     api(libs.jaeger) {
         exclude group: "org.jetbrains", module: "annotations"
     }

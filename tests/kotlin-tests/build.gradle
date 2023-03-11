@@ -6,7 +6,7 @@ plugins {
 dependencies {
     annotationProcessor(mnSerde.micronaut.serde.processor)
 
-    api projects.tracingCore
+    api projects.micronautTracingCore
     api mn.micronaut.http.client
     api mn.micronaut.core.processor
 

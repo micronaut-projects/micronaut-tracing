@@ -10,8 +10,8 @@ dependencies {
     api mn.micronaut.core.processor
     api mn.micronaut.http.client
     api mn.micronaut.router
-    api projects.tracingAnnotation
-    api projects.tracingOpentelemetry
+    api projects.micronautTracingAnnotation
+    api projects.micronautTracingOpentelemetry
     api libs.opentelemetry.api
     api libs.opentelemetry.instrumentation.annotations
     api libs.opentelemetry.instrumentation.api

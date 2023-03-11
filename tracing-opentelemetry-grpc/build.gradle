@@ -11,8 +11,8 @@ dependencies {
     api mn.micronaut.core.processor
     api mnGrpc.micronaut.grpc.client.runtime
     api mnGrpc.micronaut.grpc.server.runtime
-    api projects.tracingAnnotation
-    api projects.tracingOpentelemetry
+    api projects.micronautTracingAnnotation
+    api projects.micronautTracingOpentelemetry
     api libs.opentelemetry.api
     api libs.opentelemetry.instrumentation.annotations
     api libs.opentelemetry.instrumentation.api

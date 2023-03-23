@@ -31,9 +31,9 @@ testcontainers = '1.17.6'
 
 micronaut-aws = "4.0.0-SNAPSHOT"
 micronaut-grpc = '4.0.0-SNAPSHOT'
-micronaut-reactor = '3.0.0-SNAPSHOT'
 micronaut-rxjava2 = '2.0.0-SNAPSHOT'
 micronaut-serde = '2.0.0-SNAPSHOT'
+micronaut-reactor = '3.0.0-M1'
 micronaut-kafka = '5.0.0-SNAPSHOT'
 
 [libraries]

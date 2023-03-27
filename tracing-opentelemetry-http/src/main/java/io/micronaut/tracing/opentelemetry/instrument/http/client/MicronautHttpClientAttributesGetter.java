@@ -15,6 +15,8 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
+import java.util.List;
+
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
@@ -22,41 +24,39 @@ import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientAttributesGetter;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 
-import java.util.List;
-
 @Internal
 enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<MutableHttpRequest<Object>, HttpResponse<Object>> {
 
     INSTANCE;
 
     @Override
-    public String method(MutableHttpRequest<Object> request) {
+    public String getMethod(MutableHttpRequest<Object> request) {
         return request.getMethodName();
     }
 
     @Override
-    public List<String> requestHeader(MutableHttpRequest<Object> request, String name) {
+    public List<String> getRequestHeader(MutableHttpRequest<Object> request, String name) {
         return request.getHeaders().getAll(name);
     }
 
     @Override
-    public Integer statusCode(MutableHttpRequest<Object> request, HttpResponse<Object> response, @Nullable Throwable error) {
+    public Integer getStatusCode(MutableHttpRequest<Object> request, HttpResponse<Object> response, @Nullable Throwable error) {
         return response.code();
     }
 
     @Override
-    public List<String> responseHeader(MutableHttpRequest<Object> request, HttpResponse<Object> response, String name) {
+    public List<String> getResponseHeader(MutableHttpRequest<Object> request, HttpResponse<Object> response, String name) {
         return response.getHeaders().getAll(name);
     }
 
     @Override
-    public String url(MutableHttpRequest<Object> request) {
+    public String getUrl(MutableHttpRequest<Object> request) {
         return request.getUri().toString();
     }
 
     @Override
     @Nullable
-    public String flavor(MutableHttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
+    public String getFlavor(MutableHttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
         switch (request.getHttpVersion()) {
             case HTTP_1_0:
                 return SemanticAttributes.HttpFlavorValues.HTTP_1_0;

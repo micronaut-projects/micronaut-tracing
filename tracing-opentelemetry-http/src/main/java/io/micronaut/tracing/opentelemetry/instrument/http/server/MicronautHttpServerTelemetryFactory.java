@@ -81,7 +81,7 @@ public final class MicronautHttpServerTelemetryFactory {
         return builder
             .setSpanStatusExtractor(HttpSpanStatusExtractor.create(httpAttributesGetter))
             .addOperationMetrics(HttpServerMetrics.get())
-            .addContextCustomizer(HttpRouteHolder.get())
+            .addContextCustomizer(HttpRouteHolder.create(MicronautHttpServerAttributesGetter.INSTANCE))
             .buildServerInstrumenter(HttpRequestGetter.INSTANCE);
     }
 
@@ -92,7 +92,7 @@ public final class MicronautHttpServerTelemetryFactory {
      */
     @Prototype
     @Server
-    HttpServerAttributesExtractor<HttpRequest<Object>, HttpResponse<Object>> httpServerAttributesExtractor(@Nullable OpenTelemetryHttpServerConfig openTelemetryHttpServerConfig) {
+    AttributesExtractor<HttpRequest<Object>, HttpResponse<Object>> httpServerAttributesExtractor(@Nullable OpenTelemetryHttpServerConfig openTelemetryHttpServerConfig) {
         HttpServerAttributesExtractorBuilder<HttpRequest<Object>, HttpResponse<Object>> httpAttributesExtractorBuilder =
             HttpServerAttributesExtractor.builder(MicronautHttpServerAttributesGetter.INSTANCE, new MicronautHttpNetServerAttributesGetter());
 
@@ -109,7 +109,7 @@ public final class MicronautHttpServerTelemetryFactory {
      */
     @Prototype
     @Server
-    NetServerAttributesExtractor<HttpRequest<Object>, HttpResponse<Object>> netServerAttributesExtractor() {
+    AttributesExtractor<HttpRequest<Object>, HttpResponse<Object>> netServerAttributesExtractor() {
         return NetServerAttributesExtractor.create(new MicronautHttpNetServerAttributesGetter());
     }
 

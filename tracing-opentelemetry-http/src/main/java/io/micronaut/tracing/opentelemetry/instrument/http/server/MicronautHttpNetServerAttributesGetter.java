@@ -28,18 +28,18 @@ import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.NetTr
 final class MicronautHttpNetServerAttributesGetter extends InetSocketAddressNetServerAttributesGetter<HttpRequest<Object>> {
 
     @Override
-    public String transport(HttpRequest<Object> request) {
+    public String getTransport(HttpRequest<Object> request) {
         return IP_TCP;
     }
 
     @Nullable
     @Override
-    public String hostName(HttpRequest<Object> request) {
+    public String getHostName(HttpRequest<Object> request) {
         return request.getServerAddress().getHostName();
     }
 
     @Override
-    public Integer hostPort(HttpRequest<Object> request) {
+    public Integer getHostPort(HttpRequest<Object> request) {
         return request.getServerAddress().getPort();
     }
 

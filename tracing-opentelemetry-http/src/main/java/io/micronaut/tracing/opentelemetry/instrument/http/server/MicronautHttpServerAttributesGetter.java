@@ -36,28 +36,28 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     INSTANCE;
 
     @Override
-    public String method(HttpRequest<Object> request) {
+    public String getMethod(HttpRequest<Object> request) {
         return request.getMethodName();
     }
 
     @Override
-    public List<String> requestHeader(HttpRequest<Object> request, String name) {
+    public List<String> getRequestHeader(HttpRequest<Object> request, String name) {
         return request.getHeaders().getAll(name);
     }
 
     @Override
-    public Integer statusCode(HttpRequest<Object> request, HttpResponse<Object> response, @Nullable Throwable error) {
+    public Integer getStatusCode(HttpRequest<Object> request, HttpResponse<Object> response, @Nullable Throwable error) {
         return response.code();
     }
 
     @Override
-    public List<String> responseHeader(HttpRequest<Object> request, HttpResponse<Object> response, String name) {
+    public List<String> getResponseHeader(HttpRequest<Object> request, HttpResponse<Object> response, String name) {
         return response.getHeaders().getAll(name);
     }
 
     @Override
     @Nullable
-    public String flavor(HttpRequest<Object> request) {
+    public String getFlavor(HttpRequest<Object> request) {
         switch (request.getHttpVersion()) {
             case HTTP_1_0:
                 return SemanticAttributes.HttpFlavorValues.HTTP_1_0;
@@ -71,7 +71,7 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     }
 
     @Override
-    public String target(HttpRequest<Object> request) {
+    public String getTarget(HttpRequest<Object> request) {
         String requestPath = request.getPath();
         String queryString = request.getUri().getRawQuery();
         if (StringUtils.isNotEmpty(queryString)) {
@@ -81,7 +81,7 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     }
 
     @Override
-    public String route(HttpRequest<Object> request) {
+    public String getRoute(HttpRequest<Object> request) {
         Optional<Object> routeInfo = request.getAttribute(HttpAttributes.ROUTE_INFO)
             .filter(UriRouteMatch.class::isInstance)
             .map(ri -> (UriRouteMatch) ri)
@@ -93,8 +93,7 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     }
 
     @Override
-    public String scheme(HttpRequest<Object> request) {
+    public String getScheme(HttpRequest<Object> request) {
         return request.getUri().getScheme();
     }
-
 }

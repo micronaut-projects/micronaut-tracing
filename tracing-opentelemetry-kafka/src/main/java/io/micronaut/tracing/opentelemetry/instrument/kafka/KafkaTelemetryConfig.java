@@ -18,31 +18,30 @@ package io.micronaut.tracing.opentelemetry.instrument.kafka;
 import java.util.Collection;
 
 import io.micronaut.context.ApplicationContext;
-import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Context;
 import io.opentelemetry.api.OpenTelemetry;
 
-import jakarta.inject.Singleton;
-
 /**
- * Opentelemetery Kafka tracing factory.
+ * Helper-class to access to kafkaTelemetry object from non-micronaut components.
  *
- * @since 4.5.0
+ * @since 4.6.0
  */
-@Factory
-public final class KafkaTelemetryFactory {
+@Context
+public final class KafkaTelemetryConfig {
 
-    @Singleton
-    public KafkaTelemetryConfig kafkaTelemetryConfig(OpenTelemetry openTelemetry, KafkaTelemetryProperties kafkaTelemetryProperties,
-                                                     ApplicationContext applicationContext) {
-        return new KafkaTelemetryConfig(openTelemetry, kafkaTelemetryProperties, applicationContext);
-    }
+    private static KafkaTelemetry kafkaTelemetry;
+    private final OpenTelemetry openTelemetry;
 
     @SuppressWarnings("rawtypes")
-    @Singleton
-    public KafkaTelemetry kafkaTelemetry(OpenTelemetry openTelemetry, KafkaTelemetryProperties kafkaTelemetryProperties,
-                                         ApplicationContext applicationContext) {
+    public KafkaTelemetryConfig(OpenTelemetry openTelemetry, KafkaTelemetryProperties kafkaTelemetryProperties,
+                                ApplicationContext applicationContext) {
+        this.openTelemetry = openTelemetry;
         Collection<KafkaTelemetryConsumerTracingFilter> consumerTracingFilters = applicationContext.getBeansOfType(KafkaTelemetryConsumerTracingFilter.class);
         Collection<KafkaTelemetryProducerTracingFilter> producerTracingFilters = applicationContext.getBeansOfType(KafkaTelemetryProducerTracingFilter.class);
-        return KafkaTelemetry.create(openTelemetry, kafkaTelemetryProperties, consumerTracingFilters, producerTracingFilters);
+        kafkaTelemetry = KafkaTelemetry.create(openTelemetry, kafkaTelemetryProperties, consumerTracingFilters, producerTracingFilters);
+    }
+
+    public static KafkaTelemetry getKafkaTelemetry() {
+        return kafkaTelemetry;
     }
 }

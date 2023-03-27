@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Contains configuration that provide integration with Kafka Opentelemetry.
- *
- * @since 4.5.0
- */
-@Configuration
-@Requires(property = KafkaTelemetryProperties.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
-@Requires(classes = Consumer.class)
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
-import io.micronaut.context.annotation.Configuration;
-import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.util.StringUtils;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import org.apache.kafka.clients.consumer.Consumer;
+/**
+ * Interface to filter consumer messages for tracing.
+ *
+ * @param <K> key class
+ * @param <V> value class
+ *
+ * @since 4.6.0
+ */
+public interface KafkaTelemetryConsumerTracingFilter<K, V> {
+
+    boolean filter(ConsumerRecord<K, V> record);
+}

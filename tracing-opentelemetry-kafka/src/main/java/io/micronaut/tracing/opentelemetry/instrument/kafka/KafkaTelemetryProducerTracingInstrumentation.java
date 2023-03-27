@@ -15,11 +15,14 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
+import java.lang.reflect.Proxy;
+
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.BeanCreatedEvent;
 import io.micronaut.context.event.BeanCreatedEventListener;
-import io.opentelemetry.instrumentation.kafkaclients.v2_6.KafkaTelemetry;
+import io.micronaut.core.util.StringUtils;
 
-import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.producer.Producer;
 
 import jakarta.inject.Singleton;
 
@@ -28,8 +31,9 @@ import jakarta.inject.Singleton;
  *
  * @since 4.5.0
  */
+@Requires(property = KafkaTelemetryProperties.PREFIX + ".wrapper", notEquals = StringUtils.FALSE)
 @Singleton
-public class OpenTelemetryKafkaConsumerTracingInstrumentation implements BeanCreatedEventListener<Consumer<?, ?>> {
+public class KafkaTelemetryProducerTracingInstrumentation implements BeanCreatedEventListener<Producer<?, ?>> {
 
     private final KafkaTelemetry kafkaTelemetry;
 
@@ -38,12 +42,18 @@ public class OpenTelemetryKafkaConsumerTracingInstrumentation implements BeanCre
      *
      * @param kafkaTelemetry The kafka telemetry
      */
-    public OpenTelemetryKafkaConsumerTracingInstrumentation(KafkaTelemetry kafkaTelemetry) {
+    public KafkaTelemetryProducerTracingInstrumentation(KafkaTelemetry kafkaTelemetry) {
         this.kafkaTelemetry = kafkaTelemetry;
     }
 
     @Override
-    public Consumer<?, ?> onCreated(BeanCreatedEvent<Consumer<?, ?>> event) {
+    public Producer<?, ?> onCreated(BeanCreatedEvent<Producer<?, ?>> event) {
+
+        Producer<?, ?> bean = event.getBean();
+        if (Proxy.isProxyClass(bean.getClass())) {
+            return bean;
+        }
+
         return kafkaTelemetry.wrap(event.getBean());
     }
 }

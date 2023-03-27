@@ -1,4 +1,4 @@
-package io.micronaut.tracing.instrument.kafka
+package io.micronaut.tracing.opentelemetry.instrument.kafka
 
 import io.micronaut.configuration.kafka.annotation.KafkaClient
 import io.micronaut.configuration.kafka.annotation.KafkaListener

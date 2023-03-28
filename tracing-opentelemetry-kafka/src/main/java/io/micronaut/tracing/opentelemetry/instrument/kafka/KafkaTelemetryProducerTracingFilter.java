@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 /**
@@ -27,5 +28,5 @@ import org.apache.kafka.clients.producer.ProducerRecord;
  */
 public interface KafkaTelemetryProducerTracingFilter<K, V> {
 
-    boolean filter(ProducerRecord<K, V> record);
+    boolean filter(ProducerRecord<K, V> record, Producer<K, V> producer);
 }

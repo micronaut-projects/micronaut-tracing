@@ -17,7 +17,7 @@ package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
 import io.micronaut.context.event.BeanCreatedEvent;
 import io.micronaut.context.event.BeanCreatedEventListener;
-import io.opentelemetry.instrumentation.kafkaclients.v2_6.KafkaTelemetry;
+import io.micronaut.core.util.StringUtils;
 
 import org.apache.kafka.clients.producer.Producer;
 

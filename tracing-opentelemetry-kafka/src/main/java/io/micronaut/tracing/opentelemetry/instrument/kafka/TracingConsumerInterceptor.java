@@ -18,7 +18,9 @@ package io.micronaut.tracing.opentelemetry.instrument.kafka;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerInterceptor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -35,6 +37,9 @@ import org.apache.kafka.common.TopicPartition;
  */
 public class TracingConsumerInterceptor<K, V> implements ConsumerInterceptor<K, V> {
 
+    private String consumerGroup;
+    private String clientId;
+
     @Override
     public ConsumerRecords<K, V> onConsume(ConsumerRecords<K, V> records) {
 
@@ -45,12 +50,12 @@ public class TracingConsumerInterceptor<K, V> implements ConsumerInterceptor<K, 
             if (kafkaTelemetry.excludeTopic(record.topic())) {
                 continue;
             }
-            if (!filterRecord(record)) {
+            if (!filterRecord(record, consumerGroup, clientId)) {
                 continue;
             }
             recordsToTrace.add(record);
         }
-        kafkaTelemetry.buildAndFinishSpan(recordsToTrace);
+        kafkaTelemetry.buildAndFinishSpan(recordsToTrace, consumerGroup, clientId);
 
         return records;
     }
@@ -59,10 +64,11 @@ public class TracingConsumerInterceptor<K, V> implements ConsumerInterceptor<K, 
      * Override this method if you need to set custom condition or logic to filter message to trace.
      *
      * @param record consumer record
+     * @param clientId clinet ID
      *
      * @return true if this record need to trace, false - otherwise
      */
-    public boolean filterRecord(ConsumerRecord<K, V> record) {
+    public boolean filterRecord(ConsumerRecord<K, V> record, String consumerGroup, String clientId) {
         return true;
     }
 
@@ -76,5 +82,7 @@ public class TracingConsumerInterceptor<K, V> implements ConsumerInterceptor<K, 
 
     @Override
     public void configure(Map<String, ?> configs) {
+        consumerGroup = Objects.toString(configs.get(ConsumerConfig.GROUP_ID_CONFIG), null);
+        clientId = Objects.toString(configs.get(ConsumerConfig.CLIENT_ID_CONFIG), null);
     }
 }

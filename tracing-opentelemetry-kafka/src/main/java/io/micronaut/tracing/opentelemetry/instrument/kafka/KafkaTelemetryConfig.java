@@ -30,12 +30,10 @@ import io.opentelemetry.api.OpenTelemetry;
 public final class KafkaTelemetryConfig {
 
     private static KafkaTelemetry kafkaTelemetry;
-    private final OpenTelemetry openTelemetry;
 
     @SuppressWarnings("rawtypes")
-    public KafkaTelemetryConfig(OpenTelemetry openTelemetry, KafkaTelemetryProperties kafkaTelemetryProperties,
+    KafkaTelemetryConfig(OpenTelemetry openTelemetry, KafkaTelemetryProperties kafkaTelemetryProperties,
                                 ApplicationContext applicationContext) {
-        this.openTelemetry = openTelemetry;
         Collection<KafkaTelemetryConsumerTracingFilter> consumerTracingFilters = applicationContext.getBeansOfType(KafkaTelemetryConsumerTracingFilter.class);
         Collection<KafkaTelemetryProducerTracingFilter> producerTracingFilters = applicationContext.getBeansOfType(KafkaTelemetryProducerTracingFilter.class);
         kafkaTelemetry = KafkaTelemetry.create(openTelemetry, kafkaTelemetryProperties, consumerTracingFilters, producerTracingFilters);

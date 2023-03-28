@@ -16,7 +16,11 @@
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
 import java.util.Map;
+import java.util.Objects;
 
+import io.micronaut.core.annotation.Nullable;
+
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerInterceptor;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -31,6 +35,9 @@ import org.apache.kafka.clients.producer.RecordMetadata;
  */
 public class TracingProducerInterceptor<K, V> implements ProducerInterceptor<K, V> {
 
+    @Nullable
+    private String clientId;
+
     @Override
     public ProducerRecord<K, V> onSend(ProducerRecord<K, V> producerRecord) {
 
@@ -38,11 +45,11 @@ public class TracingProducerInterceptor<K, V> implements ProducerInterceptor<K, 
         if (kafkaTelemetry.excludeTopic(producerRecord.topic())) {
             return producerRecord;
         }
-        if (!filterRecord(producerRecord)) {
+        if (!filterRecord(producerRecord, clientId)) {
             return producerRecord;
         }
 
-        KafkaTelemetryConfig.getKafkaTelemetry().buildAndFinishSpan(producerRecord, null, null);
+        KafkaTelemetryConfig.getKafkaTelemetry().buildAndFinishSpan(producerRecord, clientId);
         return producerRecord;
     }
 
@@ -50,10 +57,11 @@ public class TracingProducerInterceptor<K, V> implements ProducerInterceptor<K, 
      * Override this method if you need to set custom condition or logic to filter message to trace.
      *
      * @param record consumer record
+     * @param clientId clinet ID
      *
      * @return true if this record need to trace, false - otherwise
      */
-    public boolean filterRecord(ProducerRecord<K, V> record) {
+    public boolean filterRecord(ProducerRecord<K, V> record, String clientId) {
         return true;
     }
 
@@ -67,5 +75,6 @@ public class TracingProducerInterceptor<K, V> implements ProducerInterceptor<K, 
 
     @Override
     public void configure(Map<String, ?> map) {
+        clientId = Objects.toString(map.get(ProducerConfig.CLIENT_ID_CONFIG), null);
     }
 }

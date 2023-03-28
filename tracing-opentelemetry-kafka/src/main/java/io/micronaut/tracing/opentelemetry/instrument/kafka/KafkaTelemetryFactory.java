@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.core.annotation.Nullable;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.context.Context;

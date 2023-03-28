@@ -28,6 +28,7 @@ import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 
 /**
+ * Utility class to help get kafka headers and put them as span attributes.
  *
  * @since 4.6.0
  */
@@ -46,7 +47,7 @@ public final class KafkaAttributesExtractorUtils {
      * @param attributes attributes builder
      * @param headers kafka message headers
      */
-    static void putAttributes(KafkaTelemetryProperties kafkaTelemetryProperties, AttributesBuilder attributes, Headers headers) {
+    public static void putAttributes(KafkaTelemetryProperties kafkaTelemetryProperties, AttributesBuilder attributes, Headers headers) {
         Set<String> capturedHeaders = kafkaTelemetryProperties.getCapturedHeaders();
         if (capturedHeaders.contains(KafkaTelemetryProperties.ALL_HEADERS)) {
             Map<String, Integer> counterMap = new HashMap<>();

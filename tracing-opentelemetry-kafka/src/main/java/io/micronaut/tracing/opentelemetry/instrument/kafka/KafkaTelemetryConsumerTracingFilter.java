@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 /**
@@ -27,5 +28,5 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
  */
 public interface KafkaTelemetryConsumerTracingFilter<K, V> {
 
-    boolean filter(ConsumerRecord<K, V> record);
+    boolean filter(ConsumerRecord<K, V> record, Consumer<K, V> consumer);
 }

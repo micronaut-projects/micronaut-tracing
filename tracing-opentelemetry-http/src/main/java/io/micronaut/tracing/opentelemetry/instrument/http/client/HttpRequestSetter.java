@@ -21,6 +21,7 @@ import io.opentelemetry.context.propagation.TextMapSetter;
 
 @Internal
 enum HttpRequestSetter implements TextMapSetter<MutableHttpRequest<Object>> {
+
     INSTANCE;
 
     @Override

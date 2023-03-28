@@ -27,27 +27,29 @@ import static io.micronaut.http.HttpAttributes.SERVICE_ID;
 import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.NetTransportValues.IP_TCP;
 
 @Internal
-final class MicronautHttpNetClientAttributesGetter implements NetClientAttributesGetter<MutableHttpRequest<Object>, HttpResponse<Object>> {
+enum MicronautHttpNetClientAttributesGetter implements NetClientAttributesGetter<MutableHttpRequest<Object>, HttpResponse<Object>> {
+
+    INSTANCE;
 
     public InetSocketAddress getAddress(MutableHttpRequest<Object> request) {
         return request.getRemoteAddress();
     }
 
     @Override
-    public String transport(MutableHttpRequest<Object> request,
-                            @Nullable HttpResponse<Object> response) {
+    public String getTransport(MutableHttpRequest<Object> request,
+                               @Nullable HttpResponse<Object> response) {
         return IP_TCP;
     }
 
     @Override
-    public String peerName(MutableHttpRequest<Object> request) {
+    public String getPeerName(MutableHttpRequest<Object> request) {
         return request.getAttribute(SERVICE_ID, String.class)
             .filter(serviceId -> !serviceId.contains("/"))
             .orElseGet(() -> getAddress(request).getHostString());
     }
 
     @Override
-    public Integer peerPort(MutableHttpRequest<Object> request) {
+    public Integer getPeerPort(MutableHttpRequest<Object> request) {
         return getAddress(request).getPort();
     }
 }

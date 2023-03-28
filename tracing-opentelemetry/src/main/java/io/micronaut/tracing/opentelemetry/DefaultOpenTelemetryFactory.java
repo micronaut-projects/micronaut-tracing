@@ -27,6 +27,8 @@ import io.micronaut.core.util.StringUtils;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.events.GlobalEventEmitterProvider;
+import io.opentelemetry.api.logs.GlobalLoggerProvider;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
 import io.opentelemetry.sdk.trace.IdGenerator;
@@ -110,6 +112,8 @@ public class DefaultOpenTelemetryFactory {
     void resetForTest(Environment environment) {
         if (environment.getActiveNames().contains(Environment.TEST)) {
             GlobalOpenTelemetry.resetForTest();
+            GlobalEventEmitterProvider.resetForTest();
+            GlobalLoggerProvider.resetForTest();
         }
     }
 

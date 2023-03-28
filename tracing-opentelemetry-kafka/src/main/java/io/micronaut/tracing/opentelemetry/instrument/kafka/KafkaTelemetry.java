@@ -1,3 +1,18 @@
+/*
+ * Copyright 2017-2023 original authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
 import java.lang.reflect.Proxy;
@@ -39,6 +54,11 @@ import org.apache.kafka.common.metrics.MetricsReporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The main class with opentelemetry-kafka logic.
+ *
+ * @since 4.7.0
+ */
 public final class KafkaTelemetry {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaTelemetry.class);
@@ -150,6 +170,7 @@ public final class KafkaTelemetry {
      * Build and inject span into record.
      *
      * @param record the producer record to inject span info.
+     * @param clientId producer client ID
      * @param <K> key class
      * @param <V> value class
      */
@@ -177,10 +198,11 @@ public final class KafkaTelemetry {
      * Build and inject span into record.
      *
      * @param record the producer record to inject span info.
+     * @param producer the producer
      * @param callback the producer send callback
+     * @param sendFn send function
      * @param <K> key class
      * @param <V> value class
-     * @param sendFn send function
      *
      * @return send function's result
      */
@@ -364,7 +386,7 @@ public final class KafkaTelemetry {
         return kafkaTelemetryProperties;
     }
 
-    private class ProducerCallback implements Callback {
+    private final class ProducerCallback implements Callback {
 
         private final Callback callback;
         private final Context parentContext;

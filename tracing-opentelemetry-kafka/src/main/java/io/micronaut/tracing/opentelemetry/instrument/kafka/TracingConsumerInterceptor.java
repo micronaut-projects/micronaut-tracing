@@ -33,7 +33,7 @@ import org.apache.kafka.common.TopicPartition;
  * @param <K> key class
  * @param <V> value class
  *
- * @since 4.6.0
+ * @since 4.7.0
  */
 public class TracingConsumerInterceptor<K, V> implements ConsumerInterceptor<K, V> {
 
@@ -64,6 +64,7 @@ public class TracingConsumerInterceptor<K, V> implements ConsumerInterceptor<K, 
      * Override this method if you need to set custom condition or logic to filter message to trace.
      *
      * @param record consumer record
+     * @param consumerGroup consumer group
      * @param clientId clinet ID
      *
      * @return true if this record need to trace, false - otherwise

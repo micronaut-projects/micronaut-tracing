@@ -31,7 +31,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
  * @param <K> key class
  * @param <V> value class
  *
- * @since 4.6.0
+ * @since 4.7.0
  */
 public class TracingProducerInterceptor<K, V> implements ProducerInterceptor<K, V> {
 

@@ -24,7 +24,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
  * @param <K> key class
  * @param <V> value class
  *
- * @since 4.6.0
+ * @since 4.7.0
  */
 public interface KafkaTelemetryProducerTracingFilter<K, V> {
 

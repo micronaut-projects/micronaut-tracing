@@ -24,7 +24,7 @@ import io.opentelemetry.api.OpenTelemetry;
 /**
  * Helper-class to access to kafkaTelemetry object from non-micronaut components.
  *
- * @since 4.6.0
+ * @since 4.7.0
  */
 @Context
 public final class KafkaTelemetryConfig {

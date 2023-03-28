@@ -19,7 +19,7 @@
  * @since 4.5.0
  */
 @Configuration
-@Requires(property = KafkaTelemetryProperties.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
+@Requires(property = KafkaTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @Requires(classes = Consumer.class)
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 

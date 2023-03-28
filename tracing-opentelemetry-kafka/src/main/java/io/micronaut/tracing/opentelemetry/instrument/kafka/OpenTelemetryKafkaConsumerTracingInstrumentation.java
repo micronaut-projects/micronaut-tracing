@@ -15,6 +15,9 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
+import java.lang.reflect.Proxy;
+
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.BeanCreatedEvent;
 import io.micronaut.context.event.BeanCreatedEventListener;
 import io.micronaut.core.util.StringUtils;
@@ -28,6 +31,7 @@ import jakarta.inject.Singleton;
  *
  * @since 4.5.0
  */
+@Requires(property = KafkaTelemetryConfiguration.PREFIX + ".wrapper", notEquals = StringUtils.FALSE)
 @Singleton
 public class OpenTelemetryKafkaConsumerTracingInstrumentation implements BeanCreatedEventListener<Consumer<?, ?>> {
 
@@ -44,6 +48,11 @@ public class OpenTelemetryKafkaConsumerTracingInstrumentation implements BeanCre
 
     @Override
     public Consumer<?, ?> onCreated(BeanCreatedEvent<Consumer<?, ?>> event) {
-        return kafkaTelemetry.wrap(event.getBean());
+
+        Consumer<?, ?> bean = event.getBean();
+        if (Proxy.isProxyClass(bean.getClass())) {
+            return bean;
+        }
+        return kafkaTelemetry.wrap(bean);
     }
 }

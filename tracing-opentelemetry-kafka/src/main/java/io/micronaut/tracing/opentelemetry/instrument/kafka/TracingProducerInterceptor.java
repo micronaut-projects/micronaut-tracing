@@ -41,7 +41,7 @@ public class TracingProducerInterceptor<K, V> implements ProducerInterceptor<K, 
     @Override
     public ProducerRecord<K, V> onSend(ProducerRecord<K, V> producerRecord) {
 
-        KafkaTelemetry kafkaTelemetry = KafkaTelemetryConfig.getKafkaTelemetry();
+        KafkaTelemetry kafkaTelemetry = KafkaTelemetryHelper.getKafkaTelemetry();
         if (kafkaTelemetry.excludeTopic(producerRecord.topic())) {
             return producerRecord;
         }

@@ -43,7 +43,7 @@ public class TracingConsumerInterceptor<K, V> implements ConsumerInterceptor<K, 
     @Override
     public ConsumerRecords<K, V> onConsume(ConsumerRecords<K, V> records) {
 
-        KafkaTelemetry kafkaTelemetry = KafkaTelemetryConfig.getKafkaTelemetry();
+        KafkaTelemetry kafkaTelemetry = KafkaTelemetryHelper.getKafkaTelemetry();
         List<ConsumerRecord<K, V>> recordsToTrace = new ArrayList<>();
 
         for (ConsumerRecord<K, V> record : records) {
@@ -64,6 +64,7 @@ public class TracingConsumerInterceptor<K, V> implements ConsumerInterceptor<K, 
      * Override this method if you need to set custom condition or logic to filter message to trace.
      *
      * @param record consumer record
+     * @param consumerGroup consumer group
      * @param clientId clinet ID
      *
      * @return true if this record need to trace, false - otherwise

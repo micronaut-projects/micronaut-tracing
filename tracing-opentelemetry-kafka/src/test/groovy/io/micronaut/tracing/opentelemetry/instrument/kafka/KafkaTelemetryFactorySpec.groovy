@@ -29,7 +29,7 @@ class KafkaTelemetryFactorySpec extends Specification {
 
         when:
         def kafkaTelemetryFactory = ctx.getBean(KafkaTelemetryFactory)
-        def kafkaTelemetryProperties = ctx.getBean(KafkaTelemetryProperties)
+        def kafkaTelemetryProperties = ctx.getBean(KafkaTelemetryConfiguration)
 
         then:
         kafkaTelemetryFactory
@@ -67,7 +67,7 @@ class KafkaTelemetryFactorySpec extends Specification {
 
         when:
         def kafkaTelemetryFactory = ctx.getBean(KafkaTelemetryFactory)
-        def kafkaTelemetryProperties = ctx.getBean(KafkaTelemetryProperties)
+        def kafkaTelemetryProperties = ctx.getBean(KafkaTelemetryConfiguration)
 
         then:
         kafkaTelemetryFactory
@@ -104,7 +104,7 @@ class KafkaTelemetryFactorySpec extends Specification {
 
         when:
         def kafkaTelemetryFactory = ctx.getBean(KafkaTelemetryFactory)
-        def kafkaTelemetryProperties = ctx.getBean(KafkaTelemetryProperties)
+        def kafkaTelemetryProperties = ctx.getBean(KafkaTelemetryConfiguration)
 
         then:
         kafkaTelemetryFactory
@@ -137,7 +137,7 @@ class KafkaTelemetryFactorySpec extends Specification {
 
         when:
         def kafkaTelemetryFactory = ctx.getBean(KafkaTelemetryFactory)
-        def kafkaTelemetryProperties = ctx.getBean(KafkaTelemetryProperties)
+        def kafkaTelemetryProperties = ctx.getBean(KafkaTelemetryConfiguration)
 
         then:
         kafkaTelemetryFactory
@@ -173,7 +173,7 @@ class KafkaTelemetryFactorySpec extends Specification {
 
         when:
         def kafkaTelemetryFactory = ctx.getBean(KafkaTelemetryFactory)
-        def kafkaTelemetryProperties = ctx.getBean(KafkaTelemetryProperties)
+        def kafkaTelemetryProperties = ctx.getBean(KafkaTelemetryConfiguration)
 
         then:
         kafkaTelemetryFactory

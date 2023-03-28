@@ -43,38 +43,38 @@ public final class KafkaAttributesExtractorUtils {
     /**
      * Add message headers as span attributes.
      *
-     * @param kafkaTelemetryProperties kafkaTelemetryProperties
+     * @param kafkaTelemetryConfiguration kafkaTelemetryProperties
      * @param attributes attributes builder
      * @param headers kafka message headers
      */
-    public static void putAttributes(KafkaTelemetryProperties kafkaTelemetryProperties, AttributesBuilder attributes, Headers headers) {
-        Set<String> capturedHeaders = kafkaTelemetryProperties.getCapturedHeaders();
-        if (capturedHeaders.contains(KafkaTelemetryProperties.ALL_HEADERS)) {
+    public static void putAttributes(KafkaTelemetryConfiguration kafkaTelemetryConfiguration, AttributesBuilder attributes, Headers headers) {
+        Set<String> capturedHeaders = kafkaTelemetryConfiguration.getCapturedHeaders();
+        if (capturedHeaders.contains(KafkaTelemetryConfiguration.ALL_HEADERS)) {
             Map<String, Integer> counterMap = new HashMap<>();
             for (Header header : headers) {
-                processHeader(kafkaTelemetryProperties, attributes, header, counterMap);
+                processHeader(kafkaTelemetryConfiguration, attributes, header, counterMap);
             }
         } else {
-            applyHeaders(kafkaTelemetryProperties, attributes, headers);
+            applyHeaders(kafkaTelemetryConfiguration, attributes, headers);
         }
     }
 
-    private static void applyHeaders(KafkaTelemetryProperties kafkaTelemetryProperties, AttributesBuilder attributes, Headers headers) {
-        Set<String> capturedHeaders = kafkaTelemetryProperties.getCapturedHeaders();
-        if (kafkaTelemetryProperties.isHeadersAsLists()) {
-            applyHeadersAsList(kafkaTelemetryProperties, attributes, headers, capturedHeaders);
+    private static void applyHeaders(KafkaTelemetryConfiguration kafkaTelemetryConfiguration, AttributesBuilder attributes, Headers headers) {
+        Set<String> capturedHeaders = kafkaTelemetryConfiguration.getCapturedHeaders();
+        if (kafkaTelemetryConfiguration.isHeadersAsLists()) {
+            applyHeadersAsList(kafkaTelemetryConfiguration, attributes, headers, capturedHeaders);
         } else {
             Map<String, Integer> counterMap = new HashMap<>();
             for (String headerName : capturedHeaders) {
                 Header header = headers.lastHeader(headerName);
                 if (header != null) {
-                    processHeader(kafkaTelemetryProperties, attributes, header, counterMap);
+                    processHeader(kafkaTelemetryConfiguration, attributes, header, counterMap);
                 }
             }
         }
     }
 
-    private static void applyHeadersAsList(KafkaTelemetryProperties kafkaTelemetryProperties, AttributesBuilder attributes, Headers headers, Set<String> capturedHeaders) {
+    private static void applyHeadersAsList(KafkaTelemetryConfiguration kafkaTelemetryConfiguration, AttributesBuilder attributes, Headers headers, Set<String> capturedHeaders) {
         for (String headerName : capturedHeaders) {
             List<String> values = null;
             Iterable<Header> headersByName = headers.headers(headerName);
@@ -86,8 +86,8 @@ public final class KafkaAttributesExtractorUtils {
             }
             if (values != null) {
                 String spanAttrName;
-                if (kafkaTelemetryProperties.isAttributeWithPrefix()) {
-                    spanAttrName = kafkaTelemetryProperties.getAttributePrefix() + headerName;
+                if (kafkaTelemetryConfiguration.isAttributeWithPrefix()) {
+                    spanAttrName = kafkaTelemetryConfiguration.getAttributePrefix() + headerName;
                 } else {
                     spanAttrName = headerName;
                 }
@@ -96,14 +96,14 @@ public final class KafkaAttributesExtractorUtils {
         }
     }
 
-    private static void processHeader(KafkaTelemetryProperties kafkaTelemetryProperties, AttributesBuilder attributes, Header header, Map<String, Integer> counterMap) {
+    private static void processHeader(KafkaTelemetryConfiguration kafkaTelemetryConfiguration, AttributesBuilder attributes, Header header, Map<String, Integer> counterMap) {
         String headerValue = header.value() != null ? new String(header.value(), StandardCharsets.UTF_8) : null;
         if (headerValue == null) {
             return;
         }
         String spanAttrName;
-        if (kafkaTelemetryProperties.isAttributeWithPrefix()) {
-            spanAttrName = kafkaTelemetryProperties.getAttributePrefix() + header.key();
+        if (kafkaTelemetryConfiguration.isAttributeWithPrefix()) {
+            spanAttrName = kafkaTelemetryConfiguration.getAttributePrefix() + header.key();
         } else {
             spanAttrName = header.key();
         }

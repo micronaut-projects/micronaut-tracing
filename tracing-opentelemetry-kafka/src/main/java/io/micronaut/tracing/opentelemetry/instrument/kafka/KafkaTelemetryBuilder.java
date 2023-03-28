@@ -1,3 +1,18 @@
+/*
+ * Copyright 2017-2023 original authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
 import java.util.ArrayList;
@@ -30,7 +45,7 @@ public final class KafkaTelemetryBuilder {
     static final String INSTRUMENTATION_NAME = "io.opentelemetry.micronaut-kafka-2.6";
 
     private final OpenTelemetry openTelemetry;
-    private final KafkaTelemetryProperties kafkaTelemetryProperties;
+    private final KafkaTelemetryConfiguration kafkaTelemetryConfiguration;
     @SuppressWarnings("rawtypes")
     private final Collection<KafkaTelemetryConsumerTracingFilter> consumerTracingFilters;
     @SuppressWarnings("rawtypes")
@@ -49,11 +64,11 @@ public final class KafkaTelemetryBuilder {
     private boolean propagationEnabled = true;
 
     @SuppressWarnings("rawtypes")
-    public KafkaTelemetryBuilder(OpenTelemetry openTelemetry, KafkaTelemetryProperties kafkaTelemetryProperties,
+    public KafkaTelemetryBuilder(OpenTelemetry openTelemetry, KafkaTelemetryConfiguration kafkaTelemetryConfiguration,
                                  Collection<KafkaTelemetryConsumerTracingFilter> consumerTracingFilters,
                                  Collection<KafkaTelemetryProducerTracingFilter> producerTracingFilters) {
         this.openTelemetry = openTelemetry;
-        this.kafkaTelemetryProperties = kafkaTelemetryProperties;
+        this.kafkaTelemetryConfiguration = kafkaTelemetryConfiguration;
         this.consumerTracingFilters = consumerTracingFilters;
         this.producerTracingFilters = producerTracingFilters;
     }
@@ -73,12 +88,12 @@ public final class KafkaTelemetryBuilder {
         KafkaInstrumenterFactory instrumenterFactory = new KafkaInstrumenterFactory(openTelemetry, INSTRUMENTATION_NAME);
         instrumenterFactory.setCaptureExperimentalSpanAttributes(captureExperimentalSpanAttributes);
 
-        Set<String> capturedHeaders = kafkaTelemetryProperties.getCapturedHeaders();
+        Set<String> capturedHeaders = kafkaTelemetryConfiguration.getCapturedHeaders();
         if (CollectionUtils.isNotEmpty(capturedHeaders)) {
             consumerAttributesExtractors.add(new AttributesExtractor<KafkaProcessRequest, Void>() {
                 @Override
                 public void onStart(AttributesBuilder attributes, Context parentContext, KafkaProcessRequest processRequest) {
-                    putAttributes(kafkaTelemetryProperties, attributes, processRequest.getRecord().headers());
+                    putAttributes(kafkaTelemetryConfiguration, attributes, processRequest.getRecord().headers());
                 }
 
                 @Override
@@ -89,7 +104,7 @@ public final class KafkaTelemetryBuilder {
             producerAttributesExtractors.add(new AttributesExtractor<KafkaProducerRequest, RecordMetadata>() {
                 @Override
                 public void onStart(AttributesBuilder attributes, Context parentContext, KafkaProducerRequest producerRequest) {
-                    putAttributes(kafkaTelemetryProperties, attributes, producerRequest.getRecord().headers());
+                    putAttributes(kafkaTelemetryConfiguration, attributes, producerRequest.getRecord().headers());
                 }
 
                 @Override
@@ -103,7 +118,7 @@ public final class KafkaTelemetryBuilder {
             openTelemetry,
             instrumenterFactory.createProducerInstrumenter(producerAttributesExtractors),
             instrumenterFactory.createConsumerOperationInstrumenter(MessageOperation.RECEIVE, consumerAttributesExtractors),
-            producerTracingFilters, consumerTracingFilters, kafkaTelemetryProperties,
+            producerTracingFilters, consumerTracingFilters, kafkaTelemetryConfiguration,
             propagationEnabled);
     }
 

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2017-2023 original authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
 import java.lang.reflect.Proxy;
@@ -39,6 +54,11 @@ import org.apache.kafka.common.metrics.MetricsReporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The main class with opentelemetry-kafka logic.
+ *
+ * @since 4.6.0
+ */
 public final class KafkaTelemetry {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaTelemetry.class);
@@ -56,7 +76,7 @@ public final class KafkaTelemetry {
     private final Collection<KafkaTelemetryProducerTracingFilter> producerTracingFilters;
     @SuppressWarnings("rawtypes")
     private final Collection<KafkaTelemetryConsumerTracingFilter> consumerTracingFilters;
-    private final KafkaTelemetryProperties kafkaTelemetryProperties;
+    private final KafkaTelemetryConfiguration kafkaTelemetryConfiguration;
     private final boolean producerPropagationEnabled;
 
     @SuppressWarnings("rawtypes")
@@ -64,13 +84,13 @@ public final class KafkaTelemetry {
                           Instrumenter<KafkaProcessRequest, Void> consumerProcessInstrumenter,
                           Collection<KafkaTelemetryProducerTracingFilter> producerTracingFilters,
                           Collection<KafkaTelemetryConsumerTracingFilter> consumerTracingFilters,
-                          KafkaTelemetryProperties kafkaTelemetryProperties, boolean producerPropagationEnabled) {
+                          KafkaTelemetryConfiguration kafkaTelemetryConfiguration, boolean producerPropagationEnabled) {
         this.openTelemetry = openTelemetry;
         this.producerInstrumenter = producerInstrumenter;
         this.consumerProcessInstrumenter = consumerProcessInstrumenter;
         this.producerTracingFilters = producerTracingFilters;
         this.consumerTracingFilters = consumerTracingFilters;
-        this.kafkaTelemetryProperties = kafkaTelemetryProperties;
+        this.kafkaTelemetryConfiguration = kafkaTelemetryConfiguration;
         this.producerPropagationEnabled = producerPropagationEnabled;
     }
 
@@ -78,34 +98,34 @@ public final class KafkaTelemetry {
      * Returns a new KafkaTelemetry configured with the given {@link OpenTelemetry}.
      *
      * @param openTelemetry openTelemetry instance
-     * @param kafkaTelemetryProperties kafkaTelemetryProperties instance
+     * @param kafkaTelemetryConfiguration kafkaTelemetryProperties instance
      * @param consumerTracingFilters list of consumerTracingFilters
      * @param producerTracingFilters list of producerTracingFilters
      *
      * @return kafkaTelemetry instance
      */
     @SuppressWarnings("rawtypes")
-    public static KafkaTelemetry create(OpenTelemetry openTelemetry, KafkaTelemetryProperties kafkaTelemetryProperties,
+    public static KafkaTelemetry create(OpenTelemetry openTelemetry, KafkaTelemetryConfiguration kafkaTelemetryConfiguration,
                                         Collection<KafkaTelemetryConsumerTracingFilter> consumerTracingFilters,
                                         Collection<KafkaTelemetryProducerTracingFilter> producerTracingFilters) {
-        return builder(openTelemetry, kafkaTelemetryProperties, consumerTracingFilters, producerTracingFilters).build();
+        return builder(openTelemetry, kafkaTelemetryConfiguration, consumerTracingFilters, producerTracingFilters).build();
     }
 
     /**
      * Returns a new {@link KafkaTelemetryBuilder} configured with the given {@link OpenTelemetry}.
      *
      * @param openTelemetry openTelemetry instance
-     * @param kafkaTelemetryProperties kafkaTelemetryProperties instance
+     * @param kafkaTelemetryConfiguration kafkaTelemetryProperties instance
      * @param consumerTracingFilters list of consumerTracingFilters
      * @param producerTracingFilters list of producerTracingFilters
      *
      * @return KafkaTelemetryBuilder object
      */
     @SuppressWarnings("rawtypes")
-    public static KafkaTelemetryBuilder builder(OpenTelemetry openTelemetry, KafkaTelemetryProperties kafkaTelemetryProperties,
+    public static KafkaTelemetryBuilder builder(OpenTelemetry openTelemetry, KafkaTelemetryConfiguration kafkaTelemetryConfiguration,
                                                 Collection<KafkaTelemetryConsumerTracingFilter> consumerTracingFilters,
                                                 Collection<KafkaTelemetryProducerTracingFilter> producerTracingFilters) {
-        return new KafkaTelemetryBuilder(openTelemetry, kafkaTelemetryProperties, consumerTracingFilters, producerTracingFilters);
+        return new KafkaTelemetryBuilder(openTelemetry, kafkaTelemetryConfiguration, consumerTracingFilters, producerTracingFilters);
     }
 
     private TextMapPropagator propagator() {
@@ -150,6 +170,7 @@ public final class KafkaTelemetry {
      * Build and inject span into record.
      *
      * @param record the producer record to inject span info.
+     * @param clientId producer client ID
      * @param <K> key class
      * @param <V> value class
      */
@@ -177,10 +198,11 @@ public final class KafkaTelemetry {
      * Build and inject span into record.
      *
      * @param record the producer record to inject span info.
+     * @param producer the producer
      * @param callback the producer send callback
+     * @param sendFn send function
      * @param <K> key class
      * @param <V> value class
-     * @param sendFn send function
      *
      * @return send function's result
      */
@@ -251,16 +273,16 @@ public final class KafkaTelemetry {
      * @return nedd or not exclude topic for tracing.
      */
     public boolean excludeTopic(String topic) {
-        if (CollectionUtils.isNotEmpty(kafkaTelemetryProperties.getIncludedTopics())) {
-            for (String includedTopic : kafkaTelemetryProperties.getIncludedTopics()) {
+        if (CollectionUtils.isNotEmpty(kafkaTelemetryConfiguration.getIncludedTopics())) {
+            for (String includedTopic : kafkaTelemetryConfiguration.getIncludedTopics()) {
                 if (includedTopic.equalsIgnoreCase(topic)) {
                     return false;
                 }
             }
             return true;
         }
-        if (CollectionUtils.isNotEmpty(kafkaTelemetryProperties.getExcludedTopics())) {
-            for (String excludedTopic : kafkaTelemetryProperties.getExcludedTopics()) {
+        if (CollectionUtils.isNotEmpty(kafkaTelemetryConfiguration.getExcludedTopics())) {
+            for (String excludedTopic : kafkaTelemetryConfiguration.getExcludedTopics()) {
                 if (excludedTopic.equalsIgnoreCase(topic)) {
                     return true;
                 }
@@ -360,11 +382,11 @@ public final class KafkaTelemetry {
             });
     }
 
-    public KafkaTelemetryProperties getKafkaTelemetryProperties() {
-        return kafkaTelemetryProperties;
+    public KafkaTelemetryConfiguration getKafkaTelemetryProperties() {
+        return kafkaTelemetryConfiguration;
     }
 
-    private class ProducerCallback implements Callback {
+    private final class ProducerCallback implements Callback {
 
         private final Callback callback;
         private final Context parentContext;

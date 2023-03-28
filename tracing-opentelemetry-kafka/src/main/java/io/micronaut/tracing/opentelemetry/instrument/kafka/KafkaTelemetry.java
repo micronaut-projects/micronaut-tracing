@@ -189,33 +189,18 @@ public final class KafkaTelemetry {
         Context parentContext = Context.current();
         KafkaProducerRequest request = KafkaProducerRequest.create(record, producer);
         if (!producerInstrumenter.shouldStart(parentContext, request)) {
-            return sendFn.apply(record, callback);
+            return sendFn == null ? EMPTY_FUTURE : sendFn.apply(record, callback);
         }
 
         Context context = producerInstrumenter.start(parentContext, request);
         try (Scope ignored = context.makeCurrent()) {
-            propagator().inject(context, record.headers(), SETTER);
-            callback = new ProducerCallback(callback, parentContext, context, request);
-            return sendFn.apply(record, callback);
-        }
-    }
-
-    public <K, V> Future<RecordMetadata> buildAndFinishSpan(ProducerRecord<K, V> record, Producer<K, V> producer, Callback callback,
-                                                            BiFunction<ProducerRecord<K, V>, Callback, Future<RecordMetadata>> sendFn) {
-        Context currentContext = Context.current();
-        KafkaProducerRequest request = KafkaProducerRequest.create(record, producer);
-
-        if (!producerInstrumenter.shouldStart(currentContext, request)) {
-            return sendFn == null ? EMPTY_FUTURE : sendFn.apply(record, callback);
-        }
-
-        Context context = producerInstrumenter.start(currentContext, request);
-        if (producerPropagationEnabled) {
-            try {
-                propagator().inject(context, record.headers(), SETTER);
-            } catch (Throwable t) {
-                // it can happen if headers are read only (when record is sent second time)
-                LOG.warn("failed to inject span context. sending record second time?", t);
+            if (producerPropagationEnabled) {
+                try {
+                    propagator().inject(context, record.headers(), SETTER);
+                } catch (Throwable t) {
+                    // it can happen if headers are read only (when record is sent second time)
+                    LOG.warn("Failed to inject span context. sending record second time?", t);
+                }
             }
         }
         producerInstrumenter.end(context, request, null, null);
@@ -223,27 +208,8 @@ public final class KafkaTelemetry {
             return EMPTY_FUTURE;
         }
 
-        callback = new ProducerCallback(callback, currentContext, context, request);
+        callback = new ProducerCallback(callback, parentContext, context, request);
         return sendFn.apply(record, callback);
-    }
-
-    public <K, V> void buildAndFinishSpan(ProducerRecord<K, V> record, String clientId) {
-        Context currentContext = Context.current();
-        KafkaProducerRequest request = KafkaProducerRequest.create(record, clientId);
-        if (!producerInstrumenter.shouldStart(currentContext, request)) {
-            return;
-        }
-
-        Context context = producerInstrumenter.start(currentContext, request);
-        if (producerPropagationEnabled) {
-            try {
-                propagator().inject(context, record.headers(), SETTER);
-            } catch (Throwable t) {
-                // it can happen if headers are read only (when record is sent second time)
-                LOG.warn("failed to inject span context. sending record second time?", t);
-            }
-        }
-        producerInstrumenter.end(context, request, null, null);
     }
 
     private <K, V> void buildAndFinishSpan(ConsumerRecords<K, V> records, Consumer<K, V> consumer) {
@@ -358,7 +324,7 @@ public final class KafkaTelemetry {
                 if (method.getParameterCount() >= 2 && method.getParameterTypes()[1] == Callback.class) {
                     callback = (Callback) args[1];
                 }
-                return buildAndFinishSpan(record, producer, callback, producer::send);
+                return buildAndInjectSpan(record, producer, callback, producer::send);
             });
     }
 

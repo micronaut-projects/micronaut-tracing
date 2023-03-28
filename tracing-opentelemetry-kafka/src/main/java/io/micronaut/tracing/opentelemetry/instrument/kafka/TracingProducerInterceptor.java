@@ -49,7 +49,7 @@ public class TracingProducerInterceptor<K, V> implements ProducerInterceptor<K, 
             return producerRecord;
         }
 
-        KafkaTelemetryConfig.getKafkaTelemetry().buildAndFinishSpan(producerRecord, clientId);
+        kafkaTelemetry.buildAndInjectSpan(producerRecord, clientId);
         return producerRecord;
     }
 

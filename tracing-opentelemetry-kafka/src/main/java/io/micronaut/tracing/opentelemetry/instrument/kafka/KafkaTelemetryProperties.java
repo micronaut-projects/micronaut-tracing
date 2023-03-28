@@ -39,12 +39,10 @@ public class KafkaTelemetryProperties {
      * Value to capture all headers as span attributes.
      */
     public static final String ALL_HEADERS = "*";
-
     /**
      * Default prefix value for span attributes.
      */
     private static final String DEFAULT_ATTR_PREFIX = "messaging.header.";
-
     /**
      * If you want to set headers as lists, set "true".
      */

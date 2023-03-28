@@ -33,7 +33,7 @@ public final class KafkaTelemetryConfig {
 
     @SuppressWarnings("rawtypes")
     KafkaTelemetryConfig(OpenTelemetry openTelemetry, KafkaTelemetryProperties kafkaTelemetryProperties,
-                                ApplicationContext applicationContext) {
+                         ApplicationContext applicationContext) {
         Collection<KafkaTelemetryConsumerTracingFilter> consumerTracingFilters = applicationContext.getBeansOfType(KafkaTelemetryConsumerTracingFilter.class);
         Collection<KafkaTelemetryProducerTracingFilter> producerTracingFilters = applicationContext.getBeansOfType(KafkaTelemetryProducerTracingFilter.class);
         kafkaTelemetry = KafkaTelemetry.create(openTelemetry, kafkaTelemetryProperties, consumerTracingFilters, producerTracingFilters);

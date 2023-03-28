@@ -45,10 +45,6 @@ public final class KafkaTelemetryBuilder {
     private boolean captureExperimentalSpanAttributes;
     /**
      * Set whether to propagate trace context in producers. Enabled by default.
-     *
-     * <p>You will need to disable this if there are kafka consumers using kafka-clients version prior
-     * to 0.11, since those old versions do not support headers, and attaching trace context
-     * propagation headers upstream causes those consumers to fail when reading the messages.
      */
     private boolean propagationEnabled = true;
 

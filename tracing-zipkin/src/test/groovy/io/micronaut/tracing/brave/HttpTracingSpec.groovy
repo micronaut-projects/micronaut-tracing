@@ -34,6 +34,7 @@ class HttpTracingSpec extends Specification {
 
     @AutoCleanup
     private ApplicationContext context
+
     private TestReporter reporter
     private EmbeddedServer embeddedServer
     private HttpClient client
@@ -175,7 +176,7 @@ class HttpTracingSpec extends Specification {
                 'tracing.zipkin.sampler.probability': 1,
                 'micronaut.http.services.not-traced-client.urls[0]': "http://localhost:${embeddedServerWithoutTracing.port}",
         )
-                .singletons(new StrictCurrentTraceContext(), new TestReporter())
+                .singletons(StrictCurrentTraceContext.newBuilder().build(), new TestReporter())
                 .start()
 
         TestReporter reporter = context.getBean(TestReporter)
@@ -221,7 +222,7 @@ class HttpTracingSpec extends Specification {
                 'tracing.exclusions[0]': '.*hello.*',
                 'micronaut.http.services.not-traced-client.urls[0]': "http://localhost:${embeddedServerWithoutTracing.port}",
         )
-                .singletons(new StrictCurrentTraceContext(), new TestReporter())
+                .singletons(StrictCurrentTraceContext.newBuilder().build(), new TestReporter())
                 .start()
 
         TestReporter reporter = context.getBean(TestReporter)
@@ -309,7 +310,7 @@ class HttpTracingSpec extends Specification {
                         'tracing.zipkin.enabled'            : true,
                         'tracing.zipkin.sampler.probability': 1
                 ] + extraConfig)
-                .singletons(new StrictCurrentTraceContext(), new TestReporter())
+                .singletons(StrictCurrentTraceContext.newBuilder().build(), new TestReporter())
                 .start()
         reporter = context.getBean(TestReporter)
         embeddedServer = context.getBean(EmbeddedServer).start()

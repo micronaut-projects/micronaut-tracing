@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.annotation.Context;
+import io.micronaut.core.annotation.Internal;
 import io.opentelemetry.api.OpenTelemetry;
 
 /**
@@ -27,6 +28,7 @@ import io.opentelemetry.api.OpenTelemetry;
  * @since 4.6.0
  */
 @Context
+@Internal
 public final class KafkaTelemetryHelper {
 
     private static KafkaTelemetry kafkaTelemetry;

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.micronaut.core.annotation.Internal;
 import io.opentelemetry.api.common.AttributesBuilder;
 
 import org.apache.kafka.common.header.Header;
@@ -32,6 +33,7 @@ import org.apache.kafka.common.header.Headers;
  *
  * @since 4.6.0
  */
+@Internal
 public final class KafkaAttributesExtractorUtils {
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];

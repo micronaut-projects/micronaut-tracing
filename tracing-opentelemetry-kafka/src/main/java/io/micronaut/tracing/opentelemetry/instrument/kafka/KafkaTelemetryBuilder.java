@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.CollectionUtils;
 import io.opentelemetry.api.OpenTelemetry;
@@ -40,6 +41,7 @@ import static io.micronaut.tracing.opentelemetry.instrument.kafka.KafkaAttribute
  *
  * @since 4.6.0
  */
+@Internal
 public final class KafkaTelemetryBuilder {
 
     static final String INSTRUMENTATION_NAME = "io.opentelemetry.micronaut-kafka-2.6";

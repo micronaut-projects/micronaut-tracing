@@ -26,8 +26,10 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
 /**
- * Default tracing producer kafka listener.
- *
+ * Default tracing producer kafka interceptor. Altrernative way to connect tracing
+ * to your kafka records. If you want to trace records, just connect this default implementation
+ * producer interceptor to kafka. If you want to customize filter messages to trace, then
+ * you need to override method filterRecord in child class and connect it to kafka. *
  * @param <K> key class
  * @param <V> value class
  *
@@ -56,7 +58,7 @@ public class TracingProducerInterceptor<K, V> implements ProducerInterceptor<K, 
     /**
      * Override this method if you need to set custom condition or logic to filter message to trace.
      *
-     * @param record consumer record
+     * @param record producer record
      * @param clientId clinet ID
      *
      * @return true if this record need to trace, false - otherwise

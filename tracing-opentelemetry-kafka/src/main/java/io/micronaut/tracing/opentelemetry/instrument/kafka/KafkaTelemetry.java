@@ -25,6 +25,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.util.CollectionUtils;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.context.Context;
@@ -59,6 +60,7 @@ import org.slf4j.LoggerFactory;
  *
  * @since 4.6.0
  */
+@Internal
 public final class KafkaTelemetry {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaTelemetry.class);

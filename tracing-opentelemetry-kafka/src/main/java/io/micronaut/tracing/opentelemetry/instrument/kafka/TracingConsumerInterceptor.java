@@ -28,7 +28,10 @@ import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 
 /**
- * Default tracing consumer kafka listener.
+ * Default tracing consumer kafka interceptor. Altrernative way to connect tracing
+ * to your kafka records. If you want to trace records, just connect this default implementation
+ * consumer interceptor to kafka. If you want to customize filter messages to trace, then
+ * you need to override method filterRecord in child class and connect it to kafka.
  *
  * @param <K> key class
  * @param <V> value class

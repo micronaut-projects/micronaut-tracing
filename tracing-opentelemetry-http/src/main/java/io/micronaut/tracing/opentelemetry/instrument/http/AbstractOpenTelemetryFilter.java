@@ -47,24 +47,6 @@ public abstract class AbstractOpenTelemetryFilter implements HttpFilter {
     }
 
     /**
-     * Sets the error tags to use on the span.
-     *
-     * @param span  the span
-     * @param error the error
-     */
-    protected void setErrorTags(Span span, Throwable error) {
-        if (error == null) {
-            return;
-        }
-
-        String message = error.getMessage();
-        if (message == null) {
-            message = error.getClass().getSimpleName();
-        }
-        span.setAttribute(TAG_ERROR, message);
-    }
-
-    /**
      * Tests if the defined path should be excluded from tracing.
      *
      * @param path the path

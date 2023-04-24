@@ -28,10 +28,10 @@ import static io.micronaut.tracing.instrument.util.ThreadTracingInvocationInstru
 /**
  * Enables threads tracing invocation instrumentation.
  */
-@Requires(beans = TracingInvocationInstrumenterFactory.class)
-@Requires(property = PROPERTY_INSTRUMENT_THREADS, value = TRUE, defaultValue = FALSE)
-@Singleton
-@Internal
+//@Requires(beans = TracingInvocationInstrumenterFactory.class)
+//@Requires(property = PROPERTY_INSTRUMENT_THREADS, value = TRUE, defaultValue = FALSE)
+//@Singleton
+//@Internal
 final class ThreadTracingInvocationInstrumenterFactory implements InvocationInstrumenterFactory {
 
     public static final String PROPERTY_INSTRUMENT_THREADS = "tracing.instrument-threads";

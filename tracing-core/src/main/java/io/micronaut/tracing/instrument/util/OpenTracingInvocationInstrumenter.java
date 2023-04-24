@@ -32,10 +32,10 @@ import jakarta.inject.Singleton;
  * @author dstepanov
  * @since 1.0
  */
-@Singleton
-@Requires(beans = Tracer.class)
-@Requires(missingBeans = TracingInvocationInstrumenterFactory.class)
-@Internal
+//@Singleton
+//@Requires(beans = Tracer.class)
+//@Requires(missingBeans = TracingInvocationInstrumenterFactory.class)
+//@Internal
 public class OpenTracingInvocationInstrumenter implements TracingInvocationInstrumenterFactory, ReactiveInvocationInstrumenterFactory, InvocationInstrumenterFactory {
 
     private final Tracer tracer;

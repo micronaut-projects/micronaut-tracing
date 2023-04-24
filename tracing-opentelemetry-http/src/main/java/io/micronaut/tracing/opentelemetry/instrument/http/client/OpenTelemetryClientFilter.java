@@ -17,21 +17,25 @@ package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
 import io.micronaut.tracing.annotation.ContinueSpan;
+import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
 import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
-import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryPublisherUtils;
 import io.micronaut.tracing.opentelemetry.interceptor.AbstractOpenTelemetryTraceInterceptor;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import jakarta.inject.Named;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
 import static io.micronaut.http.HttpAttributes.INVOCATION_CONTEXT;
 import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTelemetryClientFilter.CLIENT_PATH;
@@ -53,7 +57,8 @@ public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter imple
      * @param exclusionsConfig The {@link OpenTelemetryExclusionsConfiguration}
      * @param instrumenter The {@link OpenTelemetryHttpClientConfig}
      */
-    public OpenTelemetryClientFilter(@Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig, @Named("micronautHttpClientTelemetryInstrumenter") Instrumenter<MutableHttpRequest<?>, Object> instrumenter) {
+    public OpenTelemetryClientFilter(@Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig,
+                                     @Named("micronautHttpClientTelemetryInstrumenter") Instrumenter<MutableHttpRequest<?>, Object> instrumenter) {
         super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
         this.instrumenter = instrumenter;
     }
@@ -62,31 +67,36 @@ public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter imple
     public Publisher<? extends HttpResponse<?>> doFilter(MutableHttpRequest<?> request,
                                                          ClientFilterChain chain) {
 
-        Publisher<? extends HttpResponse<?>> requestPublisher = chain.proceed(request);
-
         if (shouldExclude(request.getPath())) {
-            return requestPublisher;
+            return chain.proceed(request);
         }
 
         Context parentContext = Context.current();
         if (!instrumenter.shouldStart(parentContext, request)) {
-            return requestPublisher;
+            return chain.proceed(request);
         }
 
-        Context newContext = instrumenter.start(parentContext, request);
+        Context context = instrumenter.start(parentContext, request);
 
-        try (Scope ignored = newContext.makeCurrent()) {
+        try (Scope ignored = context.makeCurrent()) {
             handleContinueSpan(request);
+
+            try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty().plus(new OpenTelemetryPropagationContext(context)).propagate()) {
+                return Mono.from(chain.proceed(request))
+                    .doOnNext(mutableHttpResponse -> instrumenter.end(context, request, mutableHttpResponse, null))
+                    .doOnError(throwable -> {
+                        Span span = Span.fromContext(context);
+                        span.recordException(throwable);
+                        span.setStatus(StatusCode.ERROR);
+                        instrumenter.end(context, request, null, throwable);
+                    });
+            }
         }
-
-        return OpenTelemetryPublisherUtils.createOpenTelemetryPublisher(requestPublisher, instrumenter, newContext, request);
-
     }
 
     private void handleContinueSpan(MutableHttpRequest<?> request) {
         Object invocationContext = request.getAttribute(INVOCATION_CONTEXT).orElse(null);
-        if (invocationContext instanceof MethodInvocationContext) {
-            MethodInvocationContext<?, ?> context = (MethodInvocationContext<?, ?>) invocationContext;
+        if (invocationContext instanceof MethodInvocationContext<?, ?> context) {
             if (context.hasAnnotation(ContinueSpan.class)) {
                 AbstractOpenTelemetryTraceInterceptor.tagArguments(context);
             }

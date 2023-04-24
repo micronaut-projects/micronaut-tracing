@@ -33,9 +33,9 @@ import java.util.Map;
  * @author LarsEckart
  * @since 1.1
  */
-@Singleton
-@Requires(classes = MDC.class)
-@Internal
+//@Singleton
+//@Requires(classes = MDC.class)
+//@Internal
 public final class MdcInstrumenter implements InvocationInstrumenterFactory, ReactiveInvocationInstrumenterFactory {
 
     /**

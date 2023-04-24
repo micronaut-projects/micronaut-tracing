@@ -47,7 +47,7 @@ import java.util.concurrent.CompletionStage;
  */
 @Singleton
 @Requires(beans = Tracer.class)
-@InterceptorBean(NewSpan.class)
+@InterceptorBean(value = NewSpan.class)
 public class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
 
     /**

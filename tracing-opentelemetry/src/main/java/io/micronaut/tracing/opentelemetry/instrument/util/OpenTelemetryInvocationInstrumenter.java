@@ -32,9 +32,9 @@ import jakarta.inject.Singleton;
  * @author Nemanja Mikic
  * @since 4.2.0
  */
-@Singleton
-@Requires(beans = Tracer.class)
-@Internal
+//@Singleton
+//@Requires(beans = Tracer.class)
+//@Internal
 public final class OpenTelemetryInvocationInstrumenter implements ReactiveInvocationInstrumenterFactory {
 
     @Override

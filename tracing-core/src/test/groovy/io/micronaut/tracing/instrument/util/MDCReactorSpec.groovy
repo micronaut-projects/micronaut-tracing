@@ -55,7 +55,6 @@ class MDCReactorSpec extends Specification {
     @AutoCleanup
     HttpClient client = HttpClient.create(embeddedServer.URL)
 
-    @PendingFeature(reason = "https://github.com/micronaut-projects/micronaut-core/issues/8617")
     void "test MDC propagates"() {
         expect:
         List<Tuple2> result = Flux.range(1, 100)

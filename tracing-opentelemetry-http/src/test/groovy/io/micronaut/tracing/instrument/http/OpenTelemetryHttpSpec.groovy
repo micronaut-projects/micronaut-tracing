@@ -148,6 +148,8 @@ class OpenTelemetryHttpSpec extends Specification {
         conditions.eventually {
             response
             exporter.finishedSpanItems.size() == internalSpanCount + serverSpanCount + clientSpanCount
+            exporter.finishedSpanItems.stream().filter(s -> s.kind == SpanKind.SERVER).count() == serverSpanCount
+            exporter.finishedSpanItems.stream().filter(s -> s.kind == SpanKind.CLIENT).count() == clientSpanCount
         }
 
         cleanup:

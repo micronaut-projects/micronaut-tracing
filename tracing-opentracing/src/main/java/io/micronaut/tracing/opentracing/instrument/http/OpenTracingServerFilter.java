@@ -16,6 +16,7 @@
 package io.micronaut.tracing.opentracing.instrument.http;
 
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
@@ -46,10 +47,11 @@ import static io.opentracing.propagation.Format.Builtin.HTTP_HEADERS;
  * @author graemerocher
  * @since 1.0
  */
+@Internal
 @Filter(SERVER_PATH)
 @Requires(beans = Tracer.class)
 @Requires(missingBeans = NoopTracer.class)
-public class OpenTracingServerFilter extends AbstractOpenTracingFilter implements HttpServerFilter {
+public final class OpenTracingServerFilter extends AbstractOpenTracingFilter implements HttpServerFilter {
 
     /**
      * Creates an HTTP server instrumentation filter.

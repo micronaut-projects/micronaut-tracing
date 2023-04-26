@@ -16,6 +16,7 @@
 package io.micronaut.tracing.opentracing.instrument.http;
 
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
@@ -31,7 +32,6 @@ import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
 import io.opentracing.noop.NoopTracer;
-import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
@@ -46,18 +46,11 @@ import static io.opentracing.propagation.Format.Builtin.HTTP_HEADERS;
  * @author graemerocher
  * @since 1.0
  */
+@Internal
 @Filter(CLIENT_PATH)
 @Requires(beans = Tracer.class)
 @Requires(missingBeans = NoopTracer.class)
-public class OpenTracingClientFilter extends AbstractOpenTracingFilter implements HttpClientFilter {
-
-    /**
-     * @param tracer            the tracer for span creation and configuring across arbitrary transports
-     * @param conversionService the {@code ConversionService} instance
-     */
-    public OpenTracingClientFilter(Tracer tracer, ConversionService conversionService) {
-        this(tracer, conversionService, null);
-    }
+public final class OpenTracingClientFilter extends AbstractOpenTracingFilter implements HttpClientFilter {
 
     /**
      * Initialize the open tracing client filter with tracer and exclusion configuration.
@@ -66,7 +59,6 @@ public class OpenTracingClientFilter extends AbstractOpenTracingFilter implement
      * @param conversionService the {@code ConversionService} instance
      * @param exclusionsConfig  The {@link TracingExclusionsConfiguration}
      */
-    @Inject
     public OpenTracingClientFilter(Tracer tracer,
                                    ConversionService conversionService,
                                    @Nullable TracingExclusionsConfiguration exclusionsConfig) {

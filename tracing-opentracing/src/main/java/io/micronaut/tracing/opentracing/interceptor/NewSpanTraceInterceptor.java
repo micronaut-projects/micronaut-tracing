@@ -15,14 +15,12 @@
  */
 package io.micronaut.tracing.opentracing.interceptor;
 
-import io.micronaut.aop.InterceptPhase;
 import io.micronaut.aop.InterceptedMethod;
 import io.micronaut.aop.InterceptorBean;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.util.StringUtils;

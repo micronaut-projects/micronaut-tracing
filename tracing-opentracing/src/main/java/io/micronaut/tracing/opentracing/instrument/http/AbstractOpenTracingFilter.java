@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.opentracing.instrument.http;
 
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.http.HttpRequest;
@@ -38,7 +39,9 @@ import static io.micronaut.http.HttpAttributes.URI_TEMPLATE;
  * @author graemerocher
  * @since 1.0
  */
-public abstract class AbstractOpenTracingFilter implements HttpFilter {
+@Internal
+public abstract sealed class AbstractOpenTracingFilter implements HttpFilter
+    permits OpenTracingClientFilter, OpenTracingServerFilter {
 
     public static final String CLIENT_PATH = "${tracing.http.client.path:/**}";
     public static final String SERVER_PATH = "${tracing.http.server.path:/**}";
@@ -57,16 +60,6 @@ public abstract class AbstractOpenTracingFilter implements HttpFilter {
 
     @Nullable
     private final Predicate<String> pathExclusionTest;
-
-    /**
-     * Configure tracer in the filter for span creation and propagation across arbitrary transports.
-     *
-     * @param tracer            the tracer
-     * @param conversionService the {@code ConversionService} instance
-     */
-    protected AbstractOpenTracingFilter(Tracer tracer, ConversionService conversionService) {
-        this(tracer, conversionService, null);
-    }
 
     /**
      * Configure tracer in the filter for span creation and propagation across

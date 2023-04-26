@@ -16,6 +16,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpAttributes;
@@ -44,9 +45,10 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTele
  * @author Nemanja Mikic
  * @since 4.2.0
  */
+@Internal
 @Filter(SERVER_PATH)
 @Requires(beans = Tracer.class)
-public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter implements HttpServerFilter {
+public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter implements HttpServerFilter {
 
     private static final String APPLIED = OpenTelemetryServerFilter.class.getName() + "-applied";
     private static final String CONTINUE = OpenTelemetryServerFilter.class.getName() + "-continue";
@@ -82,7 +84,10 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
 
         Context context = instrumenter.start(parentContext, request);
 
-        try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty().plus(new OpenTelemetryPropagationContext(context)).propagate()) {
+        try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty()
+            .plus(new OpenTelemetryPropagationContext(context))
+            .propagate()) {
+
             return Mono.from(chain.proceed(request)).doOnNext(mutableHttpResponse -> {
                 mutableHttpResponse.getAttribute(HttpAttributes.EXCEPTION, Exception.class).ifPresentOrElse(e -> {
                     onError(request, context, e);
@@ -94,6 +99,7 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
                     }
                 });
             }).doOnError(throwable -> onError(request, context, throwable));
+
         }
     }
 

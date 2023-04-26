@@ -30,7 +30,6 @@ import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryPublisherUtils;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
-import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.instrumenter.util.ClassAndMethod;
 import jakarta.inject.Named;
@@ -96,7 +95,7 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
 
         try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty()
             .plus(new OpenTelemetryPropagationContext(newContext))
-            .propagate(); Scope ignored = newContext.makeCurrent()) {
+            .propagate()) {
 
             tagArguments(context);
 

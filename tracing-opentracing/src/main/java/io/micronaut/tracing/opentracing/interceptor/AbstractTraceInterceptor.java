@@ -20,6 +20,7 @@ import io.micronaut.aop.MethodInterceptor;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.AnnotationMetadata;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.type.Argument;
 import io.micronaut.core.util.CollectionUtils;
@@ -41,6 +42,7 @@ import static io.opentracing.log.Fields.MESSAGE;
  * @author graemerocher
  * @since 1.0
  */
+@Internal
 @Requires(beans = Tracer.class)
 public abstract sealed class AbstractTraceInterceptor implements MethodInterceptor<Object, Object>
     permits ContinueSpanInterceptor, NewSpanTraceInterceptor {

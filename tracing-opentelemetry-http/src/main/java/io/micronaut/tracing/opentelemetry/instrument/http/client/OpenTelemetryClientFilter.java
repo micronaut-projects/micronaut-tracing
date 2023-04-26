@@ -16,6 +16,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
 import io.micronaut.aop.MethodInvocationContext;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpResponse;
@@ -46,8 +47,9 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTele
  * @author Nemanja Mikic
  * @since 4.2.0
  */
+@Internal
 @Filter(CLIENT_PATH)
-public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter implements HttpClientFilter {
+public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter implements HttpClientFilter {
 
     private final Instrumenter<MutableHttpRequest<?>, Object> instrumenter;
 
@@ -81,7 +83,10 @@ public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter imple
         try (Scope ignored = context.makeCurrent()) {
             handleContinueSpan(request);
 
-            try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty().plus(new OpenTelemetryPropagationContext(context)).propagate()) {
+            try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty()
+                .plus(new OpenTelemetryPropagationContext(context))
+                .propagate()) {
+
                 return Mono.from(chain.proceed(request))
                     .doOnNext(mutableHttpResponse -> instrumenter.end(context, request, mutableHttpResponse, null))
                     .doOnError(throwable -> {
@@ -90,6 +95,7 @@ public class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter imple
                         span.setStatus(StatusCode.ERROR);
                         instrumenter.end(context, request, null, throwable);
                     });
+
             }
         }
     }

@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.opentracing.instrument.http;
 
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.MutableHttpHeaders;
@@ -31,6 +32,7 @@ import java.util.Map;
  * @author graemerocher
  * @since 1.0
  */
+@Internal
 class HttpHeadersTextMap implements TextMap {
 
     private final HttpHeaders headers;

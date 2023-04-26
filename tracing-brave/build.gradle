@@ -7,7 +7,6 @@ dependencies {
     api mnReactor.micronaut.reactor
     api platform (libs.boms.brave)
     api platform (libs.boms.zipkin.reporter)
-    api libs.brave.instrumentation.http
     api libs.zipkin.reporter
     api libs.brave.opentracing
 

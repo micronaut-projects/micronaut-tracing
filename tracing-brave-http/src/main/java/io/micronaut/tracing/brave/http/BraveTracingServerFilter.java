@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing.brave.instrument.http;
+package io.micronaut.tracing.brave.http;
 
 import brave.Span;
 import brave.http.HttpServerHandler;

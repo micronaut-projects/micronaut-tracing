@@ -28,6 +28,8 @@ include 'tracing-opentelemetry-kafka'
 include 'tracing-opentracing'
 include 'tracing-jaeger'
 include 'tracing-brave'
+include 'tracing-brave-http'
+
 include 'tests:kotlin-tests'
 
 enableFeaturePreview 'TYPESAFE_PROJECT_ACCESSORS'

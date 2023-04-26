@@ -15,27 +15,36 @@
  */
 package io.micronaut.tracing.brave.instrument.http;
 
+import brave.Span;
 import brave.http.HttpClientHandler;
 import brave.http.HttpClientRequest;
 import brave.http.HttpClientResponse;
-import brave.http.HttpTracing;
+import brave.propagation.CurrentTraceContext;
 import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.propagation.PropagatedContext;
+import io.micronaut.core.util.StringUtils;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.annotation.Filter;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
-import io.micronaut.tracing.instrument.http.OpenTracingClientFilter;
-import io.micronaut.tracing.instrument.http.TracingExclusionsConfiguration;
-import jakarta.inject.Inject;
+import io.micronaut.tracing.brave.BravePropagationContext;
+import io.micronaut.tracing.opentracing.instrument.http.OpenTracingClientFilter;
+import io.micronaut.tracing.opentracing.instrument.http.TracingExclusionsConfiguration;
 import org.reactivestreams.Publisher;
-import reactor.core.CorePublisher;
+import reactor.core.publisher.Mono;
 
 import java.util.function.Predicate;
 
-import static io.micronaut.tracing.instrument.http.AbstractOpenTracingFilter.CLIENT_PATH;
+import static io.micronaut.http.HttpAttributes.SERVICE_ID;
+import static io.micronaut.http.HttpAttributes.URI_TEMPLATE;
+import static io.micronaut.tracing.opentracing.instrument.http.AbstractOpenTracingFilter.CLIENT_PATH;
+import static io.micronaut.tracing.opentracing.instrument.http.TraceRequestAttributes.CURRENT_SPAN;
 
 /**
  * Instruments outgoing HTTP requests.
@@ -43,57 +52,133 @@ import static io.micronaut.tracing.instrument.http.AbstractOpenTracingFilter.CLI
  * @author graemerocher
  * @since 1.0
  */
+@Internal
 @Filter(CLIENT_PATH)
 @Requires(beans = HttpClientHandler.class)
 @Replaces(OpenTracingClientFilter.class)
-public class BraveTracingClientFilter implements HttpClientFilter {
+public final class BraveTracingClientFilter implements HttpClientFilter {
 
+    private final CurrentTraceContext currentTraceContext;
     private final HttpClientHandler<HttpClientRequest, HttpClientResponse> clientHandler;
-    private final HttpTracing httpTracing;
     @Nullable
     private final Predicate<String> pathExclusionTest;
 
     /**
-     * @param clientHandler the standard way to instrument HTTP client
-     * @param httpTracing   the tracer for creation of span
-     */
-    public BraveTracingClientFilter(HttpClientHandler<HttpClientRequest, HttpClientResponse> clientHandler,
-                                    HttpTracing httpTracing) {
-        this(clientHandler, httpTracing, null);
-    }
-
-    /**
      * Initialize tracing filter with clientHandler and httpTracing.
      *
-     * @param clientHandler the standard way to instrument HTTP client
-     * @param httpTracing   the tracer for creation of span
+     * @param currentTraceContext     The trace context
+     * @param clientHandler           the standard way to instrument HTTP client
      * @param exclusionsConfiguration the {@link TracingExclusionsConfiguration}
      */
-    @Inject
-    public BraveTracingClientFilter(HttpClientHandler<HttpClientRequest, HttpClientResponse> clientHandler,
-                                    HttpTracing httpTracing,
+    public BraveTracingClientFilter(CurrentTraceContext currentTraceContext,
+                                    HttpClientHandler<HttpClientRequest, HttpClientResponse> clientHandler,
                                     @Nullable TracingExclusionsConfiguration exclusionsConfiguration) {
+        this.currentTraceContext = currentTraceContext;
         this.clientHandler = clientHandler;
-        this.httpTracing = httpTracing;
         this.pathExclusionTest = exclusionsConfiguration == null ? null : exclusionsConfiguration.exclusionTest();
     }
 
     @Override
     public Publisher<? extends HttpResponse<?>> doFilter(MutableHttpRequest<?> request,
                                                          ClientFilterChain chain) {
-        Publisher<? extends HttpResponse<?>> requestPublisher = chain.proceed(request);
         if (shouldExclude(request.getPath())) {
-            return requestPublisher;
+            return chain.proceed(request);
         }
 
-        if (requestPublisher instanceof CorePublisher) {
-            return new HttpClientTracingCorePublisher(requestPublisher, request, clientHandler, httpTracing);
-        }
+        HttpClientRequest httpClientRequest = mapRequest(request);
+        Span span = clientHandler.handleSend(httpClientRequest);
 
-        return new HttpClientTracingPublisher(requestPublisher, request, clientHandler, httpTracing);
+        request.getAttribute(SERVICE_ID, String.class)
+            .filter(StringUtils::isNotEmpty)
+            .ifPresent(span::remoteServiceName);
+
+        request.setAttribute(CURRENT_SPAN, span);
+
+        try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty()
+            .plus(new BravePropagationContext(currentTraceContext, span.context()))
+            .propagate()) {
+
+            return Mono.from(chain.proceed(request))
+                .doOnNext(response -> clientHandler.handleReceive(mapResponse(request, response, null), span))
+                .doOnError(throwable -> {
+                    if (throwable instanceof HttpClientResponseException e) {
+                        clientHandler.handleReceive(mapResponse(request, e.getResponse(), e), span);
+                    } else {
+                        span.error(throwable);
+                    }
+                });
+
+        }
     }
 
     private boolean shouldExclude(@Nullable String path) {
         return pathExclusionTest != null && path != null && pathExclusionTest.test(path);
+    }
+
+    private HttpClientRequest mapRequest(MutableHttpRequest<?> request) {
+        return new HttpClientRequest() {
+
+            @Override
+            public void header(String name, String value) {
+                request.header(name, value);
+            }
+
+            @Override
+            public String method() {
+                return request.getMethodName();
+            }
+
+            @Override
+            public String path() {
+                return request.getPath();
+            }
+
+            @Override
+            public String url() {
+                return request.getUri().toString();
+            }
+
+            @Override
+            public String header(String name) {
+                return request.getHeaders().get(name);
+            }
+
+            @Override
+            public Object unwrap() {
+                return request;
+            }
+        };
+    }
+
+    private HttpClientResponse mapResponse(HttpRequest<?> request,
+                                           HttpResponse<?> response,
+                                           Throwable error) {
+        return new HttpClientResponse() {
+
+            @Override
+            public Object unwrap() {
+                return response;
+            }
+
+            @Override
+            public Throwable error() {
+                return error;
+            }
+
+            @Override
+            public String method() {
+                return request.getMethodName();
+            }
+
+            @Override
+            public String route() {
+                return request.getAttribute(URI_TEMPLATE, String.class).orElse(null);
+            }
+
+            @Override
+            public int statusCode() {
+                return response.getStatus().getCode();
+            }
+        };
     }
 }

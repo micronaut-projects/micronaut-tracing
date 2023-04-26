@@ -13,53 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing.opentelemetry.interceptor;
+package io.micronaut.tracing.opentracing.interceptor;
 
 import io.micronaut.aop.InterceptorBean;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.convert.ConversionService;
 import io.micronaut.tracing.annotation.ContinueSpan;
-import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.context.Context;
-import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
-import io.opentelemetry.instrumentation.api.instrumenter.util.ClassAndMethod;
-import jakarta.inject.Named;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import jakarta.inject.Singleton;
 
 /**
  * Implements tracing logic for {@code ContinueSpan} and {@code NewSpan}
- * using the Open Telemetry API.
+ * using the Open Tracing API.
  *
- * @author Nemanja Mikic
- * @since 4.2.0
+ * @author graemerocher
+ * @since 1.0
  */
 @Internal
 @Singleton
 @Requires(beans = Tracer.class)
 @InterceptorBean(ContinueSpan.class)
-public final class ContinueSpanOpenTelemetryTraceInterceptor extends AbstractOpenTelemetryTraceInterceptor {
+public final class ContinueSpanInterceptor extends AbstractTraceInterceptor {
 
     /**
      * Initialize the interceptor with tracer and conversion service.
      *
-     * @param instrumenter the ClassAndMethod Instrumenter
+     * @param tracer            for span creation and propagation across arbitrary transports
+     * @param conversionService the {@code ConversionService} instance
      */
-    public ContinueSpanOpenTelemetryTraceInterceptor(@Named("micronautCodeTelemetryInstrumenter") Instrumenter<ClassAndMethod, Object> instrumenter) {
-        super(instrumenter);
+    public ContinueSpanInterceptor(Tracer tracer, ConversionService conversionService) {
+        super(tracer, conversionService);
     }
 
-    @Nullable
     @Override
     public Object intercept(MethodInvocationContext<Object, Object> context) {
-        Context currentContext = Context.current();
-
-        if (currentContext.toString().equals("{}")) {
+        Span currentSpan = tracer.activeSpan();
+        if (currentSpan == null) {
             return context.proceed();
         }
-        tagArguments(context);
-
+        tagArguments(currentSpan, context);
         return context.proceed();
     }
 }

@@ -19,27 +19,33 @@ import brave.Span;
 import brave.http.HttpServerHandler;
 import brave.http.HttpServerRequest;
 import brave.http.HttpServerResponse;
-import brave.http.HttpTracing;
+import brave.propagation.CurrentTraceContext;
 import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.convert.ConversionService;
+import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
+import io.micronaut.http.exceptions.HttpStatusException;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
-import io.micronaut.tracing.instrument.http.OpenTracingServerFilter;
-import io.micronaut.tracing.instrument.http.TracingExclusionsConfiguration;
-import io.opentracing.Tracer;
+import io.micronaut.tracing.brave.BravePropagationContext;
+import io.micronaut.tracing.opentracing.instrument.http.OpenTracingServerFilter;
+import io.micronaut.tracing.opentracing.instrument.http.TracingExclusionsConfiguration;
 import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
-import reactor.core.CorePublisher;
+import reactor.core.publisher.Mono;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 
+import static io.micronaut.http.HttpAttributes.EXCEPTION;
+import static io.micronaut.http.HttpAttributes.URI_TEMPLATE;
 import static io.micronaut.http.filter.ServerFilterPhase.TRACING;
-import static io.micronaut.tracing.instrument.http.AbstractOpenTracingFilter.SERVER_PATH;
+import static io.micronaut.tracing.opentracing.instrument.http.AbstractOpenTracingFilter.SERVER_PATH;
 
 /**
  * Instruments incoming HTTP requests.
@@ -47,48 +53,29 @@ import static io.micronaut.tracing.instrument.http.AbstractOpenTracingFilter.SER
  * @author graemerocher
  * @since 1.0
  */
+@Internal
 @Filter(SERVER_PATH)
 @Requires(beans = HttpServerHandler.class)
 @Replaces(OpenTracingServerFilter.class)
-public class BraveTracingServerFilter implements HttpServerFilter {
+public final class BraveTracingServerFilter implements HttpServerFilter {
 
-    private final HttpTracing httpTracing;
-    private final Tracer openTracer;
+    private final CurrentTraceContext currentTraceContext;
     private final HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler;
 
-    private final ConversionService conversionService;
     @Nullable
     private final Predicate<String> pathExclusionTest;
 
     /**
-     * @param httpTracing       the {@code HttpTracing} instance
-     * @param openTracer        the Open Tracing instance
-     * @param serverHandler     the {@code HttpServerHandler} instance
-     * @param conversionService the {@code ConversionService} instance
-     */
-    public BraveTracingServerFilter(HttpTracing httpTracing,
-                                    Tracer openTracer,
-                                    HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler, ConversionService conversionService) {
-        this(httpTracing, openTracer, serverHandler, conversionService, null);
-    }
-
-    /**
-     * @param httpTracing             the {@code HttpTracing} instance
-     * @param openTracer              the Open Tracing instance
+     * @param currentTraceContext     The trace context
      * @param serverHandler           the {@code HttpServerHandler} instance
-     * @param conversionService       the {@code ConversionService} instance
      * @param exclusionsConfiguration the {@link TracingExclusionsConfiguration}
      */
     @Inject
-    public BraveTracingServerFilter(HttpTracing httpTracing,
-                                    io.opentracing.Tracer openTracer,
+    public BraveTracingServerFilter(CurrentTraceContext currentTraceContext,
                                     HttpServerHandler<HttpServerRequest, HttpServerResponse> serverHandler,
-                                    ConversionService conversionService,
                                     @Nullable TracingExclusionsConfiguration exclusionsConfiguration) {
-        this.httpTracing = httpTracing;
-        this.openTracer = openTracer;
+        this.currentTraceContext = currentTraceContext;
         this.serverHandler = serverHandler;
-        this.conversionService = conversionService;
         this.pathExclusionTest = exclusionsConfiguration == null ? null : exclusionsConfiguration.exclusionTest();
     }
 
@@ -96,33 +83,49 @@ public class BraveTracingServerFilter implements HttpServerFilter {
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request,
                                                       ServerFilterChain chain) {
 
-        Publisher<MutableHttpResponse<?>> requestPublisher = chain.proceed(request);
-
         if (shouldExclude(request.getPath())) {
-            return requestPublisher;
+            return chain.proceed(request);
         }
         HttpServerRequest httpServerRequest = mapRequest(request);
         Span span = serverHandler.handleReceive(httpServerRequest);
 
-        if (requestPublisher instanceof CorePublisher) {
-            return new HttpServerTracingCorePublisher(
-                requestPublisher,
-                request,
-                serverHandler,
-                httpTracing,
-                openTracer,
-                span,
-                conversionService);
-        }
+        try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty()
+            .plus(new BravePropagationContext(currentTraceContext, span.context()))
+            .propagate()) {
 
-        return new HttpServerTracingPublisher(
-            requestPublisher,
-            request,
-            serverHandler,
-            httpTracing,
-            openTracer,
-            span,
-            conversionService);
+            return Mono.from(chain.proceed(request))
+                .doOnNext(response -> {
+//            Optional<?> body = response.getBody();
+//            if (body.isPresent()) {
+//                Object o = body.get();
+//                if (Publishers.isConvertibleToPublisher(o)) {
+//                    Class<?> type = o.getClass();
+//                    Publisher<?> resultPublisher = Publishers.convertPublisher(conversionService, o, Publisher.class);
+//                    Publisher<?> scopedPublisher = new ScopePropagationPublisher<>(
+//                        resultPublisher,
+//                        openTracer,
+//                        openTracer.activeSpan()
+//                    );
+//
+//                    response.body(Publishers.convertPublisher(conversionService, scopedPublisher, type));
+//                }
+//            }
+
+                    final Optional<Throwable> throwable = response.getAttribute(EXCEPTION, Throwable.class);
+                    if (throwable.isPresent()) {
+                        int statusCode = 500;
+                        Throwable error = throwable.get();
+                        if (error instanceof HttpStatusException) {
+                            statusCode = ((HttpStatusException) error).getStatus().getCode();
+                        }
+                        serverHandler.handleSend(mapResponse(request, statusCode, error), span);
+                    } else {
+                        serverHandler.handleSend(mapResponse(request, response), span);
+                    }
+                })
+                .doOnError(throwable -> span.error(throwable).finish());
+
+        }
     }
 
     @Override
@@ -160,6 +163,61 @@ public class BraveTracingServerFilter implements HttpServerFilter {
             @Override
             public Object unwrap() {
                 return request;
+            }
+        };
+    }
+
+    private HttpServerResponse mapResponse(HttpRequest<?> request, HttpResponse<?> response) {
+        return new HttpServerResponse() {
+
+            @Override
+            public Object unwrap() {
+                return response;
+            }
+
+            @Override
+            public String method() {
+                return request.getMethodName();
+            }
+
+            @Override
+            public String route() {
+                return request.getAttribute(URI_TEMPLATE, String.class).orElse(null);
+            }
+
+            @Override
+            public int statusCode() {
+                return response.getStatus().getCode();
+            }
+        };
+    }
+
+    private HttpServerResponse mapResponse(HttpRequest<?> request, int statusCode, Throwable error) {
+        return new HttpServerResponse() {
+
+            @Override
+            public Throwable error() {
+                return error;
+            }
+
+            @Override
+            public Object unwrap() {
+                return this;
+            }
+
+            @Override
+            public String method() {
+                return request.getMethodName();
+            }
+
+            @Override
+            public String route() {
+                return request.getAttribute(URI_TEMPLATE, String.class).orElse(null);
+            }
+
+            @Override
+            public int statusCode() {
+                return statusCode;
             }
         };
     }

@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api projects.micronautTracingCore
+    api projects.micronautTracingOpentracing
     api mnReactor.micronaut.reactor
     api platform (libs.boms.brave)
     api platform (libs.boms.zipkin.reporter)

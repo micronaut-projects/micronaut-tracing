@@ -1,8 +1,8 @@
 [versions]
-micronaut = '4.0.0-M1'
-micronaut-test = '4.0.0-M1'
+micronaut = '4.0.0-M2'
+micronaut-test = '4.0.0-M2'
 micronaut-docs = '2.0.0'
-groovy = '4.0.10'
+groovy = '4.0.11'
 spock = '2.3-groovy-4.0'
 
 managed-brave-instrumentation = '5.15.0'
@@ -29,12 +29,12 @@ grpc = '1.53.0'
 protobuf = '3.21.12'
 testcontainers = '1.17.6'
 
-micronaut-aws = "4.0.0-M1"
+micronaut-aws = "4.0.0-M2"
 micronaut-grpc = '4.0.0-M1'
 micronaut-reactor = '3.0.0-M1'
 micronaut-rxjava2 = '2.0.0-M1'
-micronaut-serde = '2.0.0-M1'
-micronaut-kafka = '5.0.0-M1'
+micronaut-serde = '2.0.0-M3'
+micronaut-kafka = '5.0.0-M2'
 
 [libraries]
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 original authors
+ * Copyright 2017-2023 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,26 +23,24 @@ import java.util.Map;
 import java.util.Set;
 
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.core.annotation.Nullable;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
-import io.opentelemetry.instrumentation.kafkaclients.KafkaTelemetry;
-
-import jakarta.annotation.Nullable;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import io.opentelemetry.instrumentation.kafka.internal.KafkaProcessRequest;
+import io.opentelemetry.instrumentation.kafka.internal.KafkaProducerRequest;
+import io.opentelemetry.instrumentation.kafkaclients.v2_6.KafkaTelemetry;
+import jakarta.inject.Singleton;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
-
-import jakarta.inject.Singleton;
 
 
 /**
  * Opentelemetery Kafka tracing factory.
  *
- * @since 5.0.0
+ * @since 4.5.0
  */
 @Factory
 public class KafkaTelemetryFactory {
@@ -65,23 +63,23 @@ public class KafkaTelemetryFactory {
         return KafkaTelemetry.builder(openTelemetry)
             .addConsumerAttributesExtractors(new AttributesExtractor<>() {
                 @Override
-                public void onStart(AttributesBuilder attributes, Context parentContext, ConsumerRecord<?, ?> consumerRecord) {
-                    putAttributes(attributes, consumerRecord.headers(), kafkaTelemetryConfiguration);
+                public void onStart(AttributesBuilder attributes, Context parentContext, KafkaProcessRequest processRequest) {
+                    putAttributes(attributes, processRequest.getRecord().headers(), kafkaTelemetryConfiguration);
                 }
 
                 @Override
-                public void onEnd(AttributesBuilder attributes, Context context, ConsumerRecord<?, ?> consumerRecord, Void unused, Throwable error) {
+                public void onEnd(AttributesBuilder attributes, Context context, KafkaProcessRequest kafkaProcessRequest, @Nullable Void unused, @Nullable Throwable error) {
                     // do notting in the end
                 }
             })
             .addProducerAttributesExtractors(new AttributesExtractor<>() {
                 @Override
-                public void onStart(AttributesBuilder attributes, Context parentContext, ProducerRecord<?, ?> producerRecord) {
-                    putAttributes(attributes, producerRecord.headers(), kafkaTelemetryConfiguration);
+                public void onStart(AttributesBuilder attributes, Context parentContext, KafkaProducerRequest kafkaProducerRequest) {
+                    putAttributes(attributes, kafkaProducerRequest.getRecord().headers(), kafkaTelemetryConfiguration);
                 }
 
                 @Override
-                public void onEnd(AttributesBuilder attributes, Context context, ProducerRecord<?, ?> producerRecord, @Nullable RecordMetadata recordMetadata, @Nullable Throwable error) {
+                public void onEnd(AttributesBuilder attributes, Context context, KafkaProducerRequest kafkaProducerRequest, @Nullable RecordMetadata recordMetadata, @Nullable Throwable error) {
                     // do notting in the end
                 }
             })

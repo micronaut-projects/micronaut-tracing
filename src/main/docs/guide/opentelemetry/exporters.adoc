@@ -15,8 +15,7 @@ dependency:opentelemetry-exporter-zipkin[scope="implementation", groupId="io.ope
 
 Example configuration for the Zipkin exporter:
 
-.application.yml
-[source,yaml]
+[configuration]
 ----
 otel:
   traces:

@@ -245,9 +245,26 @@ class OpenTelemetryHttpSpec extends Specification {
         e.message == "Not Found"
         conditions.eventually {
             exporter.finishedSpanItems.size() == 1
-            exporter.finishedSpanItems[0].name == route
+            exporter.finishedSpanItems[0].name == "GET"
             exporter.finishedSpanItems[0].status.statusCode == StatusCode.ERROR
         }
+        cleanup:
+        exporter.reset()
+    }
+
+    void 'test span name contains method'() {
+        given:
+        def exporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
+        def warehouseClient = embeddedServer.applicationContext.getBean(WarehouseClient)
+
+        expect:
+        var uuid = UUID.randomUUID()
+        warehouseClient.order(uuid, UUID.randomUUID())
+
+        conditions.eventually {
+            exporter.finishedSpanItems.any(x -> x.name == "GET /client/order/{orderId}")
+        }
+
         cleanup:
         exporter.reset()
     }

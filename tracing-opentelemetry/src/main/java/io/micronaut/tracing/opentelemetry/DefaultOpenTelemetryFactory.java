@@ -84,7 +84,7 @@ public class DefaultOpenTelemetryFactory {
         otel.putIfAbsent(DEFAULT_LOGS_EXPORTER, NONE);
 
         AutoConfiguredOpenTelemetrySdkBuilder sdk = AutoConfiguredOpenTelemetrySdk.builder()
-            .setResultAsGlobal(Boolean.parseBoolean(otel.getOrDefault(REGISTER_GLOBAL, StringUtils.TRUE)))
+            .setResultAsGlobal(Boolean.parseBoolean(otel.getOrDefault(REGISTER_GLOBAL, StringUtils.FALSE)))
             .addPropertiesSupplier(() -> otel)
             .addTracerProviderCustomizer((tracerProviderBuilder, ignored) -> {
                     if (idGenerator != null) {

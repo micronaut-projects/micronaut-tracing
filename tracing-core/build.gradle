@@ -18,6 +18,7 @@ dependencies {
     testImplementation mnRxjava2.micronaut.rxjava2.http.client
     testImplementation mnReactor.micronaut.reactor.http.client
     testRuntimeOnly mnSerde.micronaut.serde.jackson
+    testRuntimeOnly mnLogging.logback.classic
 }
 
 configurations {

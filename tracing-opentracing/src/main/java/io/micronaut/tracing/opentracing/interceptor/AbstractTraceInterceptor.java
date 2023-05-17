@@ -28,7 +28,6 @@ import io.micronaut.tracing.annotation.SpanTag;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 

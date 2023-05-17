@@ -18,7 +18,6 @@ package io.micronaut.tracing.opentelemetry.instrument.http;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.filter.HttpFilter;
-import io.opentelemetry.api.trace.Span;
 
 import java.util.function.Predicate;
 

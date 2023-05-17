@@ -31,7 +31,6 @@ import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
 import io.opentracing.noop.NoopTracer;
-import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 

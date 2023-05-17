@@ -25,7 +25,6 @@ import io.micronaut.http.client.HttpClientConfiguration;
 import io.micronaut.http.client.LoadBalancer;
 import io.micronaut.http.client.LoadBalancerResolver;
 import io.micronaut.http.client.netty.DefaultHttpClient;
-import io.micronaut.scheduling.instrument.InvocationInstrumenterFactory;
 import io.micronaut.tracing.brave.ZipkinServiceInstanceList;
 import jakarta.inject.Provider;
 import org.reactivestreams.Publisher;
@@ -65,7 +64,6 @@ public final class HttpClientSender extends Sender {
     private final int messageMaxBytes;
     private final boolean compressionEnabled;
     private final URI endpoint;
-    private final List<InvocationInstrumenterFactory> factories;
     private final Provider<LoadBalancerResolver> loadBalancerResolver;
     private final HttpClientConfiguration clientConfiguration;
     private HttpClient httpClient;
@@ -75,14 +73,12 @@ public final class HttpClientSender extends Sender {
                              boolean compressionEnabled,
                              HttpClientConfiguration clientConfiguration,
                              Provider<LoadBalancerResolver> loadBalancerResolver,
-                             String path,
-                             List<InvocationInstrumenterFactory> factories) {
+                             String path) {
         this.loadBalancerResolver = loadBalancerResolver;
         this.clientConfiguration = clientConfiguration;
         this.encoding = encoding;
         this.messageMaxBytes = messageMaxBytes;
         this.compressionEnabled = compressionEnabled;
-        this.factories = factories;
         endpoint = path == null ? URI.create(DEFAULT_PATH) : URI.create(path);
     }
 
@@ -140,7 +136,7 @@ public final class HttpClientSender extends Sender {
         Optional<? extends LoadBalancer> loadBalancer = loadBalancerResolver.get()
                 .resolve(ZipkinServiceInstanceList.SERVICE_ID);
 
-        httpClient = loadBalancer.map(lb -> new DefaultHttpClient(lb, clientConfiguration, factories))
+        httpClient = loadBalancer.map(lb -> new DefaultHttpClient(lb, clientConfiguration, List.of()))
                 .orElse(null);
     }
 
@@ -263,7 +259,6 @@ public final class HttpClientSender extends Sender {
         private boolean compressionEnabled = true;
         private List<URI> servers = Collections.singletonList(URI.create(DEFAULT_SERVER_URL));
         private final HttpClientConfiguration clientConfiguration;
-        private List<InvocationInstrumenterFactory> invocationInstrumenterFactories;
 
         /**
          * @param clientConfiguration the HTTP client configuration
@@ -362,17 +357,6 @@ public final class HttpClientSender extends Sender {
         }
 
         /**
-         * The invocation instrumenter factories to use.
-         *
-         * @param factories the factories to instrument HTTP client Netty handlers execution with
-         * @return this
-         */
-        public Builder invocationInstrumenterFactories(List<InvocationInstrumenterFactory> factories) {
-            this.invocationInstrumenterFactories = factories;
-            return this;
-        }
-
-        /**
          * Constructs a {@code HttpClientSender}.
          *
          * @param loadBalancerResolver resolver capable of resolving references
@@ -386,8 +370,7 @@ public final class HttpClientSender extends Sender {
                     compressionEnabled,
                     clientConfiguration,
                     loadBalancerResolver,
-                    path,
-                    invocationInstrumenterFactories
+                    path
             );
         }
     }

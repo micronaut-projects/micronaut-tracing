@@ -15,17 +15,13 @@
  */
 package io.micronaut.tracing.brave.sender;
 
-import io.micronaut.context.BeanProvider;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.client.LoadBalancerResolver;
-import io.micronaut.scheduling.instrument.InvocationInstrumenterFactory;
 import io.micronaut.tracing.brave.BraveTracerConfiguration.HttpClientSenderConfiguration;
 import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
 import zipkin2.reporter.Sender;
-
-import java.util.stream.Collectors;
 
 /**
  * Factory that creates a Zipkin {@code Sender} based on {@code HttpClientSenderConfiguration}.
@@ -38,16 +34,12 @@ import java.util.stream.Collectors;
 public class HttpClientSenderFactory {
 
     private final HttpClientSenderConfiguration configuration;
-    private final BeanProvider<InvocationInstrumenterFactory> invocationInstrumenterFactories;
 
     /**
      * @param configuration the HTTP client sender configurations
-     * @param factories     the factories to instrument HTTP client Netty handlers execution with
      */
-    protected HttpClientSenderFactory(HttpClientSenderConfiguration configuration,
-                                      BeanProvider<InvocationInstrumenterFactory> factories) {
+    protected HttpClientSenderFactory(HttpClientSenderConfiguration configuration) {
         this.configuration = configuration;
-        this.invocationInstrumenterFactories = factories;
     }
 
     /**
@@ -59,7 +51,6 @@ public class HttpClientSenderFactory {
     @Requires(missingBeans = Sender.class)
     Sender zipkinSender(Provider<LoadBalancerResolver> loadBalancerResolver) {
         return configuration.getBuilder()
-                .invocationInstrumenterFactories(invocationInstrumenterFactories.stream().collect(Collectors.toList()))
                 .build(loadBalancerResolver);
     }
 }

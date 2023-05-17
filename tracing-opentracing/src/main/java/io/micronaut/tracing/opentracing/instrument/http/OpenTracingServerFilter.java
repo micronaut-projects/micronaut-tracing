@@ -84,7 +84,7 @@ public final class OpenTracingServerFilter extends AbstractOpenTracingFilter imp
         request.setAttribute(CURRENT_SPAN_CONTEXT, span.context());
         request.setAttribute(CURRENT_SPAN, span);
 
-        try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty()
+        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
             .plus(new OpenTracingPropagationContext(tracer, span))
             .propagate()) {
 

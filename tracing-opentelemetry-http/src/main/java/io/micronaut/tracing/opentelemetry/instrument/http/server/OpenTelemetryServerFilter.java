@@ -84,7 +84,7 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
 
         Context context = instrumenter.start(parentContext, request);
 
-        try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty()
+        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
             .plus(new OpenTelemetryPropagationContext(context))
             .propagate()) {
 

@@ -94,7 +94,7 @@ public final class BraveTracingClientFilter implements HttpClientFilter {
 
         request.setAttribute(CURRENT_SPAN, span);
 
-        try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty()
+        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
             .plus(new BravePropagationContext(currentTraceContext, span.context()))
             .propagate()) {
 

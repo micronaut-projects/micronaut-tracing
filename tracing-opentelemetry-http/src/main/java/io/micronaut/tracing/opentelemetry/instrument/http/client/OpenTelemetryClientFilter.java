@@ -83,7 +83,7 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
         try (Scope ignored = context.makeCurrent()) {
             handleContinueSpan(request);
 
-            try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty()
+            try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
                 .plus(new OpenTelemetryPropagationContext(context))
                 .propagate()) {
 

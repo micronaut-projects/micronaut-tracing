@@ -93,7 +93,7 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
 
         final Context newContext = instrumenter.start(currentContext, classAndMethod);
 
-        try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty()
+        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
             .plus(new OpenTelemetryPropagationContext(newContext))
             .propagate()) {
 

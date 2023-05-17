@@ -89,7 +89,7 @@ public final class BraveTracingServerFilter implements HttpServerFilter {
         HttpServerRequest httpServerRequest = mapRequest(request);
         Span span = serverHandler.handleReceive(httpServerRequest);
 
-        try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty()
+        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
             .plus(new BravePropagationContext(currentTraceContext, span.context()))
             .propagate()) {
 

@@ -81,7 +81,7 @@ public final class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
         Span span = builder.start();
         populateTags(context, hystrixCommand, span);
 
-        try (PropagatedContext.InContext ignore = PropagatedContext.getOrEmpty()
+        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
             .plus(new OpenTracingPropagationContext(tracer, span))
             .propagate()) {
 

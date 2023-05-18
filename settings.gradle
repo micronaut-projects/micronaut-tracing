@@ -34,5 +34,4 @@ micronautBuild {
     importMicronautCatalog("micronaut-rxjava2")
     importMicronautCatalog("micronaut-serde")
     importMicronautCatalog("micronaut-kafka")
-    importMicronautCatalog("micronaut-logging")
 }

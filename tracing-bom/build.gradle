@@ -2,6 +2,13 @@ plugins {
     id 'io.micronaut.build.internal.bom'
 }
 
+micronautBuild {
+    binaryCompatibility {
+        // Enable before Micronaut 4 release
+        enabled.set(false)
+    }
+}
+
 micronautBom {
     extraExcludedProjects.add 'kotlin-tests'
     suppressions {

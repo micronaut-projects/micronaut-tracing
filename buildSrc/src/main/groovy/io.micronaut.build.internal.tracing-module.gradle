@@ -3,6 +3,13 @@ plugins {
     id 'io.micronaut.build.internal.module'
 }
 
+micronautBuild {
+    binaryCompatibility {
+        // Enable before Micronaut 4 release
+        enabled.set(false)
+    }
+}
+
 dependencies {
     annotationProcessor mn.micronaut.inject.java
     annotationProcessor libs.micronaut.docs.asciidoc.config.props

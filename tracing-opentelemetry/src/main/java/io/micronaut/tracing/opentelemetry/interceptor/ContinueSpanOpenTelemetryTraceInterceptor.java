@@ -15,23 +15,18 @@
  */
 package io.micronaut.tracing.opentelemetry.interceptor;
 
-import io.micronaut.aop.InterceptedMethod;
 import io.micronaut.aop.InterceptorBean;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.tracing.annotation.ContinueSpan;
-import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryObserver;
-import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryPublisher;
-import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryPublisherUtils;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.instrumenter.util.ClassAndMethod;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
-import org.reactivestreams.Publisher;
 
 /**
  * Implements tracing logic for {@code ContinueSpan} and {@code NewSpan}
@@ -40,10 +35,11 @@ import org.reactivestreams.Publisher;
  * @author Nemanja Mikic
  * @since 4.2.0
  */
+@Internal
 @Singleton
 @Requires(beans = Tracer.class)
 @InterceptorBean(ContinueSpan.class)
-public class ContinueSpanOpenTelemetryTraceInterceptor extends AbstractOpenTelemetryTraceInterceptor {
+public final class ContinueSpanOpenTelemetryTraceInterceptor extends AbstractOpenTelemetryTraceInterceptor {
 
     /**
      * Initialize the interceptor with tracer and conversion service.
@@ -55,7 +51,6 @@ public class ContinueSpanOpenTelemetryTraceInterceptor extends AbstractOpenTelem
     }
 
     @Nullable
-    @SuppressWarnings("unchecked")
     @Override
     public Object intercept(MethodInvocationContext<Object, Object> context) {
         Context currentContext = Context.current();
@@ -63,43 +58,8 @@ public class ContinueSpanOpenTelemetryTraceInterceptor extends AbstractOpenTelem
         if (currentContext.toString().equals("{}")) {
             return context.proceed();
         }
+        tagArguments(context);
 
-        InterceptedMethod interceptedMethod = InterceptedMethod.of(context);
-        try {
-            switch (interceptedMethod.resultType()) {
-                case PUBLISHER:
-                    try {
-                        Publisher<?> publisher = interceptedMethod.interceptResultAsPublisher();
-                        if (publisher instanceof OpenTelemetryPublisher) {
-                            return publisher;
-                        }
-                        return interceptedMethod.handleResult(
-                            OpenTelemetryPublisherUtils.createOpenTelemetryPublisher(publisher, null, currentContext, null, new OpenTelemetryObserver() {
-
-                                @Override
-                                public void doOnSubscribe(@NonNull Context openTelemetryContext) {
-                                    tagArguments(context);
-                                }
-
-                            }));
-                    } catch (RuntimeException e) {
-                        OpenTelemetryPublisherUtils.logError(currentContext, e);
-                        throw e;
-                    }
-                case COMPLETION_STAGE:
-                case SYNCHRONOUS:
-                    tagArguments(context);
-                    try {
-                        return context.proceed();
-                    } catch (RuntimeException e) {
-                        OpenTelemetryPublisherUtils.logError(currentContext, e);
-                        throw e;
-                    }
-                default:
-                    return interceptedMethod.unsupported();
-            }
-        } catch (Exception e) {
-            return interceptedMethod.handleException(e);
-        }
+        return context.proceed();
     }
 }

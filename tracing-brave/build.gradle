@@ -1,0 +1,14 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api projects.micronautTracingOpentracing
+    api mnReactor.micronaut.reactor
+    api platform (libs.boms.brave)
+    api platform (libs.boms.zipkin.reporter)
+    api libs.zipkin.reporter
+    api libs.brave.opentracing
+
+    testRuntimeOnly mnSerde.micronaut.serde.jackson
+}

@@ -33,7 +33,8 @@ import jakarta.inject.Named;
  * @author Nemanja Mikic
  * @since 4.2.0
  */
-public abstract class AbstractOpenTelemetryTraceInterceptor implements MethodInterceptor<Object, Object> {
+public abstract sealed class AbstractOpenTelemetryTraceInterceptor implements MethodInterceptor<Object, Object>
+    permits ContinueSpanOpenTelemetryTraceInterceptor, NewSpanOpenTelemetryTraceInterceptor {
 
     protected final Instrumenter<ClassAndMethod, Object> instrumenter;
 

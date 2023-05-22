@@ -3,10 +3,11 @@ plugins {
 }
 
 dependencies {
-    api projects.micronautTracingCore
+    api projects.micronautTracingOpentracing
     api(libs.jaeger) {
         exclude group: "org.jetbrains", module: "annotations"
     }
     testImplementation mnReactor.micronaut.reactor
+    testImplementation mn.micronaut.http.server.netty
     testRuntimeOnly mnSerde.micronaut.serde.jackson
 }

@@ -115,20 +115,8 @@ implements io.micronaut.aop.MethodInterceptor&lt;<a href="https://docs.oracle.co
 <div class="col-first odd-row-color"><code>protected final io.micronaut.core.convert.ConversionService</code></div>
 <div class="col-second odd-row-color"><code><a href="#conversionService" class="member-name-link">conversionService</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#HYSTRIX_ANNOTATION" class="member-name-link">HYSTRIX_ANNOTATION</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#METHOD_TAG" class="member-name-link">METHOD_TAG</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#TAG_HYSTRIX_COMMAND" class="member-name-link">TAG_HYSTRIX_COMMAND</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>protected static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#TAG_HYSTRIX_GROUP" class="member-name-link">TAG_HYSTRIX_GROUP</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#TAG_HYSTRIX_THREAD_POOL" class="member-name-link">TAG_HYSTRIX_THREAD_POOL</a></code></div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#METHOD_TAG" class="member-name-link">METHOD_TAG</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>protected final io.opentracing.Tracer</code></div>
 <div class="col-second odd-row-color"><code><a href="#tracer" class="member-name-link">tracer</a></code></div>
@@ -181,8 +169,7 @@ implements io.micronaut.aop.MethodInterceptor&lt;<a href="https://docs.oracle.co
 <div class="block">Logs an error to the span.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#populateTags(io.micronaut.aop.MethodInvocationContext,java.util.Optional,io.opentracing.Span)" class="member-name-link">populateTags</a><wbr>(io.micronaut.aop.MethodInvocationContext&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;context,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;hystrixCommand,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#populateTags(io.micronaut.aop.MethodInvocationContext,io.opentracing.Span)" class="member-name-link">populateTags</a><wbr>(io.micronaut.aop.MethodInvocationContext&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;context,
  io.opentracing.Span&nbsp;span)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final void</code></div>
@@ -232,62 +219,6 @@ implements io.micronaut.aop.MethodInterceptor&lt;<a href="https://docs.oracle.co
 <dd>
 <ul class="see-list">
 <li><a href="../../../../../constant-values.html#io.micronaut.tracing.opentracing.interceptor.AbstractTraceInterceptor.METHOD_TAG">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="TAG_HYSTRIX_COMMAND">
-<h3>TAG_HYSTRIX_COMMAND</h3>
-<div class="member-signature"><span class="modifiers">protected static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">TAG_HYSTRIX_COMMAND</span></div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list">
-<li><a href="../../../../../constant-values.html#io.micronaut.tracing.opentracing.interceptor.AbstractTraceInterceptor.TAG_HYSTRIX_COMMAND">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="TAG_HYSTRIX_GROUP">
-<h3>TAG_HYSTRIX_GROUP</h3>
-<div class="member-signature"><span class="modifiers">protected static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">TAG_HYSTRIX_GROUP</span></div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list">
-<li><a href="../../../../../constant-values.html#io.micronaut.tracing.opentracing.interceptor.AbstractTraceInterceptor.TAG_HYSTRIX_GROUP">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="TAG_HYSTRIX_THREAD_POOL">
-<h3>TAG_HYSTRIX_THREAD_POOL</h3>
-<div class="member-signature"><span class="modifiers">protected static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">TAG_HYSTRIX_THREAD_POOL</span></div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list">
-<li><a href="../../../../../constant-values.html#io.micronaut.tracing.opentracing.interceptor.AbstractTraceInterceptor.TAG_HYSTRIX_THREAD_POOL">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="HYSTRIX_ANNOTATION">
-<h3>HYSTRIX_ANNOTATION</h3>
-<div class="member-signature"><span class="modifiers">protected static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">HYSTRIX_ANNOTATION</span></div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list">
-<li><a href="../../../../../constant-values.html#io.micronaut.tracing.opentracing.interceptor.AbstractTraceInterceptor.HYSTRIX_ANNOTATION">Constant Field Values</a></li>
 </ul>
 </dd>
 </dl>
@@ -345,10 +276,9 @@ implements io.micronaut.aop.MethodInterceptor&lt;<a href="https://docs.oracle.co
 </section>
 </li>
 <li>
-<section class="detail" id="populateTags(io.micronaut.aop.MethodInvocationContext,java.util.Optional,io.opentracing.Span)">
+<section class="detail" id="populateTags(io.micronaut.aop.MethodInvocationContext,io.opentracing.Span)">
 <h3>populateTags</h3>
 <div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">populateTags</span><wbr><span class="parameters">(io.micronaut.aop.MethodInvocationContext&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;context,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;hystrixCommand,
  io.opentracing.Span&nbsp;span)</span></div>
 </section>
 </li>

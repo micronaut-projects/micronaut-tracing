@@ -68,24 +68,19 @@ public final class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
         }
         String operationName = newSpan.stringValue().orElse(null);
 
-        Optional<String> hystrixCommand = context.stringValue(HYSTRIX_ANNOTATION);
-        if (StringUtils.isEmpty(operationName)) {
-            // try hystrix command name
-            operationName = hystrixCommand.orElse(context.getMethodName());
-        }
         Tracer.SpanBuilder builder = tracer.buildSpan(operationName);
         if (currentSpan != null) {
             builder.asChildOf(currentSpan);
         }
 
         Span span = builder.start();
-        populateTags(context, hystrixCommand, span);
+        populateTags(context, span);
 
         try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
             .plus(new OpenTracingPropagationContext(tracer, span))
             .propagate()) {
 
-            populateTags(context, hystrixCommand, span);
+            populateTags(context, span);
 
             InterceptedMethod interceptedMethod = InterceptedMethod.of(context, conversionService);
             try {

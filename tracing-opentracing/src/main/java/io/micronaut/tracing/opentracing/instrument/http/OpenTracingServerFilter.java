@@ -17,6 +17,7 @@ package io.micronaut.tracing.opentracing.instrument.http;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
@@ -72,8 +73,7 @@ public final class OpenTracingServerFilter extends AbstractOpenTracingFilter imp
         }
 
         Span currentSpan = tracer.activeSpan();
-        SpanContext activeContext = currentSpan == null ? null : currentSpan.context();
-        SpanBuilder spanBuilder = newSpan(request, activeContext);
+        SpanBuilder spanBuilder = newSpan(request, initSpanContext(request));
         if (currentSpan != null) {
             spanBuilder.asChildOf(currentSpan);
         }
@@ -88,20 +88,28 @@ public final class OpenTracingServerFilter extends AbstractOpenTracingFilter imp
             .propagate()) {
 
             return Mono.from(chain.proceed(request))
-                .doOnSubscribe(subscription -> tracer.extract(HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders())))
                 .doOnNext(response -> {
                     tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(response.getHeaders()));
                     setResponseTags(request, response, span);
                 })
                 .doOnError(throwable -> setErrorTags(span, throwable))
                 .doOnTerminate(span::finish);
-
         }
     }
 
     @Override
     public int getOrder() {
         return TRACING.order();
+    }
+
+    @NonNull
+    private SpanContext initSpanContext(@NonNull HttpRequest<?> request) {
+        SpanContext spanContext = tracer.extract(
+            HTTP_HEADERS,
+            new HttpHeadersTextMap(request.getHeaders())
+        );
+        request.setAttribute(CURRENT_SPAN_CONTEXT, spanContext);
+        return spanContext;
     }
 
 }

@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-//    api mn.micronaut.core.processor
     api mn.micronaut.http.client
     api projects.micronautTracingAnnotation
 

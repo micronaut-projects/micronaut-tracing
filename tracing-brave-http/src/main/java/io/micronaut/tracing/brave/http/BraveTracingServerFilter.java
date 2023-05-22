@@ -95,22 +95,6 @@ public final class BraveTracingServerFilter implements HttpServerFilter {
 
             return Mono.from(chain.proceed(request))
                 .doOnNext(response -> {
-//            Optional<?> body = response.getBody();
-//            if (body.isPresent()) {
-//                Object o = body.get();
-//                if (Publishers.isConvertibleToPublisher(o)) {
-//                    Class<?> type = o.getClass();
-//                    Publisher<?> resultPublisher = Publishers.convertPublisher(conversionService, o, Publisher.class);
-//                    Publisher<?> scopedPublisher = new ScopePropagationPublisher<>(
-//                        resultPublisher,
-//                        openTracer,
-//                        openTracer.activeSpan()
-//                    );
-//
-//                    response.body(Publishers.convertPublisher(conversionService, scopedPublisher, type));
-//                }
-//            }
-
                     final Optional<Throwable> throwable = response.getAttribute(EXCEPTION, Throwable.class);
                     if (throwable.isPresent()) {
                         int statusCode = 500;

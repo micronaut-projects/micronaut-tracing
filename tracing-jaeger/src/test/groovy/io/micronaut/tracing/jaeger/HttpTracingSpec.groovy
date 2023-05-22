@@ -808,7 +808,7 @@ class HttpTracingSpec extends Specification {
             spanCustomizer.activeSpan()?.setBaggageItem('foo', 'bar')
             Flux.from(tracedClient.continuedRx(name))
                     .flatMap({ String res ->
-//                        assert spanCustomizer.activeSpan()?.getBaggageItem('foo') == 'bar'
+                        assert spanCustomizer.activeSpan()?.getBaggageItem('foo') == 'bar'
                         return tracedClient.nestedReactive2(res)
                     })
         }
@@ -816,7 +816,7 @@ class HttpTracingSpec extends Specification {
         @Get('/nestedReactive2/{name}')
         @SingleResult
         Publisher<Integer> nestedReactive2(String name) {
-//            assert spanCustomizer.activeSpan()?.getBaggageItem('foo') == 'bar'
+            assert spanCustomizer.activeSpan()?.getBaggageItem('foo') == 'bar'
             Mono.just(10)
         }
 

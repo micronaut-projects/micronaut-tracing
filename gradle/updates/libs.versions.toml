@@ -1,5 +1,5 @@
 [versions]
-brave-instrumentation = '5.15.0'
+brave-instrumentation = '5.16.0'
 brave-opentracing = '1.0.0'
 jaeger = '1.8.1'
 kotlin = '1.8.21'

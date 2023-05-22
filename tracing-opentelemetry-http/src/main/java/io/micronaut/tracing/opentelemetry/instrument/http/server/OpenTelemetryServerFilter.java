@@ -16,17 +16,18 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.propagation.PropagatedContext;
+import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
+import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
 import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
-import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryObserver;
-import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryPublisherUtils;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
@@ -34,6 +35,7 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import jakarta.inject.Named;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
 import static io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTelemetryServerFilter.SERVER_PATH;
 
@@ -43,9 +45,10 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTele
  * @author Nemanja Mikic
  * @since 4.2.0
  */
+@Internal
 @Filter(SERVER_PATH)
 @Requires(beans = Tracer.class)
-public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter implements HttpServerFilter {
+public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter implements HttpServerFilter {
 
     private static final String APPLIED = OpenTelemetryServerFilter.class.getName() + "-applied";
     private static final String CONTINUE = OpenTelemetryServerFilter.class.getName() + "-continue";
@@ -54,7 +57,7 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
 
     /**
      * @param exclusionsConfig The {@link OpenTelemetryExclusionsConfiguration}
-     * @param instrumenter The {@link OpenTelemetryHttpServerConfig}
+     * @param instrumenter     The {@link OpenTelemetryHttpServerConfig}
      */
     public OpenTelemetryServerFilter(@Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig,
                                      @Named("micronautHttpServerTelemetryInstrumenter") Instrumenter<HttpRequest<?>, Object> instrumenter) {
@@ -68,36 +71,45 @@ public class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter imple
         boolean applied = request.getAttribute(APPLIED, Boolean.class).orElse(false);
         boolean continued = request.getAttribute(CONTINUE, Boolean.class).orElse(false);
 
-        Publisher<MutableHttpResponse<?>> requestPublisher = chain.proceed(request);
-
         if ((applied && !continued) || shouldExclude(request.getPath())) {
-            return requestPublisher;
+            return chain.proceed(request);
         }
 
         request.setAttribute(APPLIED, true);
 
         Context parentContext = Context.current();
         if (!instrumenter.shouldStart(parentContext, request)) {
-            return requestPublisher;
+            return chain.proceed(request);
         }
 
-        Context newContext = instrumenter.start(parentContext, request);
+        Context context = instrumenter.start(parentContext, request);
 
-        return OpenTelemetryPublisherUtils.createOpenTelemetryPublisher(requestPublisher, instrumenter, newContext, request, new OpenTelemetryObserver<MutableHttpResponse<?>>() {
+        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
+            .plus(new OpenTelemetryPropagationContext(context))
+            .propagate()) {
 
-            @Override
-            public void doOnNext(MutableHttpResponse<?> object, Context context) {
-                OpenTelemetryObserver.super.doOnNext(object, context);
-                if (object.status().getCode() >= 400) {
-                    Span.current().setStatus(StatusCode.ERROR);
-                }
-            }
+            return Mono.from(chain.proceed(request)).doOnNext(mutableHttpResponse -> {
+                mutableHttpResponse.getAttribute(HttpAttributes.EXCEPTION, Exception.class).ifPresentOrElse(e -> {
+                    onError(request, context, e);
+                }, () -> {
+                    if (mutableHttpResponse.status().getCode() >= 400) {
+                        onError(request, context, null);
+                    } else {
+                        instrumenter.end(context, request, mutableHttpResponse, null);
+                    }
+                });
+            }).doOnError(throwable -> onError(request, context, throwable));
 
-            @Override
-            public void doOnError(@NonNull Throwable throwable, @NonNull Context openTelemetryContext) {
-                request.setAttribute(CONTINUE, true);
-                OpenTelemetryPublisherUtils.logError(openTelemetryContext, throwable);
-            }
-        });
+        }
+    }
+
+    private void onError(HttpRequest<?> request, Context context, @Nullable Throwable e) {
+        Span span = Span.fromContext(context);
+        if (e != null) {
+            span.recordException(e);
+        }
+        span.setStatus(StatusCode.ERROR);
+        instrumenter.end(context, request, null, e);
+        request.setAttribute(CONTINUE, true);
     }
 }

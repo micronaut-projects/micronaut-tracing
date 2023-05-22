@@ -25,8 +25,7 @@ import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.uri.UriMatchTemplate;
-import io.micronaut.web.router.UriRoute;
-import io.micronaut.web.router.UriRouteMatch;
+import io.micronaut.web.router.UriRouteInfo;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerAttributesGetter;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 
@@ -83,10 +82,9 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     @Override
     public String getRoute(HttpRequest<Object> request) {
         Optional<String> routeInfo = request.getAttribute(HttpAttributes.ROUTE_INFO)
-            .filter(UriRouteMatch.class::isInstance)
-            .map(ri -> (UriRouteMatch) ri)
-            .map(UriRouteMatch::getRoute)
-            .map(UriRoute::getUriMatchTemplate)
+            .filter(UriRouteInfo.class::isInstance)
+            .map(ri -> (UriRouteInfo<?, ?>) ri)
+            .map(UriRouteInfo::getUriMatchTemplate)
             .map(UriMatchTemplate::toPathString);
         return routeInfo.orElseGet(() ->
             request.getAttribute(HttpAttributes.URI_TEMPLATE)

@@ -15,9 +15,9 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.http;
 
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.filter.HttpFilter;
-import io.opentelemetry.api.trace.Span;
 
 import java.util.function.Predicate;
 
@@ -27,6 +27,7 @@ import java.util.function.Predicate;
  * @author Nemanja Mikic
  * @since 4.2.0
  */
+@Internal
 public abstract class AbstractOpenTelemetryFilter implements HttpFilter {
 
     public static final String CLIENT_PATH = "${tracing.http.client.path:/**}";
@@ -44,24 +45,6 @@ public abstract class AbstractOpenTelemetryFilter implements HttpFilter {
      */
     protected AbstractOpenTelemetryFilter(@Nullable Predicate<String> pathExclusionTest) {
         this.pathExclusionTest = pathExclusionTest;
-    }
-
-    /**
-     * Sets the error tags to use on the span.
-     *
-     * @param span  the span
-     * @param error the error
-     */
-    protected void setErrorTags(Span span, Throwable error) {
-        if (error == null) {
-            return;
-        }
-
-        String message = error.getMessage();
-        if (message == null) {
-            message = error.getClass().getSimpleName();
-        }
-        span.setAttribute(TAG_ERROR, message);
     }
 
     /**

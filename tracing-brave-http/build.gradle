@@ -1,0 +1,10 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api projects.micronautTracingBrave
+    api libs.brave.instrumentation.http
+
+    testRuntimeOnly mnSerde.micronaut.serde.jackson
+}

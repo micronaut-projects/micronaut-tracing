@@ -6,7 +6,7 @@ pluginManagement {
 }
 
 plugins {
-    id 'io.micronaut.build.shared.settings' version '6.3.5'
+    id 'io.micronaut.build.shared.settings' version '6.4.4'
 }
 
 rootProject.name = 'tracing-parent'
@@ -14,13 +14,22 @@ rootProject.name = 'tracing-parent'
 include 'tracing-annotation'
 include 'tracing-bom'
 include 'tracing-core'
-include 'tracing-jaeger'
+
+// OpenTelemetry
+
 include 'tracing-opentelemetry'
 include 'tracing-opentelemetry-annotation'
 include 'tracing-opentelemetry-grpc'
 include 'tracing-opentelemetry-http'
 include 'tracing-opentelemetry-kafka'
-include 'tracing-zipkin'
+
+// OpenTracing
+
+include 'tracing-opentracing'
+include 'tracing-jaeger'
+include 'tracing-brave'
+include 'tracing-brave-http'
+
 include 'tests:kotlin-tests'
 
 enableFeaturePreview 'TYPESAFE_PROJECT_ACCESSORS'

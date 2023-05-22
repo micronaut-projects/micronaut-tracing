@@ -1,0 +1,1921 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>Micronaut Tracing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8" />
+    <link rel="stylesheet" href="../css/custom.css" type="text/css" media="screen, print" title="Style" charset="utf-8" />
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8" />
+    <link rel="stylesheet" href="../css/highlight/agate.css">
+    <script src="../js/highlight.pack.js"></script>
+    <script src="../js/guide.js"></script>
+    <script src="../js/multi-language-sample.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="../css/multi-language-sample.css"/>
+    <script src="../js/docs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.13/clipboard.min.js"></script>
+    <script type="text/javascript">
+        function addJsClass(el) {
+            var classes = document.body.className.split(" ");
+            classes.push("js");
+            document.body.className = classes.join(" ");
+        }
+    </script>
+
+</head>
+
+<body class="body" id="docs" onload="addJsClass();" onhashchange="highlightMenu()">
+
+<div id="table-of-content-nav-link" class="desktop">
+    <a id="theme-switcher" title="Switch to dark theme" href="javascript:switchTheme(true)"><i class="fa fa-moon-o"></i></a>
+    <a title="Collapse/Open Table of contents" title="Hide Table of Contents" href="javascript:hideTableOfContents();" class="button">[ + ]</a>
+</div>
+
+<div id="main">
+    <div id="navigation" class="no-print">
+        <div class="navTitle">
+            <span id="logo"><a href="http://micronaut.io" title="Go to Micronaut Website"><img src="../img/micronaut-logo-white.svg" alt="Micronaut"/></a></span>
+        </div>
+        <div class="navLinks">
+            <ul>
+                    <li><div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)" class="desktop">
+                            <a href="../guide/index.html" class="button">Table of contents</a>
+                            <div id="nav-summary-childs" style="display:none;">
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#introduction"><strong>1</strong><span>Introduction</span></a></div>
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#releaseHistory"><strong>2</strong><span>Release History</span></a></div>
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#jaeger"><strong>3</strong><span>Tracing with Jaeger</span></a></div>
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#zipkin"><strong>4</strong><span>Tracing with Zipkin</span></a></div>
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#opentelemetry"><strong>5</strong><span>Tracing with OpenTelemetry</span></a></div>
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#repository"><strong>6</strong><span>Repository</span></a></div>
+                                
+                            </div>
+                        </div>
+                    </li>
+
+                <li id="table-of-content-nav-link-mobile" class="mobile">
+                    <a title="Scroll to Table of contents" href="javascript:scrollToTop();" class="button">Toc</a>
+                </li>
+                <li class="desktop">
+                    <a title="Go to API documentation" href="../api/index.html" class="button">API Reference</a>
+                </li>
+                <li class="mobile">
+                    <a title="Go to API documentation" href="../api/index.html" class="button">API</a>
+                </li>
+                <li class="desktop">
+                    <a title="Go to Configuration Reference documentation" href="../guide/configurationreference.html" class="button">Configuration Reference</a>
+                </li>
+                <li class="mobile">
+                    <a title="Go to Configuration Reference documentation" href="../guide/configurationreference.html" class="button">Conf</a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+    
+    <div id="table-of-content">
+        <div class="toc-content">
+
+        <h2>Table of Contents</h2>
+        
+        <div class="toc-item" style="margin-left:0px" id="toc-item-introduction"><a href="#introduction"><strong>1</strong><span>Introduction</span></a></div>
+        
+        <div class="toc-item" style="margin-left:0px" id="toc-item-releaseHistory"><a href="#releaseHistory"><strong>2</strong><span>Release History</span></a></div>
+        
+        <div class="toc-item" style="margin-left:0px" id="toc-item-jaeger"><a href="#jaeger"><strong>3</strong><span>Tracing with Jaeger</span></a></div>
+        
+        <div class="toc-item" style="margin-left:0px" id="toc-item-zipkin"><a href="#zipkin"><strong>4</strong><span>Tracing with Zipkin</span></a></div>
+        
+        <div class="toc-item" style="margin-left:0px" id="toc-item-opentelemetry"><a href="#opentelemetry"><strong>5</strong><span>Tracing with OpenTelemetry</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-annotations"><a href="#annotations"><strong>5.1</strong><span>OpenTelemetry Annotations</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-exporters"><a href="#exporters"><strong>5.2</strong><span>OpenTelemetry Exporters</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-propagators"><a href="#propagators"><strong>5.3</strong><span>OpenTelemetry Propagators</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-idgenerator"><a href="#idgenerator"><strong>5.4</strong><span>ID Generator</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-http"><a href="#http"><strong>5.5</strong><span>HTTP Server and Client</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-grpc"><a href="#grpc"><strong>5.6</strong><span>gRPC Server and Client</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-kafka"><a href="#kafka"><strong>5.7</strong><span>Kafka</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>5.8</strong><span>AWS SDK Instrumentation</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>5.9</strong><span>AWS Resource Detectors</span></a></div>
+        
+        <div class="toc-item" style="margin-left:0px" id="toc-item-repository"><a href="#repository"><strong>6</strong><span>Repository</span></a></div>
+        
+        </div>
+    </div>
+    
+    <div class="docs-content">
+    <div class="project">
+        <h1>Micronaut Tracing</h1>
+        <p></p>
+        <p>Adds Distributed Tracing Support</p>
+        <p><strong>Version:</strong> <select style='max-width: 200px' onChange='window.document.location.href=this.options[this.selectedIndex].value;'><option value='https://micronaut-projects.github.io/micronaut-tracing/snapshot/guide/index.html'>SNAPSHOT</option><option value='https://micronaut-projects.github.io/micronaut-tracing/latest/guide/index.html'>LATEST</option></select> </p>
+    </div>
+    
+<h1 id="introduction"><a class="anchor" href="#introduction"></a>1 Introduction</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/introduction.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>When operating Microservices in production it can be challenging to troubleshoot interactions between Microservices in a distributed architecture.</p>
+</div>
+<div class="paragraph">
+<p>To solve this problem, a way to visualize interactions between Microservices in a distributed manner can be critical. Currently, there are various distributed tracing solutions, the most popular of which are <a href="https://zipkin.io/">Zipkin</a> and <a href="https://www.jaegertracing.io/">Jaeger</a>, both of which provide different levels of support for the <a href="https://opentracing.io/">Open Tracing</a> API.</p>
+</div>
+<div class="paragraph">
+<p>Micronaut features integration with both Zipkin and Jaeger (via the Open Tracing API).</p>
+</div>
+<div class="sect1">
+<h2 id="_tracing_annotations">Tracing Annotations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="../api/io/micronaut/tracing/annotation/package-summary.html">io.micronaut.tracing.annotation</a> package contains annotations that can be declared on methods to create new spans or continue existing spans.</p>
+</div>
+<div class="paragraph">
+<p>The available annotations are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="../api/io/micronaut/tracing/annotation/NewSpan.html">@NewSpan</a> annotation creates a new span, wrapping the method call or reactive type.</p>
+</li>
+<li>
+<p>The <a href="../api/io/micronaut/tracing/annotation/ContinueSpan.html">@ContinueSpan</a> annotation continues an existing span, wrapping the method call or reactive type.</p>
+</li>
+<li>
+<p>The <a href="../api/io/micronaut/tracing/annotation/SpanTag.html">@SpanTag</a> annotation can be used on method arguments to include the value of the argument within a Span&#8217;s tags. When you use <code>@SpanTag</code> on an argument, you must either annotate the method with <code>@NewSpan</code> or <code>@ContinueSpan</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following snippet presents an example of using the annotations:</p>
+</div>
+<div class="listingblock">
+<div class="title">Using Trace Annotations</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Singleton
+class HelloService {
+
+    @NewSpan("hello-world") <i class="conum" data-value="1"></i><b>(1)</b>
+    public String hello(@SpanTag("person.name") String name) { <i class="conum" data-value="2"></i><b>(2)</b>
+        return greet("Hello " + name);
+    }
+
+    @ContinueSpan <i class="conum" data-value="3"></i><b>(3)</b>
+    public String greet(@SpanTag("hello.greeting") String greet) {
+        return greet;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <a href="../api/io/micronaut/tracing/annotation/NewSpan.html">@NewSpan</a> annotation starts a new span</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use <a href="../api/io/micronaut/tracing/annotation/SpanTag.html">@SpanTag</a> to include method arguments as tags for the span</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use the <a href="../api/io/micronaut/tracing/annotation/ContinueSpan.html">@ContinueSpan</a> annotation to continue an existing span and incorporate additional tags using <code>@SpanTag</code></td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_tracing_instrumentation">Tracing Instrumentation</h3>
+<div class="paragraph">
+<p>In addition to explicit tracing tags, Micronaut includes a number of instrumentations to ensure that the Span context is propagated between threads and across Microservice boundaries.</p>
+</div>
+<div class="paragraph">
+<p>These instrumentations are found in the <code>io.micronaut.tracing.instrument</code> package and include <a href="https://docs.micronaut.io/latest/guide/#clientFilter">Client Filters</a> and <a href="https://docs.micronaut.io/latest/guide/#filters">Server Filters</a> to propagate the necessary headers via HTTP.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_tracing_beans">Tracing Beans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If the Tracing annotations and existing instrumentations are not sufficient, Micronaut&#8217;s tracing integration registers a <code>io.opentracing.Tracer</code> bean which exposes the Open Tracing API and can be dependency-injected as needed.</p>
+</div>
+<div class="paragraph">
+<p>Depending on the implementation you choose, there are also additional beans. For example for Zipkin <code>brave.Tracing</code> and <code>brave.SpanCustomizer</code> beans are available too.</p>
+</div>
+</div>
+</div>
+
+<h1 id="releaseHistory"><a class="anchor" href="#releaseHistory"></a>2 Release History</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/releaseHistory.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>For this project, you can find a list of releases (with release notes) here:</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/micronaut-projects/micronaut-tracing/releases">https://github.com/micronaut-projects/micronaut-tracing/releases</a></p>
+</div>
+
+<h1 id="jaeger"><a class="anchor" href="#jaeger"></a>3 Tracing with Jaeger</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/jaeger.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="https://www.jaegertracing.io/">Jaeger</a> is a distributed tracing system developed at Uber that is more or less the reference implementation for <a href="https://opentracing.io/">Open Tracing</a>.</p>
+</div>
+<div class="sect1">
+<h2 id="_running_jaeger">Running Jaeger</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The easiest way to get started with Jaeger is with Docker:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ docker run -d \
+  -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 \
+  -p 5775:5775/udp \
+  -p 6831:6831/udp \
+  -p 6832:6832/udp \
+  -p 5778:5778 \
+  -p 16686:16686 \
+  -p 14268:14268 \
+  -p 9411:9411 \
+  jaegertracing/all-in-one:1.6</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Navigate to <code><a href="http://localhost:16686" class="bare">http://localhost:16686</a></code> to access the Jaeger UI.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="https://www.jaegertracing.io/docs/getting-started/">Getting Started with Jaeger</a> for more information.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sending_traces_to_jaeger">Sending Traces to Jaeger</h2>
+<div class="sectionbody">
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Using the CLI</div>
+<div class="paragraph">
+<p>If you create your project using the Micronaut CLI, supply the <code>tracing-jaeger</code> feature to include Jaeger tracing in your project:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ mn create-app my-app --features tracing-jaeger</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To send tracing spans to Jaeger, add the <code>micronaut-tracing-jaeger</code> dependency in your build:</p>
+</div>
+<div class="paragraph">
+<p>        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-jaeger")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-tracing-jaeger&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p>Then enable Jaeger tracing in your configuration (potentially only your production configuration):</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">tracing.jaeger.enabled=true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">tracing:
+  jaeger:
+    enabled: true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
+  [tracing.jaeger]
+    enabled=true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">tracing {
+  jaeger {
+    enabled = true
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  tracing {
+    jaeger {
+      enabled = true
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "tracing": {
+    "jaeger": {
+      "enabled": true
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>By default, Jaeger will be configured to send traces to a locally running Jaeger agent.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_jaeger_configuration">Jaeger Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are many configuration options available for the Jaeger client that sends Spans to Jaeger, and they are generally exposed via the <a href="../api/io/micronaut/tracing/jaeger/JaegerConfiguration.html">JaegerConfiguration</a> class. Refer to the Javadoc for available options.</p>
+</div>
+<div class="paragraph">
+<p>Below is an example of customizing JaegerConfiguration configuration:</p>
+</div>
+<div class="openblock">
+<div class="title">Customizing Jaeger Configuration</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">tracing.jaeger.enabled=true
+tracing.jaeger.sampler.probability=0.5
+tracing.jaeger.sender.agentHost=foo
+tracing.jaeger.sender.agentPort=5775
+tracing.jaeger.reporter.flushInterval=2000
+tracing.jaeger.reporter.maxQueueSize=200
+tracing.jaeger.codecs=W3C,B3,JAEGER</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">tracing:
+  jaeger:
+    enabled: true
+    sampler:
+      probability: 0.5
+    sender:
+      agentHost: foo
+      agentPort: 5775
+    reporter:
+      flushInterval: 2000
+      maxQueueSize: 200
+    codecs: W3C,B3,JAEGER</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
+  [tracing.jaeger]
+    enabled=true
+    [tracing.jaeger.sampler]
+      probability=0.5
+    [tracing.jaeger.sender]
+      agentHost="foo"
+      agentPort=5775
+    [tracing.jaeger.reporter]
+      flushInterval=2000
+      maxQueueSize=200
+    codecs="W3C,B3,JAEGER"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">tracing {
+  jaeger {
+    enabled = true
+    sampler {
+      probability = 0.5
+    }
+    sender {
+      agentHost = "foo"
+      agentPort = 5775
+    }
+    reporter {
+      flushInterval = 2000
+      maxQueueSize = 200
+    }
+    codecs = "W3C,B3,JAEGER"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  tracing {
+    jaeger {
+      enabled = true
+      sampler {
+        probability = 0.5
+      }
+      sender {
+        agentHost = "foo"
+        agentPort = 5775
+      }
+      reporter {
+        flushInterval = 2000
+        maxQueueSize = 200
+      }
+      codecs = "W3C,B3,JAEGER"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "tracing": {
+    "jaeger": {
+      "enabled": true,
+      "sampler": {
+        "probability": 0.5
+      },
+      "sender": {
+        "agentHost": "foo",
+        "agentPort": 5775
+      },
+      "reporter": {
+        "flushInterval": 2000,
+        "maxQueueSize": 200
+      },
+      "codecs": "W3C,B3,JAEGER"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also optionally dependency-inject common configuration classes into <a href="../api/io/micronaut/tracing/jaeger/JaegerConfiguration.html">JaegerConfiguration</a> such as <code>io.jaegertracing.Configuration.SamplerConfiguration</code> just by defining them as beans. Likewise, a custom <code>io.opentracing.ScopeManager</code> can be injected into <a href="../api/io/micronaut/tracing/jaeger/JaegerTracerFactory.html">JaegerTracerFactory</a>. See the API for <a href="../api/io/micronaut/tracing/jaeger/JaegerConfiguration.html">JaegerConfiguration</a> and <a href="../api/io/micronaut/tracing/jaeger/JaegerTracerFactory.html">JaegerTracerFactory</a> for available injection points.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_filtering_http_spans">Filtering HTTP spans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It may be useful to exclude health-checks and other HTTP requests to your service.
+This can be achieved by adding a list of regular expression patterns to your configuration:</p>
+</div>
+<div class="openblock">
+<div class="title">Filtering HTTP request spans</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">tracing.jaeger.enabled=true
+tracing.exclusions[0]=/health
+tracing.exclusions[1]=/env/.*</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">tracing:
+  jaeger:
+    enabled: true
+  exclusions:
+    - /health
+    - /env/.*</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
+  [tracing.jaeger]
+    enabled=true
+  exclusions=[
+    "/health",
+    "/env/.*"
+  ]</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">tracing {
+  jaeger {
+    enabled = true
+  }
+  exclusions = ["/health", "/env/.*"]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  tracing {
+    jaeger {
+      enabled = true
+    }
+    exclusions = ["/health", "/env/.*"]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "tracing": {
+    "jaeger": {
+      "enabled": true
+    },
+    "exclusions": ["/health", "/env/.*"]
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<h1 id="zipkin"><a class="anchor" href="#zipkin"></a>4 Tracing with Zipkin</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/zipkin.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="https://zipkin.io/">Zipkin</a> is a distributed tracing system. It helps gather timing data to troubleshoot latency problems in microservice architectures. It manages both the collection and retrieval of this data.</p>
+</div>
+<div class="sect1">
+<h2 id="_running_zipkin">Running Zipkin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The quickest way to get up and started with Zipkin is with Docker:</p>
+</div>
+<div class="listingblock">
+<div class="title">Running Zipkin with Docker</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ docker run -d -p 9411:9411 openzipkin/zipkin</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Navigate to <code><a href="http://localhost:9411" class="bare">http://localhost:9411</a></code> to view traces.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sending_traces_to_zipkin">Sending Traces to Zipkin</h2>
+<div class="sectionbody">
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Using the CLI</div>
+<div class="paragraph">
+<p>If you create your project using the Micronaut CLI, supply the <code>tracing-zipkin</code> feature to include Zipkin tracing in your project:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ mn create-app my-app --features tracing-zipkin</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To send tracing spans to Zipkin, add the <code>micronaut-tracing-zipkin</code> dependency in your build:</p>
+</div>
+<div class="paragraph">
+<p>        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-zipkin")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-tracing-zipkin&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p>Then enable ZipKin tracing in your configuration (potentially only your production configuration):</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">tracing.zipkin.enabled=true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">tracing:
+  zipkin:
+    enabled: true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
+  [tracing.zipkin]
+    enabled=true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">tracing {
+  zipkin {
+    enabled = true
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  tracing {
+    zipkin {
+      enabled = true
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "tracing": {
+    "zipkin": {
+      "enabled": true
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_customizing_the_zipkin_sender">Customizing the Zipkin Sender</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To send spans you configure a Zipkin sender. You can configure a <a href="../api/io/micronaut/tracing/brave/sender/HttpClientSender.html">HttpClientSender</a> that sends Spans asynchronously using Micronaut&#8217;s native HTTP client with the <code>tracing.zipkin.http.url</code> setting:</p>
+</div>
+<div class="openblock">
+<div class="title">Configuring Multiple Zipkin Servers</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">tracing.zipkin.enabled=true
+tracing.zipkin.http.url=http://localhost:9411</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">tracing:
+  zipkin:
+    enabled: true
+    http:
+      url: http://localhost:9411</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
+  [tracing.zipkin]
+    enabled=true
+    [tracing.zipkin.http]
+      url="http://localhost:9411"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">tracing {
+  zipkin {
+    enabled = true
+    http {
+      url = "http://localhost:9411"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  tracing {
+    zipkin {
+      enabled = true
+      http {
+        url = "http://localhost:9411"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "tracing": {
+    "zipkin": {
+      "enabled": true,
+      "http": {
+        "url": "http://localhost:9411"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>It is unlikely that sending spans to localhost will be suitable for production deployment, so you generally need to configure the location of one or more Zipkin servers for production:</p>
+</div>
+<div class="openblock">
+<div class="title">Configuring Multiple Zipkin Servers</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">tracing.zipkin.enabled=true
+tracing.zipkin.http.urls[0]=https://foo:9411
+tracing.zipkin.http.urls[1]=https://bar:9411</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">tracing:
+  zipkin:
+    enabled: true
+    http:
+      urls:
+        - https://foo:9411
+        - https://bar:9411</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
+  [tracing.zipkin]
+    enabled=true
+    [tracing.zipkin.http]
+      urls=[
+        "https://foo:9411",
+        "https://bar:9411"
+      ]</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">tracing {
+  zipkin {
+    enabled = true
+    http {
+      urls = ["https://foo:9411", "https://bar:9411"]
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  tracing {
+    zipkin {
+      enabled = true
+      http {
+        urls = ["https://foo:9411", "https://bar:9411"]
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "tracing": {
+    "zipkin": {
+      "enabled": true,
+      "http": {
+        "urls": ["https://foo:9411", "https://bar:9411"]
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+In production, setting <code>TRACING_ZIPKIN_HTTP_URLS</code> environment variable with a comma-separated list of URLs also works.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Alternatively, to use a different <code>zipkin2.reporter.Sender</code> implementation, you can define a bean of type <code>zipkin2.reporter.Sender</code> and it will be used instead.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_zipkin_configuration">Zipkin Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are many configuration options available for the Brave client that sends Spans to Zipkin, and they are generally exposed via the <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.html">BraveTracerConfiguration</a> class. Refer to the Javadoc for available options.</p>
+</div>
+<div class="paragraph">
+<p>Below is an example of customizing Zipkin configuration:</p>
+</div>
+<div class="openblock">
+<div class="title">Customizing Zipkin Configuration</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">tracing.zipkin.enabled=true
+tracing.zipkin.traceId128Bit=true
+tracing.zipkin.sampler.probability=1</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">tracing:
+  zipkin:
+    enabled: true
+    traceId128Bit: true
+    sampler:
+      probability: 1</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
+  [tracing.zipkin]
+    enabled=true
+    traceId128Bit=true
+    [tracing.zipkin.sampler]
+      probability=1</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">tracing {
+  zipkin {
+    enabled = true
+    traceId128Bit = true
+    sampler {
+      probability = 1
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  tracing {
+    zipkin {
+      enabled = true
+      traceId128Bit = true
+      sampler {
+        probability = 1
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "tracing": {
+    "zipkin": {
+      "enabled": true,
+      "traceId128Bit": true,
+      "sampler": {
+        "probability": 1
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also optionally dependency-inject common configuration classes into <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.html">BraveTracerConfiguration</a> such as <code>brave.sampler.Sampler</code> just by defining them as beans. See the API for <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.html">BraveTracerConfiguration</a> for available injection points.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_filtering_http_spans">Filtering HTTP spans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It may be useful to exclude health-checks and other HTTP requests to your service.
+This can be achieved by adding a list of regular expression patterns to your configuration:</p>
+</div>
+<div class="openblock">
+<div class="title">Filtering HTTP request spans</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">tracing.zipkin.enabled=true
+tracing.exclusions[0]=/health
+tracing.exclusions[1]=/env/.*</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">tracing:
+  zipkin:
+    enabled: true
+  exclusions:
+    - /health
+    - /env/.*</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
+  [tracing.zipkin]
+    enabled=true
+  exclusions=[
+    "/health",
+    "/env/.*"
+  ]</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">tracing {
+  zipkin {
+    enabled = true
+  }
+  exclusions = ["/health", "/env/.*"]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  tracing {
+    zipkin {
+      enabled = true
+    }
+    exclusions = ["/health", "/env/.*"]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "tracing": {
+    "zipkin": {
+      "enabled": true
+    },
+    "exclusions": ["/health", "/env/.*"]
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<h1 id="opentelemetry"><a class="anchor" href="#opentelemetry"></a>5 Tracing with OpenTelemetry</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The Micronaut Open Telemetry module uses <a href="https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md">Open Telemetry Autoconfigure SDK</a> to configure Open Telemetry for tracing. For some functionalities you have to add additional dependencies. The Default values that are defined inside the Micronaut which values might be different from the default ones inside <a href="https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md">Open Telemetry Autoconfigure SDK</a> module are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>otel.traces.exporter = none</p>
+</li>
+<li>
+<p>otel.metrics.exporter = none</p>
+</li>
+<li>
+<p>otel.logs.exporter = none</p>
+</li>
+<li>
+<p>otel.service.name = value of the application.name</p>
+</li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="_opentelemetry_annotations">OpenTelemetry annotations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="../api/io/micronaut/tracing/opentelemetry/processing/package-summary.html">io.micronaut.tracing.opentelemetry.processing</a> package contains transformers and mappers that enables usage of Open Telemetry annotations.</p>
+</div>
+</div>
+</div>
+
+<h2 id="annotations"><a class="anchor" href="#annotations"></a>5.1 OpenTelemetry Annotations</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/annotations.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>The <a href="../api/io/micronaut/tracing/opentelemetry/processing/package-summary.html">io.micronaut.tracing.opentelemetry.processing</a> package contains transformers and mappers that enables usage of Open Telemetry annotations.</p>
+</div>
+<div class="paragraph">
+<p>To enable Open telemetry annotations you have to add next annotation processor in your dependency block:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">annotationProcessor(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-annotation:5.0.0-M1")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;annotationProcessorPaths&gt;
+    &lt;path&gt;
+        &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+        &lt;artifactId&gt;micronaut-tracing-opentelemetry-annotation&lt;/artifactId&gt;
+        &lt;version&gt;5.0.0-M1&lt;/version&gt;
+    &lt;/path&gt;
+&lt;/annotationProcessorPaths&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p>The Open Tracing annotations that are defined inside the <a href="../api/io/micronaut/tracing/annotation/package-summary.html">io.micronaut.tracing.annotation</a> package are also available for usage inside Open Telemetry.</p>
+</div>
+
+<h2 id="exporters"><a class="anchor" href="#exporters"></a>5.2 OpenTelemetry Exporters</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/exporters.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In your project you can specify exporters that you want to use. The default one is set to "none" value which means by default there are no exporter registered. The available values are defined on the <a href="https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md">Open Telemetry Autoconfigure SDK documentation</a>.</p>
+</div>
+<div class="paragraph">
+<p>For each exporter that you want to use you have to specify it inside configuration, and you have to add required dependency:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>OpenTelemetry Protocol exporter: <code>otlp</code>
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry:opentelemetry-exporter-otlp")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-exporter-otlp&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</li>
+<li>
+<p>Logging exporter: <code>logging</code>
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry:opentelemetry-exporter-logging")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-exporter-logging&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</li>
+<li>
+<p>Jaeger exporter: <code>jaeger</code>
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry:opentelemetry-exporter-jaeger")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-exporter-jaeger&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</li>
+<li>
+<p>Google Cloud Trace: <code>google_cloud_trace</code>
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"com.google.cloud.opentelemetry:exporter-auto")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;com.google.cloud.opentelemetry&lt;/groupId&gt;
+    &lt;artifactId&gt;exporter-auto&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</li>
+<li>
+<p>Zipkin exporter: <code>zipkin</code>
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry:opentelemetry-exporter-zipkin")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-exporter-zipkin&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Example configuration for the Zipkin exporter:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">otel.traces.exporter=zipkin</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">otel:
+  traces:
+    exporter: zipkin</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
+  [otel.traces]
+    exporter="zipkin"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">otel {
+  traces {
+    exporter = "zipkin"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  otel {
+    traces {
+      exporter = "zipkin"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "otel": {
+    "traces": {
+      "exporter": "zipkin"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+<h2 id="propagators"><a class="anchor" href="#propagators"></a>5.3 OpenTelemetry Propagators</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/propagators.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>In your project you can specify propagators that you want to use. The default one is set to "tracecontext, baggage". The available values are defined on the <a href="https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md">Open Telemetry Autoconfigure SDK documentation</a>.</p>
+</div>
+<div class="paragraph">
+<p>To use <a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-concepts.html#xray-concepts-tracingheader">AWS X-Ray</a> propagator inside your application you have to add next dependency in your project:</p>
+</div>
+<div class="paragraph">
+<p>        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry:opentelemetry-extension-aws")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-extension-aws&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p>And the "xray" has to be added inside configuration file.</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">otel.traces.exporter=otlp
+otel.propagators=tracecontext, baggage, xray</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">otel:
+  traces:
+    exporter: otlp
+  propagators: tracecontext, baggage, xray</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
+  [otel.traces]
+    exporter="otlp"
+  propagators="tracecontext, baggage, xray"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">otel {
+  traces {
+    exporter = "otlp"
+  }
+  propagators = "tracecontext, baggage, xray"
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  otel {
+    traces {
+      exporter = "otlp"
+    }
+    propagators = "tracecontext, baggage, xray"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "otel": {
+    "traces": {
+      "exporter": "otlp"
+    },
+    "propagators": "tracecontext, baggage, xray"
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+<h2 id="idgenerator"><a class="anchor" href="#idgenerator"></a>5.4 ID Generator</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/idgenerator.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="sect1">
+<h2 id="_id_generator">ID Generator</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Some custom vendor may require the span traceId in different format from the default one. You can provide your own bean of type <a href="https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk/trace/src/main/java/io/opentelemetry/sdk/trace/IdGenerator.java">IdGenerator</a>.
+For an example, AWS X-Ray requires a specific format for their tracing identifiers. Add the following dependency, to register an instance of <a href="https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/aws/src/main/java/io/opentelemetry/sdk/extension/aws/trace/AwsXrayIdGenerator.java">AwsXrayIdGenerator</a> as a bean of type <a href="https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk/trace/src/main/java/io/opentelemetry/sdk/trace/IdGenerator.java">IdGenerator</a>.</p>
+</div>
+<div class="paragraph">
+<p>        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry.contrib:opentelemetry-aws-xray")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry.contrib&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-aws-xray&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p>To successfully export traces to the AWS X-Ray you have to run <a href="https://github.com/aws-observability/aws-otel-collector">AWS Open Telemetry Collector</a> that will periodically send traces to the AWS.</p>
+</div>
+</div>
+</div>
+
+<h2 id="http"><a class="anchor" href="#http"></a>5.5 HTTP Server and Client</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/http.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To enable creating span objects on the every HTTP server request, client request, server response and client response you have to add next depedency:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-http")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-tracing-opentelemetry-http&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="sect1">
+<h2 id="_filtering_http_spans">Filtering HTTP spans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It may be useful to exclude health-checks and other HTTP requests to your service.
+This can be achieved by adding a list of regular expression patterns to your configuration:</p>
+</div>
+<div class="openblock">
+<div class="title">Filtering HTTP request spans</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">otel.exclusions[0]=/health
+otel.exclusions[1]=/env/.*</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">otel:
+  exclusions:
+    - /health
+    - /env/.*</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
+  exclusions=[
+    "/health",
+    "/env/.*"
+  ]</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">otel {
+  exclusions = ["/health", "/env/.*"]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  otel {
+    exclusions = ["/health", "/env/.*"]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "otel": {
+    "exclusions": ["/health", "/env/.*"]
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_add_http_headers_into_request_spans">Add HTTP Headers into request spans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you want you can add additional Http Headers inside your span objects. You can specify different headers for client request, client response, server request and server response.</p>
+</div>
+<div class="openblock">
+<div class="title">Adding HTTP Headers into request spans</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">otel.http.client.request-headers[0]=X-From-Client-Request
+otel.http.client.response-headers[0]=X-From-Client-Response
+otel.http.server.request-headers[0]=X-From-Server-Request
+otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">otel:
+  http:
+    client:
+      request-headers:
+        - X-From-Client-Request
+      response-headers:
+        - X-From-Client-Response
+    server:
+      request-headers:
+        - X-From-Server-Request
+      response-headers:
+        - X-From-Server-Response</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
+  [otel.http]
+    [otel.http.client]
+      request-headers=[
+        "X-From-Client-Request"
+      ]
+      response-headers=[
+        "X-From-Client-Response"
+      ]
+    [otel.http.server]
+      request-headers=[
+        "X-From-Server-Request"
+      ]
+      response-headers=[
+        "X-From-Server-Response"
+      ]</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">otel {
+  http {
+    client {
+      requestHeaders = ["X-From-Client-Request"]
+      responseHeaders = ["X-From-Client-Response"]
+    }
+    server {
+      requestHeaders = ["X-From-Server-Request"]
+      responseHeaders = ["X-From-Server-Response"]
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  otel {
+    http {
+      client {
+        request-headers = ["X-From-Client-Request"]
+        response-headers = ["X-From-Client-Response"]
+      }
+      server {
+        request-headers = ["X-From-Server-Request"]
+        response-headers = ["X-From-Server-Response"]
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "otel": {
+    "http": {
+      "client": {
+        "request-headers": ["X-From-Client-Request"],
+        "response-headers": ["X-From-Client-Response"]
+      },
+      "server": {
+        "request-headers": ["X-From-Server-Request"],
+        "response-headers": ["X-From-Server-Response"]
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<h2 id="grpc"><a class="anchor" href="#grpc"></a>5.6 gRPC Server and Client</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/grpc.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To enable creating span objects on the every GRPC server request, client request, server response and client response. You have to add next depedency:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-grpc")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-tracing-opentelemetry-grpc&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+
+<h2 id="kafka"><a class="anchor" href="#kafka"></a>5.7 Kafka</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/kafka.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To enable creating span objects on the every HTTP server request, client request, server response and client response you have to add next depedency:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-http")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-tracing-opentelemetry-http&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="sect1">
+<h2 id="_add_kafka_message_headers_into_request_spans">Add Kafka Message Headers into request spans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To enable creating span objects on the every Kafka message. You have to add next depedency:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-kafka")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-tracing-opentelemetry-kafka&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="openblock">
+<div class="title">Adding Kafka Message Headers into request spans</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">otel.instrumentation.kafka.headers-as-lists=false
+otel.instrumentation.kafka.captured-headers[0]=myHeader1
+otel.instrumentation.kafka.captured-headers[1]=myHeader2</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">otel:
+  instrumentation:
+    kafka:
+      headers-as-lists: false
+      captured-headers:
+        - myHeader1
+        - myHeader2</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
+  [otel.instrumentation]
+    [otel.instrumentation.kafka]
+      headers-as-lists=false
+      captured-headers=[
+        "myHeader1",
+        "myHeader2"
+      ]</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">otel {
+  instrumentation {
+    kafka {
+      headersAsLists = false
+      capturedHeaders = ["myHeader1", "myHeader2"]
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  otel {
+    instrumentation {
+      kafka {
+        headers-as-lists = false
+        captured-headers = ["myHeader1", "myHeader2"]
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "otel": {
+    "instrumentation": {
+      "kafka": {
+        "headers-as-lists": false,
+        "captured-headers": ["myHeader1", "myHeader2"]
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If you want to set headers as lists, set <code>headers-as-lists</code> to <code>true</code>.</p>
+</li>
+<li>
+<p><code>captured-headers</code> is the list of headers to add as span attributes. By default, all headers are added as span attributes. To set no headers as span attributes, specify <code>null</code> or an empty string.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>5.8 AWS SDK Instrumentation</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/awsSdkInstrumentation.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Include the following dependency to instrument the <a href="https://aws-otel.github.io/docs/getting-started/java-sdk/trace-manual-instr#instrumenting-the-aws-sdk">AWS SDK</a>:</p>
+</div>
+<div class="paragraph">
+<p>        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry.instrumentation&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-aws-sdk-2.2&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p>Additionally, include <a href="https://micronaut-projects.github.io/micronaut-aws/latest/guide/#sdkv2">Micronaut AWS SDK v2</a> dependency:</p>
+</div>
+<div class="paragraph">
+<p>        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.aws:micronaut-aws-sdk-v2")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.aws&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-aws-sdk-v2&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p><code>micronaut-aws-sdk-v2</code> dependency creates a bean of type <code>SdkClientBuilder</code>. To instrument the AWS SDK, Micronaut OpenTelemetry registers a tracing interceptor
+via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.</p>
+</div>
+
+<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>5.9 AWS Resource Detectors</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/awsResourceDetectors.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="https://aws-otel.github.io/docs/getting-started/java-sdk/trace-manual-instr#using-the-aws-resource-detectors">AWS Resource detectors</a> enrich traces with AWS infrastructure information.</p>
+</div>
+<div class="paragraph">
+<p>To use AWS resource detectors include the following dependency:</p>
+</div>
+<div class="paragraph">
+<p>        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry:opentelemetry-sdk-extension-aws")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-sdk-extension-aws&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p>and provide a bean of type <a href="../api/io/micronaut/tracing/opentelemetry/ResourceProvider.html">ResourceProvider</a></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package io.micronaut.tracing.opentelemetry;
+
+import io.micronaut.core.annotation.NonNull;
+import io.opentelemetry.contrib.aws.resource.Ec2Resource;
+import io.opentelemetry.sdk.resources.Resource;
+
+import jakarta.inject.Singleton;
+
+@Singleton
+public class AwsResourceProvider implements ResourceProvider {
+
+    @Override
+    @NonNull
+    public Resource resource() {
+        return Resource.getDefault()
+            .merge(Ec2Resource.get());
+    }
+}</code></pre>
+</div>
+</div>
+
+<h1 id="repository"><a class="anchor" href="#repository"></a>6 Repository</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/repository.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>You can find the source code of this project in this repository:</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/micronaut-projects/micronaut-tracing">https://github.com/micronaut-projects/micronaut-tracing</a></p>
+</div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+
+</script>
+</body>
+</html>

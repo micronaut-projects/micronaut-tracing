@@ -10,6 +10,13 @@ import io.opentracing.Span;
 import io.opentracing.Tracer;
 import jakarta.inject.Singleton;
 
+/**
+ * Tracing invocation instrument for OpenTracing.
+ *
+ * @author graemerocher
+ * @author dstepanov
+ * @since 1.0
+ */
 @Singleton
 @Requires(beans = Tracer.class)
 @Requires(missingBeans = TracingInvocationInstrumenterFactory.class)

@@ -240,9 +240,34 @@
 </tbody>
 </table>
 <div style="page-break-after: always;"></div>
+<a id="io.micronaut.tracing.brave.BraveTracerConfiguration$SamplerConfiguration" href="#io.micronaut.tracing.brave.BraveTracerConfiguration$SamplerConfiguration">&#128279;</a>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.SamplerConfiguration.html">BraveTracerConfiguration$SamplerConfiguration</a></caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.sampler.probability</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">float</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Get sampler probability. A value of 1.0 indicates to sample all requests.
+ A value of 0.1 indicates to sample 10% of requests.</p></td>
+</tr>
+</tbody>
+</table>
+<div style="page-break-after: always;"></div>
 <a id="io.micronaut.tracing.brave.AsyncReporterConfiguration" href="#io.micronaut.tracing.brave.AsyncReporterConfiguration">&#128279;</a>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/AsyncReporterConfiguration.html">AsyncReporterConfiguration</a></caption>
+<caption class="title">Table 3. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/AsyncReporterConfiguration.html">AsyncReporterConfiguration</a></caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -301,7 +326,7 @@
 <div style="page-break-after: always;"></div>
 <a id="io.micronaut.tracing.brave.BraveTracerConfiguration" href="#io.micronaut.tracing.brave.BraveTracerConfiguration">&#128279;</a>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.html">BraveTracerConfiguration</a></caption>
+<caption class="title">Table 4. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.html">BraveTracerConfiguration</a></caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -384,31 +409,6 @@
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.build</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"></td>
-</tr>
-</tbody>
-</table>
-<div style="page-break-after: always;"></div>
-<a id="io.micronaut.tracing.brave.BraveTracerConfiguration$SamplerConfiguration" href="#io.micronaut.tracing.brave.BraveTracerConfiguration$SamplerConfiguration">&#128279;</a>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. Configuration Properties for <a href="../api/io/micronaut/tracing/brave/BraveTracerConfiguration.SamplerConfiguration.html">BraveTracerConfiguration$SamplerConfiguration</a></caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.sampler.probability</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">float</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Get sampler probability. A value of 1.0 indicates to sample all requests.
- A value of 0.1 indicates to sample 10% of requests.</p></td>
 </tr>
 </tbody>
 </table>
@@ -533,9 +533,48 @@
 </tbody>
 </table>
 <div style="page-break-after: always;"></div>
+<a id="io.micronaut.tracing.jaeger.JaegerConfiguration$JaegerReporterConfiguration" href="#io.micronaut.tracing.jaeger.JaegerConfiguration$JaegerReporterConfiguration">&#128279;</a>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 8. Configuration Properties for <a href="../api/io/micronaut/tracing/jaeger/JaegerConfiguration.JaegerReporterConfiguration.html">JaegerConfiguration$JaegerReporterConfiguration</a></caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.reporter.log-spans</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.Boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.reporter.flush-interval</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.Integer</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.reporter.max-queue-size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.Integer</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.reporter.sender</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">io.jaegertracing.Configuration$SenderConfiguration</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div style="page-break-after: always;"></div>
 <a id="io.micronaut.tracing.jaeger.JaegerConfiguration" href="#io.micronaut.tracing.jaeger.JaegerConfiguration">&#128279;</a>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 8. Configuration Properties for <a href="../api/io/micronaut/tracing/jaeger/JaegerConfiguration.html">JaegerConfiguration</a></caption>
+<caption class="title">Table 9. Configuration Properties for <a href="../api/io/micronaut/tracing/jaeger/JaegerConfiguration.html">JaegerConfiguration</a></caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -573,45 +612,6 @@
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.codecs</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set codecs from comma-delimited string.</p></td>
-</tr>
-</tbody>
-</table>
-<div style="page-break-after: always;"></div>
-<a id="io.micronaut.tracing.jaeger.JaegerConfiguration$JaegerReporterConfiguration" href="#io.micronaut.tracing.jaeger.JaegerConfiguration$JaegerReporterConfiguration">&#128279;</a>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 9. Configuration Properties for <a href="../api/io/micronaut/tracing/jaeger/JaegerConfiguration.JaegerReporterConfiguration.html">JaegerConfiguration$JaegerReporterConfiguration</a></caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.reporter.log-spans</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.Boolean</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.reporter.flush-interval</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.Integer</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.reporter.max-queue-size</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.Integer</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.reporter.sender</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">io.jaegertracing.Configuration$SenderConfiguration</p></td>
-<td class="tableblock halign-left valign-top"></td>
 </tr>
 </tbody>
 </table>

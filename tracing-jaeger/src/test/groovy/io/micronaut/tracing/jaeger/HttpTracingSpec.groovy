@@ -18,6 +18,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
+import io.micronaut.tracing.annotation.NewSpan
 import io.opentracing.Tracer
 import jakarta.inject.Inject
 import org.reactivestreams.Publisher
@@ -76,10 +77,15 @@ class HttpTracingSpec extends Specification {
         conditions.eventually {
             reporter.spans.size() == 2
 
-            JaegerSpan span = reporter.spans.find { it.operationName == 'GET /traced/hello/{name}' }
-            span != null
-            span.tags['foo'] == 'bar'
-            span.tags['http.path'] == '/traced/hello/John'
+            JaegerSpan serverSpan = reporter.spans.find { it.operationName == 'GET /traced/hello/{name}' && it.tags['http.server'] == true }
+            serverSpan != null
+            serverSpan.tags['foo'] == 'bar'
+            serverSpan.tags['http.path'] == '/traced/hello/John'
+
+            JaegerSpan clientSpan = reporter.spans.find { it.operationName == 'GET /traced/hello/John' && it.tags['http.client'] == true }
+            clientSpan != null
+            clientSpan.tags['foo'] == null
+            clientSpan.tags['http.path'] == '/traced/hello/John'
 
             nrOfStartedSpans > 0
             nrOfFinishedSpans == nrOfStartedSpans

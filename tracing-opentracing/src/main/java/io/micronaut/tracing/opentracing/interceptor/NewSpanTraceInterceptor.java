@@ -23,7 +23,6 @@ import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
-import io.micronaut.core.util.StringUtils;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.opentracing.OpenTracingPropagationContext;
 import io.opentracing.Span;
@@ -31,7 +30,6 @@ import io.opentracing.Tracer;
 import jakarta.inject.Singleton;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 /**
@@ -68,24 +66,19 @@ public final class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
         }
         String operationName = newSpan.stringValue().orElse(null);
 
-        Optional<String> hystrixCommand = context.stringValue(HYSTRIX_ANNOTATION);
-        if (StringUtils.isEmpty(operationName)) {
-            // try hystrix command name
-            operationName = hystrixCommand.orElse(context.getMethodName());
-        }
         Tracer.SpanBuilder builder = tracer.buildSpan(operationName);
         if (currentSpan != null) {
             builder.asChildOf(currentSpan);
         }
 
         Span span = builder.start();
-        populateTags(context, hystrixCommand, span);
+        populateTags(context, span);
 
         try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
             .plus(new OpenTracingPropagationContext(tracer, span))
             .propagate()) {
 
-            populateTags(context, hystrixCommand, span);
+            populateTags(context, span);
 
             InterceptedMethod interceptedMethod = InterceptedMethod.of(context, conversionService);
             try {

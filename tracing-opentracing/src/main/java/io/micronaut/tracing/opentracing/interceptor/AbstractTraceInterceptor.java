@@ -29,7 +29,6 @@ import io.opentracing.Span;
 import io.opentracing.Tracer;
 
 import java.util.Map;
-import java.util.Optional;
 
 import static io.opentracing.log.Fields.ERROR_OBJECT;
 import static io.opentracing.log.Fields.MESSAGE;
@@ -48,11 +47,6 @@ public abstract sealed class AbstractTraceInterceptor implements MethodIntercept
 
     public static final String CLASS_TAG = "class";
     public static final String METHOD_TAG = "method";
-
-    protected static final String TAG_HYSTRIX_COMMAND = "hystrix.command";
-    protected static final String TAG_HYSTRIX_GROUP = "hystrix.group";
-    protected static final String TAG_HYSTRIX_THREAD_POOL = "hystrix.threadPool";
-    protected static final String HYSTRIX_ANNOTATION = "io.micronaut.configuration.hystrix.annotation.HystrixCommand";
 
     protected final Tracer tracer;
 
@@ -75,17 +69,9 @@ public abstract sealed class AbstractTraceInterceptor implements MethodIntercept
     }
 
     protected final void populateTags(MethodInvocationContext<Object, Object> context,
-                                      Optional<String> hystrixCommand,
                                       Span span) {
         span.setTag(CLASS_TAG, context.getDeclaringType().getSimpleName());
         span.setTag(METHOD_TAG, context.getMethodName());
-        hystrixCommand.ifPresent(s -> span.setTag(TAG_HYSTRIX_COMMAND, s));
-        context.stringValue(HYSTRIX_ANNOTATION, "group").ifPresent(s ->
-            span.setTag(TAG_HYSTRIX_GROUP, s)
-        );
-        context.stringValue(HYSTRIX_ANNOTATION, "threadPool").ifPresent(s ->
-            span.setTag(TAG_HYSTRIX_THREAD_POOL, s)
-        );
         tagArguments(span, context);
     }
 

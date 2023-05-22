@@ -29,7 +29,6 @@ import io.opentracing.Span;
 import io.opentracing.Tracer;
 
 import java.util.Map;
-import java.util.Optional;
 
 import static io.opentracing.log.Fields.ERROR_OBJECT;
 import static io.opentracing.log.Fields.MESSAGE;

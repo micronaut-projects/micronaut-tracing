@@ -11,7 +11,7 @@
 <link rel="stylesheet" type="text/css" href="script-dir/jquery-ui.min.css" title="Style">
 <link rel="stylesheet" type="text/css" href="jquery-ui.overrides.css" title="Style">
 <script type="text/javascript" src="script.js"></script>
-<script type="text/javascript" src="script-dir/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="script-dir/jquery-3.6.1.min.js"></script>
 <script type="text/javascript" src="script-dir/jquery-ui.min.js"></script>
 </head>
 <body class="all-classes-index-page">
@@ -54,7 +54,7 @@ loadScripts(document, 'script');</script>
 <h1 title="All Classes and Interfaces" class="title">All Classes and Interfaces</h1>
 </div>
 <div id="all-classes-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="all-classes-table-tab0" role="tab" aria-selected="true" aria-controls="all-classes-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="all-classes-table-tab1" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab1', 2)" class="table-tab">Interfaces</button><button id="all-classes-table-tab2" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab2', 2)" class="table-tab">Classes</button><button id="all-classes-table-tab3" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab3', 2)" class="table-tab">Enum Classes</button><button id="all-classes-table-tab7" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab7', 2)" class="table-tab">Annotation Interfaces</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="all-classes-table-tab0" role="tab" aria-selected="true" aria-controls="all-classes-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="all-classes-table-tab1" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab1', 2)" class="table-tab">Interfaces</button><button id="all-classes-table-tab2" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab2', 2)" class="table-tab">Classes</button><button id="all-classes-table-tab3" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab3', 2)" class="table-tab">Enum Classes</button><button id="all-classes-table-tab4" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab4', 2)" class="table-tab">Record Classes</button><button id="all-classes-table-tab7" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab7', 2)" class="table-tab">Annotation Interfaces</button></div>
 <div id="all-classes-table.tabpanel" role="tabpanel">
 <div class="summary-table two-column-summary" aria-labelledby="all-classes-table-tab0">
 <div class="table-header col-first">Class</div>
@@ -68,11 +68,11 @@ loadScripts(document, 'script');</script>
 <div class="block">Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
  using the Open Telemetry API.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.instrument.http">AbstractOpenTracingFilter</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.opentracing.instrument.http">AbstractOpenTracingFilter</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Abstract filter used for Open Tracing based HTTP tracing.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">AbstractTraceInterceptor</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.opentracing.interceptor">AbstractTraceInterceptor</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
  using the Open Tracing API.</div>
@@ -85,31 +85,31 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Registers an instance of <code>AwsXrayIdGenerator.getInstance()</code> as a Singleton of type <code>IdGenerator</code>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="io/micronaut/tracing/brave/BravePropagationContext.html" title="class in io.micronaut.tracing.brave">BravePropagationContext</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">The Brave propagation context.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Configuration properties for Brave.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.HttpClientSenderConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.HttpClientSenderConfiguration</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.HttpClientSenderConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.HttpClientSenderConfiguration</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Used to configure HTTP trace sending under the <code>tracing.zipkin.http</code> namespace.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.SamplerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.SamplerConfiguration</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/BraveTracerConfiguration.SamplerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.SamplerConfiguration</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The sampler configuration.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/BraveTracerFactory.html" title="class in io.micronaut.tracing.brave">BraveTracerFactory</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/BraveTracerFactory.html" title="class in io.micronaut.tracing.brave">BraveTracerFactory</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Builds a <code>Tracer</code> for Brave using <code>BraveTracer</code>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/instrument/http/BraveTracingClientFilter.html" title="class in io.micronaut.tracing.brave.instrument.http">BraveTracingClientFilter</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/http/BraveTracingClientFilter.html" title="class in io.micronaut.tracing.brave.http">BraveTracingClientFilter</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Instruments outgoing HTTP requests.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/BraveTracingInvocationInstrumenter.html" title="class in io.micronaut.tracing.brave">BraveTracingInvocationInstrumenter</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Tracing invocation instrument for Brave.</div>
-</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/instrument/http/BraveTracingServerFilter.html" title="class in io.micronaut.tracing.brave.instrument.http">BraveTracingServerFilter</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/http/BraveTracingServerFilter.html" title="class in io.micronaut.tracing.brave.http">BraveTracingServerFilter</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Instruments incoming HTTP requests.</div>
 </div>
@@ -117,7 +117,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab7">
 <div class="block">Indicates that the current span should be continued.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/interceptor/ContinueSpanInterceptor.html" title="class in io.micronaut.tracing.interceptor">ContinueSpanInterceptor</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentracing/interceptor/ContinueSpanInterceptor.html" title="class in io.micronaut.tracing.opentracing.interceptor">ContinueSpanInterceptor</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
  using the Open Tracing API.</div>
@@ -135,7 +135,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Creates a default NoopTracer if no other tracer is present.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/DefaultTracer.html" title="class in io.micronaut.tracing">DefaultTracer</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentracing/DefaultTracer.html" title="class in io.micronaut.tracing.opentracing">DefaultTracer</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Creates a default NoopTracer if no other tracer is present.</div>
 </div>
@@ -159,15 +159,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Factory that creates a Zipkin <code>Sender</code> based on <code>HttpClientSenderConfiguration</code>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingCorePublisher.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingCorePublisher</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Handles HTTP client server tracing.</div>
-</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/instrument/http/HttpServerTracingPublisher.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpServerTracingPublisher</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Handles HTTP client server tracing.</div>
-</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/instrument/http/HttpTracingFactory.html" title="class in io.micronaut.tracing.brave.instrument.http">HttpTracingFactory</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/http/HttpTracingFactory.html" title="class in io.micronaut.tracing.brave.http">HttpTracingFactory</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Adds HTTP tracing for Micronaut using Brave.</div>
 </div>
@@ -199,73 +191,65 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Opentelemetery Kafka tracing factory.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/instrument/util/MdcInstrumenter.html" title="class in io.micronaut.tracing.instrument.util">MdcInstrumenter</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/util/MicronautCodeTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">MicronautCodeTelemetryFactory</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">A function that instruments invocations with the Mapped Diagnostic Context for Slf4j.</div>
-</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/util/MicronautCodeTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">MicronautCodeTelemetryFactory</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">An HTTP client instrumentation factory for Open Telemetry.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/MicronautHttpClientTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client">MicronautHttpClientTelemetryFactory</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/MicronautHttpClientTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client">MicronautHttpClientTelemetryFactory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">An HTTP client instrumentation builder for Open Telemetry.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab7"><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/MicronautHttpClientTelemetryFactory.Client.html" title="annotation interface in io.micronaut.tracing.opentelemetry.instrument.http.client">MicronautHttpClientTelemetryFactory.Client</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab7">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab7"><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/MicronautHttpClientTelemetryFactory.Client.html" title="annotation interface in io.micronaut.tracing.opentelemetry.instrument.http.client">MicronautHttpClientTelemetryFactory.Client</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab7">
 <div class="block">Client Qualifier represents AttributesExtractor that should be used in http client instrumenter.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/MicronautHttpServerTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">MicronautHttpServerTelemetryFactory</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/MicronautHttpServerTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">MicronautHttpServerTelemetryFactory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">An HTTP server instrumentation builder for Open Telemetry.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab7"><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/MicronautHttpServerTelemetryFactory.Server.html" title="annotation interface in io.micronaut.tracing.opentelemetry.instrument.http.server">MicronautHttpServerTelemetryFactory.Server</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab7">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab7"><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/MicronautHttpServerTelemetryFactory.Server.html" title="annotation interface in io.micronaut.tracing.opentelemetry.instrument.http.server">MicronautHttpServerTelemetryFactory.Server</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab7">
 <div class="block">Server Qualifier represents AttributesExtractor that should be used in http srver instrumenter.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab7"><a href="io/micronaut/tracing/annotation/NewSpan.html" title="annotation interface in io.micronaut.tracing.annotation">NewSpan</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab7">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab7"><a href="io/micronaut/tracing/annotation/NewSpan.html" title="annotation interface in io.micronaut.tracing.annotation">NewSpan</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab7">
 <div class="block">Indicates that a new Open Tracing span should be started.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/interceptor/NewSpanOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">NewSpanOpenTelemetryTraceInterceptor</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/interceptor/NewSpanOpenTelemetryTraceInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.interceptor">NewSpanOpenTelemetryTraceInterceptor</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
  using the Open Telemetry API.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/interceptor/NewSpanTraceInterceptor.html" title="class in io.micronaut.tracing.interceptor">NewSpanTraceInterceptor</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentracing/interceptor/NewSpanTraceInterceptor.html" title="class in io.micronaut.tracing.opentracing.interceptor">NewSpanTraceInterceptor</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Implements tracing logic for <code>ContinueSpan</code> and <code>NewSpan</code>
  using the Open Tracing API.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/OpenTelemetryClientFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client">OpenTelemetryClientFilter</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/OpenTelemetryClientFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client">OpenTelemetryClientFilter</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">An HTTP client instrumentation filter that uses Open Telemetry.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfiguration.html" title="interface in io.micronaut.tracing.opentelemetry.conf">OpenTelemetryConfiguration</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfiguration.html" title="interface in io.micronaut.tracing.opentelemetry.conf">OpenTelemetryConfiguration</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Configuration for OpenTelemetry.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html" title="class in io.micronaut.tracing.opentelemetry.conf">OpenTelemetryConfigurationProperties</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html" title="class in io.micronaut.tracing.opentelemetry.conf">OpenTelemetryConfigurationProperties</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block"><code>ConfigurationProperties</code> implementation of <a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfiguration.html" title="interface in io.micronaut.tracing.opentelemetry.conf"><code>OpenTelemetryConfiguration</code></a>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryCorePublisher</a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="type parameter in OpenTelemetryCorePublisher">T</a>,<wbr><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="type parameter in OpenTelemetryCorePublisher">R</a>&gt;</div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryCorePublisher</a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="type parameter in OpenTelemetryCorePublisher">T</a>,<wbr><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="type parameter in OpenTelemetryCorePublisher">R</a>&gt;</div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A reactor publisher that traces.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryExclusionsConfiguration</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/OpenTelemetryHttpClientConfig.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client">OpenTelemetryHttpClientConfig</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryExclusionsConfiguration</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/OpenTelemetryHttpClientConfig.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client">OpenTelemetryHttpClientConfig</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Stores http Open Telemetry Http client configuration.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryHttpServerConfig.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">OpenTelemetryHttpServerConfig</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Stores http Open Telemetry Http server configuration.</div>
-</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryInvocationInstrumenter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryInvocationInstrumenter</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryHttpServerConfig.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">OpenTelemetryHttpServerConfig</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Tracing invocation instrumenter for OpenTelemetry.</div>
+<div class="block">Stores http Open Telemetry Http server configuration.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpenTelemetryKafkaConsumerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">OpenTelemetryKafkaConsumerTracingInstrumentation</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
@@ -279,27 +263,35 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">OpenTelemetry observer.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher</a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="type parameter in OpenTelemetryPublisher">T</a>,<wbr><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="type parameter in OpenTelemetryPublisher">R</a>&gt;</div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="io/micronaut/tracing/opentelemetry/OpenTelemetryPropagationContext.html" title="class in io.micronaut.tracing.opentelemetry">OpenTelemetryPropagationContext</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">Open telemetry propagated context.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher</a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="type parameter in OpenTelemetryPublisher">T</a>,<wbr><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="type parameter in OpenTelemetryPublisher">R</a>&gt;</div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A reactive streams publisher that traces.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisherUtils.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisherUtils</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisherUtils.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisherUtils</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The tracing observer.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryServerFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">OpenTelemetryServerFilter</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryServerFilter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">OpenTelemetryServerFilter</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">An HTTP server instrumentation filter that uses Open Telemetry.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/instrument/http/OpenTracingClientFilter.html" title="class in io.micronaut.tracing.instrument.http">OpenTracingClientFilter</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentracing/instrument/http/OpenTracingClientFilter.html" title="class in io.micronaut.tracing.opentracing.instrument.http">OpenTracingClientFilter</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">An HTTP client instrumentation filter that uses Open Tracing.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/instrument/util/OpenTracingInvocationInstrumenter.html" title="class in io.micronaut.tracing.instrument.util">OpenTracingInvocationInstrumenter</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentracing/util/OpenTracingInvocationInstrumenter.html" title="class in io.micronaut.tracing.opentracing.util">OpenTracingInvocationInstrumenter</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Tracing invocation instrument for OpenTracing.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/instrument/http/OpenTracingServerFilter.html" title="class in io.micronaut.tracing.instrument.http">OpenTracingServerFilter</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="io/micronaut/tracing/opentracing/OpenTracingPropagationContext.html" title="class in io.micronaut.tracing.opentracing">OpenTracingPropagationContext</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">The open tracing propagated context.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentracing/instrument/http/OpenTracingServerFilter.html" title="class in io.micronaut.tracing.opentracing.instrument.http">OpenTracingServerFilter</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">An HTTP server instrumentation filter that uses Open Tracing.</div>
 </div>
@@ -307,58 +299,38 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">API to provide a Resource to be attached to all Spans created by Tracers.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/instrument/util/ScopePropagationPublisher.html" title="class in io.micronaut.tracing.instrument.util">ScopePropagationPublisher</a>&lt;<a href="io/micronaut/tracing/instrument/util/ScopePropagationPublisher.html" title="type parameter in ScopePropagationPublisher">T</a>&gt;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/xray/SdkClientBuilderListener.html" title="class in io.micronaut.tracing.opentelemetry.xray">SdkClientBuilderListener</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">A <code>Publisher</code> that just propagates tracing state without creating a new span.</div>
-</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/xray/SdkClientBuilderListener.html" title="class in io.micronaut.tracing.opentelemetry.xray">SdkClientBuilderListener</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Configures a Tracing Interceptor for all sdk client builders.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/log/Slf4jCurrentTraceContextFactory.html" title="class in io.micronaut.tracing.brave.log">Slf4jCurrentTraceContextFactory</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/log/Slf4jCurrentTraceContextFactory.html" title="class in io.micronaut.tracing.brave.log">Slf4jCurrentTraceContextFactory</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Factory for the current trace context object.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/processing/SpanAttributeAnnotationMapper.html" title="class in io.micronaut.tracing.opentelemetry.processing">SpanAttributeAnnotationMapper</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/processing/SpanAttributeAnnotationMapper.html" title="class in io.micronaut.tracing.opentelemetry.processing">SpanAttributeAnnotationMapper</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Adds <a href="io/micronaut/tracing/annotation/SpanTag.html" title="annotation interface in io.micronaut.tracing.annotation"><code>SpanTag</code></a> to <code>SpanAttribute</code>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab7"><a href="io/micronaut/tracing/annotation/SpanTag.html" title="annotation interface in io.micronaut.tracing.annotation">SpanTag</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab7">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab7"><a href="io/micronaut/tracing/annotation/SpanTag.html" title="annotation interface in io.micronaut.tracing.annotation">SpanTag</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab7">
 <div class="block">Applied to parameters of a method to indicate which parameters should be included in span tags.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="io/micronaut/tracing/instrument/http/TraceRequestAttributes.html" title="enum class in io.micronaut.tracing.instrument.http">TraceRequestAttributes</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="io/micronaut/tracing/opentracing/instrument/http/TraceRequestAttributes.html" title="enum class in io.micronaut.tracing.opentracing.instrument.http">TraceRequestAttributes</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
 <div class="block">Constants used to store <code>Span</code>s in instrumented request attributes.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingCorePublisher</a>&lt;<a href="io/micronaut/tracing/instrument/util/TracingCorePublisher.html" title="type parameter in TracingCorePublisher">T</a>&gt;</div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">The tracing publisher that supports Reactor's context.</div>
-</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.instrument.http">TracingExclusionsConfiguration</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentracing.instrument.http">TracingExclusionsConfiguration</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/tracing/instrument/util/TracingInvocationInstrumenterFactory.html" title="interface in io.micronaut.tracing.instrument.util">TracingInvocationInstrumenterFactory</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/tracing/opentracing/util/TracingInvocationInstrumenterFactory.html" title="interface in io.micronaut.tracing.opentracing.util">TracingInvocationInstrumenterFactory</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A factory interface for tracing invocation instrumentation.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/tracing/instrument/util/TracingObserver.html" title="interface in io.micronaut.tracing.instrument.util">TracingObserver</a>&lt;<a href="io/micronaut/tracing/instrument/util/TracingObserver.html" title="type parameter in TracingObserver">T</a>&gt;</div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
-<div class="block">The tracing observer.</div>
-</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisher</a>&lt;<a href="io/micronaut/tracing/instrument/util/TracingPublisher.html" title="type parameter in TracingPublisher">T</a>&gt;</div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">A reactive streams publisher that traces.</div>
-</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/instrument/util/TracingPublisherUtils.html" title="class in io.micronaut.tracing.instrument.util">TracingPublisherUtils</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/processing/WithSpanAnnotationTransformer.html" title="class in io.micronaut.tracing.opentelemetry.processing">WithSpanAnnotationTransformer</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Tracing publisher utils.</div>
-</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/processing/WithSpanAnnotationTransformer.html" title="class in io.micronaut.tracing.opentelemetry.processing">WithSpanAnnotationTransformer</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Adds interceptor binding to <code>WithSpan</code> and adds <a href="io/micronaut/tracing/annotation/NewSpan.html" title="annotation interface in io.micronaut.tracing.annotation"><code>NewSpan</code></a> to it.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/ZipkinServiceInstanceList.html" title="class in io.micronaut.tracing.brave">ZipkinServiceInstanceList</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/brave/ZipkinServiceInstanceList.html" title="class in io.micronaut.tracing.brave">ZipkinServiceInstanceList</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A <code>ServiceInstanceList</code> for Zipkin.</div>
 </div>
 </div>

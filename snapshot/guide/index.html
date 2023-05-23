@@ -48,13 +48,15 @@
                                 
                                 <div class="toc-item" style="margin-left:0"><a href="#releaseHistory"><strong>2</strong><span>Release History</span></a></div>
                                 
-                                <div class="toc-item" style="margin-left:0"><a href="#jaeger"><strong>3</strong><span>Tracing with Jaeger</span></a></div>
+                                <div class="toc-item" style="margin-left:0"><a href="#breaks"><strong>3</strong><span>Breaking Changes</span></a></div>
                                 
-                                <div class="toc-item" style="margin-left:0"><a href="#zipkin"><strong>4</strong><span>Tracing with Zipkin</span></a></div>
+                                <div class="toc-item" style="margin-left:0"><a href="#jaeger"><strong>4</strong><span>Tracing with Jaeger</span></a></div>
                                 
-                                <div class="toc-item" style="margin-left:0"><a href="#opentelemetry"><strong>5</strong><span>Tracing with OpenTelemetry</span></a></div>
+                                <div class="toc-item" style="margin-left:0"><a href="#zipkin"><strong>5</strong><span>Tracing with Zipkin</span></a></div>
                                 
-                                <div class="toc-item" style="margin-left:0"><a href="#repository"><strong>6</strong><span>Repository</span></a></div>
+                                <div class="toc-item" style="margin-left:0"><a href="#opentelemetry"><strong>6</strong><span>Tracing with OpenTelemetry</span></a></div>
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#repository"><strong>7</strong><span>Repository</span></a></div>
                                 
                             </div>
                         </div>
@@ -89,31 +91,33 @@
         
         <div class="toc-item" style="margin-left:0px" id="toc-item-releaseHistory"><a href="#releaseHistory"><strong>2</strong><span>Release History</span></a></div>
         
-        <div class="toc-item" style="margin-left:0px" id="toc-item-jaeger"><a href="#jaeger"><strong>3</strong><span>Tracing with Jaeger</span></a></div>
+        <div class="toc-item" style="margin-left:0px" id="toc-item-breaks"><a href="#breaks"><strong>3</strong><span>Breaking Changes</span></a></div>
         
-        <div class="toc-item" style="margin-left:0px" id="toc-item-zipkin"><a href="#zipkin"><strong>4</strong><span>Tracing with Zipkin</span></a></div>
+        <div class="toc-item" style="margin-left:0px" id="toc-item-jaeger"><a href="#jaeger"><strong>4</strong><span>Tracing with Jaeger</span></a></div>
         
-        <div class="toc-item" style="margin-left:0px" id="toc-item-opentelemetry"><a href="#opentelemetry"><strong>5</strong><span>Tracing with OpenTelemetry</span></a></div>
+        <div class="toc-item" style="margin-left:0px" id="toc-item-zipkin"><a href="#zipkin"><strong>5</strong><span>Tracing with Zipkin</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-annotations"><a href="#annotations"><strong>5.1</strong><span>OpenTelemetry Annotations</span></a></div>
+        <div class="toc-item" style="margin-left:0px" id="toc-item-opentelemetry"><a href="#opentelemetry"><strong>6</strong><span>Tracing with OpenTelemetry</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-exporters"><a href="#exporters"><strong>5.2</strong><span>OpenTelemetry Exporters</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-annotations"><a href="#annotations"><strong>6.1</strong><span>OpenTelemetry Annotations</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-propagators"><a href="#propagators"><strong>5.3</strong><span>OpenTelemetry Propagators</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-exporters"><a href="#exporters"><strong>6.2</strong><span>OpenTelemetry Exporters</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-idgenerator"><a href="#idgenerator"><strong>5.4</strong><span>ID Generator</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-propagators"><a href="#propagators"><strong>6.3</strong><span>OpenTelemetry Propagators</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-http"><a href="#http"><strong>5.5</strong><span>HTTP Server and Client</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-idgenerator"><a href="#idgenerator"><strong>6.4</strong><span>ID Generator</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-grpc"><a href="#grpc"><strong>5.6</strong><span>gRPC Server and Client</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-http"><a href="#http"><strong>6.5</strong><span>HTTP Server and Client</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-kafka"><a href="#kafka"><strong>5.7</strong><span>Kafka</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-grpc"><a href="#grpc"><strong>6.6</strong><span>gRPC Server and Client</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>5.8</strong><span>AWS SDK Instrumentation</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-kafka"><a href="#kafka"><strong>6.7</strong><span>Kafka</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>5.9</strong><span>AWS Resource Detectors</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>6.8</strong><span>AWS SDK Instrumentation</span></a></div>
         
-        <div class="toc-item" style="margin-left:0px" id="toc-item-repository"><a href="#repository"><strong>6</strong><span>Repository</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>6.9</strong><span>AWS Resource Detectors</span></a></div>
+        
+        <div class="toc-item" style="margin-left:0px" id="toc-item-repository"><a href="#repository"><strong>7</strong><span>Repository</span></a></div>
         
         </div>
     </div>
@@ -242,7 +246,49 @@ class HelloService {
 <p><a href="https://github.com/micronaut-projects/micronaut-tracing/releases">https://github.com/micronaut-projects/micronaut-tracing/releases</a></p>
 </div>
 
-<h1 id="jaeger"><a class="anchor" href="#jaeger"></a>3 Tracing with Jaeger</h1>
+<h1 id="breaks"><a class="anchor" href="#breaks"></a>3 Breaking Changes</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/breaks.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>This section will document breaking changes that may happen during milestone or release candidate releases, as well as major releases eg (1.x.x → 2.x.x).</p>
+</div>
+<div class="sect1">
+<h2 id="_micronaut_tracing_4_5_0_breaking_changes">Micronaut Tracing 4.5.0 breaking changes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In version <code>1.19.0</code> of OpenTelemetry annotations have moved from <code>io.opentelemetry.extension.annotations</code> to <code>io.opentelemetry.instrumentation.annotations</code>. If you want to continue to use them, you have to update package name.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_micronaut_tracing_5_0_0_m2_breaking_changes">Micronaut Tracing 5.0.0-M2 breaking changes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Micronaut Tracing Zipkin module (<code>io.micronaut.tracing:micronaut-tracing-zipkin</code>) has been renamed and separated in two new modules:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Micronaut Tracing Brave (<code>io.micronaut.tracing:micronaut-tracing-brave</code>)</p>
+</li>
+<li>
+<p>Micronaut Tracing Brave HTTP (<code>io.micronaut.tracing:micronaut-tracing-brave-http</code>)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>if you are using OpenTracing and Micronaut Tracing Zipkin module, you have to change <code>io.micronaut.tracing:micronaut-tracing-zipkin</code> dependency to <code>io.micronaut.tracing:micronaut-tracing-brave-http</code>. The Micronaut Tracing Brave HTTP brings HTTP filters for auto instrumentation of your requests. If you don&#8217;t need HTTP filters you can only add <code>io.micronaut.tracing:micronaut-tracing-brave</code> dependency.</p>
+</div>
+</div>
+</div>
+
+<h1 id="jaeger"><a class="anchor" href="#jaeger"></a>4 Tracing with Jaeger</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/jaeger.adoc"'>
@@ -592,7 +638,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
 </div>
 </div>
 
-<h1 id="zipkin"><a class="anchor" href="#zipkin"></a>4 Tracing with Zipkin</h1>
+<h1 id="zipkin"><a class="anchor" href="#zipkin"></a>5 Tracing with Zipkin</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/zipkin.adoc"'>
@@ -645,20 +691,20 @@ tracing.exclusions[1]=/env/.*</code></pre>
 </table>
 </div>
 <div class="paragraph">
-<p>To send tracing spans to Zipkin, add the <code>micronaut-tracing-zipkin</code> dependency in your build:</p>
+<p>To send tracing spans to Zipkin, add the <code>micronaut-tracing-brave-http</code> dependency in your build:</p>
 </div>
 <div class="paragraph">
 <p>        <div class="listingblock multi-language-sample">
 <div class="title"></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-zipkin")</span></code></pre>
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-brave-http")</span></code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
     &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
-    &lt;artifactId&gt;micronaut-tracing-zipkin&lt;/artifactId&gt;
+    &lt;artifactId&gt;micronaut-tracing-brave-http&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div></p>
@@ -1058,7 +1104,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
 </div>
 </div>
 
-<h1 id="opentelemetry"><a class="anchor" href="#opentelemetry"></a>5 Tracing with OpenTelemetry</h1>
+<h1 id="opentelemetry"><a class="anchor" href="#opentelemetry"></a>6 Tracing with OpenTelemetry</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry.adoc"'>
@@ -1095,7 +1141,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
 </div>
 </div>
 
-<h2 id="annotations"><a class="anchor" href="#annotations"></a>5.1 OpenTelemetry Annotations</h2>
+<h2 id="annotations"><a class="anchor" href="#annotations"></a>6.1 OpenTelemetry Annotations</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/annotations.adoc"'>
@@ -1132,7 +1178,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
 <p>The Open Tracing annotations that are defined inside the <a href="../api/io/micronaut/tracing/annotation/package-summary.html">io.micronaut.tracing.annotation</a> package are also available for usage inside Open Telemetry.</p>
 </div>
 
-<h2 id="exporters"><a class="anchor" href="#exporters"></a>5.2 OpenTelemetry Exporters</h2>
+<h2 id="exporters"><a class="anchor" href="#exporters"></a>6.2 OpenTelemetry Exporters</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/exporters.adoc"'>
@@ -1294,7 +1340,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
 </div>
 </div>
 
-<h2 id="propagators"><a class="anchor" href="#propagators"></a>5.3 OpenTelemetry Propagators</h2>
+<h2 id="propagators"><a class="anchor" href="#propagators"></a>6.3 OpenTelemetry Propagators</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/propagators.adoc"'>
@@ -1389,7 +1435,7 @@ otel.propagators=tracecontext, baggage, xray</code></pre>
 </div>
 </div>
 
-<h2 id="idgenerator"><a class="anchor" href="#idgenerator"></a>5.4 ID Generator</h2>
+<h2 id="idgenerator"><a class="anchor" href="#idgenerator"></a>6.4 ID Generator</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/idgenerator.adoc"'>
@@ -1427,7 +1473,7 @@ For an example, AWS X-Ray requires a specific format for their tracing identifie
 </div>
 </div>
 
-<h2 id="http"><a class="anchor" href="#http"></a>5.5 HTTP Server and Client</h2>
+<h2 id="http"><a class="anchor" href="#http"></a>6.5 HTTP Server and Client</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/http.adoc"'>
@@ -1625,7 +1671,7 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
 </div>
 </div>
 
-<h2 id="grpc"><a class="anchor" href="#grpc"></a>5.6 gRPC Server and Client</h2>
+<h2 id="grpc"><a class="anchor" href="#grpc"></a>6.6 gRPC Server and Client</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/grpc.adoc"'>
@@ -1652,7 +1698,7 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
 </div></p>
 </div>
 
-<h2 id="kafka"><a class="anchor" href="#kafka"></a>5.7 Kafka</h2>
+<h2 id="kafka"><a class="anchor" href="#kafka"></a>6.7 Kafka</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/kafka.adoc"'>
@@ -1786,7 +1832,7 @@ otel.instrumentation.kafka.captured-headers[1]=myHeader2</code></pre>
 </div>
 </div>
 
-<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>5.8 AWS SDK Instrumentation</h2>
+<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>6.8 AWS SDK Instrumentation</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/awsSdkInstrumentation.adoc"'>
@@ -1838,7 +1884,7 @@ otel.instrumentation.kafka.captured-headers[1]=myHeader2</code></pre>
 via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.</p>
 </div>
 
-<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>5.9 AWS Resource Detectors</h2>
+<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>6.9 AWS Resource Detectors</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/opentelemetry/awsResourceDetectors.adoc"'>
@@ -1895,7 +1941,7 @@ public class AwsResourceProvider implements ResourceProvider {
 </div>
 </div>
 
-<h1 id="repository"><a class="anchor" href="#repository"></a>6 Repository</h1>
+<h1 id="repository"><a class="anchor" href="#repository"></a>7 Repository</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/master/src/main/docs/guide/repository.adoc"'>

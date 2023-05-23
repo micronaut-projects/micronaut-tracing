@@ -23,9 +23,9 @@ $ mn create-app my-app --features tracing-zipkin
 ----
 ====
 
-To send tracing spans to Zipkin, add the `micronaut-tracing-zipkin` dependency in your build:
+To send tracing spans to Zipkin, add the `micronaut-tracing-brave-http` dependency in your build:
 
-dependency:micronaut-tracing-zipkin[groupId="io.micronaut.tracing"]
+dependency:micronaut-tracing-brave-http[groupId="io.micronaut.tracing"]
 
 Then enable ZipKin tracing in your configuration (potentially only your production configuration):
 

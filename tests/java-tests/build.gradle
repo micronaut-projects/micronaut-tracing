@@ -1,0 +1,37 @@
+plugins {
+    id "io.micronaut.application"
+    id 'io.micronaut.build.internal.tracing-native-tests'
+}
+
+mainClassName = "helloworld.Application"
+micronaut {
+    version '4.0.0-M2'
+    testRuntime "junit5"
+    enableNativeImage false
+    processing {
+        incremental(true)
+        annotations("helloworld.*")
+    }
+}
+
+dependencies {
+    testAnnotationProcessor projects.micronautTracingOpentelemetryAnnotation
+    testImplementation projects.micronautTracingOpentelemetryHttp
+    testImplementation mn.micronaut.jackson.databind
+    testImplementation mn.micronaut.context
+    testImplementation mn.reactor
+    testImplementation mn.micronaut.management
+    testImplementation mn.micronaut.http.server.netty
+    testImplementation libs.opentelemetry.sdk
+    testImplementation libs.opentelemetry.sdk.testing
+    testImplementation mnReactor.micronaut.reactor
+    testImplementation mnSerde.micronaut.serde.jackson
+    testImplementation mnReactor.micronaut.reactor.http.client
+}
+
+configurations.all {
+    resolutionStrategy.dependencySubstitution {
+        substitute module('io.micronaut.tracing:micronaut-tracing-opentelemetry-annotation') using project(':micronaut-tracing-opentelemetry-annotation')
+        substitute module('io.micronaut.tracing:micronaut-tracing-opentelemetry-http') using project(':micronaut-tracing-opentelemetry-http')
+    }
+}

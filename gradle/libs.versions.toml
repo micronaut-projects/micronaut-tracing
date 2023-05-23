@@ -4,6 +4,7 @@ micronaut-test = '4.0.0-M4'
 micronaut-docs = '2.0.0'
 groovy = '4.0.6'
 spock = '2.3-groovy-4.0'
+shadow = '7.1.2'
 
 managed-brave-instrumentation = '5.16.0'
 managed-opentelemetry = '1.26.0'
@@ -36,6 +37,8 @@ micronaut-reactor = '3.0.0-M2'
 micronaut-rxjava2 = '2.0.0-M1'
 micronaut-serde = '2.0.0-M8'
 micronaut-kafka = '5.0.0-M3'
+micronaut-gradle-plugin = "4.0.0-M3"
+
 
 [libraries]
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
@@ -93,6 +96,12 @@ boms-opentelemetry-instrumentation = { module = 'io.opentelemetry.instrumentatio
 boms-opentelemetry-instrumentation-alpha = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha', version.ref = 'managed-opentelemetry-instrumentation-alpha' }
 boms-brave = { module = 'io.zipkin.brave:brave-bom', version.ref = 'managed-brave-instrumentation' }
 boms-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter-bom', version.ref = 'managed-zipkin-reporter' }
+
+
+#plugins
+shadow-plugin = { module = "gradle.plugin.com.github.johnrengelman:shadow", version.ref = "shadow" }
+micronaut-gradle-plugin = { module = "io.micronaut.gradle:micronaut-gradle-plugin", version.ref="micronaut-gradle-plugin" }
+
 
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }

@@ -1,0 +1,38 @@
+plugins {
+    id "io.micronaut.build.internal.tracing-tests"
+    id 'org.graalvm.buildtools.native'
+}
+
+tasks.named("check") { task ->
+    def graal = ["jvmci.Compiler", "java.vendor.version", "java.vendor"].any {
+        System.getProperty(it)?.toLowerCase(Locale.ENGLISH)?.contains("graal")
+    }
+    if (graal) {
+        task.dependsOn("nativeTest")
+    }
+}
+
+graalvmNative {
+    toolchainDetection = false
+    metadataRepository {
+        enabled = true
+    }
+    binaries {
+        all {
+            resources.autodetect()
+        }
+    }
+}
+
+if (JavaVersion.current().isCompatibleWith(JavaVersion.toVersion(19))) {
+    plugins.withId('org.graalvm.buildtools.native') {
+        graalvmNative.binaries.all {
+            buildArgs.add('--enable-preview')
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+

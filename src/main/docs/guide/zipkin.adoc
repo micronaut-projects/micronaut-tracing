@@ -17,7 +17,7 @@ Navigate to `http://localhost:9411` to view traces.
 [TIP]
 .Using the CLI
 ====
-If you create your project using the Micronaut CLI, supply the `tracing-brave` feature to include Brave tracing in your project:
+If you create your project using the Micronaut CLI, supply the `tracing-zipkin` feature to include Zipkin tracing in your project:
 ----
 $ mn create-app my-app --features tracing-zipkin
 ----

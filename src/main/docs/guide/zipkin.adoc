@@ -17,15 +17,15 @@ Navigate to `http://localhost:9411` to view traces.
 [TIP]
 .Using the CLI
 ====
-If you create your project using the Micronaut CLI, supply the `tracing-zipkin` feature to include Zipkin tracing in your project:
+If you create your project using the Micronaut CLI, supply the `tracing-brave` feature to include Brave tracing in your project:
 ----
 $ mn create-app my-app --features tracing-zipkin
 ----
 ====
 
-To send tracing spans to Zipkin, add the `micronaut-tracing-zipkin` dependency in your build:
+To send tracing spans to Zipkin, add the `micronaut-tracing-brave-http` dependency in your build:
 
-dependency:micronaut-tracing-zipkin[groupId="io.micronaut.tracing"]
+dependency:micronaut-tracing-brave-http[groupId="io.micronaut.tracing"]
 
 Then enable ZipKin tracing in your configuration (potentially only your production configuration):
 

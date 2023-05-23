@@ -1,0 +1,14 @@
+This section will document breaking changes that may happen during milestone or release candidate releases, as well as major releases eg (1.x.x → 2.x.x).
+
+== Micronaut Tracing 4.5.0 breaking changes
+
+In version `1.19.0` of OpenTelemetry annotations have moved from `io.opentelemetry.extension.annotations` to `io.opentelemetry.instrumentation.annotations`. If you want to continue to use them, you have to update package name.
+
+== Micronaut Tracing 5.0.0-M2 breaking changes
+
+The Micronaut Tracing Zipkin module (`io.micronaut.tracing:micronaut-tracing-zipkin`) has been renamed and separated in two new modules:
+
+- Micronaut Tracing Brave (`io.micronaut.tracing:micronaut-tracing-brave`)
+- Micronaut Tracing Brave HTTP (`io.micronaut.tracing:micronaut-tracing-brave-http`)
+
+if you are using OpenTracing and Micronaut Tracing Zipkin module, you have to change `io.micronaut.tracing:micronaut-tracing-zipkin` dependency to `io.micronaut.tracing:micronaut-tracing-brave-http`. The Micronaut Tracing Brave HTTP brings HTTP filters for auto instrumentation of your requests. If you don't need HTTP filters you can only add `io.micronaut.tracing:micronaut-tracing-brave` dependency.

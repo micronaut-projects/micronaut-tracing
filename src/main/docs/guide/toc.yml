@@ -1,6 +1,7 @@
 introduction:
   title: Introduction
 releaseHistory: Release History
+breaks: Breaking Changes
 jaeger: Tracing with Jaeger
 zipkin: Tracing with Zipkin
 opentelemetry:

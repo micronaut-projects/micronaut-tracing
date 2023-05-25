@@ -4,9 +4,11 @@ import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.core.annotation.Nullable
+import io.micronaut.core.async.annotation.SingleResult
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.*
+import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.http.context.ServerRequestContext
@@ -18,13 +20,16 @@ import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
 import io.micronaut.tracing.annotation.SpanTag
 import io.opentelemetry.api.common.AttributeKey
+import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
+import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.instrumentation.annotations.SpanAttribute
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import io.reactivex.Single
 import jakarta.inject.Inject
+import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.function.Tuple2
@@ -50,6 +55,9 @@ class OpenTelemetryHttpSpec extends Specification {
     @AutoCleanup
     ReactorHttpClient reactorHttpClient
 
+    @AutoCleanup
+    HttpClient httpClient
+
     private PollingConditions conditions = new PollingConditions()
 
     @AutoCleanup
@@ -74,6 +82,7 @@ class OpenTelemetryHttpSpec extends Specification {
 
         embeddedServer = context.getBean(EmbeddedServer).start()
         reactorHttpClient = ReactorHttpClient.create(embeddedServer.URL)
+        httpClient = HttpClient.create(embeddedServer.URL)
         exporter = context.getBean(InMemorySpanExporter)
     }
 
@@ -301,6 +310,27 @@ class OpenTelemetryHttpSpec extends Specification {
         testExporter.reset()
     }
 
+    void 'test continue nested HTTP tracing - reactive'() {
+
+        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
+
+        when:
+        HttpResponse<String> response = httpClient.toBlocking().exchange('/propagate/nestedReactive/John', String)
+
+        then:
+        response.body() == 'John'
+
+        and: 'all spans are finished'
+        conditions.eventually {
+            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("foo")) == "bar")
+            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("foo2")) == "bar2")
+
+        }
+
+        cleanup:
+        testExporter.reset()
+    }
+
     @Introspected
     static class SomeBody {
     }
@@ -366,6 +396,14 @@ class OpenTelemetryHttpSpec extends Specification {
     @Controller('/propagate')
     static class ContextPropagateController {
 
+        @Inject
+        PropagateClient propagateClient
+
+        @Get('/hello/{name}')
+        String hello(String name) {
+            return name
+        }
+
         @Get("/context")
         Mono<String> context() {
 
@@ -375,6 +413,27 @@ class OpenTelemetryHttpSpec extends Specification {
                 return Mono.just("contains ${ServerRequestContext.KEY}: $hasKey, size: $size")
             }) as Mono<String>
         }
+
+        @Get('/nestedReactive/{name}')
+        @SingleResult
+        Publisher<String> nestedReactive(String name) {
+            def current = Span.current()
+            current.setAttribute('foo', 'bar')
+            Flux.from(propagateClient.continuedRx(name))
+                    .flatMap({ String res ->
+                        def currentInnerSpan = Span.current()
+                        currentInnerSpan.setAttribute('foo2', 'bar2')
+                        return Mono.just(name)
+                    })
+        }
+    }
+
+    @Client('/propagate')
+    static interface PropagateClient {
+
+        @Get('/hello/{name}')
+        @SingleResult
+        Publisher<String> continuedRx(String name)
     }
 
     @Controller('/error')

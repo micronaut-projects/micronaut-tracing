@@ -90,9 +90,8 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
             .propagate()) {
 
             return Mono.from(ReactivePropagation.propagate(PropagatedContext.get(), chain.proceed(request))).doOnNext(mutableHttpResponse -> {
-                mutableHttpResponse.getAttribute(HttpAttributes.EXCEPTION, Exception.class).ifPresentOrElse(e -> {
-                    onError(request, context, e);
-                }, () -> {
+                mutableHttpResponse.getAttribute(HttpAttributes.EXCEPTION, Exception.class).ifPresentOrElse(
+                    e -> onError(request, context, e), () -> {
                     if (mutableHttpResponse.status().getCode() >= 400) {
                         onError(request, context, null);
                     } else {

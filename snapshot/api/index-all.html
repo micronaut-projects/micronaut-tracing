@@ -230,14 +230,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentracing/interceptor/AbstractTraceInterceptor.html#conversionService" class="member-name-link">conversionService</a> - Variable in class io.micronaut.tracing.opentracing.interceptor.<a href="io/micronaut/tracing/opentracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.opentracing.interceptor">AbstractTraceInterceptor</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisherUtils.html#createOpenTelemetryPublisher(org.reactivestreams.Publisher,io.opentelemetry.instrumentation.api.instrumenter.Instrumenter,io.opentelemetry.context.Context,R)" class="member-name-link">createOpenTelemetryPublisher(Publisher&lt;T&gt;, Instrumenter&lt;R, Object&gt;, Context, R)</a> - Static method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisherUtils.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisherUtils</a></dt>
-<dd>
-<div class="block">Creates a new tracing publisher for the given arguments.</div>
-</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisherUtils.html#createOpenTelemetryPublisher(org.reactivestreams.Publisher,io.opentelemetry.instrumentation.api.instrumenter.Instrumenter,io.opentelemetry.context.Context,R,io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryObserver)" class="member-name-link">createOpenTelemetryPublisher(Publisher&lt;T&gt;, Instrumenter&lt;R, Object&gt;, Context, R, OpenTelemetryObserver&lt;T&gt;)</a> - Static method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisherUtils.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisherUtils</a></dt>
-<dd>
-<div class="block">Creates a new tracing publisher for the given arguments.</div>
-</dd>
 <dt><a href="io/micronaut/tracing/opentracing/instrument/http/TraceRequestAttributes.html#CURRENT_SCOPE" class="member-name-link">CURRENT_SCOPE</a> - Enum constant in enum class io.micronaut.tracing.opentracing.instrument.http.<a href="io/micronaut/tracing/opentracing/instrument/http/TraceRequestAttributes.html" title="enum class in io.micronaut.tracing.opentracing.instrument.http">TraceRequestAttributes</a></dt>
 <dd>
 <div class="block">The attribute used to store the current scope.</div>
@@ -311,28 +303,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentracing/instrument/http/OpenTracingClientFilter.html#doFilter(io.micronaut.http.MutableHttpRequest,io.micronaut.http.filter.ClientFilterChain)" class="member-name-link">doFilter(MutableHttpRequest&lt;?&gt;, ClientFilterChain)</a> - Method in class io.micronaut.tracing.opentracing.instrument.http.<a href="io/micronaut/tracing/opentracing/instrument/http/OpenTracingClientFilter.html" title="class in io.micronaut.tracing.opentracing.instrument.http">OpenTracingClientFilter</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html#doOnError(java.lang.Throwable,io.opentelemetry.context.Context)" class="member-name-link">doOnError(Throwable, Context)</a> - Method in interface io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryObserver</a></dt>
-<dd>
-<div class="block">For subclasses to override and implement custom on-error behaviour.</div>
-</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html#doOnFinish(io.opentelemetry.context.Context)" class="member-name-link">doOnFinish(Context)</a> - Method in interface io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryObserver</a></dt>
-<dd>
-<div class="block">For subclasses to override and implement custom on-finish behaviour.</div>
-</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html#doOnNext(T,io.opentelemetry.context.Context)" class="member-name-link">doOnNext(T, Context)</a> - Method in interface io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryObserver</a></dt>
-<dd>
-<div class="block">For subclasses to override and implement custom behaviour when an item is emitted.</div>
-</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html#doOnSubscribe(io.opentelemetry.context.Context)" class="member-name-link">doOnSubscribe(Context)</a> - Method in interface io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryObserver</a></dt>
-<dd>
-<div class="block">For subclasses to override and implement custom on-subscribe behaviour.</div>
-</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html#doSubscribe(org.reactivestreams.Subscriber,io.opentelemetry.context.Context)" class="member-name-link">doSubscribe(Subscriber&lt;? super T&gt;, Context)</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryCorePublisher</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html#doSubscribe(org.reactivestreams.Subscriber,io.opentelemetry.context.Context)" class="member-name-link">doSubscribe(Subscriber&lt;? super T&gt;, Context)</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher</a></dt>
-<dd>
-<div class="block">Do subscribe to the publisher.</div>
-</dd>
 </dl>
 <h2 class="title" id="I:E">E</h2>
 <dl class="index">
@@ -636,10 +606,6 @@ loadScripts(document, 'script');</script>
 <dl class="index">
 <dt><a href="io/micronaut/tracing/opentracing/instrument/http/TraceRequestAttributes.html#length()" class="member-name-link">length()</a> - Method in enum class io.micronaut.tracing.opentracing.instrument.http.<a href="io/micronaut/tracing/opentracing/instrument/http/TraceRequestAttributes.html" title="enum class in io.micronaut.tracing.opentracing.instrument.http">TraceRequestAttributes</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisherUtils.html#logError(io.opentelemetry.context.Context,java.lang.Throwable)" class="member-name-link">logError(Context, Throwable)</a> - Static method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisherUtils.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisherUtils</a></dt>
-<dd>
-<div class="block">Logs an error to the span.</div>
-</dd>
 <dt><a href="io/micronaut/tracing/opentracing/interceptor/AbstractTraceInterceptor.html#logError(io.opentracing.Span,java.lang.Throwable)" class="member-name-link">logError(Span, Throwable)</a> - Static method in class io.micronaut.tracing.opentracing.interceptor.<a href="io/micronaut/tracing/opentracing/interceptor/AbstractTraceInterceptor.html" title="class in io.micronaut.tracing.opentracing.interceptor">AbstractTraceInterceptor</a></dt>
 <dd>
 <div class="block">Logs an error to the span.</div>
@@ -690,6 +656,8 @@ loadScripts(document, 'script');</script>
 <dl class="index">
 <dt><a href="io/micronaut/tracing/opentracing/util/OpenTracingInvocationInstrumenter.html#newInvocationInstrumenter()" class="member-name-link">newInvocationInstrumenter()</a> - Method in class io.micronaut.tracing.opentracing.util.<a href="io/micronaut/tracing/opentracing/util/OpenTracingInvocationInstrumenter.html" title="class in io.micronaut.tracing.opentracing.util">OpenTracingInvocationInstrumenter</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryInvocationInstrumenter.html#newReactiveInvocationInstrumenter()" class="member-name-link">newReactiveInvocationInstrumenter()</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryInvocationInstrumenter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryInvocationInstrumenter</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentracing/util/OpenTracingInvocationInstrumenter.html#newReactiveInvocationInstrumenter()" class="member-name-link">newReactiveInvocationInstrumenter()</a> - Method in class io.micronaut.tracing.opentracing.util.<a href="io/micronaut/tracing/opentracing/util/OpenTracingInvocationInstrumenter.html" title="class in io.micronaut.tracing.opentracing.util">OpenTracingInvocationInstrumenter</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentracing/instrument/http/AbstractOpenTracingFilter.html#newSpan(io.micronaut.http.HttpRequest,io.opentracing.SpanContext)" class="member-name-link">newSpan(HttpRequest&lt;?&gt;, SpanContext)</a> - Method in class io.micronaut.tracing.opentracing.instrument.http.<a href="io/micronaut/tracing/opentracing/instrument/http/AbstractOpenTracingFilter.html" title="class in io.micronaut.tracing.opentracing.instrument.http">AbstractOpenTracingFilter</a></dt>
@@ -718,21 +686,17 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Initialize the interceptor with tracer and conversion service.</div>
 </dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryInvocationInstrumenter.html#newTracingInvocationInstrumenter()" class="member-name-link">newTracingInvocationInstrumenter()</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryInvocationInstrumenter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryInvocationInstrumenter</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentracing/util/OpenTracingInvocationInstrumenter.html#newTracingInvocationInstrumenter()" class="member-name-link">newTracingInvocationInstrumenter()</a> - Method in class io.micronaut.tracing.opentracing.util.<a href="io/micronaut/tracing/opentracing/util/OpenTracingInvocationInstrumenter.html" title="class in io.micronaut.tracing.opentracing.util">OpenTracingInvocationInstrumenter</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentracing/util/TracingInvocationInstrumenterFactory.html#newTracingInvocationInstrumenter()" class="member-name-link">newTracingInvocationInstrumenter()</a> - Method in interface io.micronaut.tracing.opentracing.util.<a href="io/micronaut/tracing/opentracing/util/TracingInvocationInstrumenterFactory.html" title="interface in io.micronaut.tracing.opentracing.util">TracingInvocationInstrumenterFactory</a></dt>
 <dd>
 <div class="block">An optional instrumentation.</div>
 </dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html#NO_OP" class="member-name-link">NO_OP</a> - Static variable in interface io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryObserver</a></dt>
-<dd>
-<div class="block">No op observer.</div>
-</dd>
 </dl>
 <h2 class="title" id="I:O">O</h2>
 <dl class="index">
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html#onComplete()" class="member-name-link">onComplete()</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher.TracingSubscriber</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpenTelemetryKafkaConsumerTracingInstrumentation.html#onCreated(io.micronaut.context.event.BeanCreatedEvent)" class="member-name-link">onCreated(BeanCreatedEvent&lt;Consumer&lt;?, ?&gt;&gt;)</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpenTelemetryKafkaConsumerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">OpenTelemetryKafkaConsumerTracingInstrumentation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpenTelemetryKafkaProducerTracingInstrumentation.html#onCreated(io.micronaut.context.event.BeanCreatedEvent)" class="member-name-link">onCreated(BeanCreatedEvent&lt;Producer&lt;?, ?&gt;&gt;)</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpenTelemetryKafkaProducerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">OpenTelemetryKafkaProducerTracingInstrumentation</a></dt>
@@ -741,12 +705,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Add an OpenTelemetry execution interceptor to <code>SdkClientBuilder</code>.</div>
 </dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html#onError(java.lang.Throwable)" class="member-name-link">onError(Throwable)</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher.TracingSubscriber</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html#onNext(T)" class="member-name-link">onNext(T)</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher.TracingSubscriber</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html#onSubscribe(org.reactivestreams.Subscription)" class="member-name-link">onSubscribe(Subscription)</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher.TracingSubscriber</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/OpenTelemetryClientFilter.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client">OpenTelemetryClientFilter</a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/http/client/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.http.client</a></dt>
 <dd>
 <div class="block">An HTTP client instrumentation filter that uses Open Telemetry.</div>
@@ -765,12 +723,6 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html#%3Cinit%3E()" class="member-name-link">OpenTelemetryConfigurationProperties()</a> - Constructor for class io.micronaut.tracing.opentelemetry.conf.<a href="io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html" title="class in io.micronaut.tracing.opentelemetry.conf">OpenTelemetryConfigurationProperties</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryCorePublisher</a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="type parameter in OpenTelemetryCorePublisher">T</a>,<wbr><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="type parameter in OpenTelemetryCorePublisher">R</a>&gt; - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a></dt>
-<dd>
-<div class="block">A reactor publisher that traces.</div>
-</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html#%3Cinit%3E(org.reactivestreams.Publisher,io.opentelemetry.instrumentation.api.instrumenter.Instrumenter,io.opentelemetry.context.Context,R,io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryObserver)" class="member-name-link">OpenTelemetryCorePublisher(Publisher&lt;T&gt;, Instrumenter&lt;R, Object&gt;, Context, R, OpenTelemetryObserver&lt;T&gt;)</a> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryCorePublisher</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryExclusionsConfiguration</a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html#%3Cinit%3E()" class="member-name-link">OpenTelemetryExclusionsConfiguration()</a> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryExclusionsConfiguration</a></dt>
@@ -786,6 +738,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Stores http Open Telemetry Http server configuration.</div>
 </dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryHttpServerConfig.html#%3Cinit%3E()" class="member-name-link">OpenTelemetryHttpServerConfig()</a> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.http.server.<a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryHttpServerConfig.html" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">OpenTelemetryHttpServerConfig</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryInvocationInstrumenter.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryInvocationInstrumenter</a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a></dt>
+<dd>
+<div class="block">Tracing invocation instrumenter for OpenTelemetry.</div>
+</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryInvocationInstrumenter.html#%3Cinit%3E()" class="member-name-link">OpenTelemetryInvocationInstrumenter()</a> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryInvocationInstrumenter.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryInvocationInstrumenter</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpenTelemetryKafkaConsumerTracingInstrumentation.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">OpenTelemetryKafkaConsumerTracingInstrumentation</a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/kafka/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.kafka</a></dt>
 <dd>
@@ -803,10 +761,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Default constructor.</div>
 </dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html" class="type-name-link" title="interface in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryObserver</a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryObserver.html" title="type parameter in OpenTelemetryObserver">T</a>&gt; - Interface in <a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a></dt>
-<dd>
-<div class="block">OpenTelemetry observer.</div>
-</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/OpenTelemetryPropagationContext.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry">OpenTelemetryPropagationContext</a> - Record Class in <a href="io/micronaut/tracing/opentelemetry/package-summary.html">io.micronaut.tracing.opentelemetry</a></dt>
 <dd>
 <div class="block">Open telemetry propagated context.</div>
@@ -814,20 +768,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/micronaut/tracing/opentelemetry/OpenTelemetryPropagationContext.html#%3Cinit%3E(io.opentelemetry.context.Context)" class="member-name-link">OpenTelemetryPropagationContext(Context)</a> - Constructor for record class io.micronaut.tracing.opentelemetry.<a href="io/micronaut/tracing/opentelemetry/OpenTelemetryPropagationContext.html" title="class in io.micronaut.tracing.opentelemetry">OpenTelemetryPropagationContext</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>OpenTelemetryPropagationContext</code> record class.</div>
-</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher</a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="type parameter in OpenTelemetryPublisher">T</a>,<wbr><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="type parameter in OpenTelemetryPublisher">R</a>&gt; - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a></dt>
-<dd>
-<div class="block">A reactive streams publisher that traces.</div>
-</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html#%3Cinit%3E(org.reactivestreams.Publisher,io.opentelemetry.instrumentation.api.instrumenter.Instrumenter,io.opentelemetry.context.Context,R,io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryObserver)" class="member-name-link">OpenTelemetryPublisher(Publisher&lt;T&gt;, Instrumenter&lt;R, Object&gt;, Context, R, OpenTelemetryObserver&lt;T&gt;)</a> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher.TracingSubscriber</a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a></dt>
-<dd>
-<div class="block">The tracing subscriber.</div>
-</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisherUtils.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisherUtils</a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/util/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.util</a></dt>
-<dd>
-<div class="block">The tracing observer.</div>
 </dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryServerFilter.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">OpenTelemetryServerFilter</a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/http/server/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.http.server</a></dt>
 <dd>
@@ -897,8 +837,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html#PREFIX" class="member-name-link">PREFIX</a> - Static variable in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryExclusionsConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentracing/instrument/http/TracingExclusionsConfiguration.html#PREFIX" class="member-name-link">PREFIX</a> - Static variable in class io.micronaut.tracing.opentracing.instrument.http.<a href="io/micronaut/tracing/opentracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentracing.instrument.http">TracingExclusionsConfiguration</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html#publisher" class="member-name-link">publisher</a> - Variable in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:R">R</h2>
@@ -1092,10 +1030,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Applied to parameters of a method to indicate which parameters should be included in span tags.</div>
 </dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html#subscribe(org.reactivestreams.Subscriber)" class="member-name-link">subscribe(Subscriber&lt;? super T&gt;)</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html#subscribe(reactor.core.CoreSubscriber)" class="member-name-link">subscribe(CoreSubscriber&lt;? super T&gt;)</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryCorePublisher.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryCorePublisher</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentracing/instrument/http/TraceRequestAttributes.html#subSequence(int,int)" class="member-name-link">subSequence(int, int)</a> - Method in enum class io.micronaut.tracing.opentracing.instrument.http.<a href="io/micronaut/tracing/opentracing/instrument/http/TraceRequestAttributes.html" title="enum class in io.micronaut.tracing.opentracing.instrument.http">TraceRequestAttributes</a></dt>
 <dd>&nbsp;</dd>
 </dl>
@@ -1155,8 +1089,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A factory interface for tracing invocation instrumentation.</div>
 </dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html#%3Cinit%3E(org.reactivestreams.Subscriber,io.opentelemetry.context.Context)" class="member-name-link">TracingSubscriber(Subscriber&lt;? super T&gt;, Context)</a> - Constructor for class io.micronaut.tracing.opentelemetry.instrument.util.<a href="io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryPublisher.TracingSubscriber.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryPublisher.TracingSubscriber</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/processing/WithSpanAnnotationTransformer.html#transform(io.micronaut.core.annotation.AnnotationValue,io.micronaut.inject.visitor.VisitorContext)" class="member-name-link">transform(AnnotationValue&lt;WithSpan&gt;, VisitorContext)</a> - Method in class io.micronaut.tracing.opentelemetry.processing.<a href="io/micronaut/tracing/opentelemetry/processing/WithSpanAnnotationTransformer.html" title="class in io.micronaut.tracing.opentelemetry.processing">WithSpanAnnotationTransformer</a></dt>
 <dd>&nbsp;</dd>
 </dl>

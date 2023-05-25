@@ -5,7 +5,6 @@ micronaut-platform = "4.0.0-M2"
 micronaut-docs = '2.0.0'
 groovy = '4.0.6'
 spock = '2.3-groovy-4.0'
-shadow = '7.1.2'
 
 managed-brave-instrumentation = '5.16.0'
 managed-opentelemetry = '1.26.0'
@@ -98,11 +97,8 @@ boms-opentelemetry-instrumentation-alpha = { module = 'io.opentelemetry.instrume
 boms-brave = { module = 'io.zipkin.brave:brave-bom', version.ref = 'managed-brave-instrumentation' }
 boms-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter-bom', version.ref = 'managed-zipkin-reporter' }
 
-
 #plugins
-shadow-plugin = { module = "gradle.plugin.com.github.johnrengelman:shadow", version.ref = "shadow" }
 micronaut-gradle-plugin = { module = "io.micronaut.gradle:micronaut-gradle-plugin", version.ref="micronaut-gradle-plugin" }
-
 
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }

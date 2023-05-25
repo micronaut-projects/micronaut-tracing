@@ -22,6 +22,7 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.propagation.ReactivePropagation;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.util.StringUtils;
@@ -102,7 +103,7 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
             switch (interceptedMethod.resultType()) {
                 case PUBLISHER -> {
                     return interceptedMethod.handleResult(
-                        Flux.from(interceptedMethod.interceptResultAsPublisher())
+                        Flux.from(ReactivePropagation.propagate(PropagatedContext.get(), interceptedMethod.interceptResultAsPublisher()))
                             .doOnNext(value -> instrumenter.end(newContext, classAndMethod, value, null))
                             .doOnComplete(() -> instrumenter.end(newContext, classAndMethod, null, null))
                             .doOnError(throwable -> instrumenter.end(newContext, classAndMethod, null, throwable))

@@ -18,6 +18,7 @@ package io.micronaut.tracing.opentelemetry.instrument.http.server;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.propagation.ReactivePropagation;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
@@ -88,7 +89,7 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
             .plus(new OpenTelemetryPropagationContext(context))
             .propagate()) {
 
-            return Mono.from(chain.proceed(request)).doOnNext(mutableHttpResponse -> {
+            return Mono.from(ReactivePropagation.propagate(PropagatedContext.get(), chain.proceed(request))).doOnNext(mutableHttpResponse -> {
                 mutableHttpResponse.getAttribute(HttpAttributes.EXCEPTION, Exception.class).ifPresentOrElse(e -> {
                     onError(request, context, e);
                 }, () -> {

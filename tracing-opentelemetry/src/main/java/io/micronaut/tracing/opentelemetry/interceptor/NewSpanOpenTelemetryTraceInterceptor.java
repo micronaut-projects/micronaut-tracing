@@ -28,7 +28,6 @@ import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
-import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryPublisherUtils;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
@@ -114,7 +113,6 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
                     if (completionStage != null) {
                         completionStage = completionStage.whenComplete((o, throwable) -> {
                             if (throwable != null) {
-                                OpenTelemetryPublisherUtils.logError(newContext, throwable);
                                 instrumenter.end(newContext, classAndMethod, null, throwable);
                             } else {
                                 instrumenter.end(newContext, classAndMethod, o, null);

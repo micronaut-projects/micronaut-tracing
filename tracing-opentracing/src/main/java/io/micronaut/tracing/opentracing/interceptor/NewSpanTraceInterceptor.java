@@ -21,6 +21,7 @@ import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.async.propagation.ReactivePropagation;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.tracing.annotation.NewSpan;
@@ -85,7 +86,7 @@ public final class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
                 switch (interceptedMethod.resultType()) {
                     case PUBLISHER -> {
                         return interceptedMethod.handleResult(
-                            Mono.from(interceptedMethod.interceptResultAsPublisher())
+                            Mono.from(ReactivePropagation.propagate(PropagatedContext.get(), interceptedMethod.interceptResultAsPublisher()))
                                 .doOnError(throwable -> logError(span, throwable))
                                 .doOnTerminate(span::finish)
                         );

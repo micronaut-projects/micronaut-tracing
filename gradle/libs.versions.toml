@@ -1,6 +1,7 @@
 [versions]
 micronaut = '4.0.0-M5'
 micronaut-test = '4.0.0-M4'
+micronaut-platform = "4.0.0-M2"
 micronaut-docs = '2.0.0'
 groovy = '4.0.6'
 spock = '2.3-groovy-4.0'
@@ -36,6 +37,8 @@ micronaut-reactor = '3.0.0-M2'
 micronaut-rxjava2 = '2.0.0-M1'
 micronaut-serde = '2.0.0-M8'
 micronaut-kafka = '5.0.0-M3'
+micronaut-gradle-plugin = "4.0.0-M3"
+
 
 [libraries]
 # Core
@@ -96,6 +99,9 @@ boms-opentelemetry-instrumentation = { module = 'io.opentelemetry.instrumentatio
 boms-opentelemetry-instrumentation-alpha = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha', version.ref = 'managed-opentelemetry-instrumentation-alpha' }
 boms-brave = { module = 'io.zipkin.brave:brave-bom', version.ref = 'managed-brave-instrumentation' }
 boms-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter-bom', version.ref = 'managed-zipkin-reporter' }
+
+#plugins
+micronaut-gradle-plugin = { module = "io.micronaut.gradle:micronaut-gradle-plugin", version.ref="micronaut-gradle-plugin" }
 
 [plugins]
 kotlinjvm = { id = 'org.jetbrains.kotlin.jvm', version.ref = 'kotlin' }

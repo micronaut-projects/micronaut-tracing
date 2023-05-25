@@ -22,12 +22,12 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.propagation.ReactivePropagation;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
-import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryPublisherUtils;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
@@ -102,7 +102,7 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
             switch (interceptedMethod.resultType()) {
                 case PUBLISHER -> {
                     return interceptedMethod.handleResult(
-                        Flux.from(interceptedMethod.interceptResultAsPublisher())
+                        Flux.from(ReactivePropagation.propagate(PropagatedContext.get(), interceptedMethod.interceptResultAsPublisher()))
                             .doOnNext(value -> instrumenter.end(newContext, classAndMethod, value, null))
                             .doOnComplete(() -> instrumenter.end(newContext, classAndMethod, null, null))
                             .doOnError(throwable -> instrumenter.end(newContext, classAndMethod, null, throwable))
@@ -113,7 +113,6 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
                     if (completionStage != null) {
                         completionStage = completionStage.whenComplete((o, throwable) -> {
                             if (throwable != null) {
-                                OpenTelemetryPublisherUtils.logError(newContext, throwable);
                                 instrumenter.end(newContext, classAndMethod, null, throwable);
                             } else {
                                 instrumenter.end(newContext, classAndMethod, o, null);

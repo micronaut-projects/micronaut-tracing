@@ -24,6 +24,7 @@ import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.propagation.ReactivePropagation;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -93,7 +94,7 @@ public final class BraveTracingServerFilter implements HttpServerFilter {
             .plus(new BravePropagationContext(currentTraceContext, span.context()))
             .propagate()) {
 
-            return Mono.from(chain.proceed(request))
+            return Mono.from(ReactivePropagation.propagate(PropagatedContext.get(), chain.proceed(request)))
                 .doOnNext(response -> {
                     final Optional<Throwable> throwable = response.getAttribute(EXCEPTION, Throwable.class);
                     if (throwable.isPresent()) {

@@ -18,6 +18,7 @@ package io.micronaut.tracing.opentelemetry.instrument.http.client;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.propagation.ReactivePropagation;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
@@ -87,7 +88,7 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
                 .plus(new OpenTelemetryPropagationContext(context))
                 .propagate()) {
 
-                return Mono.from(chain.proceed(request))
+                return Mono.from(ReactivePropagation.propagate(PropagatedContext.get(), chain.proceed(request)))
                     .doOnNext(mutableHttpResponse -> instrumenter.end(context, request, mutableHttpResponse, null))
                     .doOnError(throwable -> {
                         Span span = Span.fromContext(context);

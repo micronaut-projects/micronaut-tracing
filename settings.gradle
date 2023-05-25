@@ -31,6 +31,8 @@ include 'tracing-brave'
 include 'tracing-brave-http'
 
 include 'tests:kotlin-tests'
+include 'tests:test-suite-java'
+
 
 enableFeaturePreview 'TYPESAFE_PROJECT_ACCESSORS'
 

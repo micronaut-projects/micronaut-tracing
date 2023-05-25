@@ -18,6 +18,7 @@ package io.micronaut.tracing.opentracing.instrument.http;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.propagation.ReactivePropagation;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpResponse;
@@ -88,7 +89,7 @@ public final class OpenTracingClientFilter extends AbstractOpenTracingFilter imp
             .plus(new OpenTracingPropagationContext(tracer, span))
             .propagate()) {
 
-            return Mono.from(chain.proceed(request))
+            return Mono.from(ReactivePropagation.propagate(PropagatedContext.get(), chain.proceed(request)))
                 .doOnSubscribe(subscription -> tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders())))
                 .doOnNext(httpResponse -> setResponseTags(request, httpResponse, span))
                 .doOnError(throwable -> {

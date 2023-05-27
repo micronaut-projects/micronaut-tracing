@@ -33,7 +33,7 @@ logback = "1.4.7"
 
 micronaut-aws = "4.0.0-M3"
 micronaut-grpc = '4.0.0-M1'
-micronaut-reactor = '3.0.0-M2'
+micronaut-reactor = '3.0.0-M3'
 micronaut-rxjava2 = '2.0.0-M1'
 micronaut-serde = '2.0.0-M8'
 micronaut-kafka = '5.0.0-M3'

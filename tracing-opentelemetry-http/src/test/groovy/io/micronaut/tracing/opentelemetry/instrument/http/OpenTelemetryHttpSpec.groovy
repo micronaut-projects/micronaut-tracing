@@ -19,6 +19,7 @@ import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
 import io.micronaut.tracing.annotation.SpanTag
+import io.micronaut.tracing.opentelemetry.utils.OpenTelemetryReactorPropagation
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanKind
@@ -139,7 +140,7 @@ class OpenTelemetryHttpSpec extends Specification {
         then:
         conditions.eventually {
             response
-            response.body() == "contains micronaut.http.server.request: true, size: 1"
+            response.body() == "contains micronaut.http.server.request: true"
         }
         cleanup:
         exporter.reset()
@@ -331,6 +332,27 @@ class OpenTelemetryHttpSpec extends Specification {
         testExporter.reset()
     }
 
+    void 'test continue nested HTTP tracing - reactive 2'() {
+
+        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
+
+        when:
+        HttpResponse<String> response = httpClient.toBlocking().exchange('/propagate/nestedReactive2/John', String)
+
+        then:
+        response.body() == 'John'
+
+        and: 'all spans are finished'
+        conditions.eventually {
+            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("foo")) == "bar")
+            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("foo3")) == "bar3")
+
+        }
+
+        cleanup:
+        testExporter.reset()
+    }
+
     @Introspected
     static class SomeBody {
     }
@@ -410,21 +432,43 @@ class OpenTelemetryHttpSpec extends Specification {
             return Mono.deferContextual(ctx -> {
                 boolean hasKey = ctx.hasKey(ServerRequestContext.KEY)
                 int size = ctx.size()
-                return Mono.just("contains ${ServerRequestContext.KEY}: $hasKey, size: $size")
+                return Mono.just("contains ${ServerRequestContext.KEY}: $hasKey")
             }) as Mono<String>
         }
 
         @Get('/nestedReactive/{name}')
         @SingleResult
         Publisher<String> nestedReactive(String name) {
+            def methodSpan = Span.current()
+            methodSpan.setAttribute('foo', 'bar')
+            return Flux.deferContextual { contextView ->
+                Flux.from(propagateClient.continuedRx(name))
+                        .flatMap({ String res ->
+                            // Here thread switch can occur,
+                            // that means the thread might be different and Span.current() wouldn't work
+                            methodSpan.setAttribute('foo2', 'bar2')
+                            // NOTE: the span needs to be not closed for this attribute setting to work
+                            return Mono.just(name)
+                        })
+            }
+        }
+
+        @Get('/nestedReactive2/{name}')
+        @SingleResult
+        Publisher<String> nestedReactive2(String name) {
             def current = Span.current()
             current.setAttribute('foo', 'bar')
-            Flux.from(propagateClient.continuedRx(name))
-                    .flatMap({ String res ->
-                        def currentInnerSpan = Span.current()
-                        currentInnerSpan.setAttribute('foo2', 'bar2')
-                        return Mono.just(name)
-                    })
+            return Flux.deferContextual { contextView ->
+                Flux.from(propagateClient.continuedRx(name))
+                        .flatMap({ String res ->
+                            // Here thread switch can occur,
+                            // that means the thread might be different and Span.current() wouldn't work
+                            // We need can retrieve the current span from the Reactor context
+                            def currentInnerSpan = Span.fromContext(OpenTelemetryReactorPropagation.currentContext(contextView))
+                            currentInnerSpan.setAttribute('foo3', 'bar3')
+                            return Mono.just(name)
+                        })
+            }
         }
     }
 
@@ -469,7 +513,7 @@ class OpenTelemetryHttpSpec extends Specification {
 
         @Get("/completionStage")
         @WithSpan
-        CompletionStage<Void> completionStage (){
+        CompletionStage<Void> completionStage(){
             throw new RuntimeException("completionStage")
         }
 

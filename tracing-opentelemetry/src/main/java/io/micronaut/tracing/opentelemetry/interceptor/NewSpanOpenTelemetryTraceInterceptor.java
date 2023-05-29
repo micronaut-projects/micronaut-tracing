@@ -22,7 +22,6 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.async.propagation.ReactivePropagation;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.util.StringUtils;
@@ -73,7 +72,6 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
         if (!isNew) {
             return context.proceed();
         }
-        Context currentContext = Context.current();
         // must be new
         // don't create a nested span if you're not supposed to.
         String operationName = newSpan.stringValue().orElse("");
@@ -87,6 +85,8 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
         }
 
         InterceptedMethod interceptedMethod = InterceptedMethod.of(context, conversionService);
+
+        Context currentContext = Context.current();
         if (!instrumenter.shouldStart(currentContext, classAndMethod)) {
             return context.proceed();
         }
@@ -102,7 +102,7 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
             switch (interceptedMethod.resultType()) {
                 case PUBLISHER -> {
                     return interceptedMethod.handleResult(
-                        Flux.from(ReactivePropagation.propagate(PropagatedContext.get(), interceptedMethod.interceptResultAsPublisher()))
+                        Flux.from(interceptedMethod.interceptResultAsPublisher())
                             .doOnNext(value -> instrumenter.end(newContext, classAndMethod, value, null))
                             .doOnComplete(() -> instrumenter.end(newContext, classAndMethod, null, null))
                             .doOnError(throwable -> instrumenter.end(newContext, classAndMethod, null, throwable))

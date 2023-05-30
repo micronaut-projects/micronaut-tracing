@@ -1,5 +1,5 @@
 [versions]
-micronaut = '4.0.0-SNAPSHOT'
+micronaut = '4.0.0-M6'
 micronaut-test = '4.0.0-M4'
 micronaut-platform = "4.0.0-M2"
 micronaut-docs = '2.0.0'
@@ -29,16 +29,14 @@ kotlin-coroutines = '1.7.1'
 grpc = '1.55.1'
 protobuf = '3.23.2'
 testcontainers = '1.18.1'
-logback = "1.4.7"
 
 micronaut-aws = "4.0.0-M3"
 micronaut-grpc = '4.0.0-M1'
-micronaut-reactor = '3.0.0-M3'
-micronaut-rxjava2 = '2.0.0-M1'
+micronaut-reactor = '3.0.0-M4'
+micronaut-rxjava2 = '2.0.0-M3'
 micronaut-serde = '2.0.0-M8'
 micronaut-kafka = '5.0.0-M3'
 micronaut-gradle-plugin = "4.0.0-M4"
-
 
 [libraries]
 # Core

@@ -24,7 +24,6 @@ import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.async.propagation.ReactivePropagation;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
@@ -99,7 +98,7 @@ public final class BraveTracingClientFilter implements HttpClientFilter {
             .plus(new BravePropagationContext(currentTraceContext, span.context()))
             .propagate()) {
 
-            return Mono.from(ReactivePropagation.propagate(PropagatedContext.get(), chain.proceed(request)))
+            return Mono.from(chain.proceed(request))
                 .doOnNext(response -> clientHandler.handleReceive(mapResponse(request, response, null), span))
                 .doOnError(throwable -> {
                     if (throwable instanceof HttpClientResponseException e) {

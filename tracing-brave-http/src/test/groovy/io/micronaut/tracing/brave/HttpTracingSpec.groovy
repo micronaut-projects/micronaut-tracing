@@ -259,7 +259,7 @@ class HttpTracingSpec extends Specification {
 
         then:
         response
-        response.body() == "contains micronaut.http.server.request: true, size: 1"
+        response.body() == "contains micronaut.http.server.request: true"
     }
 
     void 'test nested HTTP error tracing'() {
@@ -324,8 +324,7 @@ class HttpTracingSpec extends Specification {
 
             return Mono.deferContextual(ctx -> {
                 boolean hasKey = ctx.hasKey(ServerRequestContext.KEY)
-                int size = ctx.size()
-                return Mono.just("contains ${ServerRequestContext.KEY}: $hasKey, size: $size")
+                return Mono.just("contains ${ServerRequestContext.KEY}: $hasKey")
             }) as Mono<String>
         }
     }

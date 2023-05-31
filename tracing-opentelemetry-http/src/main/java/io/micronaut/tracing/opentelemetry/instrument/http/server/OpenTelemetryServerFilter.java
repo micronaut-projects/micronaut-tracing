@@ -18,7 +18,7 @@ package io.micronaut.tracing.opentelemetry.instrument.http.server;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.async.propagation.ReactivePropagation;
+import io.micronaut.core.async.propagation.ReactorPropagation;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
@@ -89,17 +89,19 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
             .plus(new OpenTelemetryPropagationContext(context))
             .propagate()) {
 
-            return Mono.from(ReactivePropagation.propagate(PropagatedContext.get(), chain.proceed(request))).doOnNext(mutableHttpResponse -> {
-                mutableHttpResponse.getAttribute(HttpAttributes.EXCEPTION, Exception.class).ifPresentOrElse(
-                    e -> onError(request, context, e), () -> {
-                    if (mutableHttpResponse.status().getCode() >= 400) {
-                        onError(request, context, null);
-                    } else {
-                        instrumenter.end(context, request, mutableHttpResponse, null);
-                    }
-                });
-            }).doOnError(throwable -> onError(request, context, throwable));
-
+            PropagatedContext propagatedContext = PropagatedContext.get();
+            return Mono.from(chain.proceed(request))
+                .doOnNext(mutableHttpResponse -> mutableHttpResponse.getAttribute(HttpAttributes.EXCEPTION, Exception.class)
+                    .ifPresentOrElse(
+                        e -> onError(request, context, e), () -> {
+                            if (mutableHttpResponse.status().getCode() >= 400) {
+                                onError(request, context, null);
+                            } else {
+                                instrumenter.end(context, request, mutableHttpResponse, null);
+                            }
+                        }))
+                .doOnError(throwable -> onError(request, context, throwable))
+                .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext));
         }
     }
 

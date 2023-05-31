@@ -750,14 +750,32 @@
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.kafka.headers-as-lists</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">If you want to set headers as lists, set "true".</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Getter for headersAsLists flag.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.kafka.captured-headers</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.util.Set</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">List of headers, which you want to add as span attributes. By default, all headers
- will be added as span attributes. If you don&#8217;t want to set any headers as attributes,
- just set it to <code>null</code> or an empty string.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Getter for captured headers set.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.kafka.included-topics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.Set</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Getter for includedTopics.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.kafka.excluded-topics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.Set</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Getter for excludedTopics.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.kafka.attribute-with-prefix</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Getter for captured headers set.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.kafka.attribute-prefix</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Getter for attributePrefix.</p></td>
 </tr>
 </tbody>
 </table>

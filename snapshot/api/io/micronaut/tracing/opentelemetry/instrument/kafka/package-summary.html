@@ -15,7 +15,11 @@
 <script type="text/javascript" src="../../../../../../script-dir/jquery-ui.min.js"></script>
 </head>
 <body class="package-declaration-page">
-<script type="text/javascript">var pathtoroot = "../../../../../../";
+<script type="text/javascript">var evenRowColor = "even-row-color";
+var oddRowColor = "odd-row-color";
+var tableTab = "table-tab";
+var activeTableTab = "active-table-tab";
+var pathtoroot = "../../../../../../";
 loadScripts(document, 'script');</script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
@@ -72,25 +76,59 @@ loadScripts(document, 'script');</script>
 <ul class="summary-list">
 <li>
 <div id="class-summary">
-<div class="caption"><span>Classes</span></div>
-<div class="summary-table two-column-summary">
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab1" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab1', 2)" class="table-tab">Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button></div>
+<div id="class-summary.tabpanel" role="tabpanel">
+<div class="summary-table two-column-summary" aria-labelledby="class-summary-tab0">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="KafkaTelemetryConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConfiguration</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="KafkaAttributesExtractorUtils.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaAttributesExtractorUtils</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Utility class to help get kafka headers and put them as span attributes.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="KafkaTelemetry.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetry</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">The main class with opentelemetry-kafka logic.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="KafkaTelemetryBuilder.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryBuilder</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Builder class for KafkaTelemetry object.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="KafkaTelemetryConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConfiguration</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Configuration properties for KafkaTelemetry.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="KafkaTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryFactory</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="KafkaTelemetryConsumerTracingFilter.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConsumerTracingFilter</a>&lt;K,<wbr>V&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="block">Interface to filter consumer messages for tracing.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="KafkaTelemetryConsumerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConsumerTracingInstrumentation</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Kafka consumer tracing instrumentation using OpenTelemetry.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="KafkaTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryFactory</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Opentelemetery Kafka tracing factory.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="OpenTelemetryKafkaConsumerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">OpenTelemetryKafkaConsumerTracingInstrumentation</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Kafka consumer tracing instrumentation using OpenTelemetry.</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="KafkaTelemetryHelper.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryHelper</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Helper-class to access to kafkaTelemetry object from non-micronaut components.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="OpenTelemetryKafkaProducerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">OpenTelemetryKafkaProducerTracingInstrumentation</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="KafkaTelemetryProducerTracingFilter.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryProducerTracingFilter</a>&lt;K,<wbr>V&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="block">Interface to filter producer messages for tracing.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="KafkaTelemetryProducerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryProducerTracingInstrumentation</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Kafka consumer tracing instrumentation using OpenTelemetry.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="TracingConsumerInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">TracingConsumerInterceptor</a>&lt;K,<wbr>V&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Default tracing consumer kafka interceptor.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="TracingProducerInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">TracingProducerInterceptor</a>&lt;K,<wbr>V&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Default tracing producer kafka interceptor.</div>
+</div>
 </div>
 </div>
 </div>

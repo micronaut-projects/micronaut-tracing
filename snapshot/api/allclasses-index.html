@@ -183,13 +183,45 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Registers a Jaeger tracer based on the Jaeger configuration.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConfiguration</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaAttributesExtractorUtils.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaAttributesExtractorUtils</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Utility class to help get kafka headers and put them as span attributes.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetry.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetry</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">The main class with opentelemetry-kafka logic.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryBuilder.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryBuilder</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Builder class for KafkaTelemetry object.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConfiguration</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Configuration properties for KafkaTelemetry.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryFactory</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConsumerTracingFilter.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConsumerTracingFilter</a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConsumerTracingFilter.html" title="type parameter in KafkaTelemetryConsumerTracingFilter">K</a>,<wbr><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConsumerTracingFilter.html" title="type parameter in KafkaTelemetryConsumerTracingFilter">V</a>&gt;</div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Interface to filter consumer messages for tracing.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryConsumerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryConsumerTracingInstrumentation</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Kafka consumer tracing instrumentation using OpenTelemetry.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryFactory</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Opentelemetery Kafka tracing factory.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryHelper.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryHelper</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Helper-class to access to kafkaTelemetry object from non-micronaut components.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryProducerTracingFilter.html" title="interface in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryProducerTracingFilter</a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryProducerTracingFilter.html" title="type parameter in KafkaTelemetryProducerTracingFilter">K</a>,<wbr><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryProducerTracingFilter.html" title="type parameter in KafkaTelemetryProducerTracingFilter">V</a>&gt;</div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Interface to filter producer messages for tracing.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/KafkaTelemetryProducerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">KafkaTelemetryProducerTracingInstrumentation</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Kafka consumer tracing instrumentation using OpenTelemetry.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/util/MicronautCodeTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">MicronautCodeTelemetryFactory</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
@@ -247,14 +279,6 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Stores http Open Telemetry Http server configuration.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpenTelemetryKafkaConsumerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">OpenTelemetryKafkaConsumerTracingInstrumentation</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Kafka consumer tracing instrumentation using OpenTelemetry.</div>
-</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/OpenTelemetryKafkaProducerTracingInstrumentation.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">OpenTelemetryKafkaProducerTracingInstrumentation</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Kafka consumer tracing instrumentation using OpenTelemetry.</div>
-</div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="io/micronaut/tracing/opentelemetry/OpenTelemetryPropagationContext.html" title="class in io.micronaut.tracing.opentelemetry">OpenTelemetryPropagationContext</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab4">
 <div class="block">Open telemetry propagated context.</div>
@@ -307,11 +331,19 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab3">
 <div class="block">Constants used to store <code>Span</code>s in instrumented request attributes.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentracing.instrument.http">TracingExclusionsConfiguration</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/tracing/opentracing/util/TracingInvocationInstrumenterFactory.html" title="interface in io.micronaut.tracing.opentracing.util">TracingInvocationInstrumenterFactory</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/TracingConsumerInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">TracingConsumerInterceptor</a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/TracingConsumerInterceptor.html" title="type parameter in TracingConsumerInterceptor">K</a>,<wbr><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/TracingConsumerInterceptor.html" title="type parameter in TracingConsumerInterceptor">V</a>&gt;</div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Default tracing consumer kafka interceptor.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentracing/instrument/http/TracingExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentracing.instrument.http">TracingExclusionsConfiguration</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/tracing/opentracing/util/TracingInvocationInstrumenterFactory.html" title="interface in io.micronaut.tracing.opentracing.util">TracingInvocationInstrumenterFactory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A factory interface for tracing invocation instrumentation.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/TracingProducerInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">TracingProducerInterceptor</a>&lt;<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/TracingProducerInterceptor.html" title="type parameter in TracingProducerInterceptor">K</a>,<wbr><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/TracingProducerInterceptor.html" title="type parameter in TracingProducerInterceptor">V</a>&gt;</div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Default tracing producer kafka interceptor.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/tracing/opentelemetry/processing/WithSpanAnnotationTransformer.html" title="class in io.micronaut.tracing.opentelemetry.processing">WithSpanAnnotationTransformer</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">

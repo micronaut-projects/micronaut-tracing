@@ -15,6 +15,7 @@ io.micronaut.tracing.opentelemetry.instrument.kafka
 io.micronaut.tracing.opentelemetry.instrument.util
 io.micronaut.tracing.opentelemetry.interceptor
 io.micronaut.tracing.opentelemetry.processing
+io.micronaut.tracing.opentelemetry.utils
 io.micronaut.tracing.opentelemetry.xray
 io.micronaut.tracing.opentracing
 io.micronaut.tracing.opentracing.instrument.http

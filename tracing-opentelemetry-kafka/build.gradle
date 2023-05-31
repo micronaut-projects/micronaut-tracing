@@ -9,7 +9,6 @@ dependencies {
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
     api projects.micronautTracingOpentelemetry
     api libs.opentelemetry.api
-    api libs.opentelemetry.instrumentation.kafka
     api mnKafka.micronaut.kafka
     api libs.opentelemetry.instrumentation.api.semconv
     api libs.opentelemetry.instrumentation.kafka.common
@@ -19,5 +18,4 @@ dependencies {
     testImplementation libs.opentelemetry.sdk.testing
     testImplementation libs.testcontainers.kafka
     testImplementation libs.testcontainers.spock
-
 }

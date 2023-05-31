@@ -40,20 +40,44 @@ public class KafkaTelemetryConfiguration {
      */
     public static final String ALL_HEADERS = "*";
     /**
+     * Default prefix value for span attributes.
+     */
+    private static final String DEFAULT_ATTR_PREFIX = "messaging.header.";
+    /**
      * If you want to set headers as lists, set "true".
      */
     private boolean headersAsLists;
+    /**
+     * Enable or disable adding the span attribute prefix to header names.
+     */
+    private boolean attributeWithPrefix;
+    /**
+     * Span attributes prefix for header names.
+     * <p>
+     * Default: messaging.header.
+     */
+    private String attributePrefix = DEFAULT_ATTR_PREFIX;
     /**
      * List of headers, which you want to add as span attributes. By default, all headers
      * will be added as span attributes. If you don't want to set any headers as attributes,
      * just set it to `null` or an empty string.
      */
     private Set<String> capturedHeaders = Collections.singleton(ALL_HEADERS);
+    /**
+     * List of kafka topics in which messages need to trace.
+     */
+    private Set<String> includedTopics = Collections.emptySet();
+    /**
+     * List of kafka topics in which messages don't need to trace.
+     * <p>
+     * Important! If you set includedTopics property, this property will be ignored.
+     */
+    private Set<String> excludedTopics = Collections.emptySet();
 
     /**
-     * If you want to set headers as lists, set "true".
+     * Getter for headersAsLists flag.
      *
-     * @return headersAsLists flag
+     * @return headersAsLists
      */
     public boolean isHeadersAsLists() {
         return headersAsLists;
@@ -69,11 +93,9 @@ public class KafkaTelemetryConfiguration {
     }
 
     /**
-     * List of headers, which you want to add as span attributes. By default, all headers
-     * will be added as span attributes. If you don't want to set any headers as attributes,
-     * just set it to `null` or an empty string.
+     * Getter for captured headers set.
      *
-     * @return capturedHeaders set
+     * @return capturedHeaders
      */
     public Set<String> getCapturedHeaders() {
         return capturedHeaders;
@@ -86,5 +108,77 @@ public class KafkaTelemetryConfiguration {
      */
     public void setCapturedHeaders(Set<String> capturedHeaders) {
         this.capturedHeaders = capturedHeaders;
+    }
+
+    /**
+     * Getter for includedTopics.
+     *
+     * @return includedTopics
+     */
+    public Set<String> getIncludedTopics() {
+        return includedTopics;
+    }
+
+    /**
+     * Setter for included topics set.
+     *
+     * @param includedTopics includedTopics set
+     */
+    public void setIncludedTopics(Set<String> includedTopics) {
+        this.includedTopics = includedTopics;
+    }
+
+    /**
+     * Getter for excludedTopics.
+     *
+     * @return excludedTopics
+     */
+    public Set<String> getExcludedTopics() {
+        return excludedTopics;
+    }
+
+    /**
+     * Setter for excluded topics set.
+     *
+     * @param excludedTopics excludedTopics set
+     */
+    public void setExcludedTopics(Set<String> excludedTopics) {
+        this.excludedTopics = excludedTopics;
+    }
+
+    /**
+     * Getter for captured headers set.
+     *
+     * @return attributeWithPrefix
+     */
+    public boolean isAttributeWithPrefix() {
+        return attributeWithPrefix;
+    }
+
+    /**
+     * Setter for attributeWithPrefix flag.
+     *
+     * @param attributeWithPrefix attributeWithPrefix flag
+     */
+    public void setAttributeWithPrefix(boolean attributeWithPrefix) {
+        this.attributeWithPrefix = attributeWithPrefix;
+    }
+
+    /**
+     * Getter for attributePrefix.
+     *
+     * @return attributePrefix
+     */
+    public String getAttributePrefix() {
+        return attributePrefix;
+    }
+
+    /**
+     * Setter for attributePrefix.
+     *
+     * @param attributePrefix attributePrefix set
+     */
+    public void setAttributePrefix(String attributePrefix) {
+        this.attributePrefix = attributePrefix;
     }
 }

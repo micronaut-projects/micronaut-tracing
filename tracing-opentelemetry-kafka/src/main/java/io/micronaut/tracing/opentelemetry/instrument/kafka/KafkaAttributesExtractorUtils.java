@@ -31,7 +31,7 @@ import org.apache.kafka.common.header.Headers;
 /**
  * Utility class to help get kafka headers and put them as span attributes.
  *
- * @since 4.6.0
+ * @since 5.0.0
  */
 @Internal
 public final class KafkaAttributesExtractorUtils {

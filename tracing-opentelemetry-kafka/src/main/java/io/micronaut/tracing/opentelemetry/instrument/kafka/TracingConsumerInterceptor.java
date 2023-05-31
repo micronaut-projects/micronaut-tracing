@@ -36,7 +36,7 @@ import org.apache.kafka.common.TopicPartition;
  * @param <K> key class
  * @param <V> value class
  *
- * @since 4.6.0
+ * @since 5.0.0
  */
 public class TracingConsumerInterceptor<K, V> implements ConsumerInterceptor<K, V> {
 

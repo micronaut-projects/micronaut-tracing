@@ -39,7 +39,7 @@ import static io.micronaut.tracing.opentelemetry.instrument.kafka.KafkaAttribute
 /**
  * Builder class for KafkaTelemetry object.
  *
- * @since 4.6.0
+ * @since 5.0.0
  */
 @Internal
 public final class KafkaTelemetryBuilder {
@@ -92,7 +92,7 @@ public final class KafkaTelemetryBuilder {
 
         Set<String> capturedHeaders = kafkaTelemetryConfiguration.getCapturedHeaders();
         if (CollectionUtils.isNotEmpty(capturedHeaders)) {
-            consumerAttributesExtractors.add(new AttributesExtractor<KafkaProcessRequest, Void>() {
+            consumerAttributesExtractors.add(new AttributesExtractor<>() {
                 @Override
                 public void onStart(AttributesBuilder attributes, Context parentContext, KafkaProcessRequest processRequest) {
                     putAttributes(kafkaTelemetryConfiguration, attributes, processRequest.getRecord().headers());
@@ -100,10 +100,10 @@ public final class KafkaTelemetryBuilder {
 
                 @Override
                 public void onEnd(AttributesBuilder attributes, Context context, KafkaProcessRequest processRequest, Void unused, Throwable error) {
-                    // do notting in the end
+                    // do nothing in the end
                 }
             });
-            producerAttributesExtractors.add(new AttributesExtractor<KafkaProducerRequest, RecordMetadata>() {
+            producerAttributesExtractors.add(new AttributesExtractor<>() {
                 @Override
                 public void onStart(AttributesBuilder attributes, Context parentContext, KafkaProducerRequest producerRequest) {
                     putAttributes(kafkaTelemetryConfiguration, attributes, producerRequest.getRecord().headers());
@@ -111,7 +111,7 @@ public final class KafkaTelemetryBuilder {
 
                 @Override
                 public void onEnd(AttributesBuilder attributes, Context context, KafkaProducerRequest producerRequest, @Nullable RecordMetadata recordMetadata, @Nullable Throwable error) {
-                    // do notting in the end
+                    // do nothing in the end
                 }
             });
         }

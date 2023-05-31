@@ -32,9 +32,8 @@ import jakarta.inject.Singleton;
 public final class KafkaTelemetryFactory {
 
     @Singleton
-    public KafkaTelemetryHelper kafkaTelemetryHelper(OpenTelemetry openTelemetry, KafkaTelemetryConfiguration kafkaTelemetryConfiguration,
-                                                     ApplicationContext applicationContext) {
-        return new KafkaTelemetryHelper(openTelemetry, kafkaTelemetryConfiguration, applicationContext);
+    public KafkaTelemetryHelper kafkaTelemetryHelper(KafkaTelemetry kafkaTelemetry) {
+        return new KafkaTelemetryHelper(kafkaTelemetry);
     }
 
     @SuppressWarnings("rawtypes")

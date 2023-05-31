@@ -15,17 +15,13 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
-import java.util.Collection;
-
-import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.core.annotation.Internal;
-import io.opentelemetry.api.OpenTelemetry;
 
 /**
  * Helper-class to access to kafkaTelemetry object from non-micronaut components.
  *
- * @since 4.6.0
+ * @since 5.0.0
  */
 @Context
 @Internal
@@ -33,12 +29,8 @@ public final class KafkaTelemetryHelper {
 
     private static KafkaTelemetry kafkaTelemetry;
 
-    @SuppressWarnings("rawtypes")
-    KafkaTelemetryHelper(OpenTelemetry openTelemetry, KafkaTelemetryConfiguration kafkaTelemetryConfiguration,
-                         ApplicationContext applicationContext) {
-        Collection<KafkaTelemetryConsumerTracingFilter> consumerTracingFilters = applicationContext.getBeansOfType(KafkaTelemetryConsumerTracingFilter.class);
-        Collection<KafkaTelemetryProducerTracingFilter> producerTracingFilters = applicationContext.getBeansOfType(KafkaTelemetryProducerTracingFilter.class);
-        kafkaTelemetry = KafkaTelemetry.create(openTelemetry, kafkaTelemetryConfiguration, consumerTracingFilters, producerTracingFilters);
+    KafkaTelemetryHelper(KafkaTelemetry kafkaTelemetry) {
+        this.kafkaTelemetry = kafkaTelemetry;
     }
 
     public static KafkaTelemetry getKafkaTelemetry() {

@@ -33,7 +33,7 @@ import jakarta.inject.Singleton;
  */
 @Requires(property = KafkaTelemetryConfiguration.PREFIX + ".wrapper", notEquals = StringUtils.FALSE)
 @Singleton
-public class OpenTelemetryKafkaProducerTracingInstrumentation implements BeanCreatedEventListener<Producer<?, ?>> {
+public class KafkaTelemetryProducerTracingInstrumentation implements BeanCreatedEventListener<Producer<?, ?>> {
 
     private final KafkaTelemetry kafkaTelemetry;
 
@@ -42,7 +42,7 @@ public class OpenTelemetryKafkaProducerTracingInstrumentation implements BeanCre
      *
      * @param kafkaTelemetry The kafka telemetry
      */
-    public OpenTelemetryKafkaProducerTracingInstrumentation(KafkaTelemetry kafkaTelemetry) {
+    public KafkaTelemetryProducerTracingInstrumentation(KafkaTelemetry kafkaTelemetry) {
         this.kafkaTelemetry = kafkaTelemetry;
     }
 

@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The main class with opentelemetry-kafka logic.
  *
- * @since 4.6.0
+ * @since 5.0.0
  */
 @Internal
 public final class KafkaTelemetry {
@@ -164,7 +164,7 @@ public final class KafkaTelemetry {
         Map<String, Object> config = new HashMap<>();
         config.put(CommonClientConfigs.METRIC_REPORTER_CLASSES_CONFIG, OpenTelemetryMetricsReporter.class.getName());
         config.put(OpenTelemetryMetricsReporter.CONFIG_KEY_OPENTELEMETRY_SUPPLIER, new OpenTelemetrySupplier(openTelemetry));
-        config.put(OpenTelemetryMetricsReporter.CONFIG_KEY_OPENTELEMETRY_INSTRUMENTATION_NAME, "io.opentelemetry.kafka-clients-2.6");
+        config.put(OpenTelemetryMetricsReporter.CONFIG_KEY_OPENTELEMETRY_INSTRUMENTATION_NAME, KafkaTelemetryBuilder.INSTRUMENTATION_NAME);
         return config;
     }
 

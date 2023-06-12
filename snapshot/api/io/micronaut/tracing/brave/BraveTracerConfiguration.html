@@ -175,7 +175,7 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isEnabled()" class="member-name-link">isEnabled</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setClock(brave.Clock)" class="member-name-link">setClock</a><wbr>(brave.Clock&nbsp;clock)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setClock(brave.Clock)" class="member-name-link">setClock</a><wbr>(@Nullable brave.Clock&nbsp;clock)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setCurrentTraceContext(brave.propagation.CurrentTraceContext)" class="member-name-link">setCurrentTraceContext</a><wbr>(brave.propagation.CurrentTraceContext&nbsp;traceContext)</code></div>
@@ -188,16 +188,16 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <div class="block">Default value (<a href="#DEFAULT_ENABLED">false</a>).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setErrorParser(brave.ErrorParser)" class="member-name-link">setErrorParser</a><wbr>(brave.ErrorParser&nbsp;errorParser)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setErrorParser(brave.ErrorParser)" class="member-name-link">setErrorParser</a><wbr>(@Nullable brave.ErrorParser&nbsp;errorParser)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setPropagationFactory(brave.propagation.Propagation.Factory)" class="member-name-link">setPropagationFactory</a><wbr>(brave.propagation.Propagation.Factory&nbsp;propagationFactory)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSampler(brave.sampler.Sampler)" class="member-name-link">setSampler</a><wbr>(brave.sampler.Sampler&nbsp;sampler)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSampler(brave.sampler.Sampler)" class="member-name-link">setSampler</a><wbr>(@Nullable brave.sampler.Sampler&nbsp;sampler)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSamplerConfiguration(io.micronaut.tracing.brave.BraveTracerConfiguration.SamplerConfiguration)" class="member-name-link">setSamplerConfiguration</a><wbr>(<a href="BraveTracerConfiguration.SamplerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.SamplerConfiguration</a>&nbsp;samplerConfiguration)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSamplerConfiguration(io.micronaut.tracing.brave.BraveTracerConfiguration.SamplerConfiguration)" class="member-name-link">setSamplerConfiguration</a><wbr>(@Nullable <a href="BraveTracerConfiguration.SamplerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.SamplerConfiguration</a>&nbsp;samplerConfiguration)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -322,7 +322,7 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <h3>setSamplerConfiguration</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setSamplerConfiguration</span><wbr><span class="parameters">(@Nullable
- <a href="BraveTracerConfiguration.SamplerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.SamplerConfiguration</a>&nbsp;samplerConfiguration)</span></div>
+ @Nullable <a href="BraveTracerConfiguration.SamplerConfiguration.html" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.SamplerConfiguration</a>&nbsp;samplerConfiguration)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>samplerConfiguration</code> - the configuration</dd>
@@ -344,7 +344,7 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <h3>setSampler</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setSampler</span><wbr><span class="parameters">(@Nullable
- brave.sampler.Sampler&nbsp;sampler)</span></div>
+ @Nullable brave.sampler.Sampler&nbsp;sampler)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>sampler</code> - the sampler</dd>
@@ -356,7 +356,7 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <h3>setErrorParser</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setErrorParser</span><wbr><span class="parameters">(@Nullable
- brave.ErrorParser&nbsp;errorParser)</span></div>
+ @Nullable brave.ErrorParser&nbsp;errorParser)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>errorParser</code> - the parser</dd>
@@ -380,7 +380,7 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <h3>setClock</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setClock</span><wbr><span class="parameters">(@Nullable
- brave.Clock&nbsp;clock)</span></div>
+ @Nullable brave.Clock&nbsp;clock)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>clock</code> - the clock</dd>

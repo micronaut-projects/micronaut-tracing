@@ -127,17 +127,17 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <div class="block">Override in subclass to customize.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setReporter(io.jaegertracing.spi.Reporter)" class="member-name-link">setReporter</a><wbr>(io.jaegertracing.spi.Reporter&nbsp;reporter)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setReporter(io.jaegertracing.spi.Reporter)" class="member-name-link">setReporter</a><wbr>(@Nullable io.jaegertracing.spi.Reporter&nbsp;reporter)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets a custom reporter.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSampler(io.jaegertracing.spi.Sampler)" class="member-name-link">setSampler</a><wbr>(io.jaegertracing.spi.Sampler&nbsp;sampler)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSampler(io.jaegertracing.spi.Sampler)" class="member-name-link">setSampler</a><wbr>(@Nullable io.jaegertracing.spi.Sampler&nbsp;sampler)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets a custom sampler.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setScopeManager(io.opentracing.ScopeManager)" class="member-name-link">setScopeManager</a><wbr>(io.opentracing.ScopeManager&nbsp;scopeManager)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setScopeManager(io.opentracing.ScopeManager)" class="member-name-link">setScopeManager</a><wbr>(@Nullable io.opentracing.ScopeManager&nbsp;scopeManager)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Overrides the default MDCScopeManager with a custom scope manager.</div>
 </div>
@@ -181,7 +181,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <h3>setReporter</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setReporter</span><wbr><span class="parameters">(@Nullable
- io.jaegertracing.spi.Reporter&nbsp;reporter)</span></div>
+ @Nullable io.jaegertracing.spi.Reporter&nbsp;reporter)</span></div>
 <div class="block">Sets a custom reporter.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -194,7 +194,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <h3>setSampler</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setSampler</span><wbr><span class="parameters">(@Nullable
- io.jaegertracing.spi.Sampler&nbsp;sampler)</span></div>
+ @Nullable io.jaegertracing.spi.Sampler&nbsp;sampler)</span></div>
 <div class="block">Sets a custom sampler.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -207,7 +207,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <h3>setScopeManager</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setScopeManager</span><wbr><span class="parameters">(@Nullable
- io.opentracing.ScopeManager&nbsp;scopeManager)</span></div>
+ @Nullable io.opentracing.ScopeManager&nbsp;scopeManager)</span></div>
 <div class="block">Overrides the default MDCScopeManager with a custom scope manager.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

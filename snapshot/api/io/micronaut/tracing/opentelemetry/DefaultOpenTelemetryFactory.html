@@ -115,9 +115,9 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected io.opentelemetry.api.OpenTelemetry</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration,java.util.Map,io.opentelemetry.sdk.trace.IdGenerator,io.opentelemetry.sdk.trace.SpanProcessor,io.micronaut.tracing.opentelemetry.ResourceProvider)" class="member-name-link">defaultOpenTelemetry</a><wbr>(io.micronaut.runtime.ApplicationConfiguration&nbsp;applicationConfiguration,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;otelConfig,
- io.opentelemetry.sdk.trace.IdGenerator&nbsp;idGenerator,
- io.opentelemetry.sdk.trace.SpanProcessor&nbsp;spanProcessor,
- <a href="ResourceProvider.html" title="interface in io.micronaut.tracing.opentelemetry">ResourceProvider</a>&nbsp;resourceProvider)</code></div>
+ @Nullable io.opentelemetry.sdk.trace.IdGenerator&nbsp;idGenerator,
+ @Nullable io.opentelemetry.sdk.trace.SpanProcessor&nbsp;spanProcessor,
+ @Nullable <a href="ResourceProvider.html" title="interface in io.micronaut.tracing.opentelemetry">ResourceProvider</a>&nbsp;resourceProvider)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The OpenTelemetry bean with default values.</div>
 </div>
@@ -160,11 +160,11 @@ loadScripts(document, 'script');</script>
  @Property(name="otel") @MapFormat(transformation=FLAT)
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;otelConfig,
  @Nullable
- io.opentelemetry.sdk.trace.IdGenerator&nbsp;idGenerator,
+ @Nullable io.opentelemetry.sdk.trace.IdGenerator&nbsp;idGenerator,
  @Nullable
- io.opentelemetry.sdk.trace.SpanProcessor&nbsp;spanProcessor,
+ @Nullable io.opentelemetry.sdk.trace.SpanProcessor&nbsp;spanProcessor,
  @Nullable
- <a href="ResourceProvider.html" title="interface in io.micronaut.tracing.opentelemetry">ResourceProvider</a>&nbsp;resourceProvider)</span></div>
+ @Nullable <a href="ResourceProvider.html" title="interface in io.micronaut.tracing.opentelemetry">ResourceProvider</a>&nbsp;resourceProvider)</span></div>
 <div class="block">The OpenTelemetry bean with default values.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

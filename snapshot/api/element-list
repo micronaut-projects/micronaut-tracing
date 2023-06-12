@@ -20,4 +20,3 @@ io.micronaut.tracing.opentelemetry.xray
 io.micronaut.tracing.opentracing
 io.micronaut.tracing.opentracing.instrument.http
 io.micronaut.tracing.opentracing.interceptor
-io.micronaut.tracing.opentracing.util

@@ -182,7 +182,7 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isZipkinSharedRpcSpan()" class="member-name-link">isZipkinSharedRpcSpan</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setCodecConfiguration(io.jaegertracing.Configuration.CodecConfiguration)" class="member-name-link">setCodecConfiguration</a><wbr>(io.jaegertracing.Configuration.CodecConfiguration&nbsp;codecConfiguration)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setCodecConfiguration(io.jaegertracing.Configuration.CodecConfiguration)" class="member-name-link">setCodecConfiguration</a><wbr>(@Nullable io.jaegertracing.Configuration.CodecConfiguration&nbsp;codecConfiguration)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the codec configuration.</div>
 </div>
@@ -202,22 +202,22 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <div class="block">Whether to expand exception logs.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setReporterConfiguration(io.jaegertracing.Configuration.ReporterConfiguration)" class="member-name-link">setReporterConfiguration</a><wbr>(io.jaegertracing.Configuration.ReporterConfiguration&nbsp;reporterConfiguration)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setReporterConfiguration(io.jaegertracing.Configuration.ReporterConfiguration)" class="member-name-link">setReporterConfiguration</a><wbr>(@Nullable io.jaegertracing.Configuration.ReporterConfiguration&nbsp;reporterConfiguration)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the reporter configuration.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setReporterConfiguration(io.micronaut.tracing.jaeger.JaegerConfiguration.JaegerReporterConfiguration)" class="member-name-link">setReporterConfiguration</a><wbr>(<a href="JaegerConfiguration.JaegerReporterConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration.JaegerReporterConfiguration</a>&nbsp;reporterConfiguration)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setReporterConfiguration(io.micronaut.tracing.jaeger.JaegerConfiguration.JaegerReporterConfiguration)" class="member-name-link">setReporterConfiguration</a><wbr>(@Nullable <a href="JaegerConfiguration.JaegerReporterConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration.JaegerReporterConfiguration</a>&nbsp;reporterConfiguration)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the reporter configuration.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSamplerConfiguration(io.jaegertracing.Configuration.SamplerConfiguration)" class="member-name-link">setSamplerConfiguration</a><wbr>(io.jaegertracing.Configuration.SamplerConfiguration&nbsp;samplerConfiguration)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSamplerConfiguration(io.jaegertracing.Configuration.SamplerConfiguration)" class="member-name-link">setSamplerConfiguration</a><wbr>(@Nullable io.jaegertracing.Configuration.SamplerConfiguration&nbsp;samplerConfiguration)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the sampler configuration.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSamplerConfiguration(io.micronaut.tracing.jaeger.JaegerConfiguration.JaegerSamplerConfiguration)" class="member-name-link">setSamplerConfiguration</a><wbr>(<a href="JaegerConfiguration.JaegerSamplerConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration.JaegerSamplerConfiguration</a>&nbsp;samplerConfiguration)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSamplerConfiguration(io.micronaut.tracing.jaeger.JaegerConfiguration.JaegerSamplerConfiguration)" class="member-name-link">setSamplerConfiguration</a><wbr>(@Nullable <a href="JaegerConfiguration.JaegerSamplerConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration.JaegerSamplerConfiguration</a>&nbsp;samplerConfiguration)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the sampler configuration.</div>
 </div>
@@ -385,7 +385,7 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <h3>setSamplerConfiguration</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setSamplerConfiguration</span><wbr><span class="parameters">(@Nullable
- io.jaegertracing.Configuration.SamplerConfiguration&nbsp;samplerConfiguration)</span></div>
+ @Nullable io.jaegertracing.Configuration.SamplerConfiguration&nbsp;samplerConfiguration)</span></div>
 <div class="block">Sets the sampler configuration.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -398,7 +398,7 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <h3>setReporterConfiguration</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setReporterConfiguration</span><wbr><span class="parameters">(@Nullable
- io.jaegertracing.Configuration.ReporterConfiguration&nbsp;reporterConfiguration)</span></div>
+ @Nullable io.jaegertracing.Configuration.ReporterConfiguration&nbsp;reporterConfiguration)</span></div>
 <div class="block">Sets the reporter configuration.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -411,7 +411,7 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <h3>setSamplerConfiguration</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setSamplerConfiguration</span><wbr><span class="parameters">(@Nullable
- <a href="JaegerConfiguration.JaegerSamplerConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration.JaegerSamplerConfiguration</a>&nbsp;samplerConfiguration)</span></div>
+ @Nullable <a href="JaegerConfiguration.JaegerSamplerConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration.JaegerSamplerConfiguration</a>&nbsp;samplerConfiguration)</span></div>
 <div class="block">Sets the sampler configuration.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -424,7 +424,7 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <h3>setReporterConfiguration</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setReporterConfiguration</span><wbr><span class="parameters">(@Nullable
- <a href="JaegerConfiguration.JaegerReporterConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration.JaegerReporterConfiguration</a>&nbsp;reporterConfiguration)</span></div>
+ @Nullable <a href="JaegerConfiguration.JaegerReporterConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration.JaegerReporterConfiguration</a>&nbsp;reporterConfiguration)</span></div>
 <div class="block">Sets the reporter configuration.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -437,7 +437,7 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <h3>setCodecConfiguration</h3>
 <div class="member-signature"><span class="annotations">@Inject
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setCodecConfiguration</span><wbr><span class="parameters">(@Nullable
- io.jaegertracing.Configuration.CodecConfiguration&nbsp;codecConfiguration)</span></div>
+ @Nullable io.jaegertracing.Configuration.CodecConfiguration&nbsp;codecConfiguration)</span></div>
 <div class="block">Sets the codec configuration.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

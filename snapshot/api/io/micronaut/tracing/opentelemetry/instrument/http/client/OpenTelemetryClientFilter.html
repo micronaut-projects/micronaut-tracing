@@ -116,7 +116,7 @@ implements io.micronaut.http.filter.HttpClientFilter</span></div>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration,io.opentelemetry.instrumentation.api.instrumenter.Instrumenter)" class="member-name-link">OpenTelemetryClientFilter</a><wbr>(<a href="../../util/OpenTelemetryExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryExclusionsConfiguration</a>&nbsp;exclusionsConfig,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration,io.opentelemetry.instrumentation.api.instrumenter.Instrumenter)" class="member-name-link">OpenTelemetryClientFilter</a><wbr>(@Nullable <a href="../../util/OpenTelemetryExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryExclusionsConfiguration</a>&nbsp;exclusionsConfig,
  io.opentelemetry.instrumentation.api.instrumenter.Instrumenter&lt;io.micronaut.http.MutableHttpRequest&lt;?&gt;,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;instrumenter)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Initialize the open tracing client filter with tracer and exclusion configuration.</div>
@@ -169,7 +169,7 @@ implements io.micronaut.http.filter.HttpClientFilter</span></div>
 <section class="detail" id="&lt;init&gt;(io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration,io.opentelemetry.instrumentation.api.instrumenter.Instrumenter)">
 <h3>OpenTelemetryClientFilter</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">OpenTelemetryClientFilter</span><wbr><span class="parameters">(@Nullable
- <a href="../../util/OpenTelemetryExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryExclusionsConfiguration</a>&nbsp;exclusionsConfig,
+ @Nullable <a href="../../util/OpenTelemetryExclusionsConfiguration.html" title="class in io.micronaut.tracing.opentelemetry.instrument.util">OpenTelemetryExclusionsConfiguration</a>&nbsp;exclusionsConfig,
  @Named("micronautHttpClientTelemetryInstrumenter")
  io.opentelemetry.instrumentation.api.instrumenter.Instrumenter&lt;io.micronaut.http.MutableHttpRequest&lt;?&gt;,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;instrumenter)</span></div>
 <div class="block">Initialize the open tracing client filter with tracer and exclusion configuration.</div>

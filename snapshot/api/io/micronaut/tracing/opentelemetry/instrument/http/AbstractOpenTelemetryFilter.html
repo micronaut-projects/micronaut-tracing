@@ -131,7 +131,7 @@ implements io.micronaut.http.filter.HttpFilter</span></div>
 <div class="table-header col-second">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>protected </code></div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.function.Predicate)" class="member-name-link">AbstractOpenTelemetryFilter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;pathExclusionTest)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.function.Predicate)" class="member-name-link">AbstractOpenTelemetryFilter</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;pathExclusionTest)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Configure tracer in the filter for span creation and propagation across
  arbitrary transports.</div>
@@ -151,7 +151,7 @@ implements io.micronaut.http.filter.HttpFilter</span></div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#shouldExclude(java.lang.String)" class="member-name-link">shouldExclude</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#shouldExclude(java.lang.String)" class="member-name-link">shouldExclude</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Tests if the defined path should be excluded from tracing.</div>
 </div>
@@ -232,7 +232,7 @@ implements io.micronaut.http.filter.HttpFilter</span></div>
 <section class="detail" id="&lt;init&gt;(java.util.function.Predicate)">
 <h3>AbstractOpenTelemetryFilter</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="element-name">AbstractOpenTelemetryFilter</span><wbr><span class="parameters">(@Nullable
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;pathExclusionTest)</span></div>
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;pathExclusionTest)</span></div>
 <div class="block">Configure tracer in the filter for span creation and propagation across
  arbitrary transports.</div>
 <dl class="notes">
@@ -253,7 +253,7 @@ implements io.micronaut.http.filter.HttpFilter</span></div>
 <section class="detail" id="shouldExclude(java.lang.String)">
 <h3>shouldExclude</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">shouldExclude</span><wbr><span class="parameters">(@Nullable
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path)</span></div>
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path)</span></div>
 <div class="block">Tests if the defined path should be excluded from tracing.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

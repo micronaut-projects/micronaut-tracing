@@ -136,8 +136,9 @@ public final class HttpClientSender extends Sender {
         Optional<? extends LoadBalancer> loadBalancer = loadBalancerResolver.get()
                 .resolve(ZipkinServiceInstanceList.SERVICE_ID);
 
-        httpClient = loadBalancer.map(lb -> new DefaultHttpClient(lb, clientConfiguration, List.of()))
-                .orElse(null);
+        httpClient = loadBalancer.map(lb ->
+            new DefaultHttpClient(lb, clientConfiguration)
+        ).orElse(null);
     }
 
     @Override

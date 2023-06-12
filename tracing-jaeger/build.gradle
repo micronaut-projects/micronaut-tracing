@@ -10,4 +10,5 @@ dependencies {
     testImplementation mnReactor.micronaut.reactor
     testImplementation mn.micronaut.http.server.netty
     testRuntimeOnly mnSerde.micronaut.serde.jackson
+    testRuntimeOnly mnLogging.logback.classic
 }

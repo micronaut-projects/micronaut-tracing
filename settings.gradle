@@ -41,6 +41,7 @@ micronautBuild {
     importMicronautCatalog()
     importMicronautCatalog("micronaut-grpc")
     importMicronautCatalog("micronaut-reactor")
+    importMicronautCatalog("micronaut-logging")
     importMicronautCatalog("micronaut-rxjava2")
     importMicronautCatalog("micronaut-serde")
     importMicronautCatalog("micronaut-kafka")

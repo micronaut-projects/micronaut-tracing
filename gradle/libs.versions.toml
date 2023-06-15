@@ -31,7 +31,7 @@ grpc = '1.55.1'
 protobuf = '3.23.2'
 testcontainers = '1.18.1'
 
-micronaut-aws = "4.0.0-M8"
+micronaut-aws = "4.0.0-M10"
 micronaut-grpc = '4.0.0-M4'
 micronaut-reactor = '3.0.0-M6'
 micronaut-rxjava2 = '2.0.0-M3'

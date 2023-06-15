@@ -1708,27 +1708,7 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
 
 
 <div class="paragraph">
-<p>To enable creating span objects on the every HTTP server request, client request, server response and client response you have to add next depedency:
-        <div class="listingblock multi-language-sample">
-<div class="title"></div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-http")</span></code></pre>
-</div>
-</div>
-<div class="listingblock multi-language-sample">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
-    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
-    &lt;artifactId&gt;micronaut-tracing-opentelemetry-http&lt;/artifactId&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div></p>
-</div>
-<div class="sect1">
-<h2 id="_add_kafka_message_headers_into_request_spans">Add Kafka Message Headers into request spans</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To enable creating span objects on the every Kafka message. You have to add next depedency:
+<p>To enable creating span objects on the every Kafka message, add the following depedency:
         <div class="listingblock multi-language-sample">
 <div class="title"></div>
 <div class="content">
@@ -1743,6 +1723,12 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
 &lt;/dependency&gt;</code></pre>
 </div>
 </div></p>
+</div>
+<div class="sect1">
+<h2 id="_add_kafka_message_headers_into_request_spans">Add Kafka Message Headers into request spans</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The way Kafka Message Headers are added inside your span objects may be configured as follows:</p>
 </div>
 <div class="openblock">
 <div class="title">Adding Kafka Message Headers into request spans</div>
@@ -1770,7 +1756,7 @@ otel.instrumentation.kafka.excluded-topics[1]=topic2</code></pre>
       headers-as-lists: false
       attribute-with-prefix: true
       attribute-prefix: myPrefix
-      captured-headers: # list of headers wich need to send as span attributes
+      captured-headers: # list of headers which need to send as span attributes
         - myHeader1
         - myHeader2
       included-topics:
@@ -1864,13 +1850,13 @@ otel.instrumentation.kafka.excluded-topics[1]=topic2</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p><code>wrapper</code> - if "true" tracing will be tracing will be done using object proxies over cosumers and producers. If wrappers are disabled, then tracing can be done through kafka listener</p>
+<p><code>wrapper</code> - if "true" tracing will be done using object proxies over consumers and producers. If wrappers are disabled, then tracing can be done through a kafka listener instead.</p>
 </li>
 <li>
 <p>If you want to set headers as lists, set <code>headers-as-lists</code> to <code>true</code>.</p>
 </li>
 <li>
-<p><code>attribute-with-prefix</code> - add or not prefix to span attribute names (default: false)</p>
+<p><code>attribute-with-prefix</code> - whether to add a prefix to span attribute names (default: false)</p>
 </li>
 <li>
 <p><code>attribute-prefix</code> - custom prefix for span attributes (header names). Default: <strong>messaging.header.</strong></p>
@@ -1882,7 +1868,7 @@ otel.instrumentation.kafka.excluded-topics[1]=topic2</code></pre>
 <p><code>included-topics</code> - list of topics to trace</p>
 </li>
 <li>
-<p><code>excluded-topics</code> - list of topics to exclude of tracing</p>
+<p><code>excluded-topics</code> - list of topics to exclude from tracing</p>
 </li>
 </ul>
 </div>
@@ -1893,7 +1879,7 @@ otel.instrumentation.kafka.excluded-topics[1]=topic2</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-You can&#8217;t use <code>included-topics</code> and <code>excluded-topics</code> properties together. Need to set included OR excluded topics.
+You can&#8217;t use <code>included-topics</code> and <code>excluded-topics</code> properties together as they are mutually exclusive - choose one or the other.
 </td>
 </tr>
 </table>

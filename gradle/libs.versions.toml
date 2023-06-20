@@ -1,8 +1,8 @@
 [versions]
-micronaut = '4.0.0-M7'
+micronaut = '4.0.0-RC1'
 micronaut-test = '4.0.0-M4'
 micronaut-logging = '1.0.0-M4'
-micronaut-platform = "4.0.0-M2"
+micronaut-platform = "4.0.0-M4"
 micronaut-docs = '2.0.0'
 groovy = '4.0.6'
 spock = '2.3-groovy-4.0'
@@ -31,7 +31,7 @@ grpc = '1.55.1'
 protobuf = '3.23.2'
 testcontainers = '1.18.1'
 
-micronaut-aws = "4.0.0-M10"
+micronaut-aws = "4.0.0-M11"
 micronaut-grpc = '4.0.0-M5'
 micronaut-reactor = '3.0.0-M8'
 micronaut-rxjava2 = '2.0.0-M6'

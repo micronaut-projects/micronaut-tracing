@@ -37,7 +37,7 @@ micronaut-reactor = '3.0.0-M8'
 micronaut-rxjava2 = '2.0.0-M6'
 micronaut-serde = '2.0.0-M8'
 micronaut-kafka = '5.0.0-M5'
-micronaut-gradle-plugin = "4.0.0-M4"
+micronaut-gradle-plugin = "4.0.0-M6"
 
 [libraries]
 # Core

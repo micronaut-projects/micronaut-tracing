@@ -526,50 +526,9 @@
 </tbody>
 </table>
 <div style="page-break-after: always;"></div>
-<a id="io.micronaut.tracing.jaeger.JaegerConfiguration$JaegerSamplerConfiguration" href="#io.micronaut.tracing.jaeger.JaegerConfiguration$JaegerSamplerConfiguration">&#128279;</a>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 8. Configuration Properties for <a href="../api/io/micronaut/tracing/jaeger/JaegerConfiguration.JaegerSamplerConfiguration.html">JaegerConfiguration$JaegerSamplerConfiguration</a></caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.sampler.probability</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">float</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Sets the sampler probability used by the Jaeger sampler.
- A value of 1.0 indicates to sample all requests.
- A value of 0.1 indicates to sample 10% of requests.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.sampler.type</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.sampler.param</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.Number</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.sampler.manager-host-port</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-</tbody>
-</table>
-<div style="page-break-after: always;"></div>
 <a id="io.micronaut.tracing.jaeger.JaegerConfiguration$JaegerSenderConfiguration" href="#io.micronaut.tracing.jaeger.JaegerConfiguration$JaegerSenderConfiguration">&#128279;</a>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 9. Configuration Properties for <a href="../api/io/micronaut/tracing/jaeger/JaegerConfiguration.JaegerSenderConfiguration.html">JaegerConfiguration$JaegerSenderConfiguration</a></caption>
+<caption class="title">Table 8. Configuration Properties for <a href="../api/io/micronaut/tracing/jaeger/JaegerConfiguration.JaegerSenderConfiguration.html">JaegerConfiguration$JaegerSenderConfiguration</a></caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -616,12 +575,9 @@
 </tbody>
 </table>
 <div style="page-break-after: always;"></div>
-</div>
-<div class="sect2">
-<h3 id="_micronaut_tracing_opentelemetry_config_properties">Micronaut Tracing Opentelemetry Config Properties</h3>
-<a id="io.micronaut.tracing.opentelemetry.conf.OpenTelemetryConfigurationProperties" href="#io.micronaut.tracing.opentelemetry.conf.OpenTelemetryConfigurationProperties">&#128279;</a>
+<a id="io.micronaut.tracing.jaeger.JaegerConfiguration$JaegerSamplerConfiguration" href="#io.micronaut.tracing.jaeger.JaegerConfiguration$JaegerSamplerConfiguration">&#128279;</a>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 10. Configuration Properties for <a href="../api/io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html">OpenTelemetryConfigurationProperties</a></caption>
+<caption class="title">Table 9. Configuration Properties for <a href="../api/io/micronaut/tracing/jaeger/JaegerConfiguration.JaegerSamplerConfiguration.html">JaegerConfiguration$JaegerSamplerConfiguration</a></caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -636,16 +592,36 @@
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>micronaut.otel.enabled</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Sets whether the OpenTelemetry integration is enabled. Default value ().</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.sampler.probability</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">float</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets the sampler probability used by the Jaeger sampler.
+ A value of 1.0 indicates to sample all requests.
+ A value of 0.1 indicates to sample 10% of requests.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.sampler.type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.sampler.param</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.Number</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.jaeger.sampler.manager-host-port</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 </tbody>
 </table>
 <div style="page-break-after: always;"></div>
+</div>
+<div class="sect2">
+<h3 id="_micronaut_tracing_opentelemetry_config_properties">Micronaut Tracing Opentelemetry Config Properties</h3>
 <a id="io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration" href="#io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration">&#128279;</a>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 11. Configuration Properties for <a href="../api/io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html">OpenTelemetryExclusionsConfiguration</a></caption>
+<caption class="title">Table 10. Configuration Properties for <a href="../api/io/micronaut/tracing/opentelemetry/instrument/util/OpenTelemetryExclusionsConfiguration.html">OpenTelemetryExclusionsConfiguration</a></caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -663,6 +639,30 @@
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.exclusions</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.util.List</p></td>
 <td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div style="page-break-after: always;"></div>
+<a id="io.micronaut.tracing.opentelemetry.conf.OpenTelemetryConfigurationProperties" href="#io.micronaut.tracing.opentelemetry.conf.OpenTelemetryConfigurationProperties">&#128279;</a>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 11. Configuration Properties for <a href="../api/io/micronaut/tracing/opentelemetry/conf/OpenTelemetryConfigurationProperties.html">OpenTelemetryConfigurationProperties</a></caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>micronaut.otel.enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets whether the OpenTelemetry integration is enabled. Default value ().</p></td>
 </tr>
 </tbody>
 </table>

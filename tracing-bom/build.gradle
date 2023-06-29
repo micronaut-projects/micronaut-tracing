@@ -4,8 +4,8 @@ plugins {
 
 micronautBuild {
     binaryCompatibility {
-        // Enable before Micronaut 4 release
-        enabled.set(false)
+        enabled.set(true)
+        baselineVersion = "5.0.0-M6"
     }
 }
 
@@ -28,7 +28,8 @@ micronautBom {
                         "io.opentelemetry.instrumentation",
                         "io.opentelemetry.javaagent",
                         "io.opentelemetry.javaagent.instrumentation",
-                        "io.opentelemetry.javaagent.opentelemetry-javaagent-bootstrap"
+                        "io.opentelemetry.javaagent.opentelemetry-javaagent-bootstrap",
+                        "io.opentelemetry.javaagent:opentelemetry-testing-common"
                 ] as Set
         )
         bomAuthorizedGroupIds.put(

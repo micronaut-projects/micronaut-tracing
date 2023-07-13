@@ -2,13 +2,6 @@ plugins {
     id 'io.micronaut.build.internal.bom'
 }
 
-micronautBuild {
-    binaryCompatibility {
-        enabled.set(true)
-        baselineVersion = "5.0.0-M6"
-    }
-}
-
 micronautBom {
     extraExcludedProjects.add 'kotlin-tests'
     suppressions {

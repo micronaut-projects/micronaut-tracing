@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -365,7 +366,13 @@ public final class KafkaTelemetry {
     public <K, V> Consumer<K, V> wrap(Consumer<K, V> consumer) {
         return (Consumer<K, V>) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] {Consumer.class},
             (proxy, method, args) -> {
-                Object result = method.invoke(consumer, args);
+                Object result;
+                try {
+                    result = method.invoke(consumer, args);
+                } catch (InvocationTargetException e) {
+                    throw e.getTargetException();
+                }
+
                 if (!METHOD_POLL.equals(method.getName()) || method.getReturnType() != ConsumerRecords.class) {
                     return result;
                 }

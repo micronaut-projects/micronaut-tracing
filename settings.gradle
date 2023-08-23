@@ -22,6 +22,7 @@ include 'tracing-opentelemetry-annotation'
 include 'tracing-opentelemetry-grpc'
 include 'tracing-opentelemetry-http'
 include 'tracing-opentelemetry-kafka'
+include 'tracing-opentelemetry-zipkin-exporter'
 
 // OpenTracing
 

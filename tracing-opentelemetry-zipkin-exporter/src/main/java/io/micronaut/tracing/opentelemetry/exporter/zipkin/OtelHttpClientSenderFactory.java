@@ -36,7 +36,7 @@ public final class OtelHttpClientSenderFactory {
     /**
      * @param configuration the HTTP client sender configurations
      */
-    protected OtelHttpClientSenderFactory(HttpClientOtelSenderConfiguration configuration) {
+    OtelHttpClientSenderFactory(HttpClientOtelSenderConfiguration configuration) {
         this.configuration = configuration;
     }
 

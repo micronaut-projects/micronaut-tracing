@@ -58,7 +58,6 @@ import static zipkin2.codec.Encoding.JSON;
  * @since 1.0
  */
 public final class HttpClientSender extends Sender {
-
     private final Encoding encoding;
     private final int messageMaxBytes;
     private final boolean compressionEnabled;

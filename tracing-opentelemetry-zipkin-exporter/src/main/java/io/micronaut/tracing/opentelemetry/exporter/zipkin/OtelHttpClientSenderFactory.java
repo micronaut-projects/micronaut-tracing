@@ -29,6 +29,7 @@ import zipkin2.reporter.Sender;
  * Builds a {@code SpanProcessor} that exports traces to Zipkin.
  */
 @Factory
+@Requires(missingProperty = "otel.traces.exporter")
 public final class OtelHttpClientSenderFactory {
     private final HttpClientOtelSenderConfiguration configuration;
 

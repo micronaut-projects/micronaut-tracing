@@ -21,3 +21,18 @@ otel:
   traces:
     exporter: zipkin
 ----
+
+Micronaut provides Zipkin exporter that will use Micronaut's HTTP client instead of OKHttp client. That will reduce dependency graph and will make your native executable smaller. To use it add next dependency:
+
+dependency:micronaut-tracing-opentelemetry-zipkin-exporter[scope="implementation", groupId="io.micronaut.tracing"]
+
+To configure Micronaut Zipkin exporter add
+[configuration]
+----
+otel:
+  exporter:
+    zipkin:
+      url: <url-to-zipkin-server>
+----
+
+NOTE: Micronaut Zipkin exporter requires `otel.traces.exporter` property not to be defined to avoid conflicts with Open Telemetry default implementation of zipkin exporter.

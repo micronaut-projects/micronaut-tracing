@@ -4,11 +4,14 @@ plugins {
 }
 
 dependencies {
+    api projects.micronautTracingOpentelemetry
     implementation libs.opentelemetry.exporter.zipkin
     implementation mn.micronaut.http.client
     implementation mnReactor.micronaut.reactor
     implementation platform (libs.boms.zipkin.reporter)
     implementation libs.zipkin.reporter
+    testRuntimeOnly mnSerde.micronaut.serde.jackson
+    testImplementation(projects.micronautTracingOpentelemetryHttp)
 }
 
 micronautBuild {

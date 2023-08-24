@@ -16,12 +16,15 @@
 package io.micronaut.tracing.opentelemetry.exporter.zipkin;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.tracing.zipkin.http.client.HttpClientSenderConfiguration;
+import zipkin2.reporter.Sender;
 
 /**
  * Configuration properties for Zipkin exporter.
  */
-@ConfigurationProperties(HttpClientOtelSenderConfiguration.PREFIX)
-public class HttpClientOtelSenderConfiguration extends HttpClientSenderConfiguration {
+@ConfigurationProperties(OtelHttpClientSenderConfiguration.PREFIX)
+@Requires(beans = Sender.class)
+public class OtelHttpClientSenderConfiguration extends HttpClientSenderConfiguration {
     public static final String PREFIX =  "otel.exporter.zipkin";
 }

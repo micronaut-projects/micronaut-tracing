@@ -226,6 +226,7 @@ public final class HttpClientSender extends Sender {
             return s != null && cancelled.get();
         }
 
+        @SuppressWarnings("java:S2975")
         @Override
         public Call<Void> clone() {
             // stateless. no need to clone

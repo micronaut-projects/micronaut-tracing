@@ -26,7 +26,7 @@ managed-brave-opentracing = '1.0.0'
 
 javax-annotation = '1.3.2'
 kotlin = '1.8.22'
-kotlin-coroutines = '1.7.1'
+kotlin-coroutines = '1.7.3'
 grpc = '1.55.1'
 protobuf = '3.23.2'
 testcontainers = '1.18.1'

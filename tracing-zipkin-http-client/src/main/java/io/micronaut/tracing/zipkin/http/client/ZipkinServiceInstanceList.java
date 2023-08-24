@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing.brave;
+package io.micronaut.tracing.zipkin.http.client;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.discovery.ServiceInstance;
 import io.micronaut.discovery.ServiceInstanceList;
-import io.micronaut.tracing.brave.BraveTracerConfiguration.HttpClientSenderConfiguration;
 import jakarta.inject.Singleton;
 
 import java.net.URI;

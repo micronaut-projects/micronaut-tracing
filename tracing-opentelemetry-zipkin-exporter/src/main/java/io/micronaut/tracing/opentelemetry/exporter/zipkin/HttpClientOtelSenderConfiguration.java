@@ -15,41 +15,13 @@
  */
 package io.micronaut.tracing.opentelemetry.exporter.zipkin;
 
-import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.http.client.HttpClientConfiguration;
-
-import static io.micronaut.tracing.opentelemetry.exporter.zipkin.HttpClientOtelSenderConfiguration.PREFIX;
+import io.micronaut.tracing.zipkin.http.client.HttpClientSenderConfiguration;
 
 /**
  * Configuration properties for Zipkin exporter.
  */
-@ConfigurationProperties(PREFIX)
-public class HttpClientOtelSenderConfiguration extends HttpClientConfiguration {
-
+@ConfigurationProperties(HttpClientOtelSenderConfiguration.PREFIX)
+public class HttpClientOtelSenderConfiguration extends HttpClientSenderConfiguration {
     public static final String PREFIX =  "otel.exporter.zipkin";
-
-    @ConfigurationBuilder(prefixes = "")
-    protected final HttpClientSender.Builder clientSenderBuilder;
-
-    /**
-     * Initialize the builder with client configurations.
-     */
-    public HttpClientOtelSenderConfiguration() {
-        clientSenderBuilder = new HttpClientSender.Builder(this);
-    }
-
-    @Override
-    public ConnectionPoolConfiguration getConnectionPoolConfiguration() {
-        return new ConnectionPoolConfiguration();
-    }
-
-    /**
-     * Creates builder.
-     *
-     * @return the builder
-     */
-    public HttpClientSender.Builder getBuilder() {
-        return clientSenderBuilder;
-    }
 }

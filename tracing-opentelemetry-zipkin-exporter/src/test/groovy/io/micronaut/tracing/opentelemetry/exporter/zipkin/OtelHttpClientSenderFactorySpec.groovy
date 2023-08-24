@@ -3,6 +3,7 @@ package io.micronaut.tracing.opentelemetry.exporter.zipkin
 
 import io.micronaut.context.BeanContext
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
+import io.micronaut.tracing.zipkin.http.client.HttpClientSender
 import io.opentelemetry.sdk.trace.SpanProcessor
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
 import jakarta.inject.Inject

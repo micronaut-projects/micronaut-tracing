@@ -10,7 +10,7 @@ import io.micronaut.http.annotation.Post
 import io.micronaut.http.client.HttpClient
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.runtime.server.event.ServerStartupEvent
-import io.micronaut.tracing.brave.sender.HttpClientSender
+import io.micronaut.tracing.zipkin.http.client.HttpClientSender
 import jakarta.inject.Singleton
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
@@ -20,7 +20,6 @@ import spock.util.concurrent.PollingConditions
 import zipkin2.reporter.Sender
 
 import static io.micronaut.http.HttpStatus.OK
-import static io.micronaut.tracing.brave.sender.HttpClientSender.Builder.DEFAULT_SERVER_URL
 import static zipkin2.Span.Kind.CLIENT
 import static zipkin2.Span.Kind.SERVER
 
@@ -37,7 +36,7 @@ class HttpClientSenderSpec extends Specification {
                 'tracing.zipkin.enabled': true,
                 'tracing.instrument-threads': true,
                 'tracing.zipkin.sampler.probability': 1,
-                'tracing.zipkin.http.url': DEFAULT_SERVER_URL
+                'tracing.zipkin.http.url': HttpClientSender.Builder.DEFAULT_SERVER_URL
         )
 
         when:

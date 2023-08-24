@@ -13,6 +13,7 @@ import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.context.ServerRequestContext
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.runtime.server.event.ServerStartupEvent
+import io.micronaut.tracing.zipkin.http.client.HttpClientSender
 import io.opentelemetry.api.trace.Span
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -76,6 +77,7 @@ class HttpClientSenderSpec extends Specification {
 
         when: 'Requests are executed'
         HttpResponse<String> response = client.toBlocking().exchange('/traced/nested/John', String)
+        Sender s = context.getBean(Sender)
 
         then: 'spans are received'
         conditions.eventually {

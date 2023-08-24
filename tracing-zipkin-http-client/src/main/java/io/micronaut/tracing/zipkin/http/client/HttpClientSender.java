@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.tracing.brave.sender;
+package io.micronaut.tracing.zipkin.http.client;
 
 import io.micronaut.core.io.buffer.ByteBuffer;
 import io.micronaut.core.util.CollectionUtils;
@@ -25,7 +25,6 @@ import io.micronaut.http.client.HttpClientConfiguration;
 import io.micronaut.http.client.LoadBalancer;
 import io.micronaut.http.client.LoadBalancerResolver;
 import io.micronaut.http.client.netty.DefaultHttpClient;
-import io.micronaut.tracing.brave.ZipkinServiceInstanceList;
 import jakarta.inject.Provider;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -47,7 +46,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static io.micronaut.http.HttpRequest.POST;
 import static io.micronaut.http.HttpStatus.BAD_REQUEST;
 import static io.micronaut.http.HttpStatus.MULTIPLE_CHOICES;
-import static io.micronaut.tracing.brave.sender.HttpClientSender.Builder.DEFAULT_PATH;
+import static io.micronaut.tracing.zipkin.http.client.HttpClientSender.Builder.DEFAULT_PATH;
 import static reactor.core.publisher.FluxSink.OverflowStrategy.BUFFER;
 import static zipkin2.CheckResult.OK;
 import static zipkin2.codec.Encoding.JSON;

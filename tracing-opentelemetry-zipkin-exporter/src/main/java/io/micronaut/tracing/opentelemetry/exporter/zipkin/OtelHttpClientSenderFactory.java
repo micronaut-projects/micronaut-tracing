@@ -17,11 +17,9 @@ package io.micronaut.tracing.opentelemetry.exporter.zipkin;
 
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.http.client.LoadBalancerResolver;
 import io.opentelemetry.exporter.zipkin.ZipkinSpanExporter;
 import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
-import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
 import zipkin2.reporter.Sender;
 
@@ -31,21 +29,6 @@ import zipkin2.reporter.Sender;
 @Factory
 @Requires(missingProperty = "otel.traces.exporter")
 public final class OtelHttpClientSenderFactory {
-    private final HttpClientOtelSenderConfiguration configuration;
-
-    /**
-     * @param configuration the HTTP client sender configurations
-     */
-    OtelHttpClientSenderFactory(HttpClientOtelSenderConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
-    @Singleton
-    @Requires(missingBeans = Sender.class)
-    public Sender zipkinSender(Provider<LoadBalancerResolver> loadBalancerResolver) {
-        return configuration.getBuilder()
-            .build(loadBalancerResolver);
-    }
 
     @Singleton
     public SpanProcessor createExporter(Sender sender) {

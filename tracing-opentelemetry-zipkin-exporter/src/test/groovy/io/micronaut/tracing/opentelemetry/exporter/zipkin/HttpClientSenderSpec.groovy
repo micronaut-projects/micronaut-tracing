@@ -61,7 +61,10 @@ class HttpClientSenderSpec extends Specification {
         SpanController spanController = zipkinServer.applicationContext.getBean(SpanController)
 
         ApplicationContext context = ApplicationContext.run(
-                'otel.exporter.zipkin.url': zipkinServer.URL.toString()
+                'otel.exporter.zipkin.url': zipkinServer.URL.toString(),
+                'otel.exporter.zipkin.message-max-bytes': 100000,
+                'otel.exporter.zipkin.encoding': 'JSON',
+                'otel.exporter.zipkin.compression-enabled': false,
         )
 
         when:
@@ -69,6 +72,7 @@ class HttpClientSenderSpec extends Specification {
         HttpClient client = context.createBean(HttpClient, embeddedServer.URL)
         PollingConditions conditions = new PollingConditions(timeout: 10)
         StartedListener listener = zipkinServer.applicationContext.getBean(StartedListener)
+        Sender sender = context.getBean(Sender)
 
         then:
         conditions.eventually {
@@ -77,7 +81,6 @@ class HttpClientSenderSpec extends Specification {
 
         when: 'Requests are executed'
         HttpResponse<String> response = client.toBlocking().exchange('/traced/nested/John', String)
-        Sender s = context.getBean(Sender)
 
         then: 'spans are received'
         conditions.eventually {
@@ -103,6 +106,12 @@ class HttpClientSenderSpec extends Specification {
             spanController.receivedSpans[3].name == 'get'
             spanController.receivedSpans[3].kind == CLIENT.name()
         }
+
+        when: 'Sender coverage test'
+        Sender s = context.getBean(Sender)
+
+        then:
+        s.check()
 
         cleanup:
         client.close()

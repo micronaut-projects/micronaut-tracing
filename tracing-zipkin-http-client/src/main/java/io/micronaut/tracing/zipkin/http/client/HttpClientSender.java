@@ -206,6 +206,7 @@ public final class HttpClientSender extends Sender {
 
                 @Override
                 public void onComplete() {
+                    // Do nothing
                 }
             });
         }

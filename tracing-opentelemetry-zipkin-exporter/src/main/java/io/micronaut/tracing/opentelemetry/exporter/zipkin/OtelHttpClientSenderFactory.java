@@ -28,6 +28,7 @@ import zipkin2.reporter.Sender;
  */
 @Factory
 @Requires(missingProperty = "otel.traces.exporter")
+@Requires(bean = Sender.class)
 public final class OtelHttpClientSenderFactory {
 
     @Singleton

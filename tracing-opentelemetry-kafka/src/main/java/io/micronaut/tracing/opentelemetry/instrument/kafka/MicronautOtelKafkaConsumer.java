@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
  *
  * */
 @Internal
-public class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
+final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
 
     private final Consumer<K, V> consumer;
     private final KafkaTelemetry kafkaTelemetry;

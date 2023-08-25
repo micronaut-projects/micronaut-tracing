@@ -40,7 +40,7 @@ import java.util.concurrent.Future;
  * @param <V> value class
  */
 @Internal
-public class MicronautOtelKafkaProducer<K, V>  implements Producer<K, V> {
+final class MicronautOtelKafkaProducer<K, V>  implements Producer<K, V> {
     private final Producer<K, V> producer;
     private final KafkaTelemetry kafkaTelemetry;
 

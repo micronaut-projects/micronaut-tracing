@@ -76,11 +76,13 @@ public final class KafkaTelemetry {
     private final boolean producerPropagationEnabled;
 
     @SuppressWarnings("rawtypes")
-    public KafkaTelemetry(OpenTelemetry openTelemetry, Instrumenter<KafkaProducerRequest, RecordMetadata> producerInstrumenter,
+    public KafkaTelemetry(OpenTelemetry openTelemetry,
+                          Instrumenter<KafkaProducerRequest, RecordMetadata> producerInstrumenter,
                           Instrumenter<KafkaProcessRequest, Void> consumerProcessInstrumenter,
                           Collection<KafkaTelemetryProducerTracingFilter> producerTracingFilters,
                           Collection<KafkaTelemetryConsumerTracingFilter> consumerTracingFilters,
-                          KafkaTelemetryConfiguration kafkaTelemetryConfiguration, boolean producerPropagationEnabled) {
+                          KafkaTelemetryConfiguration kafkaTelemetryConfiguration,
+                          boolean producerPropagationEnabled) {
         this.openTelemetry = openTelemetry;
         this.producerInstrumenter = producerInstrumenter;
         this.consumerProcessInstrumenter = consumerProcessInstrumenter;

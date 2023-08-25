@@ -60,6 +60,21 @@ class TraceInterceptorSpec extends Specification {
         reporter.spans[0].tags()['foo'] == 'bar'
     }
 
+    void 'test trace interceptor NewSpan without name'() {
+        when:
+        buildContext()
+        String result = tracedService.noArgNewSpan('test')
+
+        then:
+        result == 'test'
+        reporter.spans.size() == 1
+
+        reporter.spans[0].name() == 'tracedservice.noargnewspan'
+        reporter.spans[0].tags()['more.stuff'] == 'test'
+        reporter.spans[0].tags()['class'] == 'TracedService'
+        reporter.spans[0].tags()['method'] == 'noArgNewSpan'
+    }
+
     private void buildContext() {
         applicationContext = ApplicationContext
                 .builder('tracing.zipkin.enabled': true,
@@ -90,6 +105,12 @@ class TraceInterceptorSpec extends Specification {
         @SingleResult
         Publisher<String> methodThree(@SpanTag('more.stuff') String name) {
             return Mono.just(name)
+        }
+
+        @NewSpan()
+        @SingleResult
+        String noArgNewSpan(@SpanTag('more.stuff') String name) {
+            return name
         }
 
         @NewSpan('trace-cs')

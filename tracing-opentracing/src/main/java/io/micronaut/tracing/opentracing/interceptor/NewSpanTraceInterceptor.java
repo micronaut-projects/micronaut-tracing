@@ -64,7 +64,7 @@ public final class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
         if (!isNew) {
             return context.proceed();
         }
-        String operationName = newSpan.stringValue().orElse(null);
+        String operationName = newSpan.stringValue().orElse(context.getDeclaringType().getSimpleName() + "." + context.getMethodName());
 
         Tracer.SpanBuilder builder = tracer.buildSpan(operationName);
         if (currentSpan != null) {

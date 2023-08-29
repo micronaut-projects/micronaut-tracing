@@ -15,8 +15,6 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -64,10 +62,6 @@ import org.slf4j.LoggerFactory;
 public final class KafkaTelemetry {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaTelemetry.class);
-
-    private static final String METHOD_SEND = "send";
-    private static final String METHOD_POLL = "poll";
-
     private static final TextMapSetter<Headers> SETTER = KafkaHeadersSetter.INSTANCE;
     private static final Future<RecordMetadata> EMPTY_FUTURE = CompletableFuture.completedFuture(null);
 
@@ -82,11 +76,13 @@ public final class KafkaTelemetry {
     private final boolean producerPropagationEnabled;
 
     @SuppressWarnings("rawtypes")
-    public KafkaTelemetry(OpenTelemetry openTelemetry, Instrumenter<KafkaProducerRequest, RecordMetadata> producerInstrumenter,
+    public KafkaTelemetry(OpenTelemetry openTelemetry,
+                          Instrumenter<KafkaProducerRequest, RecordMetadata> producerInstrumenter,
                           Instrumenter<KafkaProcessRequest, Void> consumerProcessInstrumenter,
                           Collection<KafkaTelemetryProducerTracingFilter> producerTracingFilters,
                           Collection<KafkaTelemetryConsumerTracingFilter> consumerTracingFilters,
-                          KafkaTelemetryConfiguration kafkaTelemetryConfiguration, boolean producerPropagationEnabled) {
+                          KafkaTelemetryConfiguration kafkaTelemetryConfiguration,
+                          boolean producerPropagationEnabled) {
         this.openTelemetry = openTelemetry;
         this.producerInstrumenter = producerInstrumenter;
         this.consumerProcessInstrumenter = consumerProcessInstrumenter;
@@ -247,7 +243,7 @@ public final class KafkaTelemetry {
         }
     }
 
-    private <K, V> void buildAndFinishSpan(List<ConsumerRecord<K, V>> records, Consumer<K, V> consumer) {
+    public <K, V> void buildAndFinishSpan(List<ConsumerRecord<K, V>> records, Consumer<K, V> consumer) {
         buildAndFinishSpan(records, KafkaUtil.getConsumerGroup(consumer), KafkaUtil.getClientId(consumer));
     }
 
@@ -330,26 +326,7 @@ public final class KafkaTelemetry {
      */
     @SuppressWarnings("unchecked")
     public <K, V> Producer<K, V> wrap(Producer<K, V> producer) {
-        return (Producer<K, V>) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] {Producer.class},
-            (proxy, method, args) -> {
-                // Future<RecordMetadata> send(ProducerRecord<K, V> record)
-                // Future<RecordMetadata> send(ProducerRecord<K, V> record, Callback callback)
-                if (!METHOD_SEND.equals(method.getName()) || method.getParameterCount() == 0 || method.getParameterTypes()[0] != ProducerRecord.class) {
-                    return method.invoke(producer, args);
-                }
-
-                ProducerRecord<K, V> record = (ProducerRecord<K, V>) args[0];
-
-                if (excludeTopic(record.topic()) || !filterProducerRecord(record, producer)) {
-                    return method.invoke(producer, args);
-                }
-
-                Callback callback = null;
-                if (method.getParameterCount() >= 2 && method.getParameterTypes()[1] == Callback.class) {
-                    callback = (Callback) args[1];
-                }
-                return buildAndInjectSpan(record, producer, callback, producer::send);
-            });
+        return new MicronautOtelKafkaProducer<>(producer, this);
     }
 
     /**
@@ -363,25 +340,7 @@ public final class KafkaTelemetry {
      */
     @SuppressWarnings("unchecked")
     public <K, V> Consumer<K, V> wrap(Consumer<K, V> consumer) {
-        return (Consumer<K, V>) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] {Consumer.class},
-            (proxy, method, args) -> {
-                Object result = method.invoke(consumer, args);
-                if (!METHOD_POLL.equals(method.getName()) || method.getReturnType() != ConsumerRecords.class) {
-                    return result;
-                }
-
-                List<ConsumerRecord<K, V>> recordsToTrace = new ArrayList<>();
-                ConsumerRecords<K, V> records = (ConsumerRecords<K, V>) result;
-                for (ConsumerRecord<K, V> record : records) {
-                    if (excludeTopic(record.topic()) || !filterConsumerRecord(record, consumer)) {
-                        continue;
-                    }
-                    recordsToTrace.add(record);
-                }
-
-                buildAndFinishSpan(recordsToTrace, consumer);
-                return result;
-            });
+        return new MicronautOtelKafkaConsumer<>(consumer, this);
     }
 
     public KafkaTelemetryConfiguration getKafkaTelemetryProperties() {

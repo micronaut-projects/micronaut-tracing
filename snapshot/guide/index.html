@@ -1339,6 +1339,102 @@ tracing.exclusions[1]=/env/.*</code></pre>
 </div>
 </div>
 </div>
+<div class="paragraph">
+<p>Micronaut provides Zipkin exporter that will use Micronaut&#8217;s HTTP client instead of OKHttp client. That will reduce dependency graph and will make your native executable smaller. To use it add next dependency:</p>
+</div>
+<div class="paragraph">
+<p>        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-zipkin-exporter")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-tracing-opentelemetry-zipkin-exporter&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div></p>
+</div>
+<div class="paragraph">
+<p>To configure Micronaut Zipkin exporter add</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">otel.exporter.zipkin.url=&lt;url-to-zipkin-server&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">otel:
+  exporter:
+    zipkin:
+      url: &lt;url-to-zipkin-server&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
+  [otel.exporter]
+    [otel.exporter.zipkin]
+      url="&lt;url-to-zipkin-server&gt;"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">otel {
+  exporter {
+    zipkin {
+      url = "&lt;url-to-zipkin-server&gt;"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  otel {
+    exporter {
+      zipkin {
+        url = "&lt;url-to-zipkin-server&gt;"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "otel": {
+    "exporter": {
+      "zipkin": {
+        "url": "&lt;url-to-zipkin-server&gt;"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Micronaut Zipkin exporter requires <code>otel.traces.exporter</code> property not to be defined to avoid conflicts with Open Telemetry default implementation of zipkin exporter.
+</td>
+</tr>
+</table>
+</div>
 
 <h2 id="propagators"><a class="anchor" href="#propagators"></a>6.3 OpenTelemetry Propagators</h2>
 

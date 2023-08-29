@@ -54,10 +54,10 @@ loadScripts(document, 'script');</script>
 <li><a href="io/micronaut/tracing/brave/package-tree.html">io.micronaut.tracing.brave</a>, </li>
 <li><a href="io/micronaut/tracing/brave/http/package-tree.html">io.micronaut.tracing.brave.http</a>, </li>
 <li><a href="io/micronaut/tracing/brave/log/package-tree.html">io.micronaut.tracing.brave.log</a>, </li>
-<li><a href="io/micronaut/tracing/brave/sender/package-tree.html">io.micronaut.tracing.brave.sender</a>, </li>
 <li><a href="io/micronaut/tracing/jaeger/package-tree.html">io.micronaut.tracing.jaeger</a>, </li>
 <li><a href="io/micronaut/tracing/opentelemetry/package-tree.html">io.micronaut.tracing.opentelemetry</a>, </li>
 <li><a href="io/micronaut/tracing/opentelemetry/conf/package-tree.html">io.micronaut.tracing.opentelemetry.conf</a>, </li>
+<li><a href="io/micronaut/tracing/opentelemetry/exporter/zipkin/package-tree.html">io.micronaut.tracing.opentelemetry.exporter.zipkin</a>, </li>
 <li><a href="io/micronaut/tracing/opentelemetry/idgenerator/xray/package-tree.html">io.micronaut.tracing.opentelemetry.idgenerator.xray</a>, </li>
 <li><a href="io/micronaut/tracing/opentelemetry/instrument/grpc/package-tree.html">io.micronaut.tracing.opentelemetry.instrument.grpc</a>, </li>
 <li><a href="io/micronaut/tracing/opentelemetry/instrument/http/package-tree.html">io.micronaut.tracing.opentelemetry.instrument.http</a>, </li>
@@ -71,7 +71,8 @@ loadScripts(document, 'script');</script>
 <li><a href="io/micronaut/tracing/opentelemetry/xray/package-tree.html">io.micronaut.tracing.opentelemetry.xray</a>, </li>
 <li><a href="io/micronaut/tracing/opentracing/package-tree.html">io.micronaut.tracing.opentracing</a>, </li>
 <li><a href="io/micronaut/tracing/opentracing/instrument/http/package-tree.html">io.micronaut.tracing.opentracing.instrument.http</a>, </li>
-<li><a href="io/micronaut/tracing/opentracing/interceptor/package-tree.html">io.micronaut.tracing.opentracing.interceptor</a></li>
+<li><a href="io/micronaut/tracing/opentracing/interceptor/package-tree.html">io.micronaut.tracing.opentracing.interceptor</a>, </li>
+<li><a href="io/micronaut/tracing/zipkin/http/client/package-tree.html">io.micronaut.tracing.zipkin.http.client</a></li>
 </ul>
 </div>
 <section class="hierarchy">
@@ -114,7 +115,7 @@ loadScripts(document, 'script');</script>
 <ul>
 <li class="circle">zipkin2.reporter.Sender
 <ul>
-<li class="circle">io.micronaut.tracing.brave.sender.<a href="io/micronaut/tracing/brave/sender/HttpClientSender.html" class="type-name-link" title="class in io.micronaut.tracing.brave.sender">HttpClientSender</a></li>
+<li class="circle">io.micronaut.tracing.zipkin.http.client.<a href="io/micronaut/tracing/zipkin/http/client/HttpClientSender.html" class="type-name-link" title="class in io.micronaut.tracing.zipkin.http.client">HttpClientSender</a></li>
 </ul>
 </li>
 </ul>
@@ -126,11 +127,16 @@ loadScripts(document, 'script');</script>
 <li class="circle">io.micronaut.tracing.opentelemetry.instrument.grpc.<a href="io/micronaut/tracing/opentelemetry/instrument/grpc/GrpcServerTracingInterceptorFactory.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.grpc">GrpcServerTracingInterceptorFactory</a></li>
 <li class="circle">io.micronaut.http.client.HttpClientConfiguration
 <ul>
-<li class="circle">io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.HttpClientSenderConfiguration.html" class="type-name-link" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.HttpClientSenderConfiguration</a></li>
+<li class="circle">io.micronaut.tracing.zipkin.http.client.<a href="io/micronaut/tracing/zipkin/http/client/HttpClientSenderConfiguration.html" class="type-name-link" title="class in io.micronaut.tracing.zipkin.http.client">HttpClientSenderConfiguration</a>
+<ul>
+<li class="circle">io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BraveTracerConfiguration.BraveHttpClientSenderConfiguration.html" class="type-name-link" title="class in io.micronaut.tracing.brave">BraveTracerConfiguration.BraveHttpClientSenderConfiguration</a></li>
+<li class="circle">io.micronaut.tracing.opentelemetry.exporter.zipkin.<a href="io/micronaut/tracing/opentelemetry/exporter/zipkin/OtelHttpClientSenderConfiguration.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.exporter.zipkin">OtelHttpClientSenderConfiguration</a></li>
 </ul>
 </li>
-<li class="circle">io.micronaut.tracing.brave.sender.<a href="io/micronaut/tracing/brave/sender/HttpClientSender.Builder.html" class="type-name-link" title="class in io.micronaut.tracing.brave.sender">HttpClientSender.Builder</a></li>
-<li class="circle">io.micronaut.tracing.brave.sender.<a href="io/micronaut/tracing/brave/sender/HttpClientSenderFactory.html" class="type-name-link" title="class in io.micronaut.tracing.brave.sender">HttpClientSenderFactory</a></li>
+</ul>
+</li>
+<li class="circle">io.micronaut.tracing.zipkin.http.client.<a href="io/micronaut/tracing/zipkin/http/client/HttpClientSender.Builder.html" class="type-name-link" title="class in io.micronaut.tracing.zipkin.http.client">HttpClientSender.Builder</a></li>
+<li class="circle">io.micronaut.tracing.zipkin.http.client.<a href="io/micronaut/tracing/zipkin/http/client/HttpClientSenderFactory.html" class="type-name-link" title="class in io.micronaut.tracing.zipkin.http.client">HttpClientSenderFactory</a></li>
 <li class="circle">io.micronaut.tracing.brave.http.<a href="io/micronaut/tracing/brave/http/HttpTracingFactory.html" class="type-name-link" title="class in io.micronaut.tracing.brave.http">HttpTracingFactory</a></li>
 <li class="circle">io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerConfiguration.html" class="type-name-link" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration</a> (implements io.micronaut.core.util.Toggleable)</li>
 <li class="circle">io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerConfiguration.JaegerReporterConfiguration.html" class="type-name-link" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration.JaegerReporterConfiguration</a></li>
@@ -153,6 +159,7 @@ loadScripts(document, 'script');</script>
 <li class="circle">io.micronaut.tracing.opentelemetry.instrument.http.client.<a href="io/micronaut/tracing/opentelemetry/instrument/http/client/OpenTelemetryHttpClientConfig.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client">OpenTelemetryHttpClientConfig</a></li>
 <li class="circle">io.micronaut.tracing.opentelemetry.instrument.http.server.<a href="io/micronaut/tracing/opentelemetry/instrument/http/server/OpenTelemetryHttpServerConfig.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.http.server">OpenTelemetryHttpServerConfig</a></li>
 <li class="circle">io.micronaut.tracing.opentelemetry.utils.<a href="io/micronaut/tracing/opentelemetry/utils/OpenTelemetryReactorPropagation.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.utils">OpenTelemetryReactorPropagation</a></li>
+<li class="circle">io.micronaut.tracing.opentelemetry.exporter.zipkin.<a href="io/micronaut/tracing/opentelemetry/exporter/zipkin/OtelHttpClientSenderFactory.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.exporter.zipkin">OtelHttpClientSenderFactory</a></li>
 <li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html" class="type-name-link external-link" title="class or interface in java.lang">Record</a>
 <ul>
 <li class="circle">io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/BravePropagationContext.html" class="type-name-link" title="class in io.micronaut.tracing.brave">BravePropagationContext</a> (implements io.micronaut.core.propagation.ThreadPropagatedContextElement&lt;S&gt;)</li>
@@ -167,7 +174,7 @@ loadScripts(document, 'script');</script>
 <li class="circle">io.micronaut.tracing.opentracing.instrument.http.<a href="io/micronaut/tracing/opentracing/instrument/http/TracingExclusionsConfiguration.html" class="type-name-link" title="class in io.micronaut.tracing.opentracing.instrument.http">TracingExclusionsConfiguration</a></li>
 <li class="circle">io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/TracingProducerInterceptor.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">TracingProducerInterceptor</a>&lt;K,<wbr>V&gt; (implements org.apache.kafka.clients.producer.ProducerInterceptor&lt;K,<wbr>V&gt;)</li>
 <li class="circle">io.micronaut.tracing.opentelemetry.processing.<a href="io/micronaut/tracing/opentelemetry/processing/WithSpanAnnotationTransformer.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.processing">WithSpanAnnotationTransformer</a> (implements io.micronaut.inject.annotation.TypedAnnotationTransformer&lt;T&gt;)</li>
-<li class="circle">io.micronaut.tracing.brave.<a href="io/micronaut/tracing/brave/ZipkinServiceInstanceList.html" class="type-name-link" title="class in io.micronaut.tracing.brave">ZipkinServiceInstanceList</a> (implements io.micronaut.discovery.ServiceInstanceList)</li>
+<li class="circle">io.micronaut.tracing.zipkin.http.client.<a href="io/micronaut/tracing/zipkin/http/client/ZipkinServiceInstanceList.html" class="type-name-link" title="class in io.micronaut.tracing.zipkin.http.client">ZipkinServiceInstanceList</a> (implements io.micronaut.discovery.ServiceInstanceList)</li>
 </ul>
 </li>
 </ul>

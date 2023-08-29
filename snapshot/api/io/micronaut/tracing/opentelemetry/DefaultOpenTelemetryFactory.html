@@ -113,11 +113,12 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected io.opentelemetry.api.OpenTelemetry</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration,java.util.Map,io.opentelemetry.sdk.trace.IdGenerator,io.opentelemetry.sdk.trace.SpanProcessor,io.micronaut.tracing.opentelemetry.ResourceProvider)" class="member-name-link">defaultOpenTelemetry</a><wbr>(io.micronaut.runtime.ApplicationConfiguration&nbsp;applicationConfiguration,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration,java.util.Map,io.opentelemetry.sdk.trace.IdGenerator,io.opentelemetry.sdk.trace.SpanProcessor,io.micronaut.tracing.opentelemetry.ResourceProvider,io.opentelemetry.sdk.trace.samplers.Sampler)" class="member-name-link">defaultOpenTelemetry</a><wbr>(io.micronaut.runtime.ApplicationConfiguration&nbsp;applicationConfiguration,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;otelConfig,
  @Nullable io.opentelemetry.sdk.trace.IdGenerator&nbsp;idGenerator,
  @Nullable io.opentelemetry.sdk.trace.SpanProcessor&nbsp;spanProcessor,
- @Nullable <a href="ResourceProvider.html" title="interface in io.micronaut.tracing.opentelemetry">ResourceProvider</a>&nbsp;resourceProvider)</code></div>
+ @Nullable <a href="ResourceProvider.html" title="interface in io.micronaut.tracing.opentelemetry">ResourceProvider</a>&nbsp;resourceProvider,
+ @Nullable io.opentelemetry.sdk.trace.samplers.Sampler&nbsp;sampler)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The OpenTelemetry bean with default values.</div>
 </div>
@@ -153,7 +154,7 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration,java.util.Map,io.opentelemetry.sdk.trace.IdGenerator,io.opentelemetry.sdk.trace.SpanProcessor,io.micronaut.tracing.opentelemetry.ResourceProvider)">
+<section class="detail" id="defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration,java.util.Map,io.opentelemetry.sdk.trace.IdGenerator,io.opentelemetry.sdk.trace.SpanProcessor,io.micronaut.tracing.opentelemetry.ResourceProvider,io.opentelemetry.sdk.trace.samplers.Sampler)">
 <h3>defaultOpenTelemetry</h3>
 <div class="member-signature"><span class="annotations">@Singleton
 </span><span class="modifiers">protected</span>&nbsp;<span class="return-type">io.opentelemetry.api.OpenTelemetry</span>&nbsp;<span class="element-name">defaultOpenTelemetry</span><wbr><span class="parameters">(io.micronaut.runtime.ApplicationConfiguration&nbsp;applicationConfiguration,
@@ -164,7 +165,9 @@ loadScripts(document, 'script');</script>
  @Nullable
  @Nullable io.opentelemetry.sdk.trace.SpanProcessor&nbsp;spanProcessor,
  @Nullable
- @Nullable <a href="ResourceProvider.html" title="interface in io.micronaut.tracing.opentelemetry">ResourceProvider</a>&nbsp;resourceProvider)</span></div>
+ @Nullable <a href="ResourceProvider.html" title="interface in io.micronaut.tracing.opentelemetry">ResourceProvider</a>&nbsp;resourceProvider,
+ @Nullable
+ @Nullable io.opentelemetry.sdk.trace.samplers.Sampler&nbsp;sampler)</span></div>
 <div class="block">The OpenTelemetry bean with default values.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

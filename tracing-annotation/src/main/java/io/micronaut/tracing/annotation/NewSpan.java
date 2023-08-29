@@ -40,9 +40,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @InterceptorBinding(kind = InterceptorKind.AROUND)
 public @interface NewSpan {
 
-    /**
+    /**x
      * The name of the span which will be created.
-     * Default is the annotated method's name separated by hyphens.
+     * Default is "className"."method"
      *
      * @return the key to use for the tag
      */

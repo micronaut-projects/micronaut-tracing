@@ -34,6 +34,7 @@ import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
 import io.opentelemetry.sdk.trace.IdGenerator;
 import io.opentelemetry.sdk.trace.SpanProcessor;
 
+import io.opentelemetry.sdk.trace.samplers.Sampler;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
@@ -71,7 +72,8 @@ public class DefaultOpenTelemetryFactory {
                                                  @Property(name = "otel") @MapFormat(transformation = FLAT) Map<String, String> otelConfig,
                                                  @Nullable IdGenerator idGenerator,
                                                  @Nullable SpanProcessor spanProcessor,
-                                                 @Nullable ResourceProvider resourceProvider) {
+                                                 @Nullable ResourceProvider resourceProvider,
+                                                 @Nullable Sampler sampler) {
 
         Map<String, String> otel = otelConfig.entrySet().stream().collect(Collectors.toMap(
             e -> "otel." + e.getKey(),
@@ -96,6 +98,10 @@ public class DefaultOpenTelemetryFactory {
                     if (resourceProvider != null) {
                         tracerProviderBuilder.setResource(resourceProvider.resource());
                     }
+                    if (sampler != null) {
+                        tracerProviderBuilder.setSampler(sampler);
+                    }
+
                     return tracerProviderBuilder;
                 }
             );

@@ -1,0 +1,20 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api mn.micronaut.http.client
+    implementation mnReactor.micronaut.reactor
+    api platform (libs.boms.zipkin.reporter)
+    api libs.zipkin.reporter
+    testRuntimeOnly mnSerde.micronaut.serde.jackson
+}
+
+micronautBuild {
+    binaryCompatibility {
+        def dash = version.indexOf('-')
+        def v = dash > 0 ? version.substring(0, dash) : version
+        def (major, minor, patch) = v.split('[.]').collect { it.toInteger() }
+        enabled = major > 5 || (major == 5 && minor > 0) || (major == 5 && minor == 0 && patch > 2)
+    }
+}

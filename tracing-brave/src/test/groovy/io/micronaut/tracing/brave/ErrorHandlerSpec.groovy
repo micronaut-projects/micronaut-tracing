@@ -8,10 +8,9 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.tracing.zipkin.http.client.HttpClientSender
 import spock.lang.Issue
 import spock.lang.Specification
-
-import static io.micronaut.tracing.brave.sender.HttpClientSender.Builder.DEFAULT_SERVER_URL
 
 class ErrorHandlerSpec extends Specification {
 
@@ -23,7 +22,7 @@ class ErrorHandlerSpec extends Specification {
                 'tracing.zipkin.enabled': true,
                 'tracing.instrument-threads': true,
                 'tracing.zipkin.sampler.probability': 1,
-                'tracing.zipkin.http.url': DEFAULT_SERVER_URL
+                'tracing.zipkin.http.url': HttpClientSender.Builder.DEFAULT_SERVER_URL
         )
         def embeddedServer = context.getBean(EmbeddedServer).start()
         def client = context.createBean(HttpClient, embeddedServer.URL)

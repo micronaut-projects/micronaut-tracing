@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api projects.micronautTracingOpentracing
+    api projects.micronautTracingZipkinHttpClient
     api mnReactor.micronaut.reactor
     api platform (libs.boms.brave)
     api platform (libs.boms.zipkin.reporter)

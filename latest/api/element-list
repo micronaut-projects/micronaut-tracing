@@ -2,10 +2,10 @@ io.micronaut.tracing.annotation
 io.micronaut.tracing.brave
 io.micronaut.tracing.brave.http
 io.micronaut.tracing.brave.log
-io.micronaut.tracing.brave.sender
 io.micronaut.tracing.jaeger
 io.micronaut.tracing.opentelemetry
 io.micronaut.tracing.opentelemetry.conf
+io.micronaut.tracing.opentelemetry.exporter.zipkin
 io.micronaut.tracing.opentelemetry.idgenerator.xray
 io.micronaut.tracing.opentelemetry.instrument.grpc
 io.micronaut.tracing.opentelemetry.instrument.http
@@ -20,3 +20,4 @@ io.micronaut.tracing.opentelemetry.xray
 io.micronaut.tracing.opentracing
 io.micronaut.tracing.opentracing.instrument.http
 io.micronaut.tracing.opentracing.interceptor
+io.micronaut.tracing.zipkin.http.client

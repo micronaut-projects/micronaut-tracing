@@ -28,7 +28,6 @@ import io.micronaut.runtime.ApplicationConfiguration;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.events.GlobalEventEmitterProvider;
-import io.opentelemetry.api.logs.GlobalLoggerProvider;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
 import io.opentelemetry.sdk.trace.IdGenerator;
@@ -85,9 +84,13 @@ public class DefaultOpenTelemetryFactory {
         otel.putIfAbsent(DEFAULT_METRICS_EXPORTER, NONE);
         otel.putIfAbsent(DEFAULT_LOGS_EXPORTER, NONE);
 
-        AutoConfiguredOpenTelemetrySdkBuilder sdk = AutoConfiguredOpenTelemetrySdk.builder()
-            .setResultAsGlobal(Boolean.parseBoolean(otel.getOrDefault(REGISTER_GLOBAL, StringUtils.FALSE)))
-            .addPropertiesSupplier(() -> otel)
+        AutoConfiguredOpenTelemetrySdkBuilder sdk = AutoConfiguredOpenTelemetrySdk.builder();
+
+        if (Boolean.parseBoolean(otel.getOrDefault(REGISTER_GLOBAL, StringUtils.FALSE))) {
+            sdk.setResultAsGlobal();
+        }
+
+        sdk.addPropertiesSupplier(() -> otel)
             .addTracerProviderCustomizer((tracerProviderBuilder, ignored) -> {
                     if (idGenerator != null) {
                         tracerProviderBuilder.setIdGenerator(idGenerator);
@@ -119,7 +122,6 @@ public class DefaultOpenTelemetryFactory {
         if (environment.getActiveNames().contains(Environment.TEST)) {
             GlobalOpenTelemetry.resetForTest();
             GlobalEventEmitterProvider.resetForTest();
-            GlobalLoggerProvider.resetForTest();
         }
     }
 

@@ -27,9 +27,8 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.Toggleable;
-import io.micronaut.http.client.HttpClientConfiguration;
 import io.micronaut.runtime.ApplicationConfiguration;
-import io.micronaut.tracing.brave.sender.HttpClientSender;
+import io.micronaut.tracing.zipkin.http.client.HttpClientSenderConfiguration;
 import jakarta.inject.Inject;
 
 import static io.micronaut.context.env.Environment.DEFAULT_NAME;
@@ -164,35 +163,10 @@ public class BraveTracerConfiguration implements Toggleable {
      * Used to configure HTTP trace sending under the {@code tracing.zipkin.http} namespace.
      */
     @ConfigurationProperties("http")
-    @Requires(property = HttpClientSenderConfiguration.PREFIX)
+    @Requires(property = BraveHttpClientSenderConfiguration.PREFIX)
     @Requires(classes = Tracing.class)
-    public static class HttpClientSenderConfiguration extends HttpClientConfiguration {
-
+    public static class BraveHttpClientSenderConfiguration extends HttpClientSenderConfiguration {
         public static final String PREFIX = BraveTracerConfiguration.PREFIX + ".http";
-
-        @ConfigurationBuilder(prefixes = "")
-        protected final HttpClientSender.Builder clientSenderBuilder;
-
-        /**
-         * Initialize the builder with client configurations.
-         */
-        public HttpClientSenderConfiguration() {
-            clientSenderBuilder = new HttpClientSender.Builder(this);
-        }
-
-        @Override
-        public ConnectionPoolConfiguration getConnectionPoolConfiguration() {
-            return new ConnectionPoolConfiguration();
-        }
-
-        /**
-         * Creates builder.
-         *
-         * @return the builder
-         */
-        public HttpClientSender.Builder getBuilder() {
-            return clientSenderBuilder;
-        }
     }
 
     /**

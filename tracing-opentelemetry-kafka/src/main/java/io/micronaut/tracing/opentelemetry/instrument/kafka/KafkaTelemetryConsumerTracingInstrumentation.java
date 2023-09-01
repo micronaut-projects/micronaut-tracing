@@ -15,8 +15,6 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
-import java.lang.reflect.Proxy;
-
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.BeanCreatedEvent;
 import io.micronaut.context.event.BeanCreatedEventListener;
@@ -50,9 +48,10 @@ public class KafkaTelemetryConsumerTracingInstrumentation implements BeanCreated
     public Consumer<?, ?> onCreated(BeanCreatedEvent<Consumer<?, ?>> event) {
 
         Consumer<?, ?> bean = event.getBean();
-        if (Proxy.isProxyClass(bean.getClass())) {
+        if (bean instanceof MicronautOtelKafkaConsumer<?, ?>) {
             return bean;
         }
+
         return kafkaTelemetry.wrap(bean);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 original authors
+ * Copyright 2017-2023 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.micronaut.tracing.opentelemetry.exporter.zipkin;
+
+import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.tracing.zipkin.http.client.HttpClientSenderConfiguration;
+
 /**
- * Brave tracing HTTP sender.
- *
- * @author graemerocher
- * @since 1.0
+ * Configuration properties for Zipkin exporter.
  */
-package io.micronaut.tracing.brave.sender;
+@ConfigurationProperties(OtelHttpClientSenderConfiguration.PREFIX)
+public class OtelHttpClientSenderConfiguration extends HttpClientSenderConfiguration {
+    public static final String PREFIX =  "otel.exporter.zipkin";
+}

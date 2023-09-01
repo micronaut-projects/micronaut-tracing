@@ -1,5 +1,5 @@
 [versions]
-micronaut = "4.0.0"
+micronaut = "4.1.3"
 micronaut-test = "4.0.0"
 micronaut-logging = "1.0.0"
 micronaut-platform = "4.0.0-RC1"
@@ -16,7 +16,7 @@ managed-opentelemetry-contrib-aws-xray = '1.26.0'
 managed-opentelemetry-contrib-aws-resources = '1.26.0-alpha'
 managed-opentelemetry-gcp-trace = '0.25.1-alpha'
 managed-protobuf = '0.9.4'
-managed-zipkin = '2.24.2'
+managed-zipkin = '2.24.3'
 managed-zipkin-reporter = '2.16.4'
 
 managed-jaeger = '1.8.1'
@@ -26,18 +26,18 @@ managed-brave-opentracing = '1.0.0'
 
 javax-annotation = '1.3.2'
 kotlin = '1.8.22'
-kotlin-coroutines = '1.7.1'
+kotlin-coroutines = '1.7.3'
 grpc = '1.55.1'
-protobuf = '3.23.2'
+protobuf = '3.24.2'
 testcontainers = '1.19.0'
 
-micronaut-aws = "4.0.1"
-micronaut-grpc = '4.0.0'
-micronaut-reactor = '3.0.0'
-micronaut-rxjava2 = '2.0.0'
+micronaut-aws = "4.0.3"
+micronaut-grpc = '4.0.1'
+micronaut-reactor = '3.0.2'
+micronaut-rxjava2 = '2.0.1'
 micronaut-serde = '2.0.0'
-micronaut-kafka = '5.0.0'
-micronaut-gradle-plugin = "4.0.0"
+micronaut-kafka = '5.0.2'
+micronaut-gradle-plugin = "4.0.2"
 
 [libraries]
 # Core
@@ -82,6 +82,8 @@ opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api' }
 opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk' }
 opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure' }
+opentelemetry-exporter-zipkin = { module = 'io.opentelemetry:opentelemetry-exporter-zipkin', version.ref = 'managed-opentelemetry' }
+
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api' }
 opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6'}
 opentelemetry-instrumentation-kafka-common = { module = 'io.opentelemetry.instrumentation:opentelemetry-kafka-clients-common'}

@@ -5,15 +5,12 @@ import brave.http.HttpClientHandler
 import brave.http.HttpServerHandler
 import brave.http.HttpTracing
 import io.micronaut.context.ApplicationContext
-import io.opentracing.Scope
-import io.opentracing.Span
+import io.micronaut.tracing.zipkin.http.client.HttpClientSender
 import io.opentracing.Tracer
-import io.opentracing.noop.NoopTracer
 import spock.lang.Specification
 import zipkin2.reporter.AsyncReporter
 import zipkin2.reporter.Reporter
 
-import static io.micronaut.tracing.brave.sender.HttpClientSender.Builder.DEFAULT_SERVER_URL
 
 /**
  * @author graemerocher
@@ -25,7 +22,7 @@ class BraveTracerFactorySpec extends Specification {
         given:
         ApplicationContext context = ApplicationContext.run(
                 'tracing.zipkin.enabled': true,
-                'tracing.zipkin.http.endpoint': DEFAULT_SERVER_URL
+                'tracing.zipkin.http.endpoint': HttpClientSender.Builder.DEFAULT_SERVER_URL
         )
 
         expect: 'The tracer is obtained'

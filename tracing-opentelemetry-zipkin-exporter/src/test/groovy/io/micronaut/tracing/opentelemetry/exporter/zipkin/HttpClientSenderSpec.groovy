@@ -1,4 +1,4 @@
-package io.micronaut.tracing.brave
+package io.micronaut.tracing.opentelemetry.exporter.zipkin
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.event.ApplicationEventListener
@@ -6,37 +6,39 @@ import io.micronaut.core.async.annotation.SingleResult
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.context.ServerRequestContext
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.runtime.server.event.ServerStartupEvent
 import io.micronaut.tracing.zipkin.http.client.HttpClientSender
+import io.opentelemetry.api.trace.Span
+import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import spock.lang.Retry
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 import zipkin2.reporter.Sender
 
 import static io.micronaut.http.HttpStatus.OK
+import static io.micronaut.http.MediaType.TEXT_PLAIN
 import static zipkin2.Span.Kind.CLIENT
 import static zipkin2.Span.Kind.SERVER
 
-/**
- * @author graemerocher
- * @since 1.0
- */
+
 @Retry
 class HttpClientSenderSpec extends Specification {
 
     void 'test http client sender bean initialization with instrumented threads'() {
         given:
         ApplicationContext context = ApplicationContext.run(
-                'tracing.zipkin.enabled': true,
-                'tracing.instrument-threads': true,
-                'tracing.zipkin.sampler.probability': 1,
-                'tracing.zipkin.http.url': HttpClientSender.Builder.DEFAULT_SERVER_URL
+                'otel.exporter.zipkin.url': HttpClientSender.Builder.DEFAULT_SERVER_URL
         )
 
         when:
@@ -59,9 +61,10 @@ class HttpClientSenderSpec extends Specification {
         SpanController spanController = zipkinServer.applicationContext.getBean(SpanController)
 
         ApplicationContext context = ApplicationContext.run(
-                'tracing.zipkin.enabled': true,
-                'tracing.zipkin.sampler.probability': 1,
-                'tracing.zipkin.http.url': zipkinServer.URL.toString()
+                'otel.exporter.zipkin.url': zipkinServer.URL.toString(),
+                'otel.exporter.zipkin.message-max-bytes': 100000,
+                'otel.exporter.zipkin.encoding': 'JSON',
+                'otel.exporter.zipkin.compression-enabled': false,
         )
 
         when:
@@ -69,6 +72,7 @@ class HttpClientSenderSpec extends Specification {
         HttpClient client = context.createBean(HttpClient, embeddedServer.URL)
         PollingConditions conditions = new PollingConditions(timeout: 10)
         StartedListener listener = zipkinServer.applicationContext.getBean(StartedListener)
+        Sender sender = context.getBean(Sender)
 
         then:
         conditions.eventually {
@@ -84,24 +88,30 @@ class HttpClientSenderSpec extends Specification {
             spanController.receivedSpans.size() == 4
 
             spanController.receivedSpans[0].tags.get('foo') == 'bar'
-            spanController.receivedSpans[0].tags.get('http.path') == '/traced/hello/John'
+            spanController.receivedSpans[0].tags.get('http.target') == '/traced/hello/John'
             spanController.receivedSpans[0].name == 'get /traced/hello/{name}'
             spanController.receivedSpans[0].kind == SERVER.name()
 
-            spanController.receivedSpans[1].tags.get('http.path') == '/traced/hello/John'
-            spanController.receivedSpans[1].name == 'get /traced/hello/{name}'
+            spanController.receivedSpans[1].tags.get('http.url').contains("/traced/hello/John")
+            spanController.receivedSpans[1].name == 'get'
             spanController.receivedSpans[1].kind == CLIENT.name()
 
             spanController.receivedSpans[2].name == 'get /traced/nested/{name}'
             spanController.receivedSpans[2].kind == SERVER.name()
             spanController.receivedSpans[2].tags.get('http.method') == 'GET'
-            spanController.receivedSpans[2].tags.get('http.path') == '/traced/nested/John'
+            spanController.receivedSpans[2].tags.get('http.target') == '/traced/nested/John'
 
             spanController.receivedSpans[3].tags.get('foo') == null
-            spanController.receivedSpans[3].tags.get('http.path') == '/traced/nested/John'
+            spanController.receivedSpans[3].tags.get('http.url').contains('/traced/nested/John')
             spanController.receivedSpans[3].name == 'get'
             spanController.receivedSpans[3].kind == CLIENT.name()
         }
+
+        when: 'Sender coverage test'
+        Sender s = context.getBean(Sender)
+
+        then:
+        s.check()
 
         cleanup:
         client.close()
@@ -116,10 +126,8 @@ class HttpClientSenderSpec extends Specification {
                 ['micronaut.server.port': -1]
         )
         ApplicationContext context = ApplicationContext.run(
-                'tracing.zipkin.enabled': true,
-                'tracing.zipkin.sampler.probability': 1,
-                'tracing.zipkin.http.url': zipkinServer.URL.toString(),
-                'tracing.zipkin.http.path': '/custom/path/spans'
+                'otel.exporter.zipkin.url': zipkinServer.URL.toString(),
+                'otel.exporter.zipkin.path': '/custom/path/spans'
         )
 
         when:
@@ -144,21 +152,21 @@ class HttpClientSenderSpec extends Specification {
             customPathSpanController.receivedSpans.size() == 4
 
             customPathSpanController.receivedSpans[0].tags.get('foo') == 'bar'
-            customPathSpanController.receivedSpans[0].tags.get('http.path') == '/traced/hello/John'
+            customPathSpanController.receivedSpans[0].tags.get('http.target') == '/traced/hello/John'
             customPathSpanController.receivedSpans[0].name == 'get /traced/hello/{name}'
             customPathSpanController.receivedSpans[0].kind == SERVER.name()
 
-            customPathSpanController.receivedSpans[1].tags.get('http.path') == '/traced/hello/John'
-            customPathSpanController.receivedSpans[1].name == 'get /traced/hello/{name}'
+            customPathSpanController.receivedSpans[1].tags.get('http.url').contains("/traced/hello/John")
+            customPathSpanController.receivedSpans[1].name == 'get'
             customPathSpanController.receivedSpans[1].kind == CLIENT.name()
 
             customPathSpanController.receivedSpans[2].name == 'get /traced/nested/{name}'
             customPathSpanController.receivedSpans[2].kind == SERVER.name()
             customPathSpanController.receivedSpans[2].tags.get('http.method') == 'GET'
-            customPathSpanController.receivedSpans[2].tags.get('http.path') == '/traced/nested/John'
+            customPathSpanController.receivedSpans[2].tags.get('http.target') == '/traced/nested/John'
 
             customPathSpanController.receivedSpans[3].tags.get('foo') == null
-            customPathSpanController.receivedSpans[3].tags.get('http.path') == '/traced/nested/John'
+            customPathSpanController.receivedSpans[3].tags.get('http.url').contains("/traced/nested/John")
             customPathSpanController.receivedSpans[3].name == 'get'
             customPathSpanController.receivedSpans[3].kind == CLIENT.name()
         }
@@ -207,5 +215,86 @@ class HttpClientSenderSpec extends Specification {
         void onApplicationEvent(ServerStartupEvent event) {
             started = true
         }
+    }
+
+    @Controller('/traced')
+    static class TracedController {
+
+        @Inject
+        TracedClient tracedClient
+
+        @Inject
+        NotTracedEndpointClient notTracedEndpointClient
+
+        @Get('/hello/{name}')
+        String hello(String name) {
+            Span span = Span.current();
+            span.setAttribute("foo", "bar")
+            return name
+        }
+
+        @Get(value = '/rxjava/observe', produces = TEXT_PLAIN)
+        @SingleResult
+        Publisher<String> index() {
+            return Mono.just('hello').publishOn(Schedulers.boundedElastic()).map({ r ->
+                if (!ServerRequestContext.currentRequest().isPresent()) {
+                    throw new RuntimeException('fail')
+                }
+                return r
+            })
+        }
+
+        @Get('/rxjava/{name}')
+        @SingleResult
+        Publisher<String> rxjava(String name) {
+            Mono.fromCallable({ ->
+                spanCustomizer.tag('foo', 'bar')
+                return name
+            }).subscribeOn(Schedulers.boundedElastic())
+        }
+
+        @Get('/error/{name}')
+        String error(String name) {
+            throw new RuntimeException('bad')
+        }
+
+        @Get('/nested/{name}')
+        String nested(String name) {
+            tracedClient.hello(name)
+        }
+
+        @Get('/nested-not-traced/{name}')
+        String nestedNotTraced(String name) {
+            notTracedEndpointClient.hello(name)
+        }
+
+        @Get('/nestedError/{name}')
+        String nestedError(String name) {
+            tracedClient.error(name)
+        }
+    }
+
+    @Client('/traced')
+    static interface TracedClient {
+        @Get('/hello/{name}')
+        String hello(String name)
+
+        @Get('/error/{name}')
+        String error(String name)
+    }
+
+    @Controller('/not-traced')
+    static class NotTracedController {
+
+        @Get('/hello/{name}')
+        String hello(String name) {
+            return name
+        }
+    }
+
+    @Client(id = 'not-traced-client')
+    static interface NotTracedEndpointClient {
+        @Get('/not-traced/hello/{name}')
+        String hello(String name)
     }
 }

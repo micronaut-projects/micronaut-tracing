@@ -36,7 +36,7 @@ micronaut-grpc = '4.0.1'
 micronaut-reactor = '3.0.2'
 micronaut-rxjava2 = '2.0.1'
 micronaut-serde = '2.0.0'
-micronaut-kafka = '5.0.2'
+micronaut-kafka = '5.1.1'
 micronaut-gradle-plugin = "4.0.2"
 
 [libraries]

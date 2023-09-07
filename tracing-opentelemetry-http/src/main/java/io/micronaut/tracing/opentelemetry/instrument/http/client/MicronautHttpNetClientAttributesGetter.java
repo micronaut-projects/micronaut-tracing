@@ -42,14 +42,14 @@ enum MicronautHttpNetClientAttributesGetter implements NetClientAttributesGetter
     }
 
     @Override
-    public String getPeerName(MutableHttpRequest<Object> request) {
+    public String getServerAddress(MutableHttpRequest<Object> request) {
         return request.getAttribute(SERVICE_ID, String.class)
             .filter(serviceId -> !serviceId.contains("/"))
             .orElseGet(() -> getAddress(request).getHostString());
     }
 
     @Override
-    public Integer getPeerPort(MutableHttpRequest<Object> request) {
+    public Integer getServerPort(MutableHttpRequest<Object> request) {
         return getAddress(request).getPort();
     }
 }

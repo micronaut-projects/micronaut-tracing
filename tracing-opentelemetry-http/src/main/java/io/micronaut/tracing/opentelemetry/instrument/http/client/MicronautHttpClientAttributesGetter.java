@@ -30,33 +30,33 @@ enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<M
     INSTANCE;
 
     @Override
-    public String getMethod(MutableHttpRequest<Object> request) {
+    public String getHttpRequestMethod(MutableHttpRequest<Object> request) {
         return request.getMethodName();
     }
 
     @Override
-    public List<String> getRequestHeader(MutableHttpRequest<Object> request, String name) {
+    public List<String> getHttpRequestHeader(MutableHttpRequest<Object> request, String name) {
         return request.getHeaders().getAll(name);
     }
 
     @Override
-    public Integer getStatusCode(MutableHttpRequest<Object> request, HttpResponse<Object> response, @Nullable Throwable error) {
+    public Integer getHttpResponseStatusCode(MutableHttpRequest<Object> request, HttpResponse<Object> response, @Nullable Throwable error) {
         return response.code();
     }
 
     @Override
-    public List<String> getResponseHeader(MutableHttpRequest<Object> request, HttpResponse<Object> response, String name) {
+    public List<String> getHttpResponseHeader(MutableHttpRequest<Object> request, HttpResponse<Object> response, String name) {
         return response.getHeaders().getAll(name);
     }
 
     @Override
-    public String getUrl(MutableHttpRequest<Object> request) {
+    public String getUrlFull(MutableHttpRequest<Object> request) {
         return request.getUri().toString();
     }
 
     @Override
     @Nullable
-    public String getFlavor(MutableHttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
+    public String getNetworkProtocolVersion(MutableHttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
         switch (request.getHttpVersion()) {
             case HTTP_1_0:
                 return SemanticAttributes.HttpFlavorValues.HTTP_1_0;
@@ -67,5 +67,17 @@ enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<M
             default:
                 return null;
         }
+    }
+
+    @Override
+    @Nullable
+    public String getServerAddress(MutableHttpRequest<Object> request) {
+        return request.getServerAddress().getHostName();
+    }
+
+    @Override
+    @Nullable
+    public Integer getServerPort(MutableHttpRequest<Object> request) {
+        return request.getServerAddress().getPort();
     }
 }

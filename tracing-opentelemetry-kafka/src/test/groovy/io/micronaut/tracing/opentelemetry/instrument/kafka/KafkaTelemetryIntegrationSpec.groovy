@@ -35,7 +35,7 @@ class KafkaTelemetryIntegrationSpec extends Specification {
         conditions.eventually {
             kafkaListener.text.size() == 1
             exporter.getFinishedSpanItems().size() == 2
-            exporter.finishedSpanItems.name.any(x -> x.contains("send"))
+            exporter.finishedSpanItems.name.any(x -> x.contains("publish"))
             exporter.finishedSpanItems.name.any(x -> x.contains("receive"))
         }
 

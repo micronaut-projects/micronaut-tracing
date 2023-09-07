@@ -16,6 +16,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import io.micronaut.core.annotation.Internal;
@@ -23,14 +24,21 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpVersion;
 import io.micronaut.http.uri.UriMatchTemplate;
 import io.micronaut.web.router.UriRouteInfo;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerAttributesGetter;
+
+import static io.micronaut.http.HttpVersion.HTTP_1_0;
+import static io.micronaut.http.HttpVersion.HTTP_1_1;
+import static io.micronaut.http.HttpVersion.HTTP_2_0;
 
 @Internal
 enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<HttpRequest<Object>, HttpResponse<Object>> {
 
     INSTANCE;
+
+    private static final Map<HttpVersion, String> PROTOCOL_VERSION = Map.of(HTTP_1_0, "1.0", HTTP_1_1, "1.1", HTTP_2_0, "2.0");
 
     @Override
     public String getHttpRequestMethod(HttpRequest<Object> request) {
@@ -55,11 +63,7 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     @Override
     @Nullable
     public String getNetworkProtocolVersion(HttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
-        return switch (request.getHttpVersion()) {
-            case HTTP_1_0 -> "1.0";
-            case HTTP_1_1 -> "1.1";
-            case HTTP_2_0 -> "2.0";
-        };
+        return PROTOCOL_VERSION.get(request.getHttpVersion());
     }
 
     @Override

@@ -30,7 +30,6 @@ import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientAttribut
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientMetrics;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanNameExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanStatusExtractor;
-import io.opentelemetry.instrumentation.api.instrumenter.net.NetClientAttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.net.PeerServiceAttributesExtractor;
 
 import jakarta.inject.Named;
@@ -91,17 +90,7 @@ public class MicronautHttpClientTelemetryFactory {
     @Client
     @Prototype
     AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> peerServiceAttributesExtractor() {
-        return PeerServiceAttributesExtractor.create(MicronautHttpNetClientAttributesGetter.INSTANCE, Collections.emptyMap());
-    }
-
-    /**
-     * Builds the PeerServiceAttributesExtractor.
-     * @return the {@link PeerServiceAttributesExtractor}
-     */
-    @Client
-    @Prototype
-    AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>>  micronautHttpNetClientAttributesGetter() {
-        return NetClientAttributesExtractor.create(MicronautHttpNetClientAttributesGetter.INSTANCE);
+        return PeerServiceAttributesExtractor.create(MicronautHttpClientAttributesGetter.INSTANCE, Collections.emptyMap());
     }
 
     /**
@@ -113,7 +102,7 @@ public class MicronautHttpClientTelemetryFactory {
     @Prototype
     AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> mutableHttpRequestHttpResponseHttpClientAttributesExtractorBuilder(@Nullable OpenTelemetryHttpClientConfig openTelemetryHttpClientConfig) {
         HttpClientAttributesExtractorBuilder<MutableHttpRequest<Object>, HttpResponse<Object>> httpAttributesExtractorBuilder =
-            HttpClientAttributesExtractor.builder(MicronautHttpClientAttributesGetter.INSTANCE, MicronautHttpNetClientAttributesGetter.INSTANCE);
+            HttpClientAttributesExtractor.builder(MicronautHttpClientAttributesGetter.INSTANCE);
 
         if (openTelemetryHttpClientConfig != null) {
             httpAttributesExtractorBuilder.setCapturedRequestHeaders(openTelemetryHttpClientConfig.getRequestHeaders());

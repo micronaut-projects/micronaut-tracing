@@ -23,6 +23,9 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientAttributesGetter;
 
+import static io.micronaut.http.HttpAttributes.SERVICE_ID;
+import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.NetTransportValues.IP_TCP;
+
 @Internal
 enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<MutableHttpRequest<Object>, HttpResponse<Object>> {
 
@@ -66,12 +69,19 @@ enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<M
     @Override
     @Nullable
     public String getServerAddress(MutableHttpRequest<Object> request) {
-        return request.getServerAddress().getHostName();
+        return request.getAttribute(SERVICE_ID, String.class)
+            .filter(serviceId -> !serviceId.contains("/"))
+            .orElseGet(() -> request.getRemoteAddress().getHostString());
     }
 
     @Override
     @Nullable
     public Integer getServerPort(MutableHttpRequest<Object> request) {
         return request.getServerAddress().getPort();
+    }
+
+    @Override
+    public String getTransport(MutableHttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
+        return IP_TCP;
     }
 }

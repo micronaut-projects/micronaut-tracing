@@ -22,7 +22,6 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientAttributesGetter;
-import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 
 @Internal
 enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<MutableHttpRequest<Object>, HttpResponse<Object>> {
@@ -57,16 +56,11 @@ enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<M
     @Override
     @Nullable
     public String getNetworkProtocolVersion(MutableHttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
-        switch (request.getHttpVersion()) {
-            case HTTP_1_0:
-                return SemanticAttributes.HttpFlavorValues.HTTP_1_0;
-            case HTTP_1_1:
-                return SemanticAttributes.HttpFlavorValues.HTTP_1_1;
-            case HTTP_2_0:
-                return SemanticAttributes.HttpFlavorValues.HTTP_2_0;
-            default:
-                return null;
-        }
+        return switch (request.getHttpVersion()) {
+            case HTTP_1_0 -> "1.0";
+            case HTTP_1_1 -> "1.1";
+            case HTTP_2_0 -> "2.0";
+        };
     }
 
     @Override

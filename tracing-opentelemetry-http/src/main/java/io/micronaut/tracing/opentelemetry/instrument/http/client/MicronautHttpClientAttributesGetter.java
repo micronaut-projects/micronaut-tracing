@@ -29,7 +29,7 @@ import static io.micronaut.http.HttpAttributes.SERVICE_ID;
 import static io.micronaut.http.HttpVersion.HTTP_1_0;
 import static io.micronaut.http.HttpVersion.HTTP_1_1;
 import static io.micronaut.http.HttpVersion.HTTP_2_0;
-import static io.opentelemetry.semconv.trace.attributes.SemanticAttributes.NetTransportValues.IP_TCP;
+import static io.opentelemetry.semconv.SemanticAttributes.NetTransportValues.IP_TCP;
 
 @Internal
 enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<MutableHttpRequest<Object>, HttpResponse<Object>> {

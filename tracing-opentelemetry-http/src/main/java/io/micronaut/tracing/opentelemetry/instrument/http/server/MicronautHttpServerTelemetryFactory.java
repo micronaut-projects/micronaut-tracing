@@ -25,10 +25,10 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.instrumenter.InstrumenterBuilder;
-import io.opentelemetry.instrumentation.api.instrumenter.http.HttpRouteHolder;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerAttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerAttributesExtractorBuilder;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerMetrics;
+import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerRoute;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanNameExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanStatusExtractor;
 import jakarta.inject.Named;
@@ -80,7 +80,7 @@ public final class MicronautHttpServerTelemetryFactory {
         return builder
             .setSpanStatusExtractor(HttpSpanStatusExtractor.create(httpAttributesGetter))
             .addOperationMetrics(HttpServerMetrics.get())
-            .addContextCustomizer(HttpRouteHolder.create(MicronautHttpServerAttributesGetter.INSTANCE))
+            .addContextCustomizer(HttpServerRoute.create(MicronautHttpServerAttributesGetter.INSTANCE))
             .buildServerInstrumenter(HttpRequestGetter.INSTANCE);
     }
 

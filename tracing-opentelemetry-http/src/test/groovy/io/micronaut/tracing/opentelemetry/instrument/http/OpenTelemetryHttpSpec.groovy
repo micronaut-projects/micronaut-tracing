@@ -7,6 +7,7 @@ import io.micronaut.core.annotation.Nullable
 import io.micronaut.core.async.annotation.SingleResult
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.*
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
@@ -24,10 +25,10 @@ import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
-import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.instrumentation.annotations.SpanAttribute
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
+import io.opentelemetry.semconv.trace.attributes.SemanticAttributes
 import io.reactivex.Single
 import jakarta.inject.Inject
 import org.reactivestreams.Publisher
@@ -87,6 +88,20 @@ class OpenTelemetryHttpSpec extends Specification {
         exporter = context.getBean(InMemorySpanExporter)
     }
 
+    void hasSpans(int internalSpanCount, int serverSpanCount, int clientSpanCount) {
+        assert exporter.finishedSpanItems.size() == internalSpanCount + serverSpanCount + clientSpanCount
+        assert exporter.finishedSpanItems.kind.stream().filter(x -> x == SpanKind.INTERNAL).collect().size() == internalSpanCount
+        assert exporter.finishedSpanItems.kind.stream().filter(x -> x == SpanKind.SERVER).collect().size() == serverSpanCount
+        assert exporter.finishedSpanItems.kind.stream().filter(x -> x == SpanKind.CLIENT).collect().size() == clientSpanCount
+    }
+
+    void hasHttpSemanticAttributes(HttpStatus httpStatus, boolean hasRoute = true) {
+        def serverSpans = exporter.finishedSpanItems.findAll { it -> it.kind == SpanKind.SERVER }
+        assert serverSpans.every {it.attributes.stream().any { it.get(SemanticAttributes.HTTP_METHOD) }}
+        assert !hasRoute || serverSpans.every {it.attributes.stream().any { it.get(SemanticAttributes.HTTP_ROUTE) }}
+        assert serverSpans.every {it.attributes.stream().any {x -> Optional.ofNullable(x.get(SemanticAttributes.HTTP_STATUS_CODE)).map { it.intValue() == httpStatus.code }.orElse(false) }}
+    }
+
     void 'test map WithSpan annotation'() {
         int count = 1
         // 1x Server POST 2x Server GET 2x Client GET, 3x Method call with NewSpan
@@ -94,7 +109,6 @@ class OpenTelemetryHttpSpec extends Specification {
         int serverSpanCount = 3
         int internalSpanCount = 3
 
-        int spanNumbers = clientSpanCount + serverSpanCount + internalSpanCount
         def spanNumbersOfRequests = 5
 
         expect:
@@ -114,10 +128,7 @@ class OpenTelemetryHttpSpec extends Specification {
             assert t.getT1() == t.getT2()
         }
         conditions.eventually {
-            exporter.finishedSpanItems.size() == count * spanNumbers
-            exporter.finishedSpanItems.kind.stream().filter(x -> x == SpanKind.INTERNAL).collect().size() == internalSpanCount
-            exporter.finishedSpanItems.kind.stream().filter(x -> x == SpanKind.SERVER).collect().size() == serverSpanCount
-            exporter.finishedSpanItems.kind.stream().filter(x -> x == SpanKind.CLIENT).collect().size() == clientSpanCount
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
 
             exporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-attribute"))
             !exporter.finishedSpanItems.attributes.any(x -> x.asMap().keySet().any(y -> y.key == "tracing-annotation-span-tag-no-withspan"))
@@ -128,12 +139,18 @@ class OpenTelemetryHttpSpec extends Specification {
             exporter.finishedSpanItems.name.any(x -> x.contains("#test-withspan-mapping"))
 
             exporter.getFinishedSpanItems().attributes.stream().filter(x -> x.asMap().keySet().any(y -> y.key == TRACING_ID_IN_SPAN)).collect().size() == spanNumbersOfRequests * count
+
+            hasHttpSemanticAttributes(HttpStatus.OK)
         }
         cleanup:
         exporter.reset()
     }
 
     void 'test context propagation'() {
+        def serverSpanCount = 1
+        def clientSpanCount = 0
+        def internalSpanCount = 0
+
         when:
         HttpResponse<String> response = reactorHttpClient.toBlocking().exchange('/propagate/context', String)
 
@@ -141,6 +158,8 @@ class OpenTelemetryHttpSpec extends Specification {
         conditions.eventually {
             response
             response.body() == "contains micronaut.http.server.request: true"
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            hasHttpSemanticAttributes(HttpStatus.OK)
         }
         cleanup:
         exporter.reset()
@@ -157,9 +176,8 @@ class OpenTelemetryHttpSpec extends Specification {
         then:
         conditions.eventually {
             response
-            exporter.finishedSpanItems.size() == internalSpanCount + serverSpanCount + clientSpanCount
-            exporter.finishedSpanItems.stream().filter(s -> s.kind == SpanKind.SERVER).count() == serverSpanCount
-            exporter.finishedSpanItems.stream().filter(s -> s.kind == SpanKind.CLIENT).count() == clientSpanCount
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            hasHttpSemanticAttributes(response.status)
         }
 
         cleanup:
@@ -188,9 +206,10 @@ class OpenTelemetryHttpSpec extends Specification {
         def e = thrown(HttpClientResponseException)
         e.message == "Internal Server Error"
         conditions.eventually {
-            exporter.finishedSpanItems.size() == spanCount
+            hasSpans(spanCount - 1, Math.max(spanCount - 1, 1), 0)
             exporter.finishedSpanItems.events.any { it.size() > 0 && it.get(0).name == "exception" }
             exporter.finishedSpanItems.stream().allMatch(span -> span.status.statusCode == StatusCode.ERROR)
+            hasHttpSemanticAttributes(e.status)
         }
         cleanup:
         exporter.reset()
@@ -206,7 +225,6 @@ class OpenTelemetryHttpSpec extends Specification {
     }
 
     void 'client with tracing annotations'() {
-        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
         def warehouseClient = embeddedServer.applicationContext.getBean(WarehouseClient)
         def serverSpanCount = 2
         def clientSpanCount = 2
@@ -217,37 +235,43 @@ class OpenTelemetryHttpSpec extends Specification {
         warehouseClient.order(Collections.singletonMap("testOrderKey", "testOrderValue"))
         warehouseClient.getItemCount("testItemCount", 10) == 10
         conditions.eventually {
-            testExporter.finishedSpanItems.size() == serverSpanCount + clientSpanCount + internalSpanCount
-            testExporter.finishedSpanItems.name.contains("WarehouseClient.order")
-            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("warehouse.order")) == "{testOrderKey=testOrderValue}")
-            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("upc")) == "10")
-            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("net.peer.name")) == "localhost")
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            exporter.finishedSpanItems.name.contains("WarehouseClient.order")
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("warehouse.order")) == "{testOrderKey=testOrderValue}")
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("upc")) == "10")
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(SemanticAttributes.NET_PEER_NAME) == "localhost")
+            hasHttpSemanticAttributes(HttpStatus.OK)
         }
 
         cleanup:
-        testExporter.reset()
+        exporter.reset()
     }
 
     void 'client with tracing annotations that contains id inside annotation'() {
-        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
         def warehouseClient = embeddedServer.applicationContext.getBean(WarehouseClientWithId)
-        def serverSpanCount = 1
+        def internalSpanCount = 1
+        def serverSpanCount = 0 // server runs in a different context
         def clientSpanCount = 1
 
-        expect:
-
+        when:
         warehouseClient.order(Collections.singletonMap("testOrderKey", "testOrderValue"))
+
+        then:
         conditions.eventually {
-            testExporter.finishedSpanItems.size() == serverSpanCount + clientSpanCount
-            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("warehouse.order")) == "{testOrderKey=testOrderValue}")
-            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("net.peer.name")) == "correctspanname")
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("warehouse.order")) == "{testOrderKey=testOrderValue}")
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(SemanticAttributes.NET_PEER_NAME) == "correctspanname")
         }
 
         cleanup:
-        testExporter.reset()
+        exporter.reset()
     }
 
     void 'test error 404'() {
+        def internalSpanCount = 0
+        def serverSpanCount = 1
+        def clientSpanCount = 0
+
         when:
         def route = '/error/notFoundRoute'
         HttpResponse<String> response = reactorHttpClient.toBlocking().exchange(route, String)
@@ -256,25 +280,33 @@ class OpenTelemetryHttpSpec extends Specification {
         def e = thrown(HttpClientResponseException)
         e.message == "Not Found"
         conditions.eventually {
-            exporter.finishedSpanItems.size() == 1
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
             exporter.finishedSpanItems[0].name == "GET"
             exporter.finishedSpanItems[0].status.statusCode == StatusCode.ERROR
+            hasHttpSemanticAttributes(e.status, false)
         }
         cleanup:
         exporter.reset()
     }
 
     void 'test span name contains method'() {
+        def internalSpanCount = 0
+        def serverSpanCount = 1
+        def clientSpanCount = 1
+
         given:
         def exporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
         def warehouseClient = embeddedServer.applicationContext.getBean(WarehouseClient)
 
-        expect:
+        when:
         var uuid = UUID.randomUUID()
         warehouseClient.order(uuid, UUID.randomUUID())
 
+        then:
         conditions.eventually {
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
             exporter.finishedSpanItems.any(x -> x.name == "GET /client/order/{orderId}")
+            hasHttpSemanticAttributes(HttpStatus.OK)
         }
 
         cleanup:
@@ -282,38 +314,51 @@ class OpenTelemetryHttpSpec extends Specification {
     }
 
     void 'route match template is added as route attribute'() {
-        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
+        def internalSpanCount = 0
+        def serverSpanCount = 1
+        def clientSpanCount = 1
+
         def warehouseClient = embeddedServer.applicationContext.getBean(WarehouseClient)
 
-        expect:
-
+        when:
         warehouseClient.order(UUID.randomUUID())
+
+        then:
         conditions.eventually {
-            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("http.route")) == "/client/order/{orderId}")
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(SemanticAttributes.HTTP_ROUTE) == "/client/order/{orderId}")
+            hasHttpSemanticAttributes(HttpStatus.OK)
         }
 
         cleanup:
-        testExporter.reset()
+        exporter.reset()
     }
 
     void 'query variables are not included in route template attribute'() {
-        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
+        def internalSpanCount = 0
+        def serverSpanCount = 1
+        def clientSpanCount = 1
+
         def warehouseClient = embeddedServer.applicationContext.getBean(WarehouseClient)
 
-        expect:
-
+        when:
         warehouseClient.order(UUID.randomUUID(), UUID.randomUUID())
+
+        then:
         conditions.eventually {
-            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("http.route")) == "/client/order/{orderId}")
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(SemanticAttributes.HTTP_ROUTE) == "/client/order/{orderId}")
+            hasHttpSemanticAttributes(HttpStatus.OK)
         }
 
         cleanup:
-        testExporter.reset()
+        exporter.reset()
     }
 
     void 'test continue nested HTTP tracing - reactive'() {
-
-        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
+        def internalSpanCount = 0
+        def serverSpanCount = 2
+        def clientSpanCount = 1
 
         when:
         HttpResponse<String> response = httpClient.toBlocking().exchange('/propagate/nestedReactive/John', String)
@@ -323,18 +368,20 @@ class OpenTelemetryHttpSpec extends Specification {
 
         and: 'all spans are finished'
         conditions.eventually {
-            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("foo")) == "bar")
-            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("foo2")) == "bar2")
-
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("foo")) == "bar")
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("foo2")) == "bar2")
+            hasHttpSemanticAttributes(HttpStatus.OK)
         }
 
         cleanup:
-        testExporter.reset()
+        exporter.reset()
     }
 
     void 'test continue nested HTTP tracing - reactive 2'() {
-
-        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
+        def internalSpanCount = 0
+        def serverSpanCount = 2
+        def clientSpanCount = 1
 
         when:
         HttpResponse<String> response = httpClient.toBlocking().exchange('/propagate/nestedReactive2/John', String)
@@ -344,13 +391,14 @@ class OpenTelemetryHttpSpec extends Specification {
 
         and: 'all spans are finished'
         conditions.eventually {
-            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("foo")) == "bar")
-            testExporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("foo3")) == "bar3")
-
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("foo")) == "bar")
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("foo3")) == "bar3")
+            hasHttpSemanticAttributes(HttpStatus.OK)
         }
 
         cleanup:
-        testExporter.reset()
+        exporter.reset()
     }
 
     @Introspected
@@ -612,7 +660,7 @@ class OpenTelemetryHttpSpec extends Specification {
     @Client(id = "correctspanname")
     static interface WarehouseClientWithId {
 
-        @Post("/order")
+        @Post("/client/order")
         @NewSpan
         void order(@SpanTag("warehouse.order") Map<String, ?> json);
 

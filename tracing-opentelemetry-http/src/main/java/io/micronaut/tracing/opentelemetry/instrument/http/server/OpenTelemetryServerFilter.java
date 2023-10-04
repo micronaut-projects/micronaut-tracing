@@ -106,7 +106,7 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
     }
 
     private void onError(HttpRequest<?> request, Context context,
-                         MutableHttpResponse<?> mutableHttpResponse, @Nullable Throwable e) {
+                         @Nullable MutableHttpResponse<?> mutableHttpResponse, @Nullable Throwable e) {
         Span span = Span.fromContext(context);
         if (e != null) {
             span.recordException(e);

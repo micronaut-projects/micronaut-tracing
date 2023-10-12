@@ -25,13 +25,12 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.instrumenter.InstrumenterBuilder;
-import io.opentelemetry.instrumentation.api.instrumenter.http.HttpRouteHolder;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerAttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerAttributesExtractorBuilder;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerMetrics;
+import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerRoute;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanNameExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanStatusExtractor;
-import io.opentelemetry.instrumentation.api.instrumenter.net.NetServerAttributesExtractor;
 import jakarta.inject.Named;
 import jakarta.inject.Qualifier;
 
@@ -81,7 +80,7 @@ public final class MicronautHttpServerTelemetryFactory {
         return builder
             .setSpanStatusExtractor(HttpSpanStatusExtractor.create(httpAttributesGetter))
             .addOperationMetrics(HttpServerMetrics.get())
-            .addContextCustomizer(HttpRouteHolder.create(MicronautHttpServerAttributesGetter.INSTANCE))
+            .addContextCustomizer(HttpServerRoute.create(MicronautHttpServerAttributesGetter.INSTANCE))
             .buildServerInstrumenter(HttpRequestGetter.INSTANCE);
     }
 
@@ -94,7 +93,7 @@ public final class MicronautHttpServerTelemetryFactory {
     @Server
     AttributesExtractor<HttpRequest<Object>, HttpResponse<Object>> httpServerAttributesExtractor(@Nullable OpenTelemetryHttpServerConfig openTelemetryHttpServerConfig) {
         HttpServerAttributesExtractorBuilder<HttpRequest<Object>, HttpResponse<Object>> httpAttributesExtractorBuilder =
-            HttpServerAttributesExtractor.builder(MicronautHttpServerAttributesGetter.INSTANCE, new MicronautHttpNetServerAttributesGetter());
+            HttpServerAttributesExtractor.builder(MicronautHttpServerAttributesGetter.INSTANCE);
 
         if (openTelemetryHttpServerConfig != null) {
             httpAttributesExtractorBuilder.setCapturedRequestHeaders(openTelemetryHttpServerConfig.getRequestHeaders());
@@ -102,15 +101,4 @@ public final class MicronautHttpServerTelemetryFactory {
         }
         return httpAttributesExtractorBuilder.build();
     }
-
-    /**
-     * Builds the NetServerAttributesExtractor.
-     * @return the {@link NetServerAttributesExtractor}
-     */
-    @Prototype
-    @Server
-    AttributesExtractor<HttpRequest<Object>, HttpResponse<Object>> netServerAttributesExtractor() {
-        return NetServerAttributesExtractor.create(new MicronautHttpNetServerAttributesGetter());
-    }
-
 }

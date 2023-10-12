@@ -8,12 +8,12 @@ groovy = "4.0.13"
 spock = "2.3-groovy-4.0"
 
 managed-brave-instrumentation = '5.16.0'
-managed-opentelemetry = '1.26.0'
-managed-opentelemetry-alpha = '1.26.0-alpha'
-managed-opentelemetry-instrumentation = '1.26.0'
-managed-opentelemetry-instrumentation-alpha = '1.26.0-alpha'
-managed-opentelemetry-contrib-aws-xray = '1.29.0'
-managed-opentelemetry-contrib-aws-resources = '1.26.0-alpha'
+managed-opentelemetry = '1.30.1'
+managed-opentelemetry-alpha = '1.30.1-alpha'
+managed-opentelemetry-instrumentation = '1.30.0'
+managed-opentelemetry-instrumentation-alpha = '1.30.0-alpha'
+managed-opentelemetry-contrib-aws-xray = '1.30.0'
+managed-opentelemetry-contrib-aws-resources = '1.30.0-alpha'
 managed-opentelemetry-gcp-trace = '0.25.2-alpha'
 managed-protobuf = '0.9.4'
 managed-zipkin = '2.24.3'
@@ -79,6 +79,7 @@ zipkin = { module = 'io.zipkin.zipkin2:zipkin', version.ref = 'managed-zipkin' }
 zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter' }
 
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api' }
+opentelemetry-api-events = { module = 'io.opentelemetry:opentelemetry-api-events' }
 opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk' }
 opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure' }

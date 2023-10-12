@@ -13,7 +13,6 @@ import io.micronaut.http.client.HttpClient
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
-import io.opentelemetry.api.logs.GlobalLoggerProvider
 import io.opentelemetry.instrumentation.annotations.SpanAttribute
 import reactor.core.publisher.Mono
 import spock.lang.AutoCleanup
@@ -35,10 +34,6 @@ class HttpClientResetForTestSpec extends Specification {
     @Shared
     @AutoCleanup
     HttpClient httpClient = HttpClient.create(embeddedServer.URL)
-
-    def cleanup() {
-        GlobalLoggerProvider.resetForTest()
-    }
 
     void 'test pre destroy resetForTest'() {
         given:

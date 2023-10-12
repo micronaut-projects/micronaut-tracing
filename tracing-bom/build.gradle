@@ -4,45 +4,40 @@ plugins {
 
 micronautBom {
     extraExcludedProjects.add 'kotlin-tests'
+
     suppressions {
-        bomAuthorizedGroupIds.put(
-                "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom",
-                [
+        bomAuthorizedGroupIds.putAll(
+                "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom": [
                         "io.opentelemetry",
                         "io.opentelemetry.instrumentation",
                         "io.opentelemetry.javaagent",
-                        "io.opentelemetry.javaagent.instrumentation"
-                ] as Set
-        )
-        bomAuthorizedGroupIds.put(
-                "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha",
-                [
+                        "io.opentelemetry.javaagent.instrumentation",
+                ] as Set,
+                "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha": [
                         "io.opentelemetry",
                         "io.opentelemetry.instrumentation",
                         "io.opentelemetry.semconv",
                         "io.opentelemetry.javaagent",
                         "io.opentelemetry.javaagent.instrumentation",
                         "io.opentelemetry.javaagent.opentelemetry-javaagent-bootstrap",
-                        "io.opentelemetry.javaagent:opentelemetry-testing-common"
-                ] as Set
-        )
-        bomAuthorizedGroupIds.put(
-                "io.zipkin.brave:brave-bom",
-                [
+                        "io.opentelemetry.javaagent:opentelemetry-testing-common",
+                ] as Set,
+                "io.zipkin.brave:brave-bom": [
                         "io.zipkin.brave",
                         "io.zipkin.zipkin2",
                         "io.zipkin.reporter2",
-                        "io.zipkin.proto3"
-                ] as Set
-        )
-        bomAuthorizedGroupIds.put(
-                "io.zipkin.reporter2:zipkin-reporter-bom",
-                [
+                        "io.zipkin.proto3",
+                ] as Set,
+                "io.zipkin.reporter2:zipkin-reporter-bom": [
                         "io.zipkin.reporter2",
                         "io.zipkin.zipkin2",
-                        "io.zipkin.proto3"
+                        "io.zipkin.proto3",
                 ] as Set
         )
+        // opentelemetry-instrumentation-bom and opentelemetry-instrumentation-bom-alpha still use 1.30.1
+        dependencies.add("io.opentelemetry:opentelemetry-bom:1.30.1")
+        dependencies.add("io.opentelemetry:opentelemetry-bom-alpha:1.30.1-alpha")
+
         dependencies.add("io.opentelemetry:opentelemetry-bom:1.31.0")
         dependencies.add("io.opentelemetry:opentelemetry-bom-alpha:1.31.0-alpha")
         dependencies.add("io.zipkin.brave:brave-bom:5.16.0")

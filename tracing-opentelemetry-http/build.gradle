@@ -16,6 +16,7 @@ dependencies {
     api libs.opentelemetry.instrumentation.annotations
     api libs.opentelemetry.instrumentation.api
     api libs.opentelemetry.instrumentation.api.semconv
+    api libs.opentelemetry.instrumentation.semconv
 
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor

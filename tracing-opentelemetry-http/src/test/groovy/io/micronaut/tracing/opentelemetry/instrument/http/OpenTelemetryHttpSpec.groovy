@@ -8,7 +8,13 @@ import io.micronaut.core.async.annotation.SingleResult
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
-import io.micronaut.http.annotation.*
+import io.micronaut.http.annotation.Body
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Header
+import io.micronaut.http.annotation.PathVariable
+import io.micronaut.http.annotation.Post
+import io.micronaut.http.annotation.QueryValue
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
@@ -28,7 +34,7 @@ import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.instrumentation.annotations.SpanAttribute
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
-import io.opentelemetry.semconv.trace.attributes.SemanticAttributes
+import io.opentelemetry.semconv.SemanticAttributes
 import io.reactivex.Single
 import jakarta.inject.Inject
 import org.reactivestreams.Publisher

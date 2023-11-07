@@ -9,8 +9,10 @@ dependencies {
     api platform (libs.boms.opentelemetry.instrumentation)
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
     api mn.micronaut.core.processor
-    api mnGrpc.micronaut.grpc.client.runtime
-    api mnGrpc.micronaut.grpc.server.runtime
+    compileOnly(mnGrpc.micronaut.grpc.client.runtime)
+    testImplementation(mnGrpc.micronaut.grpc.client.runtime)    
+    compileOnly(mnGrpc.micronaut.grpc.server.runtime)
+    testImplementation(mnGrpc.micronaut.grpc.server.runtime)
     api projects.micronautTracingAnnotation
     api projects.micronautTracingOpentelemetry
     api libs.opentelemetry.api

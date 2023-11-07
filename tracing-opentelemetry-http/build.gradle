@@ -8,7 +8,6 @@ dependencies {
     api platform (libs.boms.opentelemetry.instrumentation)
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
     api mn.micronaut.core.processor
-    api mn.micronaut.http.client
     api mn.micronaut.router
     api projects.micronautTracingAnnotation
     api projects.micronautTracingOpentelemetry

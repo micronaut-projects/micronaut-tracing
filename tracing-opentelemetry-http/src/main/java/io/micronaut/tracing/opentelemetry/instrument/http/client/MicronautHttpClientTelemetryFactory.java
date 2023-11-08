@@ -32,6 +32,7 @@ import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanNameExtrac
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpSpanStatusExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.net.PeerServiceAttributesExtractor;
 
+import io.opentelemetry.instrumentation.api.instrumenter.net.PeerServiceResolver;
 import jakarta.inject.Named;
 import jakarta.inject.Qualifier;
 
@@ -90,7 +91,7 @@ public class MicronautHttpClientTelemetryFactory {
     @Client
     @Prototype
     AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> peerServiceAttributesExtractor() {
-        return PeerServiceAttributesExtractor.create(MicronautHttpClientAttributesGetter.INSTANCE, Collections.emptyMap());
+        return PeerServiceAttributesExtractor.create(MicronautHttpClientAttributesGetter.INSTANCE, PeerServiceResolver.create(Collections.emptyMap()));
     }
 
     /**

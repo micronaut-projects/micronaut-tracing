@@ -1,8 +1,8 @@
 [versions]
-micronaut = "4.1.9"
+micronaut = "4.1.11"
 micronaut-test = "4.0.0"
 micronaut-logging = "1.1.2"
-micronaut-platform = "4.0.0-RC1"
+micronaut-platform = "4.1.4"
 micronaut-docs = '2.0.0'
 groovy = "4.0.13"
 spock = "2.3-groovy-4.0"
@@ -10,11 +10,12 @@ spock = "2.3-groovy-4.0"
 managed-brave-instrumentation = '5.16.0'
 managed-opentelemetry = '1.31.0'
 managed-opentelemetry-alpha = '1.31.0-alpha'
-managed-opentelemetry-instrumentation = '1.30.0'
+managed-opentelemetry-instrumentation = '1.31.0'
 managed-opentelemetry-instrumentation-alpha = '1.30.0-alpha'
-managed-opentelemetry-contrib-aws-xray = '1.30.0'
+managed-opentelemetry-contrib-aws-xray = '1.31.0'
 managed-opentelemetry-contrib-aws-resources = '1.30.0-alpha'
 managed-opentelemetry-gcp-trace = '0.25.2-alpha'
+managed-opentelemetry-semconv = '1.21.0-alpha'
 managed-protobuf = '0.9.4'
 managed-zipkin = '2.24.3'
 managed-zipkin-reporter = '2.16.4'
@@ -25,24 +26,23 @@ managed-opentracing-grpc = '0.2.3'
 managed-brave-opentracing = '1.0.0'
 
 javax-annotation = '1.3.2'
-kotlin = '1.9.10'
+kotlin = '1.9.20'
 kotlin-coroutines = '1.7.3'
-grpc = '1.55.1'
-protobuf = '3.24.4'
+grpc = '1.59.0'
+protobuf = '3.25.0'
 testcontainers = '1.19.1'
 
-micronaut-aws = "4.0.4"
+micronaut-aws = "4.1.1"
 micronaut-grpc = '4.0.1'
-micronaut-reactor = '3.0.2'
-micronaut-rxjava2 = '2.0.1'
-micronaut-serde = '2.2.6'
+micronaut-reactor = '3.1.0'
+micronaut-rxjava2 = '2.1.0'
+micronaut-serde = '2.3.1'
 micronaut-kafka = '5.1.2'
-micronaut-gradle-plugin = "4.1.1"
+micronaut-gradle-plugin = "4.1.2"
 
 [libraries]
 # Core
 micronaut-core = { module = 'io.micronaut:micronaut-core-bom', version.ref = 'micronaut' }
-micronaut-logging = { module = 'io.micronaut.logging:micronaut-logging-bom', version.ref = 'micronaut-logging' }
 
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
 managed-opentelemetry-contrib-aws-resources = { module = 'io.opentelemetry.contrib:opentelemetry-aws-resources', version.ref = 'managed-opentelemetry-contrib-aws-resources'}
@@ -89,6 +89,7 @@ opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation
 opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6'}
 opentelemetry-instrumentation-kafka-common = { module = 'io.opentelemetry.instrumentation:opentelemetry-kafka-clients-common'}
 opentelemetry-instrumentation-api-semconv = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv' }
+opentelemetry-instrumentation-semconv = { module = 'io.opentelemetry.semconv:opentelemetry-semconv', version.ref ='managed-opentelemetry-semconv' }
 opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrumentation: opentelemetry-instrumentation-annotations' }
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 

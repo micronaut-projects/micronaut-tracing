@@ -8,7 +8,6 @@ dependencies {
     api platform (libs.boms.opentelemetry.instrumentation)
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
     api mn.micronaut.core.processor
-    api mn.micronaut.http.client
     api mn.micronaut.router
     api projects.micronautTracingAnnotation
     api projects.micronautTracingOpentelemetry
@@ -16,6 +15,7 @@ dependencies {
     api libs.opentelemetry.instrumentation.annotations
     api libs.opentelemetry.instrumentation.api
     api libs.opentelemetry.instrumentation.api.semconv
+    api libs.opentelemetry.instrumentation.semconv
 
     compileOnly libs.kotlinx.coroutines.core
     compileOnly libs.kotlinx.coroutines.reactor

@@ -24,10 +24,8 @@ dependencies {
     testImplementation mnSerde.micronaut.serde.jackson
 }
 
-tasks.named('compileTestKotlin') {
-    kotlinOptions.jvmTarget = '17'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }

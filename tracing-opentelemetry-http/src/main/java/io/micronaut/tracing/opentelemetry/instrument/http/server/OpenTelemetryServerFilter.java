@@ -93,25 +93,26 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
             return Mono.from(chain.proceed(request))
                 .doOnNext(mutableHttpResponse -> mutableHttpResponse.getAttribute(HttpAttributes.EXCEPTION, Exception.class)
                     .ifPresentOrElse(
-                        e -> onError(request, context, e), () -> {
+                        e -> onError(request, context, mutableHttpResponse, e), () -> {
                             if (mutableHttpResponse.status().getCode() >= 400) {
-                                onError(request, context, null);
+                                onError(request, context, mutableHttpResponse,null);
                             } else {
                                 instrumenter.end(context, request, mutableHttpResponse, null);
                             }
                         }))
-                .doOnError(throwable -> onError(request, context, throwable))
+                .doOnError(throwable -> onError(request, context, null, throwable))
                 .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext));
         }
     }
 
-    private void onError(HttpRequest<?> request, Context context, @Nullable Throwable e) {
+    private void onError(HttpRequest<?> request, Context context,
+                         @Nullable MutableHttpResponse<?> mutableHttpResponse, @Nullable Throwable e) {
         Span span = Span.fromContext(context);
         if (e != null) {
             span.recordException(e);
         }
         span.setStatus(StatusCode.ERROR);
-        instrumenter.end(context, request, null, e);
+        instrumenter.end(context, request, mutableHttpResponse, e);
         request.setAttribute(CONTINUE, true);
     }
 }

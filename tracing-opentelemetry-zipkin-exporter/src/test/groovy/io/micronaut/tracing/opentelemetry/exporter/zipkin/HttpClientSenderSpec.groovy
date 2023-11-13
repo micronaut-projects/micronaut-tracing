@@ -13,6 +13,8 @@ import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.context.ServerRequestContext
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.runtime.server.event.ServerStartupEvent
+import io.micronaut.scheduling.TaskExecutors
+import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.zipkin.http.client.HttpClientSender
 import io.opentelemetry.api.trace.Span
 import jakarta.inject.Inject
@@ -258,16 +260,19 @@ class HttpClientSenderSpec extends Specification {
             throw new RuntimeException('bad')
         }
 
+        @ExecuteOn(TaskExecutors.BLOCKING)
         @Get('/nested/{name}')
         String nested(String name) {
             tracedClient.hello(name)
         }
 
+        @ExecuteOn(TaskExecutors.BLOCKING)
         @Get('/nested-not-traced/{name}')
         String nestedNotTraced(String name) {
             notTracedEndpointClient.hello(name)
         }
 
+        @ExecuteOn(TaskExecutors.BLOCKING)
         @Get('/nestedError/{name}')
         String nestedError(String name) {
             tracedClient.error(name)

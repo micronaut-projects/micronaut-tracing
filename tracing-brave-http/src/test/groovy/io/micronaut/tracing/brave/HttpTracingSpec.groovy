@@ -12,6 +12,8 @@ import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.http.context.ServerRequestContext
 import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.scheduling.TaskExecutors
+import io.micronaut.scheduling.annotation.ExecuteOn
 import jakarta.inject.Inject
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Mono
@@ -372,16 +374,19 @@ class HttpTracingSpec extends Specification {
             throw new RuntimeException('bad')
         }
 
+        @ExecuteOn(TaskExecutors.BLOCKING)
         @Get('/nested/{name}')
         String nested(String name) {
             tracedClient.hello(name)
         }
 
+        @ExecuteOn(TaskExecutors.BLOCKING)
         @Get('/nested-not-traced/{name}')
         String nestedNotTraced(String name) {
             notTracedEndpointClient.hello(name)
         }
 
+        @ExecuteOn(TaskExecutors.BLOCKING)
         @Get('/nestedError/{name}')
         String nestedError(String name) {
             tracedClient.error(name)

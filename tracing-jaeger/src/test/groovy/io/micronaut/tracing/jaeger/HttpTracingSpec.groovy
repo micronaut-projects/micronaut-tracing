@@ -16,6 +16,7 @@ import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.scheduling.TaskExecutors
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
@@ -34,6 +35,7 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 import static io.micronaut.http.HttpStatus.TOO_MANY_REQUESTS
+import static io.micronaut.scheduling.TaskExecutors.BLOCKING
 import static io.micronaut.scheduling.TaskExecutors.IO
 import static java.time.temporal.ChronoUnit.MILLIS
 
@@ -750,43 +752,47 @@ class HttpTracingSpec extends Specification {
             Mono.defer { Mono.just(error(name)) }
         }
 
+        @ExecuteOn(TaskExecutors.BLOCKING)
         @Get('/nested/{name}')
         String nested(String name) {
             tracedClient.hello(name)
         }
 
         @Get('/blocking/nested/{name}')
-        @ExecuteOn(IO)
+        @ExecuteOn(BLOCKING)
         String blockingNested(String name) {
             tracedClient.blockingHello(name)
         }
 
+        @ExecuteOn(TaskExecutors.BLOCKING)
         @ContinueSpan
         @Get('/continued/{name}')
         String continued(String name) {
             tracedClient.continued(name)
         }
 
+        @ExecuteOn(BLOCKING)
         @ContinueSpan
         @Get('/blocking/continued/{name}')
-        @ExecuteOn(IO)
         String blockingContinued(String name) {
             tracedClient.blockingContinued(name)
         }
 
+        @ExecuteOn(BLOCKING)
         @ContinueSpan
         @Get('/continueRx/{name}')
         Publisher<String> continuedRx(String name) {
             tracedClient.continuedRx(name)
         }
 
+        @ExecuteOn(BLOCKING)
         @Get('/nestedError/{name}')
         String nestedError(String name) {
             tracedClient.error(name)
         }
 
         @Get('/blocking/nestedError/{name}')
-        @ExecuteOn(IO)
+        @ExecuteOn(BLOCKING)
         String blockingNestedError(String name) {
             tracedClient.blockingError(name)
         }

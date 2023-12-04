@@ -14,7 +14,6 @@ import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import spock.lang.PendingFeature
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -33,7 +32,6 @@ class OpenTelemetryGrpcClientSpec extends Specification {
     @Inject
     InMemorySpanExporter exporter
 
-    @PendingFeature
     void "test opentelemetry gRPC"() {
         when:
         testBean.sayHello("Fred") == "Hello Fred"

@@ -1,2 +1,2 @@
-To enable creating span objects on the every GRPC server request, client request, server response and client response. You have to add next depedency:
+To enable creating span objects on the every GRPC server request, client request, server response and client response,  add the following dependency:
 dependency:micronaut-tracing-opentelemetry-grpc[scope="implementation", groupId="io.micronaut.tracing"]

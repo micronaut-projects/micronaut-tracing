@@ -88,3 +88,10 @@ tracing:
     - /health
     - /env/.*
 ----
+
+== Jaeger Guides
+
+See the following guides to learn more about distributed tracing with Jaeger in the Micronaut Framework:
+
+- https://guides.micronaut.io/latest/micronaut-microservices-distributed-tracing-jaeger.html[Use OpenTracing with Jaeger and the Micronaut Framework for Microservice Distributed Tracing]
+- https://guides.micronaut.io/latest/micronaut-microservices-distributed-tracing-jaeger-opentelemetry.html[Use OpenTelemetry with Jaeger and the Micronaut Framework for Microservice Distributed Tracing]

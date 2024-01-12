@@ -8,7 +8,7 @@ groovy = "4.0.13"
 spock = "2.3-groovy-4.0"
 
 managed-brave-instrumentation = '5.16.0'
-managed-opentelemetry = '1.32.0'
+managed-opentelemetry = '1.34.1'
 managed-opentelemetry-alpha = '1.31.0-alpha'
 managed-opentelemetry-instrumentation = '1.31.0'
 managed-opentelemetry-instrumentation-alpha = '1.31.0-alpha'

@@ -34,7 +34,7 @@ testcontainers = '1.19.3'
 
 micronaut-aws = "4.1.1"
 micronaut-grpc = '4.2.0'
-micronaut-reactor = '3.2.0'
+micronaut-reactor = '3.2.1'
 micronaut-rxjava2 = '2.2.0'
 micronaut-serde = '2.4.0'
 micronaut-kafka = '5.2.0'

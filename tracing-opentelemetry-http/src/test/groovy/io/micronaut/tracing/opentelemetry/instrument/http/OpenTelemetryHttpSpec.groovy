@@ -407,8 +407,58 @@ class OpenTelemetryHttpSpec extends Specification {
         exporter.reset()
     }
 
+    void 'test consecutive sibling client calls'() {
+        def internalSpanCount = 0
+        def serverSpanCount = 3
+        def clientSpanCount = 2
+
+        when:
+        HttpResponse<String> response = httpClient.toBlocking().exchange('/words/quad?input=foo', String)
+
+        then:
+        response.body() == 'foo foo foo foo'
+
+        and: 'all spans are finished'
+        conditions.eventually {
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            def mainServerSpan = exporter.finishedSpanItems.find { it.kind == SpanKind.SERVER && it.name == 'GET /words/quad' }
+            def clientSpans = exporter.finishedSpanItems.stream().filter { it.kind == SpanKind.CLIENT }.toList()
+            clientSpans.stream().allMatch { cs -> cs.parentSpanId == mainServerSpan.spanId && cs.traceId == mainServerSpan.traceId }
+            hasHttpSemanticAttributes(HttpStatus.OK)
+        }
+
+        cleanup:
+        exporter.reset()
+    }
+
     @Introspected
     static class SomeBody {
+    }
+
+    @Client("/words")
+    static interface WordsClient {
+
+        @Get(uri = '/double')
+        Mono<String> doubleWords(@QueryValue String input)
+    }
+
+    @Controller('/words')
+    static class WordsController {
+
+        @Inject
+        @Client
+        WordsClient downstreamClient
+
+        @Get("/double")
+        Mono<String> doubleWords(@QueryValue String input) {
+            Mono.just(input.isEmpty() ? '' : "$input $input")
+        }
+
+        @Get("/quad")
+        Mono<String> quadrupleWords(@QueryValue String input) {
+            downstreamClient.doubleWords(input)
+                    .flatMap { resp -> downstreamClient.doubleWords(resp) }
+        }
     }
 
     @Controller("/annotations")

@@ -30,7 +30,7 @@ kotlin = '1.9.22'
 kotlin-coroutines = '1.7.3'
 grpc = '1.59.1'
 protobuf = '3.25.2'
-testcontainers = '1.19.4'
+testcontainers = '1.19.5'
 
 micronaut-aws = "4.4.0"
 micronaut-grpc = '4.3.0'

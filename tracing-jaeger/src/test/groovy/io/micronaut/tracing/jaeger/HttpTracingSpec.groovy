@@ -27,7 +27,6 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import spock.lang.AutoCleanup
-import spock.lang.PendingFeature
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -629,7 +628,6 @@ class HttpTracingSpec extends Specification {
         }
     }
 
-    @PendingFeature
     void 'test continue nested HTTP tracing - reactive'() {
         when:
         HttpResponse<String> response = client.toBlocking().exchange('/traced/nestedReactive/John', String)

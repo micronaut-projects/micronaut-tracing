@@ -37,6 +37,7 @@ import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import io.opentelemetry.semconv.SemanticAttributes
 import io.reactivex.Single
 import jakarta.inject.Inject
+import jakarta.inject.Singleton
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -50,6 +51,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
 import static io.micronaut.scheduling.TaskExecutors.IO
+import static java.nio.charset.StandardCharsets.UTF_8
 
 @Slf4j("LOG")
 class OpenTelemetryHttpSpec extends Specification {
@@ -431,6 +433,35 @@ class OpenTelemetryHttpSpec extends Specification {
         exporter.reset()
     }
 
+    void 'test tracing with Mono->CompletableFuture conversion'() {
+        def internalSpanCount = 1
+        def serverSpanCount = 2
+        def clientSpanCount = 1
+
+        when:
+        HttpResponse<String> response = httpClient.toBlocking().exchange('/future/test?input=' + URLEncoder.encode(' foo ', UTF_8), String)
+
+        then:
+        response.body() == '(foo foo)'
+
+        and: 'all spans are finished'
+        conditions.eventually {
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            def mainServerSpan = exporter.finishedSpanItems.find { it.kind == SpanKind.SERVER && it.name == 'GET /future/test' }
+            def internalSpan = exporter.finishedSpanItems.find { it.kind == SpanKind.INTERNAL }
+            def clientSpan = exporter.finishedSpanItems.find { it.kind == SpanKind.CLIENT }
+            internalSpan.name == 'InternalWorker.transform'
+            internalSpan.traceId == mainServerSpan.traceId
+            internalSpan.parentSpanId == mainServerSpan.spanId
+            clientSpan.traceId == mainServerSpan.traceId
+            clientSpan.parentSpanId == internalSpan.spanId // it is actually equal to mainServerSpan.spanId instead
+            hasHttpSemanticAttributes(HttpStatus.OK)
+        }
+
+        cleanup:
+        exporter.reset()
+    }
+
     @Introspected
     static class SomeBody {
     }
@@ -458,6 +489,33 @@ class OpenTelemetryHttpSpec extends Specification {
         Mono<String> quadrupleWords(@QueryValue String input) {
             downstreamClient.doubleWords(input)
                     .flatMap { resp -> downstreamClient.doubleWords(resp) }
+        }
+    }
+
+    @Singleton
+    static class InternalWorker {
+
+        @Inject
+        @Client
+        WordsClient downstreamClient
+
+        @NewSpan
+        Mono<String> transform(@SpanTag String input) {
+            return Mono.just(input.trim())
+                    .flatMap { s -> downstreamClient.doubleWords(s.trim()) }
+                    .map {"($it)".toString() }
+        }
+    }
+
+    @Controller("/future")
+    static class FutureController {
+
+        @Inject
+        InternalWorker internalWorker
+
+        @Get("/test")
+        CompletableFuture<String> test(@QueryValue String input) {
+            return internalWorker.transform(input).toFuture()
         }
     }
 

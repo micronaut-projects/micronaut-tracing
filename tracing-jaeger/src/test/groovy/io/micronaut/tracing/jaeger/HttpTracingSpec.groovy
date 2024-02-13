@@ -19,7 +19,6 @@ import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.scheduling.TaskExecutors
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
-import io.micronaut.tracing.annotation.NewSpan
 import io.opentracing.Tracer
 import jakarta.inject.Inject
 import org.reactivestreams.Publisher
@@ -27,7 +26,6 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import spock.lang.AutoCleanup
-import spock.lang.PendingFeature
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -629,7 +627,6 @@ class HttpTracingSpec extends Specification {
         }
     }
 
-    @PendingFeature
     void 'test continue nested HTTP tracing - reactive'() {
         when:
         HttpResponse<String> response = client.toBlocking().exchange('/traced/nestedReactive/John', String)

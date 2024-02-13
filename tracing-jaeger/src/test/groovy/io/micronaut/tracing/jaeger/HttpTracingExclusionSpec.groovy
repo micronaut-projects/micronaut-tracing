@@ -11,7 +11,6 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
 import io.opentracing.Tracer
 import spock.lang.AutoCleanup
-import spock.lang.PendingFeature
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -513,7 +512,6 @@ class HttpTracingExclusionSpec extends Specification {
         }
     }
 
-    @PendingFeature
     void 'test continue nested HTTP tracing - reactive'() {
         when:
         HttpResponse<String> response = client.toBlocking().exchange('/traced/nestedReactive/John', String)

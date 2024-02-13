@@ -31,7 +31,7 @@ kotlin-coroutines = '1.7.3'
 grpc = '1.59.1'
 protobuf = '3.25.2'
 
-micronaut-aws = "4.4.0"
+micronaut-aws = "4.4.1"
 micronaut-grpc = '4.3.0'
 micronaut-reactor = '3.2.1'
 micronaut-rxjava2 = '2.2.1'

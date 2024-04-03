@@ -16,7 +16,6 @@
 package io.micronaut.tracing.brave;
 
 import brave.Clock;
-import brave.ErrorParser;
 import brave.Tracing;
 import brave.propagation.CurrentTraceContext;
 import brave.propagation.Propagation;
@@ -54,7 +53,7 @@ public class BraveTracerConfiguration implements Toggleable {
     @SuppressWarnings("WeakerAccess")
     public static final boolean DEFAULT_ENABLED = false;
 
-    @ConfigurationBuilder(prefixes = "", excludes = {"errorParser", "clock", "endpoint", "spanReporter", "propagationFactory", "currentTraceContext", "sampler"})
+    @ConfigurationBuilder(prefixes = "", excludes = {"clock", "endpoint", "spanReporter", "propagationFactory", "currentTraceContext", "sampler"})
     protected Tracing.Builder tracingBuilder = Tracing.newBuilder();
 
     private boolean enabled = DEFAULT_ENABLED;
@@ -114,16 +113,6 @@ public class BraveTracerConfiguration implements Toggleable {
     public void setSampler(@Nullable Sampler sampler) {
         if (sampler != null) {
             tracingBuilder.sampler(sampler);
-        }
-    }
-
-    /**
-     * @param errorParser the parser
-     */
-    @Inject
-    public void setErrorParser(@Nullable ErrorParser errorParser) {
-        if (errorParser != null) {
-            tracingBuilder.errorParser(errorParser);
         }
     }
 

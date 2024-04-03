@@ -17,7 +17,6 @@ dependencies {
     api libs.opentelemetry.api.events
     api libs.opentelemetry.instrumentation.annotations
     api libs.opentelemetry.instrumentation.api
-    api libs.opentelemetry.instrumentation.api.semconv
     api libs.opentelemetry.instrumentation.semconv
     api libs.opentelemetry.autoconfigure
 

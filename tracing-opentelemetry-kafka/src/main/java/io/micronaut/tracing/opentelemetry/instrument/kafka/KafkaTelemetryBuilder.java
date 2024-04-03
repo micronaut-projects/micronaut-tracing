@@ -119,7 +119,7 @@ public final class KafkaTelemetryBuilder {
         return new KafkaTelemetry(
             openTelemetry,
             instrumenterFactory.createProducerInstrumenter(producerAttributesExtractors),
-            instrumenterFactory.createConsumerOperationInstrumenter(MessageOperation.RECEIVE, consumerAttributesExtractors),
+            instrumenterFactory.createConsumerProcessInstrumenter(consumerAttributesExtractors),
             producerTracingFilters, consumerTracingFilters, kafkaTelemetryConfiguration,
             propagationEnabled);
     }

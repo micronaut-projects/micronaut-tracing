@@ -9,6 +9,7 @@ dependencies {
     api platform (libs.boms.brave)
     api platform (libs.boms.zipkin.reporter)
     api libs.zipkin.reporter
+    api libs.zipkin.reporter.brave
     api libs.brave.opentracing
 
     testRuntimeOnly mnSerde.micronaut.serde.jackson

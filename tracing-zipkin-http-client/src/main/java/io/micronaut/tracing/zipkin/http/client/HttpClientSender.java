@@ -30,10 +30,10 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
-import zipkin2.Call;
-import zipkin2.Callback;
-import zipkin2.CheckResult;
-import zipkin2.codec.Encoding;
+import zipkin2.reporter.Encoding;
+import zipkin2.reporter.Call;
+import zipkin2.reporter.Callback;
+import zipkin2.reporter.CheckResult;
 import zipkin2.reporter.Sender;
 
 import java.net.URI;
@@ -48,8 +48,6 @@ import static io.micronaut.http.HttpStatus.BAD_REQUEST;
 import static io.micronaut.http.HttpStatus.MULTIPLE_CHOICES;
 import static io.micronaut.tracing.zipkin.http.client.HttpClientSender.Builder.DEFAULT_PATH;
 import static reactor.core.publisher.FluxSink.OverflowStrategy.BUFFER;
-import static zipkin2.CheckResult.OK;
-import static zipkin2.codec.Encoding.JSON;
 
 /**
  * A {@code Sender} implementation that uses Micronaut's {@code HttpClient}.
@@ -121,7 +119,7 @@ public final class HttpClientSender extends Sender {
             if (response.getStatus().getCode() >= MULTIPLE_CHOICES.getCode()) {
                 throw new IllegalStateException("check response failed: " + response);
             }
-            return OK;
+            return CheckResult.OK;
         } catch (Exception e) {
             return CheckResult.failed(e);
         }
@@ -255,7 +253,7 @@ public final class HttpClientSender extends Sender {
         public static final String DEFAULT_PATH = "/api/v2/spans";
         public static final String DEFAULT_SERVER_URL = "http://localhost:9411";
 
-        private Encoding encoding = JSON;
+        private Encoding encoding = Encoding.JSON;
         private int messageMaxBytes = 5 * 1024;
         private String path = DEFAULT_PATH;
         private boolean compressionEnabled = true;

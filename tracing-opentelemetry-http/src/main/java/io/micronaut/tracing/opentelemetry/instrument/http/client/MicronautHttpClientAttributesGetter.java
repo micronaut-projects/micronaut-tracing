@@ -15,9 +15,6 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
-import java.util.List;
-import java.util.Map;
-
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
@@ -25,11 +22,13 @@ import io.micronaut.http.HttpVersion;
 import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientAttributesGetter;
 
+import java.util.List;
+import java.util.Map;
+
 import static io.micronaut.http.HttpAttributes.SERVICE_ID;
 import static io.micronaut.http.HttpVersion.HTTP_1_0;
 import static io.micronaut.http.HttpVersion.HTTP_1_1;
 import static io.micronaut.http.HttpVersion.HTTP_2_0;
-import static io.opentelemetry.semconv.SemanticAttributes.NetTransportValues.IP_TCP;
 
 @Internal
 enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<MutableHttpRequest<Object>, HttpResponse<Object>> {
@@ -81,10 +80,5 @@ enum MicronautHttpClientAttributesGetter implements HttpClientAttributesGetter<M
     @Nullable
     public Integer getServerPort(MutableHttpRequest<Object> request) {
         return request.getServerAddress().getPort();
-    }
-
-    @Override
-    public String getTransport(MutableHttpRequest<Object> request, @Nullable HttpResponse<Object> response) {
-        return IP_TCP;
     }
 }

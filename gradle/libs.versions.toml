@@ -7,18 +7,18 @@ micronaut-docs = '2.0.0'
 groovy = "4.0.17"
 spock = "2.3-groovy-4.0"
 
-managed-brave-instrumentation = '5.18.1'
-managed-opentelemetry = '1.32.0'
-managed-opentelemetry-alpha = '1.31.0-alpha'
-managed-opentelemetry-instrumentation = '1.31.0'
-managed-opentelemetry-instrumentation-alpha = '1.31.0-alpha'
+managed-brave-instrumentation = '6.0.2'
+managed-opentelemetry = '1.36.0'
+managed-opentelemetry-alpha = '1.36.0-alpha'
+managed-opentelemetry-instrumentation = '1.33.1'
+managed-opentelemetry-instrumentation-alpha = '1.33.1-alpha'
 managed-opentelemetry-contrib-aws-xray = '1.32.0'
 managed-opentelemetry-contrib-aws-resources = '1.31.0-alpha'
 managed-opentelemetry-gcp-trace = '0.27.0-alpha'
 managed-opentelemetry-semconv = '1.21.0-alpha'
 managed-protobuf = '0.9.4'
-managed-zipkin = '2.27.1'
-managed-zipkin-reporter = '2.17.2'
+managed-zipkin = '3.1.1'
+managed-zipkin-reporter = '3.3.0'
 
 managed-jaeger = '1.8.1'
 managed-opentracing = '0.33.0'
@@ -75,6 +75,7 @@ protoc = { module = 'com.google.protobuf:protoc', version.ref = 'protobuf' }
 protoc-grpc = { module = 'io.grpc:protoc-gen-grpc-java', version.ref = 'grpc' }
 zipkin = { module = 'io.zipkin.zipkin2:zipkin', version.ref = 'managed-zipkin' }
 zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter' }
+zipkin-reporter-brave = { module = 'io.zipkin.reporter2:zipkin-reporter-brave' }
 
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api' }
 opentelemetry-api-events = { module = 'io.opentelemetry:opentelemetry-api-events' }

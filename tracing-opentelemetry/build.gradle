@@ -27,8 +27,8 @@ dependencies {
     testImplementation(libs.opentelemetry.aws.sdk)
     testImplementation(libs.awssdk.core)
 
-    compileOnly libs.kotlinx.coroutines.core
-    compileOnly libs.kotlinx.coroutines.reactor
+    compileOnly mn.kotlinx.coroutines.core
+    compileOnly mn.kotlinx.coroutines.reactor
     compileOnly libs.managed.opentelemetry.contrib.aws.xray
 
     testAnnotationProcessor projects.micronautTracingOpentelemetryAnnotation

@@ -15,11 +15,6 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.CollectionUtils;
@@ -27,12 +22,15 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
-import io.opentelemetry.instrumentation.api.instrumenter.messaging.MessageOperation;
 import io.opentelemetry.instrumentation.kafka.internal.KafkaInstrumenterFactory;
 import io.opentelemetry.instrumentation.kafka.internal.KafkaProcessRequest;
 import io.opentelemetry.instrumentation.kafka.internal.KafkaProducerRequest;
-
 import org.apache.kafka.clients.producer.RecordMetadata;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import static io.micronaut.tracing.opentelemetry.instrument.kafka.KafkaAttributesExtractorUtils.putAttributes;
 

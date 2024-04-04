@@ -12,3 +12,20 @@ The Micronaut Tracing Zipkin module (`io.micronaut.tracing:micronaut-tracing-zip
 - Micronaut Tracing Brave HTTP (`io.micronaut.tracing:micronaut-tracing-brave-http`)
 
 if you are using OpenTracing and Micronaut Tracing Zipkin module, you have to change `io.micronaut.tracing:micronaut-tracing-zipkin` dependency to `io.micronaut.tracing:micronaut-tracing-brave-http`. The Micronaut Tracing Brave HTTP brings HTTP filters for auto instrumentation of your requests. If you don't need HTTP filters you can only add `io.micronaut.tracing:micronaut-tracing-brave` dependency.
+
+== Micronaut Tracing 7.0.0 Breaking changes
+
+The following dependencies have been updated:
+
+- Open Telemetry 1.36
+- Open Telemetry Instrumentation 1.33.1
+
+The Open Telemetry updates required updating the following Zipkin dependencies to a new major version:
+
+- Zipkin Reporter 3.3.0
+- Zipkin Brave 6.0.2
+
+The only change due to the above dependency updates that might affect end user code is that the `errorParser` property has been removed from `io.micronaut.tracing.brave.BraveTracerConfiguration` as the `brave.ErrorParser` type no longer exists.
+
+The `io.micronaut.tracing.zipkin.http.client.HttpClientSender` class is now deprecated as it implements a deprecated Zipkin API. This class will be replaced with an implementation based on the Zipkin 3 APIs in a future release.
+

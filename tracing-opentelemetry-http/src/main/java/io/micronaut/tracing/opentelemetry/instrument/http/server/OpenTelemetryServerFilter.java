@@ -95,7 +95,7 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
                     .ifPresentOrElse(
                         e -> onError(request, context, mutableHttpResponse, e), () -> {
                             if (mutableHttpResponse.status().getCode() >= 400) {
-                                onError(request, context, mutableHttpResponse,null);
+                                onError(request, context, mutableHttpResponse, null);
                             } else {
                                 instrumenter.end(context, request, mutableHttpResponse, null);
                             }

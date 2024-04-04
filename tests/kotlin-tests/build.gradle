@@ -10,13 +10,13 @@ dependencies {
     api mn.micronaut.http.client
     api mn.micronaut.core.processor
 
-    api libs.kotlinx.coroutines.core
-    api libs.kotlinx.coroutines.reactor
+    api mn.kotlinx.coroutines.core
+    api mn.kotlinx.coroutines.reactor
 
     kaptTest mn.micronaut.inject.java
 
-    testImplementation libs.kotlinx.coroutines.core
-    testImplementation libs.kotlinx.coroutines.reactor
+    testImplementation mn.kotlinx.coroutines.core
+    testImplementation mn.kotlinx.coroutines.reactor
 
     testImplementation mn.micronaut.http.server.netty
     testImplementation mnTest.micronaut.test.junit5

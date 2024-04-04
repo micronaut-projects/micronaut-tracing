@@ -133,7 +133,7 @@
         <h1>Micronaut Tracing</h1>
         <p></p>
         <p>Adds Distributed Tracing Support</p>
-        <p><strong>Version:</strong> 6.5.0-SNAPSHOT </p>
+        <p><strong>Version:</strong> 7.0.0-SNAPSHOT </p>
     </div>
     
 <h1 id="introduction"><a class="anchor" href="#introduction"></a>1 Introduction</h1>
@@ -290,6 +290,43 @@ class HelloService {
 </div>
 <div class="paragraph">
 <p>if you are using OpenTracing and Micronaut Tracing Zipkin module, you have to change <code>io.micronaut.tracing:micronaut-tracing-zipkin</code> dependency to <code>io.micronaut.tracing:micronaut-tracing-brave-http</code>. The Micronaut Tracing Brave HTTP brings HTTP filters for auto instrumentation of your requests. If you don&#8217;t need HTTP filters you can only add <code>io.micronaut.tracing:micronaut-tracing-brave</code> dependency.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_micronaut_tracing_7_0_0_breaking_changes">Micronaut Tracing 7.0.0 Breaking changes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following dependencies have been updated:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Open Telemetry 1.36</p>
+</li>
+<li>
+<p>Open Telemetry Instrumentation 1.33.1</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The Open Telemetry updates required updating the following Zipkin dependencies to a new major version:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Zipkin Reporter 3.3.0</p>
+</li>
+<li>
+<p>Zipkin Brave 6.0.2</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The only change due to the above dependency updates that might affect end user code is that the <code>errorParser</code> property has been removed from <code>io.micronaut.tracing.brave.BraveTracerConfiguration</code> as the <code>brave.ErrorParser</code> type no longer exists.</p>
+</div>
+<div class="paragraph">
+<p>The <code>io.micronaut.tracing.zipkin.http.client.HttpClientSender</code> class is now deprecated as it implements a deprecated Zipkin API. This class will be replaced with an implementation based on the Zipkin 3 APIs in a future release.</p>
 </div>
 </div>
 </div>
@@ -1200,7 +1237,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
         <div class="listingblock multi-language-sample">
 <div class="title"></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">annotationProcessor(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-annotation:6.5.0-SNAPSHOT")</span></code></pre>
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">annotationProcessor(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-annotation:7.0.0-SNAPSHOT")</span></code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1210,7 +1247,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
     &lt;path&gt;
         &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
         &lt;artifactId&gt;micronaut-tracing-opentelemetry-annotation&lt;/artifactId&gt;
-        &lt;version&gt;6.5.0-SNAPSHOT&lt;/version&gt;
+        &lt;version&gt;7.0.0-SNAPSHOT&lt;/version&gt;
     &lt;/path&gt;
 &lt;/annotationProcessorPaths&gt;</code></pre>
 </div>

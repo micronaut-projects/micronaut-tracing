@@ -54,7 +54,9 @@ import static reactor.core.publisher.FluxSink.OverflowStrategy.BUFFER;
  *
  * @author graemerocher
  * @since 1.0
+ * @deprecated This class uses deprecated Zipkin 2 APIs and will be replaced by a Zipkin 3 based implementation in a future release.
  */
+@Deprecated(since = "7.0.0")
 public final class HttpClientSender extends Sender {
 
     private final Encoding encoding;

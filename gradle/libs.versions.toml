@@ -30,7 +30,7 @@ kotlin = '1.9.23'
 grpc = '1.59.1'
 protobuf = '3.25.3'
 
-micronaut-aws = "4.4.3"
+micronaut-aws = "4.5.0"
 micronaut-grpc = '4.4.0'
 micronaut-reactor = '3.2.1'
 micronaut-rxjava2 = '2.2.1'

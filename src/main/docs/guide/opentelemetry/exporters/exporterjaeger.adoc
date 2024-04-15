@@ -1,0 +1,21 @@
+For Jaeger export use the OpenTelemetry Protocol exporter: `otlp` with the following dependency:
+
+dependency:opentelemetry-exporter-otlp[scope="implementation", groupId="io.opentelemetry"]
+
+IMPORTANT: The latest binary release of the OpenTelemetry Collector no longer includes exporters for the native Jaeger format.
+https://opentelemetry.io/blog/2023/jaeger-exporter-collector-migration/[Jaeger has support for OTLP out of the box]. If you had in your application the dependency `io.opentelemetry:opentelemetry-exporter-jaeger` replace it with `io.opentelemetry:opentelemetry-exporter-otlp`. Also, in your application configuration, replace `otel.tracer.exporter=jaeger` with `otel.tracer.exporter=otlp` and supply the otlp endpoint.
+
+To configure Micronaut Tracing for OpenTelemetry OTLP exporter and Jager, add the following configuration:
+[configuration]
+----
+otel:
+  traces:
+    exporter: otlp
+  exporter:
+    otlp:
+      endpoint: http://localhost:4317
+----
+
+In the previous configuration snippet, replace `http://localhost:4317` with your Jaeger endpoint.
+
+Checkout the guide https://guides.micronaut.io/latest/micronaut-microservices-distributed-tracing-jaeger-opentelemetry.html[Use OpenTelemetry with Jaeger and the Micronaut Framework for Microservice distributed tracing].

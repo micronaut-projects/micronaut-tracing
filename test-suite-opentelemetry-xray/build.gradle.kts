@@ -11,11 +11,12 @@ dependencies {
     testImplementation(projects.micronautTracingOpentelemetryHttp)
     testImplementation(libs.opentelemetry.exporter.otlp)
     testImplementation(libs.opentelemetry.aws.sdk)
-    testImplementation(libs.opentelemetry.extension.aws)
-
+    testImplementation(libs.managed.opentelemetry.contrib.aws.xray.propagator)
+    testImplementation(libs.managed.opentelemetry.contrib.aws.resources)
     testRuntimeOnly(libs.junit.engine)
     testAnnotationProcessor(mn.micronaut.inject.java)
     testImplementation(mnTest.micronaut.test.junit5)
+
 }
 tasks.withType<Test> {
     useJUnitPlatform()

@@ -2,7 +2,7 @@ In your project you can specify propagators that you want to use. The default on
 
 To use https://docs.aws.amazon.com/xray/latest/devguide/xray-concepts.html#xray-concepts-tracingheader[AWS X-Ray] propagator inside your application you have to add next dependency in your project:
 
-dependency:opentelemetry-extension-aws[scope="implementation", groupId="io.opentelemetry"]
+dependency:opentelemetry-aws-xray-propagator[scope="implementation", groupId="io.opentelemetry.contrib"]
 
 And the "xray" has to be added inside configuration file.
 

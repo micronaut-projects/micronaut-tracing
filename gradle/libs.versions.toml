@@ -13,7 +13,7 @@ managed-opentelemetry-alpha = '1.36.0-alpha'
 managed-opentelemetry-instrumentation = '1.33.1'
 managed-opentelemetry-instrumentation-alpha = '1.33.1-alpha'
 managed-opentelemetry-contrib-aws-xray = '1.34.0'
-managed-opentelemetry-contrib-aws-resources = '1.31.0-alpha'
+managed-opentelemetry-contrib-aws-resources = '1.34.0-alpha'
 managed-opentelemetry-gcp-trace = '0.27.0-alpha'
 managed-opentelemetry-semconv = '1.21.0-alpha'
 managed-protobuf = '0.9.4'
@@ -44,6 +44,7 @@ micronaut-gradle-plugin = "4.3.5"
 micronaut-core = { module = 'io.micronaut:micronaut-core-bom', version.ref = 'micronaut' }
 
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
+managed-opentelemetry-contrib-aws-xray-propagator = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray-propagator', version.ref = 'managed-opentelemetry-contrib-aws-resources' }
 managed-opentelemetry-contrib-aws-resources = { module = 'io.opentelemetry.contrib:opentelemetry-aws-resources', version.ref = 'managed-opentelemetry-contrib-aws-resources'}
 managed-opentelemetry-gcp-trace = { module = 'com.google.cloud.opentelemetry:exporter-auto', version.ref = 'managed-opentelemetry-gcp-trace'}
 
@@ -80,7 +81,7 @@ opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk' }
 opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure' }
 opentelemetry-exporter-zipkin = { module = 'io.opentelemetry:opentelemetry-exporter-zipkin', version.ref = 'managed-opentelemetry' }
-
+opentelemetry-exporter-otlp = { module = 'io.opentelemetry:opentelemetry-exporter-otlp'}
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api' }
 opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6'}
 opentelemetry-instrumentation-kafka-common = { module = 'io.opentelemetry.instrumentation:opentelemetry-kafka-clients-common'}
@@ -90,6 +91,9 @@ opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrum
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 
 awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
+
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
 
 # BOMs
 boms-opentelemetry = { module = 'io.opentelemetry:opentelemetry-bom', version.ref = 'managed-opentelemetry' }

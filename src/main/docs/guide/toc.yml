@@ -7,7 +7,10 @@ zipkin: Tracing with Zipkin
 opentelemetry:
   title: Tracing with OpenTelemetry
   annotations: OpenTelemetry Annotations
-  exporters: OpenTelemetry Exporters
+  exporters:
+    title: OpenTelemetry Exporters
+    exporterjaeger: OpenTelemetry Jaeger Exporter
+    exporterzipkin: OpenTelemetry Zipkin Exporter
   propagators: OpenTelemetry Propagators
   idgenerator: ID Generator
   http: HTTP Server and Client

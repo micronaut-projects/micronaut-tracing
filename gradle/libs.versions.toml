@@ -80,7 +80,8 @@ opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk' }
 opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure' }
 opentelemetry-exporter-zipkin = { module = 'io.opentelemetry:opentelemetry-exporter-zipkin', version.ref = 'managed-opentelemetry' }
-
+opentelemetry-exporter-otlp = { module = 'io.opentelemetry:opentelemetry-exporter-otlp'}
+opentelemetry-extension-aws = { module = 'io.opentelemetry:opentelemetry-extension-aws' }
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api' }
 opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6'}
 opentelemetry-instrumentation-kafka-common = { module = 'io.opentelemetry.instrumentation:opentelemetry-kafka-clients-common'}
@@ -90,6 +91,9 @@ opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrum
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 
 awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
+
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
 
 # BOMs
 boms-opentelemetry = { module = 'io.opentelemetry:opentelemetry-bom', version.ref = 'managed-opentelemetry' }

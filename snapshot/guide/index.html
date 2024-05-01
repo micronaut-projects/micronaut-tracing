@@ -1241,7 +1241,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
         <div class="listingblock multi-language-sample">
 <div class="title"></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">annotationProcessor(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-annotation:6.5.2-SNAPSHOT")</span></code></pre>
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">annotationProcessor(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-annotation")</span></code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1251,11 +1251,22 @@ tracing.exclusions[1]=/env/.*</code></pre>
     &lt;path&gt;
         &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
         &lt;artifactId&gt;micronaut-tracing-opentelemetry-annotation&lt;/artifactId&gt;
-        &lt;version&gt;6.5.2-SNAPSHOT&lt;/version&gt;
     &lt;/path&gt;
 &lt;/annotationProcessorPaths&gt;</code></pre>
 </div>
 </div></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For Kotlin, add the <code>micronaut-tracing-opentelemetry-annotation</code> dependency in <a href="https://docs.micronaut.io/4.4.3/guide/#kaptOrKsp">kapt or ksp scope</a>, and for Groovy add <code>micronaut-tracing-opentelemetry-annotation</code> in compileOnly scope.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>The Open Tracing annotations that are defined inside the <a href="../api/io/micronaut/tracing/annotation/package-summary.html">io.micronaut.tracing.annotation</a> package are also available for usage inside Open Telemetry.</p>

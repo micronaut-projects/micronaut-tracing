@@ -5,6 +5,8 @@ plugins {
 }
 
 dependencies {
+    implementation(platform(libs.boms.opentelemetry.instrumentation))
+    implementation(libs.opentelemetry.instrumentation.annotations)
     implementation(mn.micronaut.core.processor)
     implementation(projects.micronautTracingAnnotation)
 

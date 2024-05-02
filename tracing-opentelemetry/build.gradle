@@ -12,7 +12,6 @@ dependencies {
     api mn.micronaut.core.processor
     api mn.micronaut.core.reactive
     api projects.micronautTracingAnnotation
-    api projects.micronautTracingOpentelemetryAnnotation
     api libs.opentelemetry.api
     api libs.opentelemetry.api.events
     api libs.opentelemetry.instrumentation.annotations
@@ -30,8 +29,7 @@ dependencies {
     compileOnly mn.kotlinx.coroutines.reactor
     compileOnly libs.managed.opentelemetry.contrib.aws.xray
 
-    testAnnotationProcessor projects.micronautTracingOpentelemetryAnnotation
-
+    testImplementation(projects.micronautTracingOpentelemetryAnnotation) // For the mapper and transformer for the Groovy/Spock tests
     testImplementation(libs.managed.opentelemetry.contrib.aws.resources)
 
     testImplementation mnReactor.micronaut.reactor

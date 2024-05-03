@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api mn.micronaut.core.processor
+    implementation(mn.micronaut.core.processor)
 }

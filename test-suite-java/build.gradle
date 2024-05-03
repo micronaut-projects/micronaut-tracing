@@ -11,7 +11,7 @@ micronaut {
     enableNativeImage false
     processing {
         incremental(true)
-        annotations("helloworld.*")
+        annotations("opentelemetry.*")
     }
 }
 

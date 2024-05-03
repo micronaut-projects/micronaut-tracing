@@ -5,18 +5,12 @@ plugins {
 }
 
 dependencies {
-    api platform (libs.boms.opentelemetry)
-    api platform (libs.boms.opentelemetry.alpha)
-    api platform (libs.boms.opentelemetry.instrumentation)
-    api platform (libs.boms.opentelemetry.instrumentation.alpha)
-    api mn.micronaut.core.processor
-    api projects.micronautTracingAnnotation
-    api libs.opentelemetry.instrumentation.annotations
+    implementation(platform(libs.boms.opentelemetry.instrumentation))
+    implementation(libs.opentelemetry.instrumentation.annotations)
+    implementation(mn.micronaut.core.processor)
+    implementation(projects.micronautTracingAnnotation)
 
     testImplementation mn.micronaut.inject.java.test
     testImplementation mn.micronaut.inject.groovy.test
-    if (!JavaVersion.current().isJava9Compatible()) {
-        testImplementation files(Jvm.current().toolsJar)
-    }
 }
 

@@ -7,7 +7,6 @@ dependencies {
     api platform (libs.boms.opentelemetry.alpha)
     api platform (libs.boms.opentelemetry.instrumentation)
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
-    api mn.micronaut.core.processor
     api mn.micronaut.router
     api projects.micronautTracingAnnotation
     api projects.micronautTracingOpentelemetry
@@ -20,6 +19,7 @@ dependencies {
     compileOnly mn.kotlinx.coroutines.core
     compileOnly mn.kotlinx.coroutines.reactor
 
+    testImplementation(projects.micronautTracingOpentelemetryAnnotation) // For the mapper and transformer for the Groovy/Spock tests
     testImplementation mnReactor.micronaut.reactor
     testImplementation mnSerde.micronaut.serde.jackson
     testImplementation mnReactor.micronaut.reactor.http.client

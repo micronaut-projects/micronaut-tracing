@@ -12,10 +12,3 @@ dependencies {
     testImplementation mn.micronaut.inject.java
     testImplementation mn.micronaut.http.server.netty
 }
-
-tasks.withType(Test) {
-    testLogging {
-        showStandardStreams = true
-        exceptionFormat = 'full'
-    }
-}

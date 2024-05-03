@@ -10,7 +10,7 @@ dependencies {
     api platform (libs.boms.opentelemetry.instrumentation.alpha)
     api mn.micronaut.core.processor
     compileOnly(mnGrpc.micronaut.grpc.client.runtime)
-    testImplementation(mnGrpc.micronaut.grpc.client.runtime)    
+    testImplementation(mnGrpc.micronaut.grpc.client.runtime)
     compileOnly(mnGrpc.micronaut.grpc.server.runtime)
     testImplementation(mnGrpc.micronaut.grpc.server.runtime)
     api projects.micronautTracingAnnotation
@@ -30,7 +30,6 @@ dependencies {
     testImplementation libs.grpc.protobuf
     testImplementation libs.grpc.stub
     testImplementation mnSerde.micronaut.serde.jackson
-
 }
 
 sourceSets {

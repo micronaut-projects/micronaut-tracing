@@ -13,6 +13,7 @@ managed-opentelemetry-alpha = '1.38.0-alpha'
 managed-opentelemetry-instrumentation = '1.33.3'
 managed-opentelemetry-instrumentation-alpha = '1.33.3-alpha'
 managed-opentelemetry-contrib-aws-xray = '1.36.0'
+managed-opentelemetry-contrib-aws-xray-propagation = '1.36.0-alpha'
 managed-opentelemetry-contrib-aws-resources = '1.33.0-alpha'
 managed-opentelemetry-api-events = '1.36.0-alpha'
 managed-opentelemetry-gcp-trace = '0.29.0-alpha'
@@ -45,7 +46,7 @@ micronaut-gradle-plugin = "4.3.6"
 micronaut-core = { module = 'io.micronaut:micronaut-core-bom', version.ref = 'micronaut' }
 
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
-managed-opentelemetry-contrib-aws-xray-propagator = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray-propagator', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
+managed-opentelemetry-contrib-aws-xray-propagator = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray-propagator', version.ref = 'managed-opentelemetry-contrib-aws-xray-propagation'}
 managed-opentelemetry-contrib-aws-resources = { module = 'io.opentelemetry.contrib:opentelemetry-aws-resources', version.ref = 'managed-opentelemetry-contrib-aws-resources'}
 
 managed-opentelemetry-gcp-trace = { module = 'com.google.cloud.opentelemetry:exporter-auto', version.ref = 'managed-opentelemetry-gcp-trace'}

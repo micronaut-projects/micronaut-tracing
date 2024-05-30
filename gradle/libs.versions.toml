@@ -45,7 +45,9 @@ micronaut-gradle-plugin = "4.3.6"
 micronaut-core = { module = 'io.micronaut:micronaut-core-bom', version.ref = 'micronaut' }
 
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
+managed-opentelemetry-contrib-aws-xray-propagator = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray-propagator', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
 managed-opentelemetry-contrib-aws-resources = { module = 'io.opentelemetry.contrib:opentelemetry-aws-resources', version.ref = 'managed-opentelemetry-contrib-aws-resources'}
+
 managed-opentelemetry-gcp-trace = { module = 'com.google.cloud.opentelemetry:exporter-auto', version.ref = 'managed-opentelemetry-gcp-trace'}
 
 micronaut-aws = { module = 'io.micronaut.aws:micronaut-aws-bom', version.ref = 'micronaut-aws'}

@@ -28,6 +28,7 @@ import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.MetricName;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.Uuid;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -205,6 +206,11 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
     @Override
     public Map<TopicPartition, OffsetAndMetadata> committed(Set<TopicPartition> set, Duration duration) {
         return consumer.committed(set, duration);
+    }
+
+    @Override
+    public Uuid clientInstanceId(Duration duration) {
+        return consumer.clientInstanceId(duration);
     }
 
     @Override

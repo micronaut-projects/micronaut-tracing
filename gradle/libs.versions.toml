@@ -32,7 +32,6 @@ kotlin = '1.9.24'
 grpc = '1.63.1'
 protobuf = '3.25.4'
 
-
 micronaut-aws = "4.6.0"
 micronaut-grpc = '4.6.0'
 micronaut-reactor = '3.4.1'

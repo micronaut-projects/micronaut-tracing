@@ -1,5 +1,5 @@
 [versions]
-micronaut = "4.5.3"
+micronaut = "4.5.4"
 micronaut-test = "4.2.0"
 micronaut-logging = "1.2.2"
 micronaut-platform = "4.2.3"
@@ -34,8 +34,8 @@ protobuf = '3.25.4'
 
 micronaut-aws = "4.5.0"
 micronaut-grpc = '4.6.0'
-micronaut-reactor = '3.3.0'
-micronaut-rxjava2 = '2.3.0'
+micronaut-reactor = '3.4.1'
+micronaut-rxjava2 = '2.4.0'
 micronaut-serde = '2.10.2'
 micronaut-test-resources = "2.5.2"
 micronaut-kafka = '5.4.0'

@@ -22,8 +22,8 @@ import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.type.Argument;
 import io.micronaut.tracing.annotation.SpanTag;
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.instrumentation.api.incubator.semconv.util.ClassAndMethod;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
-import io.opentelemetry.instrumentation.api.instrumenter.util.ClassAndMethod;
 import jakarta.inject.Named;
 
 /**

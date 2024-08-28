@@ -9,6 +9,7 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import io.opentelemetry.sdk.trace.data.SpanData;
+import io.opentelemetry.semconv.HttpAttributes;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ public class HttpTracingTest {
     private HttpClient client;
 
     public static final String TRACING_ID = "X-TrackingId";
-    public static final String TRACING_ID_IN_SPAN = "http.request.header.x_trackingid";
+    public static final String TRACING_ID_IN_SPAN = HttpAttributes.HTTP_REQUEST_HEADER.getAttributeKey(TRACING_ID.toLowerCase()).getKey();
 
     @Inject
     ReactorHttpClient reactorHttpClient;

@@ -23,8 +23,8 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.tracing.annotation.ContinueSpan;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
+import io.opentelemetry.instrumentation.api.incubator.semconv.util.ClassAndMethod;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
-import io.opentelemetry.instrumentation.api.instrumenter.util.ClassAndMethod;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 

@@ -14,10 +14,9 @@ dependencies {
     api projects.micronautTracingAnnotation
     api projects.micronautTracingOpentelemetryAnnotation
     api libs.opentelemetry.api
-    api libs.opentelemetry.api.events
+    api libs.opentelemetry.api.incubator
     api libs.opentelemetry.instrumentation.annotations
     api libs.opentelemetry.instrumentation.api
-    api libs.opentelemetry.instrumentation.semconv
     api libs.opentelemetry.autoconfigure
 
     implementation(platform(libs.micronaut.aws))

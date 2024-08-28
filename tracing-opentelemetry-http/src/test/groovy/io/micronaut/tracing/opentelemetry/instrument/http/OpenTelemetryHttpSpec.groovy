@@ -34,7 +34,8 @@ import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.instrumentation.annotations.SpanAttribute
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
-import io.opentelemetry.semconv.SemanticAttributes
+import io.opentelemetry.semconv.HttpAttributes
+import io.opentelemetry.semconv.ServerAttributes
 import io.reactivex.Single
 import jakarta.inject.Inject
 import org.reactivestreams.Publisher
@@ -55,7 +56,7 @@ import static io.micronaut.scheduling.TaskExecutors.IO
 class OpenTelemetryHttpSpec extends Specification {
 
     String TRACING_ID = "X-TrackingId"
-    String TRACING_ID_IN_SPAN = "http.request.header.x_trackingid"
+    String TRACING_ID_IN_SPAN = HttpAttributes.HTTP_REQUEST_HEADER.getAttributeKey(TRACING_ID.toLowerCase()).getKey()
 
     @AutoCleanup
     private ApplicationContext context
@@ -102,10 +103,11 @@ class OpenTelemetryHttpSpec extends Specification {
     }
 
     void hasHttpSemanticAttributes(HttpStatus httpStatus, boolean hasRoute = true) {
+
         def serverSpans = exporter.finishedSpanItems.findAll { it -> it.kind == SpanKind.SERVER }
-        assert serverSpans.every {it.attributes.stream().any { it.get(SemanticAttributes.HTTP_METHOD) }}
-        assert !hasRoute || serverSpans.every {it.attributes.stream().any { it.get(SemanticAttributes.HTTP_ROUTE) }}
-        assert serverSpans.every {it.attributes.stream().any {x -> Optional.ofNullable(x.get(SemanticAttributes.HTTP_STATUS_CODE)).map { it.intValue() == httpStatus.code }.orElse(false) }}
+        assert serverSpans.every {it.attributes.stream().any { it.get(HttpAttributes.HTTP_REQUEST_METHOD) }}
+        assert !hasRoute || serverSpans.every {it.attributes.stream().any { it.get(HttpAttributes.HTTP_ROUTE) }}
+        assert serverSpans.every {it.attributes.stream().any {x -> Optional.ofNullable(x.get(HttpAttributes.HTTP_RESPONSE_STATUS_CODE)).map { it.intValue() == httpStatus.code }.orElse(false) }}
     }
 
     void 'test map WithSpan annotation'() {
@@ -245,7 +247,7 @@ class OpenTelemetryHttpSpec extends Specification {
             exporter.finishedSpanItems.name.contains("WarehouseClient.order")
             exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("warehouse.order")) == "{testOrderKey=testOrderValue}")
             exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("upc")) == "10")
-            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(SemanticAttributes.NET_PEER_NAME) == "localhost")
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(ServerAttributes.SERVER_ADDRESS) == "localhost")
             hasHttpSemanticAttributes(HttpStatus.OK)
         }
 
@@ -266,7 +268,7 @@ class OpenTelemetryHttpSpec extends Specification {
         conditions.eventually {
             hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
             exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("warehouse.order")) == "{testOrderKey=testOrderValue}")
-            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(SemanticAttributes.NET_PEER_NAME) == "correctspanname")
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(ServerAttributes.SERVER_ADDRESS) == "correctspanname")
         }
 
         cleanup:
@@ -332,7 +334,7 @@ class OpenTelemetryHttpSpec extends Specification {
         then:
         conditions.eventually {
             hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
-            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(SemanticAttributes.HTTP_ROUTE) == "/client/order/{orderId}")
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(HttpAttributes.HTTP_ROUTE) == "/client/order/{orderId}")
             hasHttpSemanticAttributes(HttpStatus.OK)
         }
 
@@ -353,7 +355,7 @@ class OpenTelemetryHttpSpec extends Specification {
         then:
         conditions.eventually {
             hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
-            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(SemanticAttributes.HTTP_ROUTE) == "/client/order/{orderId}")
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(HttpAttributes.HTTP_ROUTE) == "/client/order/{orderId}")
             hasHttpSemanticAttributes(HttpStatus.OK)
         }
 

@@ -19,12 +19,12 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.api.incubator.semconv.code.CodeAttributesGetter;
+import io.opentelemetry.instrumentation.api.incubator.semconv.code.CodeSpanNameExtractor;
+import io.opentelemetry.instrumentation.api.incubator.semconv.util.ClassAndMethod;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.instrumenter.InstrumenterBuilder;
-import io.opentelemetry.instrumentation.api.instrumenter.code.CodeAttributesGetter;
-import io.opentelemetry.instrumentation.api.instrumenter.code.CodeSpanNameExtractor;
-import io.opentelemetry.instrumentation.api.instrumenter.http.HttpClientMetrics;
-import io.opentelemetry.instrumentation.api.instrumenter.util.ClassAndMethod;
+import io.opentelemetry.instrumentation.api.semconv.http.HttpClientMetrics;
 import jakarta.inject.Named;
 
 /**

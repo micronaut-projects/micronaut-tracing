@@ -27,7 +27,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpVersion;
 import io.micronaut.http.uri.UriMatchTemplate;
 import io.micronaut.web.router.UriRouteInfo;
-import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerAttributesGetter;
+import io.opentelemetry.instrumentation.api.semconv.http.HttpServerAttributesGetter;
 
 import static io.micronaut.http.HttpVersion.HTTP_1_0;
 import static io.micronaut.http.HttpVersion.HTTP_1_1;

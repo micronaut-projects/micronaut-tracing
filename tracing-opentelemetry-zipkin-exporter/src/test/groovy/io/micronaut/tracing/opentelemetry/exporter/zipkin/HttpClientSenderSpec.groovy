@@ -17,6 +17,8 @@ import io.micronaut.scheduling.TaskExecutors
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.zipkin.http.client.HttpClientSender
 import io.opentelemetry.api.trace.Span
+import io.opentelemetry.semconv.HttpAttributes
+import io.opentelemetry.semconv.UrlAttributes
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.reactivestreams.Publisher
@@ -90,21 +92,21 @@ class HttpClientSenderSpec extends Specification {
             spanController.receivedSpans.size() == 4
 
             spanController.receivedSpans[0].tags.get('foo') == 'bar'
-            spanController.receivedSpans[0].tags.get('http.target') == '/traced/hello/John'
+            spanController.receivedSpans[0].tags.get(UrlAttributes.URL_PATH.key) == '/traced/hello/John'
             spanController.receivedSpans[0].name == 'get /traced/hello/{name}'
             spanController.receivedSpans[0].kind == SERVER.name()
 
-            spanController.receivedSpans[1].tags.get('http.url').contains("/traced/hello/John")
+            spanController.receivedSpans[1].tags.get(UrlAttributes.URL_FULL.key).contains("/traced/hello/John")
             spanController.receivedSpans[1].name == 'get'
             spanController.receivedSpans[1].kind == CLIENT.name()
 
             spanController.receivedSpans[2].name == 'get /traced/nested/{name}'
             spanController.receivedSpans[2].kind == SERVER.name()
-            spanController.receivedSpans[2].tags.get('http.method') == 'GET'
-            spanController.receivedSpans[2].tags.get('http.target') == '/traced/nested/John'
+            spanController.receivedSpans[2].tags.get(HttpAttributes.HTTP_REQUEST_METHOD.key) == 'GET'
+            spanController.receivedSpans[2].tags.get(UrlAttributes.URL_PATH.key) == '/traced/nested/John'
 
             spanController.receivedSpans[3].tags.get('foo') == null
-            spanController.receivedSpans[3].tags.get('http.url').contains('/traced/nested/John')
+            spanController.receivedSpans[3].tags.get(UrlAttributes.URL_FULL.key).contains('/traced/nested/John')
             spanController.receivedSpans[3].name == 'get'
             spanController.receivedSpans[3].kind == CLIENT.name()
         }
@@ -154,21 +156,21 @@ class HttpClientSenderSpec extends Specification {
             customPathSpanController.receivedSpans.size() == 4
 
             customPathSpanController.receivedSpans[0].tags.get('foo') == 'bar'
-            customPathSpanController.receivedSpans[0].tags.get('http.target') == '/traced/hello/John'
+            customPathSpanController.receivedSpans[0].tags.get(UrlAttributes.URL_PATH.key) == '/traced/hello/John'
             customPathSpanController.receivedSpans[0].name == 'get /traced/hello/{name}'
             customPathSpanController.receivedSpans[0].kind == SERVER.name()
 
-            customPathSpanController.receivedSpans[1].tags.get('http.url').contains("/traced/hello/John")
+            customPathSpanController.receivedSpans[1].tags.get(UrlAttributes.URL_FULL.key).contains("/traced/hello/John")
             customPathSpanController.receivedSpans[1].name == 'get'
             customPathSpanController.receivedSpans[1].kind == CLIENT.name()
 
             customPathSpanController.receivedSpans[2].name == 'get /traced/nested/{name}'
             customPathSpanController.receivedSpans[2].kind == SERVER.name()
-            customPathSpanController.receivedSpans[2].tags.get('http.method') == 'GET'
-            customPathSpanController.receivedSpans[2].tags.get('http.target') == '/traced/nested/John'
+            customPathSpanController.receivedSpans[2].tags.get(HttpAttributes.HTTP_REQUEST_METHOD.key) == 'GET'
+            customPathSpanController.receivedSpans[2].tags.get(UrlAttributes.URL_PATH.key) == '/traced/nested/John'
 
             customPathSpanController.receivedSpans[3].tags.get('foo') == null
-            customPathSpanController.receivedSpans[3].tags.get('http.url').contains("/traced/nested/John")
+            customPathSpanController.receivedSpans[3].tags.get(UrlAttributes.URL_FULL.key).contains("/traced/nested/John")
             customPathSpanController.receivedSpans[3].name == 'get'
             customPathSpanController.receivedSpans[3].kind == CLIENT.name()
         }

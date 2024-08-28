@@ -8,11 +8,12 @@ groovy = "4.0.17"
 spock = "2.3-groovy-4.0"
 
 managed-brave-instrumentation = '6.0.2'
-managed-opentelemetry = '1.36.0'
-managed-opentelemetry-alpha = '1.36.0-alpha'
-managed-opentelemetry-instrumentation = '1.33.1'
-managed-opentelemetry-instrumentation-alpha = '1.33.1-alpha'
+managed-opentelemetry = '1.41.0'
+managed-opentelemetry-alpha = '1.41.0-alpha'
+managed-opentelemetry-instrumentation = '2.7.0'
+managed-opentelemetry-instrumentation-alpha = '2.7.0-alpha'
 managed-opentelemetry-contrib-aws-xray = '1.34.0'
+managed-opentelemetry-contrib-aws-xray-propagation = '1.34.0-alpha'
 managed-opentelemetry-contrib-aws-resources = '1.31.0-alpha'
 managed-opentelemetry-gcp-trace = '0.27.0-alpha'
 managed-opentelemetry-semconv = '1.21.0-alpha'
@@ -44,6 +45,7 @@ micronaut-gradle-plugin = "4.3.6"
 micronaut-core = { module = 'io.micronaut:micronaut-core-bom', version.ref = 'micronaut' }
 
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
+managed-opentelemetry-contrib-aws-xray-propagator = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray-propagator', version.ref = 'managed-opentelemetry-contrib-aws-xray-propagation'}
 managed-opentelemetry-contrib-aws-resources = { module = 'io.opentelemetry.contrib:opentelemetry-aws-resources', version.ref = 'managed-opentelemetry-contrib-aws-resources'}
 managed-opentelemetry-gcp-trace = { module = 'com.google.cloud.opentelemetry:exporter-auto', version.ref = 'managed-opentelemetry-gcp-trace'}
 
@@ -75,16 +77,16 @@ zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter' }
 zipkin-reporter-brave = { module = 'io.zipkin.reporter2:zipkin-reporter-brave' }
 
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api' }
-opentelemetry-api-events = { module = 'io.opentelemetry:opentelemetry-api-events' }
+opentelemetry-api-incubator = { module = 'io.opentelemetry:opentelemetry-api-incubator' }
 opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk' }
 opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure' }
 opentelemetry-exporter-zipkin = { module = 'io.opentelemetry:opentelemetry-exporter-zipkin', version.ref = 'managed-opentelemetry' }
 
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api' }
+opentelemetry-instrumentation-api-incubator = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator' }
 opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6'}
 opentelemetry-instrumentation-kafka-common = { module = 'io.opentelemetry.instrumentation:opentelemetry-kafka-clients-common'}
-opentelemetry-instrumentation-api-semconv = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv' }
 opentelemetry-instrumentation-semconv = { module = 'io.opentelemetry.semconv:opentelemetry-semconv', version.ref ='managed-opentelemetry-semconv' }
 opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrumentation: opentelemetry-instrumentation-annotations' }
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }

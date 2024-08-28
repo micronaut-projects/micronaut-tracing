@@ -10,7 +10,6 @@ dependencies {
     api projects.micronautTracingOpentelemetry
     api libs.opentelemetry.api
     api(mnKafka.micronaut.kafka)
-    api libs.opentelemetry.instrumentation.semconv
     api libs.opentelemetry.instrumentation.kafka.common
 
     testImplementation mnSerde.micronaut.serde.jackson

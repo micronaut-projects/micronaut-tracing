@@ -1,0 +1,4 @@
+To enable creating span objects on the every JDBC query, add the following dependency:
+dependency:micronaut-tracing-opentelemetry-jdbc[scope="implementation", groupId="io.micronaut.tracing"]
+
+The dependency instruments the `javax.sql.DataSource` beans for intercepting the queries to the database.

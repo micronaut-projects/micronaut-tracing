@@ -22,7 +22,7 @@ dependencies {
 
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
-    testRuntimeOnly(libs.h2)
+    testRuntimeOnly(mnSql.h2)
 }
 
 micronautBuild {

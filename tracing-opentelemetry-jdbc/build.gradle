@@ -12,6 +12,7 @@ dependencies {
     api libs.opentelemetry.instrumentation.semconv
     api libs.opentelemetry.instrumentation.jdbc
     implementation mnSql.micronaut.jdbc
+    implementation mnData.micronaut.data.jdbc
 
 
     testAnnotationProcessor mnData.micronaut.data.processor

@@ -23,9 +23,12 @@ import io.micronaut.core.util.StringUtils;
 /**
  * The configuration class for jdbc telemetry.
  * @param enabled is jdbc telemetry enabled.
+ * @param dataSourceInstrumenterEnabled sets {@link io.opentelemetry.instrumentation.jdbc.datasource.JdbcTelemetryBuilder#setDataSourceInstrumenterEnabled(boolean)}
+ * @param statementInstrumenterEnabled sets {@link io.opentelemetry.instrumentation.jdbc.datasource.JdbcTelemetryBuilder#setStatementInstrumenterEnabled(boolean)}
+ * @param statementSanitizationEnabled sets {@link io.opentelemetry.instrumentation.jdbc.datasource.JdbcTelemetryBuilder#setStatementSanitizationEnabled(boolean)}
  */
 @Requires(property = JdbcTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @ConfigurationProperties(JdbcTelemetryConfiguration.PREFIX)
-record JdbcTelemetryConfiguration(@Nullable Boolean enabled) {
+record JdbcTelemetryConfiguration(@Nullable Boolean enabled, @Nullable Boolean dataSourceInstrumenterEnabled, @Nullable Boolean statementInstrumenterEnabled, @Nullable Boolean statementSanitizationEnabled) {
     public static final String PREFIX = "otel.instrumentation.jdbc";
 }

@@ -18,10 +18,12 @@ package io.micronaut.tracing.opentelemetry.instrument.jdbc;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.event.BeanCreatedEventListener;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.Order;
 import io.opentelemetry.api.OpenTelemetry;
 import io.micronaut.jdbc.DataSourceResolver;
 import io.opentelemetry.instrumentation.jdbc.datasource.JdbcTelemetry;
 import jakarta.inject.Singleton;
+import io.micronaut.core.order.Ordered;
 
 import javax.sql.DataSource;
 
@@ -40,10 +42,18 @@ final class JdbcTelemetryFactory {
      * @return even listener for @{@link DataSource} creation
      */
     @Singleton
-    BeanCreatedEventListener<DataSource> otel(OpenTelemetry telemetry, DataSourceResolver resolver) {
+    @Order(value = Ordered.HIGHEST_PRECEDENCE)
+    BeanCreatedEventListener<DataSource> otel(
+        OpenTelemetry telemetry,
+        DataSourceResolver resolver,
+        JdbcTelemetryConfiguration jdbcTelemetryConfiguration) {
         return event -> {
             DataSource dataSource = event.getBean();
-            return JdbcTelemetry.create(telemetry).wrap(resolver.resolve(dataSource));
+            return JdbcTelemetry.builder(telemetry)
+                .setDataSourceInstrumenterEnabled(jdbcTelemetryConfiguration.dataSourceInstrumenterEnabled() == null ? Boolean.TRUE : jdbcTelemetryConfiguration.dataSourceInstrumenterEnabled())
+                .setStatementInstrumenterEnabled(jdbcTelemetryConfiguration.statementInstrumenterEnabled() == null ? Boolean.TRUE : jdbcTelemetryConfiguration.statementInstrumenterEnabled())
+                .setStatementSanitizationEnabled(jdbcTelemetryConfiguration.statementSanitizationEnabled() == null ? Boolean.TRUE : jdbcTelemetryConfiguration.statementSanitizationEnabled())
+                .build().wrap(resolver.resolve(dataSource));
         };
     }
 

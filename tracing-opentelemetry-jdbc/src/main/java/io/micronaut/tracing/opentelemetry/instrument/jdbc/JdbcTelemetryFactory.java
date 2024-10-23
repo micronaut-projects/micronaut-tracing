@@ -19,7 +19,6 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.event.BeanCreatedEventListener;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Order;
-import io.opentelemetry.api.OpenTelemetry;
 import io.micronaut.jdbc.DataSourceResolver;
 import jakarta.inject.Singleton;
 import io.micronaut.core.order.Ordered;

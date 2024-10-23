@@ -31,10 +31,11 @@ import io.opentelemetry.instrumentation.jdbc.datasource.JdbcTelemetryBuilder;
 class JdbcTelemetryConfiguration {
 
     public static final String PREFIX = "otel.instrumentation.jdbc";
-    private Boolean enabled;
 
     @ConfigurationBuilder(prefixes = "set")
     final JdbcTelemetryBuilder builder;
+
+    private Boolean enabled;
 
     JdbcTelemetryConfiguration(OpenTelemetry openTelemetry) {
         builder = JdbcTelemetry.builder(openTelemetry);

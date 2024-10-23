@@ -15,20 +15,29 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.jdbc;
 
+import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.StringUtils;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.jdbc.datasource.JdbcTelemetry;
+import io.opentelemetry.instrumentation.jdbc.datasource.JdbcTelemetryBuilder;
 
 /**
  * The configuration class for jdbc telemetry.
- * @param enabled is jdbc telemetry enabled.
- * @param dataSourceInstrumenterEnabled sets {@link io.opentelemetry.instrumentation.jdbc.datasource.JdbcTelemetryBuilder#setDataSourceInstrumenterEnabled(boolean)}
- * @param statementInstrumenterEnabled sets {@link io.opentelemetry.instrumentation.jdbc.datasource.JdbcTelemetryBuilder#setStatementInstrumenterEnabled(boolean)}
- * @param statementSanitizationEnabled sets {@link io.opentelemetry.instrumentation.jdbc.datasource.JdbcTelemetryBuilder#setStatementSanitizationEnabled(boolean)}
  */
 @Requires(property = JdbcTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @ConfigurationProperties(JdbcTelemetryConfiguration.PREFIX)
-record JdbcTelemetryConfiguration(@Nullable Boolean enabled, @Nullable Boolean dataSourceInstrumenterEnabled, @Nullable Boolean statementInstrumenterEnabled, @Nullable Boolean statementSanitizationEnabled) {
+class JdbcTelemetryConfiguration {
+
     public static final String PREFIX = "otel.instrumentation.jdbc";
+    private Boolean enabled;
+
+    @ConfigurationBuilder(prefixes = "set")
+    final JdbcTelemetryBuilder builder;
+
+    JdbcTelemetryConfiguration(OpenTelemetry openTelemetry) {
+        builder = JdbcTelemetry.builder(openTelemetry);
+    }
+
 }

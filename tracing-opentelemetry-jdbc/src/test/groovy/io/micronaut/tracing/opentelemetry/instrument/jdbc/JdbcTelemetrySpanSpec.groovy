@@ -41,15 +41,16 @@ class JdbcTelemetrySpanSpec  extends Specification {
     void "test jdbc telemetry statement-instrumenter-enabled false"() {
         given:
         ApplicationContext ctx = ApplicationContext.run([
-                'datasources.default.dialect': 'H2',
-                'micronaut.application.name': 'otel-test',
-                'datasources.default.schema-generate': 'CREATE_DROP',
-                'datasources.default.url': 'jdbc:h2:mem:devDb;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE',
-                'datasources.default.username': 'sa',
-                'datasources.default.driver-class-name': 'org.h2.Driver',
-                'otel.instrumentation.jdbc.data-source-instrumenter-enabled': 'false',
-                'otel.instrumentation.jdbc.statement-instrumenter-enabled': 'false',
-                'otel.instrumentation.jdbc.statement-sanitization-enabled': 'false'        ])
+            'datasources.default.dialect': 'H2',
+            'micronaut.application.name': 'otel-test',
+            'datasources.default.schema-generate': 'CREATE_DROP',
+            'datasources.default.url': 'jdbc:h2:mem:devDb;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE',
+            'datasources.default.username': 'sa',
+            'datasources.default.driver-class-name': 'org.h2.Driver',
+            'otel.instrumentation.jdbc.data-source-instrumenter-enabled': 'false',
+            'otel.instrumentation.jdbc.statement-instrumenter-enabled': 'false',
+            'otel.instrumentation.jdbc.statement-sanitization-enabled': 'false'
+        ])
 
         when:
         def jdbcTelemetryFactory = ctx.getBean(JdbcTelemetryFactory)
@@ -63,10 +64,9 @@ class JdbcTelemetrySpanSpec  extends Specification {
         def finishedSpanItems = inMemorySpanExporter.getFinishedSpanItems()
 
         finishedSpanItems.size() == 0
-        jdbcTelemetryConfiguration.dataSourceInstrumenterEnabled() == false
-        jdbcTelemetryConfiguration.statementInstrumenterEnabled() == false
-        jdbcTelemetryConfiguration.statementSanitizationEnabled() == false
-
+        !jdbcTelemetryConfiguration.builder.statementSanitizationEnabled
+        !jdbcTelemetryConfiguration.builder.statementInstrumenterEnabled
+        !jdbcTelemetryConfiguration.builder.dataSourceInstrumenterEnabled
 
         cleanup:
         ctx.close()

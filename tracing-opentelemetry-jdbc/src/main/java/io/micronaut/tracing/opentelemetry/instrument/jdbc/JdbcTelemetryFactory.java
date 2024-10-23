@@ -21,7 +21,6 @@ import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Order;
 import io.opentelemetry.api.OpenTelemetry;
 import io.micronaut.jdbc.DataSourceResolver;
-import io.opentelemetry.instrumentation.jdbc.datasource.JdbcTelemetry;
 import jakarta.inject.Singleton;
 import io.micronaut.core.order.Ordered;
 
@@ -37,24 +36,16 @@ final class JdbcTelemetryFactory {
     /**
      * Wraps the DataSource so OTEL can gather data for spans.
      *
-     * @param telemetry instance of {@link OpenTelemetry}
      * @param resolver the {@link DataSourceResolver}
      * @return even listener for @{@link DataSource} creation
      */
     @Singleton
     @Order(value = Ordered.HIGHEST_PRECEDENCE)
     BeanCreatedEventListener<DataSource> otel(
-        OpenTelemetry telemetry,
         DataSourceResolver resolver,
         JdbcTelemetryConfiguration jdbcTelemetryConfiguration) {
-        return event -> {
-            DataSource dataSource = event.getBean();
-            return JdbcTelemetry.builder(telemetry)
-                .setDataSourceInstrumenterEnabled(jdbcTelemetryConfiguration.dataSourceInstrumenterEnabled() == null ? Boolean.TRUE : jdbcTelemetryConfiguration.dataSourceInstrumenterEnabled())
-                .setStatementInstrumenterEnabled(jdbcTelemetryConfiguration.statementInstrumenterEnabled() == null ? Boolean.TRUE : jdbcTelemetryConfiguration.statementInstrumenterEnabled())
-                .setStatementSanitizationEnabled(jdbcTelemetryConfiguration.statementSanitizationEnabled() == null ? Boolean.TRUE : jdbcTelemetryConfiguration.statementSanitizationEnabled())
-                .build().wrap(resolver.resolve(dataSource));
-        };
+        return event -> jdbcTelemetryConfiguration.builder
+            .build().wrap(resolver.resolve(event.getBean()));
     }
 
 }

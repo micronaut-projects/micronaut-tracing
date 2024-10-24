@@ -35,6 +35,12 @@ class JdbcTelemetryConfiguration {
     @ConfigurationBuilder(prefixes = "set")
     final JdbcTelemetryBuilder builder;
 
+    private Boolean enabled;
+
+    JdbcTelemetryConfiguration(OpenTelemetry openTelemetry) {
+        builder = JdbcTelemetry.builder(openTelemetry);
+    }
+
     /**
      * @return is jdbc telemetry enabled.
      */
@@ -47,12 +53,6 @@ class JdbcTelemetryConfiguration {
      */
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    private Boolean enabled;
-
-    JdbcTelemetryConfiguration(OpenTelemetry openTelemetry) {
-        builder = JdbcTelemetry.builder(openTelemetry);
     }
 
 }

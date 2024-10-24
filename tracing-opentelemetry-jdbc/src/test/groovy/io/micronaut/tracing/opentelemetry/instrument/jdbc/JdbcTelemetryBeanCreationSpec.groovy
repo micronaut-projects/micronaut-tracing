@@ -3,18 +3,18 @@ package io.micronaut.tracing.opentelemetry.instrument.jdbc
 import io.micronaut.context.ApplicationContext
 import spock.lang.Specification
 
-class JdbcTelemetryFactorySpec extends Specification {
+class JdbcTelemetryBeanCreationSpec extends Specification {
 
     void "test jdbc telemetry enabled by default"() {
         given:
         ApplicationContext ctx = ApplicationContext.run()
 
         when:
-        def jdbcTelemetryFactory = ctx.getBean(JdbcTelemetryFactory)
+        def dataSourceBeanCreatedEventListener= ctx.getBean(DataSourceBeanCreatedEventListener)
         def jdbcTelemetryConfiguration = ctx.getBean(JdbcTelemetryConfiguration)
 
         then:
-        jdbcTelemetryFactory
+        dataSourceBeanCreatedEventListener
         jdbcTelemetryConfiguration
 
         cleanup:
@@ -28,11 +28,11 @@ class JdbcTelemetryFactorySpec extends Specification {
         ])
 
         when:
-        def jdbcTelemetryFactory = ctx.findBean(JdbcTelemetryFactory)
+        def dataSourceBeanCreatedEventListener = ctx.findBean(DataSourceBeanCreatedEventListener)
         def jdbcTelemetryConfiguration = ctx.findBean(JdbcTelemetryConfiguration)
 
         then:
-        jdbcTelemetryFactory.isEmpty()
+        dataSourceBeanCreatedEventListener.isEmpty()
         jdbcTelemetryConfiguration.isEmpty()
 
         cleanup:

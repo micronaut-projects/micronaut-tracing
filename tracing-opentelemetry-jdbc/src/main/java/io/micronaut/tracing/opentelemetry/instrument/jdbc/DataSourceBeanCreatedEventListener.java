@@ -15,36 +15,33 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.jdbc;
 
-import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.event.BeanCreatedEvent;
 import io.micronaut.context.event.BeanCreatedEventListener;
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Order;
-import io.micronaut.jdbc.DataSourceResolver;
-import jakarta.inject.Singleton;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.order.Ordered;
+import jakarta.inject.Singleton;
 
 import javax.sql.DataSource;
 
 /**
- * Jdbc telemetry factory.
+ * Wraps the DataSource so OTEL can gather data for spans.
+ * @param jdbcTelemetryConfiguration the otel JDBC configuration.
  */
-@Factory
+@Singleton
 @Internal
-final class JdbcTelemetryFactory {
+record DataSourceBeanCreatedEventListener(
+    JdbcTelemetryConfiguration jdbcTelemetryConfiguration)
+    implements BeanCreatedEventListener<DataSource>, Ordered {
 
-    /**
-     * Wraps the DataSource so OTEL can gather data for spans.
-     *
-     * @param resolver the {@link DataSourceResolver}
-     * @return even listener for @{@link DataSource} creation
-     */
-    @Singleton
-    @Order(value = Ordered.HIGHEST_PRECEDENCE)
-    BeanCreatedEventListener<DataSource> otel(
-        DataSourceResolver resolver,
-        JdbcTelemetryConfiguration jdbcTelemetryConfiguration) {
-        return event -> jdbcTelemetryConfiguration.builder
-            .build().wrap(resolver.resolve(event.getBean()));
+    @Override
+    public DataSource onCreated(@NonNull BeanCreatedEvent<DataSource> event) {
+        return jdbcTelemetryConfiguration.builder
+            .build().wrap(event.getBean());
     }
 
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
 }

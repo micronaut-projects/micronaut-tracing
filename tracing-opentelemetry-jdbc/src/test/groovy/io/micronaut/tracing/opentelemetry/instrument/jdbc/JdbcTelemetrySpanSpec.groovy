@@ -19,12 +19,12 @@ class JdbcTelemetrySpanSpec  extends Specification {
         ])
 
         when:
-        def jdbcTelemetryFactory = ctx.getBean(JdbcTelemetryFactory)
+        def dataSourceBeanCreatedEventListener= ctx.getBean(DataSourceBeanCreatedEventListener)
         def jdbcTelemetryConfiguration = ctx.getBean(JdbcTelemetryConfiguration)
         def inMemorySpanExporter = ctx.getBean(InMemorySpanExporter)
 
         then:
-        jdbcTelemetryFactory
+        dataSourceBeanCreatedEventListener
         jdbcTelemetryConfiguration
         inMemorySpanExporter
         def finishedSpanItems = inMemorySpanExporter.getFinishedSpanItems()
@@ -53,12 +53,12 @@ class JdbcTelemetrySpanSpec  extends Specification {
         ])
 
         when:
-        def jdbcTelemetryFactory = ctx.getBean(JdbcTelemetryFactory)
+        def dataSourceBeanCreatedEventListener= ctx.getBean(DataSourceBeanCreatedEventListener)
         def jdbcTelemetryConfiguration = ctx.getBean(JdbcTelemetryConfiguration)
         def inMemorySpanExporter = ctx.getBean(InMemorySpanExporter)
 
         then:
-        jdbcTelemetryFactory
+        dataSourceBeanCreatedEventListener
         jdbcTelemetryConfiguration
         inMemorySpanExporter
         def finishedSpanItems = inMemorySpanExporter.getFinishedSpanItems()

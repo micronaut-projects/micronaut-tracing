@@ -44,6 +44,8 @@ micronautBom {
                         "io.zipkin.proto3"
                 ] as Set
         )
+        dependencies.add("io.opentelemetry:opentelemetry-bom:1.41.0")
+        dependencies.add("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:1.33.5")
         dependencies.add("io.opentelemetry:opentelemetry-bom:1.40.0")
         dependencies.add("io.opentelemetry:opentelemetry-bom-alpha:1.40.0-alpha")
         dependencies.add("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:1.33.6")

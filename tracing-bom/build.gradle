@@ -51,6 +51,6 @@ micronautBom {
         dependencies.add("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:1.33.6")
         dependencies.add("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha:1.33.5-alpha")
         dependencies.add("io.zipkin.brave:brave-instrumentation-benchmarks:6.0.3")
-        dependencies.add("io.zipkin.reporter2:zipkin-reporter-bom:3.4.2")
+        dependencies.add("io.zipkin.reporter2:zipkin-reporter-bom:3.4.3")
     }
 }

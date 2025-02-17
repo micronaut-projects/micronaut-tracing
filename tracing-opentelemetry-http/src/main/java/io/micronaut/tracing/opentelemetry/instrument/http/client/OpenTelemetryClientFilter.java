@@ -20,6 +20,7 @@ import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpResponseProvider;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.ClientFilterChain;
@@ -37,6 +38,8 @@ import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import jakarta.inject.Named;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 import static io.micronaut.http.HttpAttributes.INVOCATION_CONTEXT;
 import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTelemetryClientFilter.CLIENT_PATH;
@@ -93,11 +96,19 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
                         Span span = Span.fromContext(context);
                         span.recordException(throwable);
                         span.setStatus(StatusCode.ERROR);
-                        instrumenter.end(context, request, null, throwable);
+                        HttpResponse<?> response = findResponseInThrowable(throwable).orElse(null);
+                        instrumenter.end(context, request, response, throwable);
                     });
 
             }
         }
+    }
+
+    private Optional<HttpResponse<?>> findResponseInThrowable(@Nullable Throwable throwable) {
+        if (throwable instanceof HttpResponseProvider httpResponseProvider) {
+            return Optional.ofNullable(httpResponseProvider.getResponse());
+        }
+        return Optional.empty();
     }
 
     private void handleContinueSpan(MutableHttpRequest<?> request) {

@@ -108,6 +108,9 @@ class OpenTelemetryHttpSpec extends Specification {
         assert serverSpans.every {it.attributes.stream().any { it.get(HttpAttributes.HTTP_REQUEST_METHOD) }}
         assert !hasRoute || serverSpans.every {it.attributes.stream().any { it.get(HttpAttributes.HTTP_ROUTE) }}
         assert serverSpans.every {it.attributes.stream().any {x -> Optional.ofNullable(x.get(HttpAttributes.HTTP_RESPONSE_STATUS_CODE)).map { it.intValue() == httpStatus.code }.orElse(false) }}
+        def clientSpans = exporter.finishedSpanItems.findAll { it -> it.kind == SpanKind.CLIENT }
+        assert clientSpans.every {it.attributes.stream().any { it.get(HttpAttributes.HTTP_REQUEST_METHOD) }}
+        assert clientSpans.every {it.attributes.stream().any {x -> Optional.ofNullable(x.get(HttpAttributes.HTTP_RESPONSE_STATUS_CODE)).map { it.intValue() == httpStatus.code }.orElse(false) }}
     }
 
     void 'test map WithSpan annotation'() {
@@ -230,6 +233,34 @@ class OpenTelemetryHttpSpec extends Specification {
         '/error/completionStage'                  | 2         | 'inside completionStage'
         '/error/completionStagePropagation'       | 2         | 'propagated through  completionStage'
         '/error/completionStageErrorContinueSpan' | 1         | 'inside normal method continueSpan'
+    }
+
+    void 'test client error #desc, path=/error/#variant'() {
+        def errorClient = context.getBean(ErrorClient)
+
+        when:
+        String responseBody = errorClient.get(variant)
+
+        then:
+        def e = thrown(HttpClientResponseException)
+        e.message == "Internal Server Error"
+        conditions.eventually {
+            hasSpans(hasInternalSpan ? 1 : 0, 1, 1)
+            exporter.finishedSpanItems.events.any { it.size() > 0 && it.get(0).name == "exception" }
+            exporter.finishedSpanItems.stream().allMatch(span -> span.status.statusCode == StatusCode.ERROR)
+            hasHttpSemanticAttributes(e.status)
+        }
+        cleanup:
+        exporter.reset()
+        where:
+        variant                            | hasInternalSpan | desc
+        'publisher'                        | true            | 'inside publisher'
+        'publisherErrorContinueSpan'       | false           | 'inside continueSpan publisher'
+        'mono'                             | true            | 'propagated through publisher'
+        'sync'                             | true            | 'inside normal function'
+        'completionStage'                  | true            | 'inside completionStage'
+        'completionStagePropagation'       | true            | 'propagated through  completionStage'
+        'completionStageErrorContinueSpan' | false           | 'inside normal method continueSpan'
     }
 
     void 'client with tracing annotations'() {
@@ -639,6 +670,13 @@ class OpenTelemetryHttpSpec extends Specification {
         void throwAnError() {
             throw new RuntimeException("throwAnError")
         }
+    }
+
+    @Client("/error")
+    static interface ErrorClient {
+
+        @Get("/{variant}")
+        String get(@PathVariable String variant)
     }
 
     @Controller('/exclude')

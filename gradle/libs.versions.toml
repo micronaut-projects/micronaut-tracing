@@ -41,7 +41,7 @@ micronaut-rxjava2 = '2.7.0'
 micronaut-serde = '2.14.0'
 micronaut-sql = "6.0.2"
 micronaut-test-resources = "2.7.3"
-micronaut-kafka = '5.7.0'
+micronaut-kafka = '5.8.0'
 micronaut-gradle-plugin = "4.4.5"
 
 [libraries]

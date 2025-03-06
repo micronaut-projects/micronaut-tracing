@@ -82,6 +82,7 @@ protoc-grpc = { module = 'io.grpc:protoc-gen-grpc-java', version.ref = 'grpc' }
 zipkin = { module = 'io.zipkin.zipkin2:zipkin', version.ref = 'managed-zipkin' }
 zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter' }
 zipkin-reporter-brave = { module = 'io.zipkin.reporter2:zipkin-reporter-brave' }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api' }
 opentelemetry-api-events = { module = 'io.opentelemetry:opentelemetry-api-events', version.ref = 'managed-opentelemetry-api-events' }

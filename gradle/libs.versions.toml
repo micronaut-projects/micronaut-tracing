@@ -12,6 +12,7 @@ managed-opentelemetry = '1.48.0'
 managed-opentelemetry-alpha = '1.48.0-alpha'
 managed-opentelemetry-instrumentation = '2.14.0'
 managed-opentelemetry-instrumentation-alpha = '2.14.0-alpha'
+managed-opentelemetry-instrumentation-kafka-common = '2.13.3-alpha'
 managed-opentelemetry-contrib-aws-xray = '1.44.0'
 managed-opentelemetry-contrib-aws-xray-propagation = '1.44.0-alpha'
 managed-opentelemetry-contrib-aws-resources = '1.44.0-alpha'
@@ -22,6 +23,7 @@ managed-opentelemetry-instrumentation-api-semconv = '1.33.6-alpha'
 managed-protobuf = '0.9.4'
 managed-zipkin = '3.5.0'
 managed-zipkin-reporter = '3.5.0'
+
 
 managed-jaeger = '1.8.1'
 managed-opentracing = '0.33.0'
@@ -94,7 +96,7 @@ opentelemetry-exporter-zipkin = { module = 'io.opentelemetry:opentelemetry-expor
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api' }
 opentelemetry-instrumentation-api-incubator = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator' }
 opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6'}
-opentelemetry-instrumentation-kafka-common = { module = 'io.opentelemetry.instrumentation:opentelemetry-kafka-clients-common'}
+opentelemetry-instrumentation-kafka-common = { module = 'io.opentelemetry.instrumentation:opentelemetry-kafka-clients-common', version.ref = 'managed-opentelemetry-instrumentation-kafka-common' }
 opentelemetry-instrumentation-api-semconv = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv', version.ref = 'managed-opentelemetry-instrumentation-api-semconv' }
 opentelemetry-instrumentation-semconv = { module = 'io.opentelemetry.semconv:opentelemetry-semconv', version.ref ='managed-opentelemetry-semconv' }
 opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrumentation: opentelemetry-instrumentation-annotations' }

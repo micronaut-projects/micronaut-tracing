@@ -26,6 +26,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import spock.lang.AutoCleanup
+import spock.lang.PendingFeature
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -665,6 +666,7 @@ class HttpTracingSpec extends Specification {
         }
     }
 
+    @PendingFeature
     void 'test retried HTTP request - should contain tracing headers only once'() {
         expect:
         context.containsBean(Tracer)

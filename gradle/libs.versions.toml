@@ -21,7 +21,7 @@ managed-opentelemetry-gcp-trace = '0.33.0-alpha'
 managed-opentelemetry-semconv = '1.30.0'
 managed-opentelemetry-instrumentation-api-semconv = '1.33.6-alpha'
 managed-protobuf = '0.9.4'
-managed-zipkin = '3.5.0'
+managed-zipkin = '3.5.1'
 managed-zipkin-reporter = '3.5.0'
 
 

@@ -38,6 +38,7 @@ import jakarta.inject.Named;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
+import static io.micronaut.http.filter.ServerFilterPhase.TRACING;
 import static io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTelemetryServerFilter.SERVER_PATH;
 
 /**
@@ -68,6 +69,11 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
     }
 
     @Override
+    public int getOrder() {
+        return TRACING.order();
+    }
+
+    @Override
     public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
         boolean applied = request.getAttribute(APPLIED, Boolean.class).orElse(false);
         boolean continued = request.getAttribute(CONTINUE, Boolean.class).orElse(false);
@@ -89,7 +95,7 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
             .plus(new OpenTelemetryPropagationContext(context))
             .propagate()) {
 
-            PropagatedContext propagatedContext = PropagatedContext.get();
+            var propagatedContext = PropagatedContext.get();
             return Mono.from(chain.proceed(request))
                 .doOnNext(mutableHttpResponse -> mutableHttpResponse.getAttribute(HttpAttributes.EXCEPTION, Exception.class)
                     .ifPresentOrElse(
@@ -107,11 +113,11 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
 
     private void onError(HttpRequest<?> request, Context context,
                          @Nullable MutableHttpResponse<?> mutableHttpResponse, @Nullable Throwable e) {
-        Span span = Span.fromContext(context);
+        var span = Span.fromContext(context)
+            .setStatus(StatusCode.ERROR);
         if (e != null) {
             span.recordException(e);
         }
-        span.setStatus(StatusCode.ERROR);
         instrumenter.end(context, request, mutableHttpResponse, e);
         request.setAttribute(CONTINUE, true);
     }

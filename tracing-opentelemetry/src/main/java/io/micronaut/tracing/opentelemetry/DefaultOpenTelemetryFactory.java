@@ -15,9 +15,6 @@
  */
 package io.micronaut.tracing.opentelemetry;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
@@ -31,10 +28,13 @@ import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
 import io.opentelemetry.sdk.trace.IdGenerator;
 import io.opentelemetry.sdk.trace.SpanProcessor;
-
 import io.opentelemetry.sdk.trace.samplers.Sampler;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static io.micronaut.core.convert.format.MapFormat.MapTransformation.FLAT;
 
@@ -58,11 +58,12 @@ public class DefaultOpenTelemetryFactory {
      * The OpenTelemetry bean with default values.
      *
      * @param applicationConfiguration the {@link ApplicationConfiguration}
-     * @param otelConfig the configuration values for the opentelemetry autoconfigure
-     * @param idGenerator the {@link IdGenerator}
-     * @param spanProcessor the {@link SpanProcessor}
-     * @param resourceProvider Resource Provider
-     *
+     * @param otelConfig               the configuration values for the opentelemetry autoconfigure
+     * @param idGenerator              the {@link IdGenerator}
+     * @param spanProcessor            the {@link SpanProcessor}
+     * @param resourceProvider         Resource Provider
+     * @param sampler                  sampler
+     * @param builderCustomizers       optional builder customizer beans
      * @return the OpenTelemetry bean with default values
      */
     @Singleton
@@ -71,7 +72,8 @@ public class DefaultOpenTelemetryFactory {
                                                  @Nullable IdGenerator idGenerator,
                                                  @Nullable SpanProcessor spanProcessor,
                                                  @Nullable ResourceProvider resourceProvider,
-                                                 @Nullable Sampler sampler) {
+                                                 @Nullable Sampler sampler,
+                                                 Collection<OpenTelemetryBuilderCustomizer> builderCustomizers) {
 
         Map<String, String> otel = otelConfig.entrySet().stream().collect(Collectors.toMap(
             e -> "otel." + e.getKey(),
@@ -107,6 +109,10 @@ public class DefaultOpenTelemetryFactory {
                     return tracerProviderBuilder;
                 }
             );
+
+        for (OpenTelemetryBuilderCustomizer customizer : builderCustomizers) {
+            customizer.configure(sdk);
+        }
 
         return sdk.build().getOpenTelemetrySdk();
     }

@@ -235,6 +235,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/jaeger/JaegerConfiguration.JaegerSenderConfiguration.html#configuration" class="member-name-link">configuration</a> - Variable in class io.micronaut.tracing.jaeger.<a href="io/micronaut/tracing/jaeger/JaegerConfiguration.JaegerSenderConfiguration.html" title="class in io.micronaut.tracing.jaeger">JaegerConfiguration.JaegerSenderConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/OpenTelemetryBuilderCustomizer.html#configure(io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder)" class="member-name-link">configure(AutoConfiguredOpenTelemetrySdkBuilder)</a> - Method in interface io.micronaut.tracing.opentelemetry.<a href="io/micronaut/tracing/opentelemetry/OpenTelemetryBuilderCustomizer.html" title="interface in io.micronaut.tracing.opentelemetry">OpenTelemetryBuilderCustomizer</a></dt>
+<dd>
+<div class="block">Apply customizations.</div>
+</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/TracingConsumerInterceptor.html#configure(java.util.Map)" class="member-name-link">configure(Map&lt;String, ?&gt;)</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/TracingConsumerInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">TracingConsumerInterceptor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/TracingProducerInterceptor.html#configure(java.util.Map)" class="member-name-link">configure(Map&lt;String, ?&gt;)</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/TracingProducerInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">TracingProducerInterceptor</a></dt>
@@ -328,7 +332,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 &nbsp;</dd>
-<dt><a href="io/micronaut/tracing/opentelemetry/DefaultOpenTelemetryFactory.html#defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration,java.util.Map,io.opentelemetry.sdk.trace.IdGenerator,io.opentelemetry.sdk.trace.SpanProcessor,io.micronaut.tracing.opentelemetry.ResourceProvider,io.opentelemetry.sdk.trace.samplers.Sampler)" class="member-name-link">defaultOpenTelemetry(ApplicationConfiguration, Map&lt;String, String&gt;, IdGenerator, SpanProcessor, ResourceProvider, Sampler)</a> - Method in class io.micronaut.tracing.opentelemetry.<a href="io/micronaut/tracing/opentelemetry/DefaultOpenTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry">DefaultOpenTelemetryFactory</a></dt>
+<dt><a href="io/micronaut/tracing/opentelemetry/DefaultOpenTelemetryFactory.html#defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration,java.util.Map,io.opentelemetry.sdk.trace.IdGenerator,io.opentelemetry.sdk.trace.SpanProcessor,io.micronaut.tracing.opentelemetry.ResourceProvider,io.opentelemetry.sdk.trace.samplers.Sampler,java.util.Collection)" class="member-name-link">defaultOpenTelemetry(ApplicationConfiguration, Map&lt;String, String&gt;, IdGenerator, SpanProcessor, ResourceProvider, Sampler, Collection&lt;OpenTelemetryBuilderCustomizer&gt;)</a> - Method in class io.micronaut.tracing.opentelemetry.<a href="io/micronaut/tracing/opentelemetry/DefaultOpenTelemetryFactory.html" title="class in io.micronaut.tracing.opentelemetry">DefaultOpenTelemetryFactory</a></dt>
 <dd>
 <div class="block">The OpenTelemetry bean with default values.</div>
 </dd>
@@ -866,6 +870,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/kafka/TracingProducerInterceptor.html#onSend(org.apache.kafka.clients.producer.ProducerRecord)" class="member-name-link">onSend(ProducerRecord&lt;K, V&gt;)</a> - Method in class io.micronaut.tracing.opentelemetry.instrument.kafka.<a href="io/micronaut/tracing/opentelemetry/instrument/kafka/TracingProducerInterceptor.html" title="class in io.micronaut.tracing.opentelemetry.instrument.kafka">TracingProducerInterceptor</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/tracing/opentelemetry/OpenTelemetryBuilderCustomizer.html" class="type-name-link" title="interface in io.micronaut.tracing.opentelemetry">OpenTelemetryBuilderCustomizer</a> - Interface in <a href="io/micronaut/tracing/opentelemetry/package-summary.html">io.micronaut.tracing.opentelemetry</a></dt>
+<dd>
+<div class="block">Allows external configuration of the AutoConfiguredOpenTelemetrySdkBuilder
+ created in DefaultOpenTelemetryFactory.</div>
+</dd>
 <dt><a href="io/micronaut/tracing/opentelemetry/instrument/http/client/OpenTelemetryClientFilter.html" class="type-name-link" title="class in io.micronaut.tracing.opentelemetry.instrument.http.client">OpenTelemetryClientFilter</a> - Class in <a href="io/micronaut/tracing/opentelemetry/instrument/http/client/package-summary.html">io.micronaut.tracing.opentelemetry.instrument.http.client</a></dt>
 <dd>
 <div class="block">An HTTP client instrumentation filter that uses Open Telemetry.</div>

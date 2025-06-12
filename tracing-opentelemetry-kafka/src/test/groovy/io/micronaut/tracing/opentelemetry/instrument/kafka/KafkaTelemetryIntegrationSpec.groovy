@@ -8,7 +8,7 @@ import io.micronaut.context.ApplicationContext
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.tracing.util.KafkaSetup
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
-import org.testcontainers.containers.KafkaContainer
+import org.testcontainers.kafka.KafkaContainer
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 

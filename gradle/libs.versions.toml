@@ -7,7 +7,7 @@ micronaut-docs = '2.0.0'
 groovy = "4.0.26"
 spock = "2.3-groovy-4.0"
 
-managed-brave-instrumentation = '6.1.0'
+managed-brave-instrumentation = '6.3.0'
 managed-opentelemetry = '1.48.0'
 managed-opentelemetry-alpha = '1.48.0-alpha'
 managed-opentelemetry-instrumentation = '2.14.0'

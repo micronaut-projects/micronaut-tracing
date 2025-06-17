@@ -7,22 +7,22 @@ micronaut-docs = '2.0.0'
 groovy = "4.0.26"
 spock = "2.3-groovy-4.0"
 
-managed-brave-instrumentation = '6.3.0'
-managed-opentelemetry = '1.51.0'
-managed-opentelemetry-alpha = '1.51.0-alpha'
-managed-opentelemetry-instrumentation = '2.16.0'
-managed-opentelemetry-instrumentation-alpha = '2.16.0-alpha'
+managed-brave-instrumentation = '6.1.0'
+managed-opentelemetry = '1.48.0'
+managed-opentelemetry-alpha = '1.48.0-alpha'
+managed-opentelemetry-instrumentation = '2.14.0'
+managed-opentelemetry-instrumentation-alpha = '2.14.0-alpha'
 managed-opentelemetry-instrumentation-kafka-common = '2.13.3-alpha'
-managed-opentelemetry-contrib-aws-xray = '1.46.0'
-managed-opentelemetry-contrib-aws-xray-propagation = '1.46.0-alpha'
-managed-opentelemetry-contrib-aws-resources = '1.46.0-alpha'
+managed-opentelemetry-contrib-aws-xray = '1.44.0'
+managed-opentelemetry-contrib-aws-xray-propagation = '1.44.0-alpha'
+managed-opentelemetry-contrib-aws-resources = '1.44.0-alpha'
 managed-opentelemetry-api-events = '1.36.0-alpha'
 managed-opentelemetry-gcp-trace = '0.33.0-alpha'
-managed-opentelemetry-semconv = '1.34.0'
+managed-opentelemetry-semconv = '1.30.0'
 managed-opentelemetry-instrumentation-api-semconv = '1.33.6-alpha'
 managed-protobuf = '0.9.4'
-managed-zipkin = '3.5.1'
-managed-zipkin-reporter = '3.5.1'
+managed-zipkin = '3.5.0'
+managed-zipkin-reporter = '3.5.0'
 
 
 managed-jaeger = '1.8.1'
@@ -32,8 +32,8 @@ managed-brave-opentracing = '1.0.1'
 
 javax-annotation = '1.3.2'
 kotlin = '2.0.21'
-grpc = '1.73.0'
-protobuf = '3.25.8'
+grpc = '1.71.0'
+protobuf = '3.25.6'
 
 micronaut-aws = "4.10.0"
 micronaut-data = "4.12.2"

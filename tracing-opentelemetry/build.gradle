@@ -17,6 +17,7 @@ dependencies {
     api libs.opentelemetry.api.incubator
     api libs.opentelemetry.instrumentation.annotations
     api libs.opentelemetry.instrumentation.api
+    api(libs.opentelemetry.instrumentation.api.incubator)
     api libs.opentelemetry.autoconfigure
 
     implementation(platform(libs.micronaut.aws))

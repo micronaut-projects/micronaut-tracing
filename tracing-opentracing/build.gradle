@@ -13,5 +13,6 @@ dependencies {
     testImplementation "io.reactivex.rxjava2:rxjava"
     testImplementation mnRxjava2.micronaut.rxjava2.http.client
     testImplementation mnReactor.micronaut.reactor.http.client
+    testImplementation project(":micronaut-tracing-jaeger")
     testRuntimeOnly mnSerde.micronaut.serde.jackson
 }

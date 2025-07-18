@@ -88,8 +88,8 @@ public final class OpenTracingClientFilter extends AbstractOpenTracingFilter imp
             .plus(new OpenTracingPropagationContext(tracer, span))
             .propagate()) {
 
+            tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders()));
             return Mono.from(chain.proceed(request))
-                .doOnSubscribe(subscription -> tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders())))
                 .doOnNext(httpResponse -> setResponseTags(request, httpResponse, span))
                 .doOnError(throwable -> {
                     if (throwable instanceof HttpClientResponseException e) {

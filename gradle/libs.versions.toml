@@ -1,5 +1,5 @@
 [versions]
-micronaut = "4.9.3"
+micronaut = "4.9.7"
 micronaut-test = "4.7.0"
 micronaut-logging = "1.7.0"
 micronaut-platform = "4.8.3"
@@ -20,7 +20,7 @@ managed-opentelemetry-api-events = '1.36.0-alpha'
 managed-opentelemetry-gcp-trace = '0.36.0-alpha'
 managed-opentelemetry-semconv = '1.34.0'
 managed-opentelemetry-instrumentation-api-semconv = '1.33.6-alpha'
-managed-protobuf = '0.9.4'
+managed-protobuf = '0.9.5'
 managed-zipkin = '3.5.1'
 managed-zipkin-reporter = '3.5.1'
 
@@ -41,10 +41,10 @@ micronaut-grpc = "4.9.0"
 micronaut-reactor = "3.8.0"
 micronaut-rxjava2 = "2.8.0"
 micronaut-serde = "2.15.0"
-micronaut-sql = "6.2.0"
+micronaut-sql = "6.2.1"
 micronaut-test-resources = "2.8.0"
 micronaut-kafka = '5.8.0'
-micronaut-gradle-plugin = "4.5.3"
+micronaut-gradle-plugin = "4.5.4"
 sonatype-scan = "3.1.1"
 [libraries]
 # Core

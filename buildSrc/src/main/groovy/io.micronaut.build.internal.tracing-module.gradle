@@ -7,13 +7,12 @@ String ossIndexUsername = System.getenv("OSS_INDEX_USERNAME") ?: project.propert
 String ossIndexPassword = System.getenv("OSS_INDEX_PASSWORD") ?: project.properties["ossIndexPassword"]
 boolean sonatypePluginConfigured = ossIndexUsername != null && ossIndexPassword != null
 ossIndexAudit {
-    if (sonatypePluginConfigured) {
-        username = ossIndexUsername
-        password = ossIndexPassword
-    }
+if (sonatypePluginConfigured) {
+    username = ossIndexUsername
+    password = ossIndexPassword
+}
     excludeCoordinates = [
-            "org.threeten:threetenbp:1.7.0", // no version patched https://ossindex.sonatype.org/component/pkg:maven/org.threeten/threetenbp
-            "com.squareup.okio:okio:2.8.0", // no okio 2.x version patched
+        "com.squareup.okio:okio:2.8.0", // no okio 2.x version patched
     ]
 }
 dependencies {

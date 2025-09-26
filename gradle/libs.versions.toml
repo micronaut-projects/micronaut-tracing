@@ -36,7 +36,7 @@ grpc = '1.73.0'
 protobuf = '3.25.8'
 
 micronaut-aws = "4.10.0"
-micronaut-data = "4.12.2"
+micronaut-data = "4.13.5"
 micronaut-grpc = "4.9.0"
 micronaut-reactor = "3.8.0"
 micronaut-rxjava2 = "2.8.0"

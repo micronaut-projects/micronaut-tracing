@@ -26,6 +26,7 @@ dependencies {
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
     testImplementation mnReactor.micronaut.reactor
+    testImplementation mnTest.junit.platform.suite
     testImplementation mnSerde.micronaut.serde.jackson
     testImplementation mnReactor.micronaut.reactor.http.client
 }

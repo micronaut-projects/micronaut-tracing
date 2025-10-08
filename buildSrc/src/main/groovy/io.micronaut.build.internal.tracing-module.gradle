@@ -11,9 +11,6 @@ if (sonatypePluginConfigured) {
     username = ossIndexUsername
     password = ossIndexPassword
 }
-    excludeCoordinates = [
-        "com.squareup.okio:okio:2.8.0", // no okio 2.x version patched
-    ]
 }
 dependencies {
     annotationProcessor mn.micronaut.inject.java

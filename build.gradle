@@ -6,3 +6,8 @@ plugins {
 repositories {
     mavenCentral()
 }
+
+// Workaround for duplicated doc file
+tasks.named("processConfigProps") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

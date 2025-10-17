@@ -1,5 +1,5 @@
 [versions]
-micronaut = "4.10.3"
+micronaut = "4.10.6"
 micronaut-test = "4.9.0"
 micronaut-logging = "1.7.1"
 micronaut-platform = "4.9.4"

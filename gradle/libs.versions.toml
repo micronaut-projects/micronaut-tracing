@@ -73,7 +73,6 @@ grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'grpc' }
 gson = { module = 'com.google.code.gson:gson', version.ref = 'gson' }
 jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'managed-jaeger' }
 javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation' }
-junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
 protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'protobuf' }
 protobuf-java-util = { module = 'com.google.protobuf:protobuf-java-util', version.ref = 'protobuf' }
 micronaut-docs-asciidoc-config-props = { module = 'io.micronaut.docs:micronaut-docs-asciidoc-config-props', version.ref = 'micronaut-docs' }

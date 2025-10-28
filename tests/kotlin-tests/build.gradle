@@ -1,6 +1,7 @@
 plugins {
     alias libs.plugins.kotlinjvm
     alias libs.plugins.kotlinkapt
+    id "io.micronaut.build.internal.kotlin-base"
 }
 
 dependencies {
@@ -23,12 +24,6 @@ dependencies {
     testImplementation mnTest.junit.jupiter.engine
     testImplementation mnSerde.micronaut.serde.jackson
     testRuntimeOnly(mnTest.junit.platform.launcher)
-}
-
-kotlin {
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
 }
 
 tasks.withType(Test).configureEach {

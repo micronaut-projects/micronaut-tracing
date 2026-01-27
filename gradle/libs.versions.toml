@@ -39,9 +39,9 @@ micronaut-reactor = "3.8.0"
 micronaut-rxjava2 = "2.8.0"
 micronaut-serde = "2.15.4"
 micronaut-sql = "6.2.2"
-micronaut-test-resources = "2.10.1"
 micronaut-kafka = '5.9.0'
 micronaut-gradle-plugin = "4.5.5"
+micronaut-kafka = '6.0.0-M1'
 [libraries]
 # Core
 micronaut-core = { module = 'io.micronaut:micronaut-core-bom', version.ref = 'micronaut' }
@@ -60,7 +60,6 @@ micronaut-rxjava2 = { module = 'io.micronaut.rxjava2:micronaut-rxjava2-bom', ver
 micronaut-serde = { module = 'io.micronaut.serde:micronaut-serde-bom', version.ref = 'micronaut-serde'}
 micronaut-sql = { module = 'io.micronaut.sql:micronaut-sql-bom', version.ref = 'micronaut-sql' }
 micronaut-kafka = { module = 'io.micronaut.kafka:micronaut-kafka-bom', version.ref = 'micronaut-kafka'}
-micronaut-test-resources = { module = "io.micronaut.testresources:micronaut-test-resources-bom", version.ref = "micronaut-test-resources" }
 
 brave-instrumentation-http = { module = 'io.zipkin.brave:brave-instrumentation-http' }
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
@@ -99,7 +98,7 @@ opentelemetry-instrumentation-semconv = { module = 'io.opentelemetry.semconv:ope
 opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrumentation: opentelemetry-instrumentation-annotations' }
 opentelemetry-instrumentation-jdbc = { module = 'io.opentelemetry.instrumentation:opentelemetry-jdbc' }
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
-
+testcontainers-kafka = { module = "org.testcontainers:testcontainers-kafka"}
 awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
 
 # BOMs

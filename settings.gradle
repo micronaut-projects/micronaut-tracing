@@ -48,5 +48,4 @@ micronautBuild {
     importMicronautCatalog("micronaut-kafka")
     importMicronautCatalog("micronaut-data")
     importMicronautCatalog("micronaut-sql")
-    importMicronautCatalog("micronaut-test-resources")
 }

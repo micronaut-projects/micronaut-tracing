@@ -19,7 +19,7 @@ import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
-import static io.micronaut.scheduling.TaskExecutors.IO
+import io.micronaut.scheduling.TaskExecutors
 
 @Slf4j("LOG")
 class HttpClientResetForTestSpec extends Specification {
@@ -55,7 +55,7 @@ class HttpClientResetForTestSpec extends Specification {
     @Controller("/test")
     static class TestController {
 
-        @ExecuteOn(IO)
+        @ExecuteOn(TaskExecutors.IO)
         @Produces(MediaType.TEXT_PLAIN)
         @Get("/test")
         @ContinueSpan

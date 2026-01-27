@@ -1,6 +1,5 @@
 plugins {
-    alias libs.plugins.kotlinjvm
-    alias libs.plugins.kotlinkapt
+    id 'io.micronaut.build.internal.kotlin-kapt'
 }
 
 dependencies {
@@ -24,8 +23,4 @@ dependencies {
     testImplementation mnSerde.micronaut.serde.jackson
 }
 
-kotlin {
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
+

@@ -2,11 +2,7 @@ plugins {
     id 'io.micronaut.build.internal.tracing-base'
     id 'io.micronaut.build.internal.module'
 }
-String ossIndexUsername = "liqaliissam@gmail.com"
-String ossIndexPassword = "9ae8a674b77299df8094e8db1ea0f21128fa95e4"
 ossIndexAudit {
-    username = ossIndexUsername
-    password = ossIndexPassword
     excludeCoordinates = [
         "com.squareup.okio:okio:2.8.0", // no okio 2.x version patched
         "org.lz4:lz4-java:1.8.0"

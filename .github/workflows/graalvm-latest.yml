@@ -30,6 +30,8 @@ jobs:
         id: build-matrix
   build:
     needs: build_matrix
+    with:
+      java-version: '21'
     if: github.repository != 'micronaut-projects/micronaut-project-template'
     runs-on: ubuntu-latest
     strategy:
@@ -48,6 +50,7 @@ jobs:
         id: pre-build
         with:
           distribution: 'graalvm'
+          gradle-java: '21'
           java: ${{ matrix.java }}
       - name: Build Steps
         uses: micronaut-projects/github-actions/graalvm/build@master

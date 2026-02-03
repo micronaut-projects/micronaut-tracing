@@ -15,7 +15,7 @@
     <script>hljs.initHighlightingOnLoad();</script>
     <link rel="stylesheet" href="../css/multi-language-sample.css"/>
     <script src="../js/docs.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.13/clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
     <script type="text/javascript">
         function addJsClass(el) {
             var classes = document.body.className.split(" ");
@@ -23,7 +23,9 @@
             document.body.className = classes.join(" ");
         }
     </script>
-
+    <style type="text/css">
+        .lang-java { display: block }; .lang-python { display: block }; .lang-kotlin { display: block }; .lang-groovy { display: block }; 
+    </style>
 </head>
 
 <body class="body" id="docs" onload="addJsClass();" onhashchange="highlightMenu()">
@@ -135,13 +137,13 @@
         <h1>Micronaut Tracing</h1>
         <p></p>
         <p>Adds Distributed Tracing Support</p>
-        <p><strong>Version:</strong> 7.2.1-SNAPSHOT </p>
+        <p><strong>Version:</strong> 8.0.0-SNAPSHOT </p>
     </div>
     
 <h1 id="introduction"><a class="anchor" href="#introduction"></a>1 Introduction</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/introduction.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/introduction.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -241,7 +243,7 @@ class HelloService {
 <h1 id="releaseHistory"><a class="anchor" href="#releaseHistory"></a>2 Release History</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/releaseHistory.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/releaseHistory.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -257,7 +259,7 @@ class HelloService {
 <h1 id="breaks"><a class="anchor" href="#breaks"></a>3 Breaking Changes</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/breaks.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/breaks.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -336,7 +338,7 @@ class HelloService {
 <h1 id="jaeger"><a class="anchor" href="#jaeger"></a>4 Tracing with Jaeger</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/jaeger.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/jaeger.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -413,7 +415,8 @@ class HelloService {
     &lt;artifactId&gt;micronaut-tracing-jaeger&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </div>
 <div class="paragraph">
 <p>Then enable Jaeger tracing in your configuration (potentially only your production configuration):</p>
@@ -704,7 +707,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
 <h1 id="zipkin"><a class="anchor" href="#zipkin"></a>5 Tracing with Zipkin</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/zipkin.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/zipkin.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -770,7 +773,8 @@ tracing.exclusions[1]=/env/.*</code></pre>
     &lt;artifactId&gt;micronaut-tracing-brave-http&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </div>
 <div class="paragraph">
 <p>Then enable ZipKin tracing in your configuration (potentially only your production configuration):</p>
@@ -1188,7 +1192,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
 <h1 id="opentelemetry"><a class="anchor" href="#opentelemetry"></a>6 Tracing with OpenTelemetry</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/opentelemetry.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1225,7 +1229,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
 <h2 id="annotations"><a class="anchor" href="#annotations"></a>6.1 OpenTelemetry Annotations</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/opentelemetry/annotations.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/annotations.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1239,7 +1243,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
         <div class="listingblock multi-language-sample">
 <div class="title"></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">annotationProcessor(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-annotation:7.2.1-SNAPSHOT")</span></code></pre>
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">annotationProcessor(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-annotation:8.0.0-SNAPSHOT")</span></code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1249,11 +1253,12 @@ tracing.exclusions[1]=/env/.*</code></pre>
     &lt;path&gt;
         &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
         &lt;artifactId&gt;micronaut-tracing-opentelemetry-annotation&lt;/artifactId&gt;
-        &lt;version&gt;7.2.1-SNAPSHOT&lt;/version&gt;
+        &lt;version&gt;8.0.0-SNAPSHOT&lt;/version&gt;
     &lt;/path&gt;
 &lt;/annotationProcessorPaths&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </div>
 <div class="paragraph">
 <p>The Open Tracing annotations that are defined inside the <a href="../api/io/micronaut/tracing/annotation/package-summary.html">io.micronaut.tracing.annotation</a> package are also available for usage inside Open Telemetry.</p>
@@ -1262,7 +1267,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
 <h2 id="exporters"><a class="anchor" href="#exporters"></a>6.2 OpenTelemetry Exporters</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/opentelemetry/exporters.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/exporters.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1291,7 +1296,8 @@ tracing.exclusions[1]=/env/.*</code></pre>
     &lt;artifactId&gt;opentelemetry-exporter-otlp&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </li>
 <li>
 <p>Logging exporter: <code>logging</code>
@@ -1308,7 +1314,8 @@ tracing.exclusions[1]=/env/.*</code></pre>
     &lt;artifactId&gt;opentelemetry-exporter-logging&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </li>
 <li>
 <p>Jaeger exporter: <code>jaeger</code>
@@ -1325,7 +1332,8 @@ tracing.exclusions[1]=/env/.*</code></pre>
     &lt;artifactId&gt;opentelemetry-exporter-jaeger&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </li>
 <li>
 <p>Google Cloud Trace: <code>google_cloud_trace</code>
@@ -1342,7 +1350,8 @@ tracing.exclusions[1]=/env/.*</code></pre>
     &lt;artifactId&gt;exporter-auto&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </li>
 <li>
 <p>Zipkin exporter: <code>zipkin</code>
@@ -1359,7 +1368,8 @@ tracing.exclusions[1]=/env/.*</code></pre>
     &lt;artifactId&gt;opentelemetry-exporter-zipkin&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </li>
 </ul>
 </div>
@@ -1437,7 +1447,8 @@ tracing.exclusions[1]=/env/.*</code></pre>
     &lt;artifactId&gt;micronaut-tracing-opentelemetry-zipkin-exporter&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </div>
 <div class="paragraph">
 <p>To configure Micronaut Zipkin exporter add</p>
@@ -1520,7 +1531,7 @@ Micronaut Zipkin exporter requires <code>otel.traces.exporter</code> property no
 <h2 id="propagators"><a class="anchor" href="#propagators"></a>6.3 OpenTelemetry Propagators</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/opentelemetry/propagators.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/propagators.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1546,7 +1557,8 @@ Micronaut Zipkin exporter requires <code>otel.traces.exporter</code> property no
     &lt;artifactId&gt;opentelemetry-extension-aws&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </div>
 <div class="paragraph">
 <p>And the "xray" has to be added inside configuration file.</p>
@@ -1615,7 +1627,7 @@ otel.propagators=tracecontext, baggage, xray</code></pre>
 <h2 id="idgenerator"><a class="anchor" href="#idgenerator"></a>6.4 ID Generator</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/opentelemetry/idgenerator.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/idgenerator.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1642,7 +1654,8 @@ For an example, AWS X-Ray requires a specific format for their tracing identifie
     &lt;artifactId&gt;opentelemetry-aws-xray&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </div>
 <div class="paragraph">
 <p>To successfully export traces to the AWS X-Ray you have to run <a href="https://github.com/aws-observability/aws-otel-collector">AWS Open Telemetry Collector</a> that will periodically send traces to the AWS.</p>
@@ -1653,7 +1666,7 @@ For an example, AWS X-Ray requires a specific format for their tracing identifie
 <h2 id="http"><a class="anchor" href="#http"></a>6.5 HTTP Server and Client</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/opentelemetry/http.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/http.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1674,7 +1687,8 @@ For an example, AWS X-Ray requires a specific format for their tracing identifie
     &lt;artifactId&gt;micronaut-tracing-opentelemetry-http&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </div>
 <div class="sect1">
 <h2 id="_filtering_http_spans">Filtering HTTP spans</h2>
@@ -1851,7 +1865,7 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
 <h2 id="grpc"><a class="anchor" href="#grpc"></a>6.6 gRPC Server and Client</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/opentelemetry/grpc.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/grpc.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1872,13 +1886,14 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
     &lt;artifactId&gt;micronaut-tracing-opentelemetry-grpc&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </div>
 
 <h2 id="jdbc"><a class="anchor" href="#jdbc"></a>6.7 JDBC</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/opentelemetry/jdbc.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/jdbc.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1899,7 +1914,8 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
     &lt;artifactId&gt;micronaut-tracing-opentelemetry-jdbc&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </div>
 <div class="paragraph">
 <p>The dependency instruments the <code>javax.sql.DataSource</code> beans for intercepting the queries to the database.</p>
@@ -1908,7 +1924,7 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
 <h2 id="kafka"><a class="anchor" href="#kafka"></a>6.8 Kafka</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/opentelemetry/kafka.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/kafka.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1929,7 +1945,8 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
     &lt;artifactId&gt;micronaut-tracing-opentelemetry-kafka&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </div>
 <div class="sect1">
 <h2 id="_add_kafka_message_headers_into_request_spans">Add Kafka Message Headers into request spans</h2>
@@ -2097,7 +2114,7 @@ You can&#8217;t use <code>included-topics</code> and <code>excluded-topics</code
 <h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>6.9 AWS SDK Instrumentation</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/opentelemetry/awsSdkInstrumentation.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/awsSdkInstrumentation.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -2120,7 +2137,8 @@ You can&#8217;t use <code>included-topics</code> and <code>excluded-topics</code
     &lt;artifactId&gt;opentelemetry-aws-sdk-2.2&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </div>
 <div class="paragraph">
 <p>Additionally, include <a href="https://micronaut-projects.github.io/micronaut-aws/latest/guide/#sdkv2">Micronaut AWS SDK v2</a> dependency:</p>
@@ -2139,7 +2157,8 @@ You can&#8217;t use <code>included-topics</code> and <code>excluded-topics</code
     &lt;artifactId&gt;micronaut-aws-sdk-v2&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </div>
 <div class="paragraph">
 <p><code>micronaut-aws-sdk-v2</code> dependency creates a bean of type <code>SdkClientBuilder</code>. To instrument the AWS SDK, Micronaut OpenTelemetry registers a tracing interceptor
@@ -2149,7 +2168,7 @@ via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.
 <h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>6.10 AWS Resource Detectors</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/opentelemetry/awsResourceDetectors.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/awsResourceDetectors.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -2175,7 +2194,8 @@ via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.
     &lt;artifactId&gt;opentelemetry-sdk-extension-aws&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
-</div></p>
+</div>
+</p>
 </div>
 <div class="paragraph">
 <p>and provide a bean of type <a href="../api/io/micronaut/tracing/opentelemetry/ResourceProvider.html">ResourceProvider</a></p>
@@ -2206,7 +2226,7 @@ public class AwsResourceProvider implements ResourceProvider {
 <h2 id="opentelemetryGuides"><a class="anchor" href="#opentelemetryGuides"></a>6.11 OpenTelemetry Guides</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/opentelemetry/opentelemetryGuides.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/opentelemetryGuides.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -2238,7 +2258,7 @@ public class AwsResourceProvider implements ResourceProvider {
 <h1 id="tracingGuides"><a class="anchor" href="#tracingGuides"></a>7 Micronaut Tracing Guides</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/tracingGuides.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/tracingGuides.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -2254,7 +2274,7 @@ public class AwsResourceProvider implements ResourceProvider {
 <h1 id="repository"><a class="anchor" href="#repository"></a>8 Repository</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/7.2.x/src/main/docs/guide/repository.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/repository.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>

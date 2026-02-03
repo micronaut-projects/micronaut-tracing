@@ -711,7 +711,7 @@ class HttpTracingSpec extends Specification {
         }
 
         @Get('/blocking/hello/{name}')
-        @ExecuteOn(IO)
+        @ExecuteOn(TaskExecutors.IO)
         String blockingHello(String name) {
             spanCustomizer.activeSpan()?.setTag('foo', 'bar')
             return name
@@ -740,7 +740,7 @@ class HttpTracingSpec extends Specification {
         }
 
         @Get('/blocking/error/{name}')
-        @ExecuteOn(IO)
+        @ExecuteOn(TaskExecutors.IO)
         String blockingError(String name) {
             throw new RuntimeException('bad')
         }
@@ -803,7 +803,7 @@ class HttpTracingSpec extends Specification {
         }
 
         @Get('/blocking/customised/name')
-        @ExecuteOn(IO)
+        @ExecuteOn(TaskExecutors.IO)
         String blockingCustomisedName() {
             spanCustomizer.activeSpan()?.operationName = 'custom name'
             'response'

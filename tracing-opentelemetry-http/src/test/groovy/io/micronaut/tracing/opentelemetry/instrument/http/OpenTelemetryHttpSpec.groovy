@@ -49,8 +49,7 @@ import spock.util.concurrent.PollingConditions
 
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
-
-import static io.micronaut.scheduling.TaskExecutors.IO
+import io.micronaut.scheduling.TaskExecutors
 
 @Slf4j("LOG")
 class OpenTelemetryHttpSpec extends Specification {
@@ -501,7 +500,7 @@ class OpenTelemetryHttpSpec extends Specification {
         @Client("/")
         ReactorHttpClient reactorHttpClient
 
-        @ExecuteOn(IO)
+        @ExecuteOn(TaskExecutors.IO)
         @Post("/enter")
         @NewSpan("enter")
         Mono<String> enter(@Header("X-TrackingId") String tracingId, @Body SomeBody body) {
@@ -513,7 +512,7 @@ class OpenTelemetryHttpSpec extends Specification {
             )
         }
 
-        @ExecuteOn(IO)
+        @ExecuteOn(TaskExecutors.IO)
         @Get("/test")
         @ContinueSpan
         Mono<String> test(@SpanAttribute("tracing-annotation-span-attribute")
@@ -532,7 +531,7 @@ class OpenTelemetryHttpSpec extends Specification {
 
         }
 
-        @ExecuteOn(IO)
+        @ExecuteOn(TaskExecutors.IO)
         @Get("/test2")
         Mono<String> test2(@SpanTag("tracing-annotation-span-tag-no-withspan")
                            @Header("X-TrackingId") String tracingId) {

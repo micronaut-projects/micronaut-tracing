@@ -27,8 +27,7 @@ import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
-
-import static io.micronaut.scheduling.TaskExecutors.IO
+import io.micronaut.scheduling.TaskExecutors
 
 @Slf4j("LOG")
 class AnnotationMappingSpec extends Specification {
@@ -120,7 +119,7 @@ class AnnotationMappingSpec extends Specification {
         @Client("/")
         private ReactorHttpClient reactorHttpClient
 
-        @ExecuteOn(IO)
+        @ExecuteOn(TaskExecutors.IO)
         @Post("/enter")
         @NewSpan("enter")
         Mono<String> enter(@Header("X-TrackingId") String tracingId,
@@ -129,7 +128,7 @@ class AnnotationMappingSpec extends Specification {
             return test(tracingId)
         }
 
-        @ExecuteOn(IO)
+        @ExecuteOn(TaskExecutors.IO)
         @Get("/test")
         @ContinueSpan
         Mono<String> test(@SpanAttribute("tracing-annotation-span-attribute")
@@ -142,7 +141,7 @@ class AnnotationMappingSpec extends Specification {
             )
         }
 
-        @ExecuteOn(IO)
+        @ExecuteOn(TaskExecutors.IO)
         @Get("/test2")
         Mono<String> test2(@SpanTag("tracing-annotation-span-tag-no-withspan")
                            @Header("X-TrackingId") String tracingId) {

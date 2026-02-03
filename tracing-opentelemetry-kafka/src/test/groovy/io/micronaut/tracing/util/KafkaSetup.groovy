@@ -1,39 +1,44 @@
 package io.micronaut.tracing.util
 
 import org.apache.kafka.clients.admin.AdminClient
+import org.apache.kafka.clients.admin.AdminClientConfig
 import org.apache.kafka.clients.admin.NewTopic
 import org.testcontainers.kafka.KafkaContainer
 import org.testcontainers.utility.DockerImageName
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class KafkaSetup {
-    static KafkaContainer kafkaContainer
+    // Using a singleton container instance
+    private static KafkaContainer kafkaContainer
+    public static final String MY_STREAM = "my-stream"
 
-    static String MY_STREAM = "my-stream"
-
-    static KafkaContainer init() {
+    /**
+     * Returns the configuration map required for Micronaut to connect to the test container.
+     * Automatically starts the container and creates topics if not already initialized.
+     */
+    static Map<String, String> getProperties() {
         if (kafkaContainer == null) {
-            kafkaContainer = new KafkaContainer(DockerImageName.parse("apache/kafka"))
+            kafkaContainer = new KafkaContainer(DockerImageName.parse("apache/kafka:latest"))
             kafkaContainer.start()
-            createTopics()
+            createTopics(["my-stream"])
         }
-        return kafkaContainer
+
+        return [
+                "kafka.bootstrap.servers": kafkaContainer.getBootstrapServers(),
+                "kafka.enabled"          : "true"
+        ]
     }
 
-    static void destroy() {
-        if (kafkaContainer) {
-            kafkaContainer.stop()
-            kafkaContainer = null
+    private static void createTopics(List<String> topicNames) {
+        Map<String, Object> config = [
+                (AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG): kafkaContainer.getBootstrapServers()
+        ] as Map<String, Object>
+
+        // Use .withCloseable to ensure the AdminClient is shut down immediately
+        AdminClient.create(config).withCloseable { admin ->
+            def newTopics = topicNames.collect { name -> new NewTopic(name, 1, (short) 1) }
+            admin.createTopics(newTopics).all().get() // .get() ensures topics are created before proceeding
         }
-    }
-
-    //Override to create different topics on startup
-    private static List<String> getTopics() {
-        return [MY_STREAM]
-    }
-
-    private static void createTopics() {
-        def newTopics = topics.collect { topic -> new NewTopic(topic, 1, (short) 1) }
-        def admin = AdminClient.create(["bootstrap.servers": kafkaContainer.getBootstrapServers()])
-        admin.createTopics(newTopics)
     }
 }

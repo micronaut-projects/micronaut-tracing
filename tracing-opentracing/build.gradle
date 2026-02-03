@@ -1,6 +1,6 @@
 plugins {
     id 'io.micronaut.build.internal.tracing-module'
-    alias libs.plugins.kotlinjvm
+    id 'io.micronaut.build.internal.kotlin'
 }
 
 dependencies {

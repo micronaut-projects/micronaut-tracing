@@ -39,7 +39,7 @@ micronaut-rxjava2 = "2.8.0"
 micronaut-serde = "3.0.0-M1"
 micronaut-sql = "6.2.2"
 micronaut-kafka = '6.0.0-M1'
-micronaut-gradle-plugin = "4.6.1"
+micronaut-gradle-plugin = "4.6.2"
 [libraries]
 # Core
 micronaut-core = { module = 'io.micronaut:micronaut-core-bom', version.ref = 'micronaut' }

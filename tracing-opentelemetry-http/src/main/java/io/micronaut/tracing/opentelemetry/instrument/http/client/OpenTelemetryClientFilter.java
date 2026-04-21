@@ -82,6 +82,9 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
         }
 
         Context context = instrumenter.start(parentContext, request);
+        if (context == null) {
+            return chain.proceed(request);
+        }
 
         try (Scope ignored = context.makeCurrent()) {
             handleContinueSpan(request);

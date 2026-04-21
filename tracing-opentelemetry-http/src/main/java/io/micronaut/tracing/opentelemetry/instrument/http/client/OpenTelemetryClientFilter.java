@@ -81,6 +81,8 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
             return chain.proceed(request);
         }
 
+        // Some instrumenter implementations may choose not to create telemetry state for a request.
+        // In that case, fail open by proceeding without making a context current or ending a span.
         Context context = instrumenter.start(parentContext, request);
         if (context == null) {
             return chain.proceed(request);

@@ -8,6 +8,8 @@ import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter
 import reactor.core.publisher.Mono
 import spock.lang.Specification
 
+import java.time.Duration
+
 class OpenTelemetryClientFilterSpec extends Specification {
 
     void 'falls back to the original request when the instrumenter returns no context'() {
@@ -19,7 +21,7 @@ class OpenTelemetryClientFilterSpec extends Specification {
         def filter = new OpenTelemetryClientFilter(null, instrumenter)
 
         when:
-        HttpResponse<?> result = Mono.from(filter.doFilter(request, chain)).block()
+        HttpResponse<?> result = Mono.from(filter.doFilter(request, chain)).block(Duration.ofSeconds(3))
 
         then:
         1 * instrumenter.shouldStart(_, request) >> true

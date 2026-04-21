@@ -31,6 +31,7 @@ import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
+import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.instrumentation.annotations.SpanAttribute
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
@@ -47,6 +48,7 @@ import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
+import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import io.micronaut.scheduling.TaskExecutors
@@ -463,6 +465,50 @@ class OpenTelemetryHttpSpec extends Specification {
         exporter.reset()
     }
 
+    void 'makeCurrent across reactor boundary does not suppress following server spans'() {
+        def tracer = context.getBean(Tracer)
+
+        when:
+        def responses = (1..2).collect {
+            def testSpan = tracer.spanBuilder('test').startSpan()
+            def currentSpan = testSpan.makeCurrent()
+            try {
+                httpClient.toBlocking().exchange('/propagate/makeCurrent', String)
+            } finally {
+                currentSpan.close()
+                testSpan.end()
+            }
+        }
+
+        then:
+        responses.every { it.body() == 'ok' }
+
+        and:
+        conditions.eventually {
+            def serverSpanCount = exporter.finishedSpanItems.count {
+                it.kind == SpanKind.SERVER
+            }
+            def requestServerSpanCount = exporter.finishedSpanItems.count {
+                it.kind == SpanKind.SERVER && it.name == 'GET /propagate/makeCurrent'
+            }
+            def childSpanCount = exporter.finishedSpanItems.count {
+                it.kind == SpanKind.INTERNAL && it.name == 'findAllBooks'
+            }
+            def testSpanCount = exporter.finishedSpanItems.count {
+                it.kind == SpanKind.INTERNAL && it.name == 'test'
+            }
+
+            assert serverSpanCount == 2
+            assert requestServerSpanCount == 2
+            assert childSpanCount == 2
+            assert testSpanCount == 2
+            hasHttpSemanticAttributes(HttpStatus.OK)
+        }
+
+        cleanup:
+        exporter.reset()
+    }
+
     @Introspected
     static class SomeBody {
     }
@@ -555,6 +601,9 @@ class OpenTelemetryHttpSpec extends Specification {
     static class ContextPropagateController {
 
         @Inject
+        Tracer tracer
+
+        @Inject
         PropagateClient propagateClient
 
         @Get('/hello/{name}')
@@ -570,6 +619,19 @@ class OpenTelemetryHttpSpec extends Specification {
                 int size = ctx.size()
                 return Mono.just("contains ${ServerRequestContext.KEY}: $hasKey")
             }) as Mono<String>
+        }
+
+        @Get('/makeCurrent')
+        Mono<String> makeCurrent() {
+            def childSpan = tracer.spanBuilder('findAllBooks').startSpan()
+            def childScope = childSpan.makeCurrent()
+
+            return Mono.delay(Duration.ofMillis(0))
+                .map { 'ok' }
+                .doFinally {
+                    childScope.close()
+                    childSpan.end()
+                }
         }
 
         @Get('/nestedReactive/{name}')

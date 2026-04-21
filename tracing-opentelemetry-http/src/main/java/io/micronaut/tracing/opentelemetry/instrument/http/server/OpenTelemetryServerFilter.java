@@ -84,7 +84,7 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
 
         request.setAttribute(APPLIED, true);
 
-        Context parentContext = Context.current();
+        Context parentContext = parentContext();
         if (!instrumenter.shouldStart(parentContext, request)) {
             return chain.proceed(request);
         }
@@ -109,6 +109,13 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
                 .doOnError(throwable -> onError(request, context, null, throwable))
                 .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext));
         }
+    }
+
+    private static Context parentContext() {
+        return PropagatedContext.getOrEmpty()
+            .find(OpenTelemetryPropagationContext.class)
+            .map(OpenTelemetryPropagationContext::context)
+            .orElseGet(Context::root);
     }
 
     private void onError(HttpRequest<?> request, Context context,

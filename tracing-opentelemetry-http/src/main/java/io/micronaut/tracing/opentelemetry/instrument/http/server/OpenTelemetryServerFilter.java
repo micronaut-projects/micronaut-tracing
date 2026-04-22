@@ -90,12 +90,10 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
         }
 
         Context context = instrumenter.start(parentContext, request);
-
-        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
-            .plus(new OpenTelemetryPropagationContext(context))
-            .propagate()) {
-
-            var propagatedContext = PropagatedContext.get();
+        PropagatedContext propagatedContext = PropagatedContext.getOrEmpty()
+            .plus(new OpenTelemetryPropagationContext(context));
+        return propagatedContext.propagate(() -> {
+            PropagatedContext currentContext = PropagatedContext.get();
             return Mono.from(chain.proceed(request))
                 .doOnNext(mutableHttpResponse -> mutableHttpResponse.getAttribute(HttpAttributes.EXCEPTION, Exception.class)
                     .ifPresentOrElse(
@@ -107,8 +105,8 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
                             }
                         }))
                 .doOnError(throwable -> onError(request, context, null, throwable))
-                .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext));
-        }
+                .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, currentContext));
+        });
     }
 
     private static Context parentContext() {

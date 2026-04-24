@@ -1,0 +1,28 @@
+To export logs from Logback through OpenTelemetry, add the Logback appender dependency:
+dependency:opentelemetry-logback-appender-1.0[scope="implementation", groupId="io.opentelemetry.instrumentation"]
+
+When the appender dependency and `micronaut-tracing-opentelemetry` are both on the classpath, Micronaut automatically installs the application `OpenTelemetry` bean into the Logback appender. No custom bootstrap code is required.
+
+Example configuration:
+
+[configuration]
+----
+otel:
+  logs:
+    exporter: otlp
+----
+
+[source,xml]
+----
+<configuration>
+    <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender"/>
+
+    <root level="INFO">
+        <appender-ref ref="OTEL"/>
+    </root>
+</configuration>
+----
+
+If you want to keep using your existing appenders and only enrich Logback output with the active trace and span identifiers, add the MDC integration dependency instead:
+
+dependency:opentelemetry-logback-mdc-1.0[scope="runtimeOnly", groupId="io.opentelemetry.instrumentation"]

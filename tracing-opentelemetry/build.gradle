@@ -19,6 +19,8 @@ dependencies {
     api libs.opentelemetry.instrumentation.api
     api(libs.opentelemetry.instrumentation.api.incubator)
     api libs.opentelemetry.autoconfigure
+    compileOnly libs.opentelemetry.instrumentation.logback.appender
+    compileOnly mnLogging.logback.classic
 
     implementation(platform(libs.micronaut.aws))
     compileOnly(libs.opentelemetry.aws.sdk)
@@ -39,6 +41,8 @@ dependencies {
 
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
+    testImplementation libs.opentelemetry.instrumentation.logback.appender
+    testImplementation mnLogging.logback.classic
 
     testImplementation libs.managed.opentelemetry.contrib.aws.xray
 

@@ -1,7 +1,10 @@
 package io.micronaut.tracing.opentelemetry.instrument.kafka
 
 import io.opentelemetry.api.OpenTelemetry
+import org.apache.kafka.clients.consumer.CloseOptions
 import org.apache.kafka.clients.consumer.Consumer
+import org.apache.kafka.clients.consumer.ConsumerRebalanceListener
+import org.apache.kafka.clients.consumer.SubscriptionPattern
 import java.time.Duration
 import spock.lang.Specification
 
@@ -18,6 +21,9 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
             Mock(KafkaTelemetryConfiguration),
             true
     )
+
+    def subscriptionPattern = Mock(SubscriptionPattern)
+    def consumerRebalanceListener = Mock(ConsumerRebalanceListener)
 
     void "test otel kafka consumer wrapper" () {
         def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
@@ -42,6 +48,18 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
 
         when:
         micronautConsumer.close((Duration) null)
+
+        then:
+        1 * consumer.close({ CloseOptions closeOptions -> !closeOptions.timeout().isPresent() })
+
+        when:
+        micronautConsumer.close(Duration.ofSeconds(1))
+
+        then:
+        1 * consumer.close({ CloseOptions closeOptions -> closeOptions.timeout().orElseThrow() == Duration.ofSeconds(1) })
+
+        when:
+        micronautConsumer.close((CloseOptions) null)
 
         then:
         1 * consumer.close(null)
@@ -123,6 +141,18 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
 
         then:
         1 * consumer.subscribe(null, null)
+
+        when:
+        micronautConsumer.subscribe(subscriptionPattern)
+
+        then:
+        1 * consumer.subscribe(subscriptionPattern)
+
+        when:
+        micronautConsumer.subscribe(subscriptionPattern, consumerRebalanceListener)
+
+        then:
+        1 * consumer.subscribe(subscriptionPattern, consumerRebalanceListener)
 
         when:
         micronautConsumer.seek(null, 1)
@@ -243,6 +273,18 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
 
         then:
         1 * consumer.enforceRebalance(null)
+
+        when:
+        micronautConsumer.registerMetricForSubscription(null)
+
+        then:
+        1 * consumer.registerMetricForSubscription(null)
+
+        when:
+        micronautConsumer.unregisterMetricFromSubscription(null)
+
+        then:
+        1 * consumer.unregisterMetricFromSubscription(null)
 
         when:
         micronautConsumer.wakeup()

@@ -316,7 +316,7 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
 
     @Override
     public void close(Duration duration) {
-        consumer.close(duration);
+        consumer.close(CloseOptions.timeout(duration));
     }
 
     @Override

@@ -83,6 +83,18 @@ class MicronautOtelKafkaProducerSpec extends Specification {
         then:
         1 * producer.sendOffsetsToTransaction(null, null)
 
+        when:
+        micronautProducer.registerMetricForSubscription(null)
+
+        then:
+        1 * producer.registerMetricForSubscription(null)
+
+        when:
+        micronautProducer.unregisterMetricFromSubscription(null)
+
+        then:
+        1 * producer.unregisterMetricFromSubscription(null)
+
     }
 
 }

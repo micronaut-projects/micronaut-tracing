@@ -1,6 +1,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.r2dbc
 
 import io.micronaut.context.ApplicationContext
+import io.opentelemetry.api.OpenTelemetry
 import spock.lang.Specification
 
 class R2dbcTelemetryBeanCreationSpec extends Specification {
@@ -37,5 +38,17 @@ class R2dbcTelemetryBeanCreationSpec extends Specification {
 
         cleanup:
         ctx.close()
+    }
+
+    void "test r2dbc telemetry configuration accessors"() {
+        given:
+        def configuration = new R2dbcTelemetryConfiguration(Mock(OpenTelemetry))
+
+        when:
+        configuration.setEnabled(true)
+
+        then:
+        configuration.builder
+        configuration.enabled
     }
 }

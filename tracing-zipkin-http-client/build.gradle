@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    api platform (libs.boms.netty)
     api mn.micronaut.http.client
     implementation mnReactor.micronaut.reactor
     api platform (libs.boms.zipkin.reporter)

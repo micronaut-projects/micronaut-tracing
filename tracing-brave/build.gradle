@@ -6,7 +6,6 @@ dependencies {
     api projects.micronautTracingOpentracing
     api projects.micronautTracingZipkinHttpClient
     api mnReactor.micronaut.reactor
-    api platform (libs.boms.netty)
     api platform (libs.boms.brave)
     api platform (libs.boms.zipkin.reporter)
     api libs.zipkin.reporter

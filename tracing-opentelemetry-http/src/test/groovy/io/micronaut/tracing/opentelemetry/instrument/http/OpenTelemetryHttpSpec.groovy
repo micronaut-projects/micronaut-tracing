@@ -15,6 +15,9 @@ import io.micronaut.http.annotation.Header
 import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.QueryValue
+import io.micronaut.http.annotation.RequestFilter
+import io.micronaut.http.annotation.ResponseFilter
+import io.micronaut.http.annotation.ServerFilter
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
@@ -439,6 +442,31 @@ class OpenTelemetryHttpSpec extends Specification {
         exporter.reset()
     }
 
+    void 'response filters can record to the current server span'() {
+        def internalSpanCount = 0
+        def serverSpanCount = 1
+        def clientSpanCount = 0
+
+        when:
+        HttpResponse<String> response = reactorHttpClient.toBlocking().exchange('/filters/recording', String)
+
+        then:
+        response.body() == 'ok'
+        response.header('X-Request-Filter-Recording') == 'true'
+        response.header('X-Response-Filter-Recording') == 'true'
+
+        and:
+        conditions.eventually {
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey('request-filter')) == 'recorded')
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey('response-filter')) == 'recorded')
+            hasHttpSemanticAttributes(HttpStatus.OK)
+        }
+
+        cleanup:
+        exporter.reset()
+    }
+
     void 'test consecutive sibling client calls'() {
         def internalSpanCount = 0
         def serverSpanCount = 3
@@ -490,6 +518,31 @@ class OpenTelemetryHttpSpec extends Specification {
         Mono<String> quadrupleWords(@QueryValue String input) {
             downstreamClient.doubleWords(input)
                     .flatMap { resp -> downstreamClient.doubleWords(resp) }
+        }
+    }
+
+    @Controller('/filters')
+    static class FilterSpanController {
+
+        @Get('/recording')
+        String recording() {
+            'ok'
+        }
+    }
+
+    @ServerFilter('/filters/**')
+    static class FilterSpanServerFilter {
+        @RequestFilter
+        void traceRequest(HttpRequest<?> request) {
+            request.setAttribute('request-filter-recording', Boolean.toString(Span.current().isRecording()))
+            Span.current().setAttribute('request-filter', 'recorded')
+        }
+
+        @ResponseFilter
+        void traceResponse(HttpRequest<?> request, HttpResponse<?> response) {
+            response.headers.add('X-Request-Filter-Recording', request.getAttribute('request-filter-recording', String).orElse('missing'))
+            response.headers.add('X-Response-Filter-Recording', Boolean.toString(Span.current().isRecording()))
+            Span.current().setAttribute('response-filter', 'recorded')
         }
     }
 

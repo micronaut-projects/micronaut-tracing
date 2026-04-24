@@ -1,5 +1,7 @@
 The pkg:tracing.opentelemetry.processing[] package contains transformers and mappers that enables usage of Open Telemetry annotations.
 
+NOTE: Since Micronaut Tracing `4.5.0`, OpenTelemetry's `@WithSpan` and `@SpanAttribute` annotations must be imported from `io.opentelemetry.instrumentation.annotations`. Older applications that still import `io.opentelemetry.extension.annotations` need to update those imports when upgrading.
+
 To enable Open telemetry annotations you have to add next annotation processor in your dependency block:
 dependency:micronaut-tracing-opentelemetry-annotation[scope="annotationProcessor", version="{version}", groupId="io.micronaut.tracing"]
 

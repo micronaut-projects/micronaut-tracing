@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    api platform (libs.boms.netty)
     api mn.micronaut.http.client
     api projects.micronautTracingAnnotation
 

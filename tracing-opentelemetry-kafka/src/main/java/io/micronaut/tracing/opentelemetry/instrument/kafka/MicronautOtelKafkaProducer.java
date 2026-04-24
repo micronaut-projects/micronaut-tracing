@@ -28,6 +28,7 @@ import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.errors.ProducerFencedException;
+import org.apache.kafka.common.metrics.KafkaMetric;
 
 import java.time.Duration;
 import java.util.List;
@@ -61,11 +62,6 @@ final class MicronautOtelKafkaProducer<K, V>  implements Producer<K, V> {
     }
 
     @Override
-    public void sendOffsetsToTransaction(Map<TopicPartition, OffsetAndMetadata> map, String s) throws ProducerFencedException {
-        producer.sendOffsetsToTransaction(map, s);
-    }
-
-    @Override
     public void sendOffsetsToTransaction(Map<TopicPartition, OffsetAndMetadata> map, ConsumerGroupMetadata consumerGroupMetadata) throws ProducerFencedException {
         producer.sendOffsetsToTransaction(map, consumerGroupMetadata);
     }
@@ -78,6 +74,16 @@ final class MicronautOtelKafkaProducer<K, V>  implements Producer<K, V> {
     @Override
     public void abortTransaction() throws ProducerFencedException {
         producer.abortTransaction();
+    }
+
+    @Override
+    public void registerMetricForSubscription(KafkaMetric kafkaMetric) {
+        producer.registerMetricForSubscription(kafkaMetric);
+    }
+
+    @Override
+    public void unregisterMetricFromSubscription(KafkaMetric kafkaMetric) {
+        producer.unregisterMetricFromSubscription(kafkaMetric);
     }
 
     @Override

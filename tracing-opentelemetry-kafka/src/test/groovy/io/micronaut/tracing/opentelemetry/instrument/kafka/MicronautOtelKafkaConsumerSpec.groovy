@@ -2,6 +2,7 @@ package io.micronaut.tracing.opentelemetry.instrument.kafka
 
 import io.opentelemetry.api.OpenTelemetry
 import org.apache.kafka.clients.consumer.Consumer
+import java.time.Duration
 import spock.lang.Specification
 
 class MicronautOtelKafkaConsumerSpec extends Specification {
@@ -40,7 +41,7 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         1 * consumer.close()
 
         when:
-        micronautConsumer.close(null)
+        micronautConsumer.close((Duration) null)
 
         then:
         1 * consumer.close(null)

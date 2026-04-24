@@ -21,14 +21,17 @@ import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.CloseOptions;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
 import org.apache.kafka.clients.consumer.OffsetCommitCallback;
+import org.apache.kafka.clients.consumer.SubscriptionPattern;
 import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.MetricName;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.Uuid;
+import org.apache.kafka.common.metrics.KafkaMetric;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -94,15 +97,18 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
     }
 
     @Override
-    public void unsubscribe() {
-        consumer.unsubscribe();
+    public void subscribe(SubscriptionPattern subscriptionPattern, ConsumerRebalanceListener consumerRebalanceListener) {
+        consumer.subscribe(subscriptionPattern, consumerRebalanceListener);
     }
 
     @Override
-    public ConsumerRecords<K, V> poll(long l) {
-        ConsumerRecords<K, V> records = consumer.poll(l);
-        traceConsumerRecords(records);
-        return records;
+    public void subscribe(SubscriptionPattern subscriptionPattern) {
+        consumer.subscribe(subscriptionPattern);
+    }
+
+    @Override
+    public void unsubscribe() {
+        consumer.unsubscribe();
     }
 
     @Override
@@ -159,6 +165,16 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
     }
 
     @Override
+    public void registerMetricForSubscription(KafkaMetric kafkaMetric) {
+        consumer.registerMetricForSubscription(kafkaMetric);
+    }
+
+    @Override
+    public void unregisterMetricFromSubscription(KafkaMetric kafkaMetric) {
+        consumer.unregisterMetricFromSubscription(kafkaMetric);
+    }
+
+    @Override
     public void seek(TopicPartition topicPartition, long l) {
         consumer.seek(topicPartition, l);
     }
@@ -186,16 +202,6 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
     @Override
     public long position(TopicPartition topicPartition, Duration duration) {
         return consumer.position(topicPartition, duration);
-    }
-
-    @Override
-    public OffsetAndMetadata committed(TopicPartition topicPartition) {
-        return consumer.committed(topicPartition);
-    }
-
-    @Override
-    public OffsetAndMetadata committed(TopicPartition topicPartition, Duration duration) {
-        return consumer.committed(topicPartition, duration);
     }
 
     @Override
@@ -311,6 +317,11 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
     @Override
     public void close(Duration duration) {
         consumer.close(duration);
+    }
+
+    @Override
+    public void close(CloseOptions closeOptions) {
+        consumer.close(closeOptions);
     }
 
     @Override

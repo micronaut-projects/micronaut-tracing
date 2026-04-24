@@ -277,7 +277,7 @@ class OpenTelemetryHttpSpec extends Specification {
             exporter.finishedSpanItems.name.contains("WarehouseClient.order")
             exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("warehouse.order")) == "{testOrderKey=testOrderValue}")
             exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey("upc")) == "10")
-            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(ServerAttributes.SERVER_ADDRESS) == "localhost")
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(ServerAttributes.SERVER_ADDRESS) == embeddedServer.host)
             hasHttpSemanticAttributes(HttpStatus.OK)
         }
 

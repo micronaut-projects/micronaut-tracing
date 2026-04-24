@@ -40,6 +40,7 @@ micronaut-rxjava3 = "4.1.0"
 micronaut-serde = "3.2.4"
 micronaut-sql = "7.2.0"
 micronaut-kafka = "6.2.0"
+micronaut-rabbitmq = "5.1.0"
 micronaut-gradle-plugin = "5.0.2"
 micronaut-r2dbc = "7.2.0"
 [libraries]
@@ -61,6 +62,7 @@ micronaut-serde = { module = 'io.micronaut.serde:micronaut-serde-bom', version.r
 micronaut-sql = { module = 'io.micronaut.sql:micronaut-sql-bom', version.ref = 'micronaut-sql' }
 micronaut-kafka = { module = 'io.micronaut.kafka:micronaut-kafka-bom', version.ref = 'micronaut-kafka'}
 micronaut-r2dbc = { module = 'io.micronaut.r2dbc:micronaut-r2dbc-bom', version.ref = 'micronaut-r2dbc'}
+micronaut-rabbitmq = { module = 'io.micronaut.rabbitmq:micronaut-rabbitmq', version.ref = 'micronaut-rabbitmq'}
 
 brave-instrumentation-http = { module = 'io.zipkin.brave:brave-instrumentation-http' }
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
@@ -108,6 +110,7 @@ opentelemetry-instrumentation-r2dbc = { module = 'io.opentelemetry.instrumentati
 opentelemetry-instrumentation-ucp = { module = 'io.opentelemetry.instrumentation:opentelemetry-oracle-ucp-11.2' }
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 testcontainers-kafka = { module = "org.testcontainers:testcontainers-kafka"}
+testcontainers-rabbitmq = { module = "org.testcontainers:rabbitmq", version.ref = "managed-testcontainers"}
 awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
 awssdk-sqs = { module = 'software.amazon.awssdk:sqs' }
 

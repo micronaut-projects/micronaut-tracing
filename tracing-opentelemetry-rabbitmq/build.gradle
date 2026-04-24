@@ -1,0 +1,27 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api platform(libs.boms.opentelemetry)
+    api platform(libs.boms.opentelemetry.alpha)
+    api projects.micronautTracingOpentelemetry
+    api libs.opentelemetry.api
+    api libs.micronaut.rabbitmq
+    implementation mnReactor.micronaut.reactor
+
+    testImplementation mnSerde.micronaut.serde.jackson
+    testImplementation libs.opentelemetry.sdk
+    testImplementation libs.opentelemetry.sdk.testing
+    testImplementation(platform(mnTest.boms.testcontainers))
+    testImplementation "org.testcontainers:testcontainers"
+}
+
+micronautBuild {
+    binaryCompatibility {
+        def dash = version.indexOf('-')
+        def v = dash > 0 ? version.substring(0, dash) : version
+        def (major, minor, patch) = v.split('[.]').collect { it.toInteger() }
+        enabled = major > 8 || (major == 8 && minor > 0) || (major == 8 && minor == 0 && patch > 0)
+    }
+}

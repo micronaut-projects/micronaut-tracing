@@ -25,6 +25,7 @@ include 'tracing-opentelemetry-http'
 include 'tracing-opentelemetry-jdbc'
 include 'tracing-opentelemetry-kafka'
 include 'tracing-opentelemetry-r2dbc'
+include 'tracing-opentelemetry-rabbitmq'
 include 'tracing-opentelemetry-zipkin-exporter'
 
 // OpenTracing

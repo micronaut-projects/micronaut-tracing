@@ -43,6 +43,15 @@ public abstract class HttpClientSenderConfiguration extends HttpClientConfigurat
      *
      * @return the builder
      */
+    public HttpClientSender.Builder getClientSenderBuilder() {
+        return clientSenderBuilder;
+    }
+
+    /**
+     * Creates builder.
+     *
+     * @return the builder
+     */
     public HttpClientSender.Builder getBuilder() {
         return clientSenderBuilder;
     }

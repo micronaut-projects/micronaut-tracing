@@ -19,13 +19,11 @@
  * @since 7.1.0
  */
 @Configuration
-@Requires(property = R2dbcTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @Requires(classes = {OpenTelemetry.class, ConnectionFactory.class, R2dbcTelemetry.class})
 package io.micronaut.tracing.opentelemetry.instrument.r2dbc;
 
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.util.StringUtils;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.r2dbc.v1_0.R2dbcTelemetry;
 import io.r2dbc.spi.ConnectionFactory;

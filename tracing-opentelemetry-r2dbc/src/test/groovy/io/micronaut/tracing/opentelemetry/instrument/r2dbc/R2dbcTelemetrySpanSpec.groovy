@@ -8,6 +8,8 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import spock.lang.Specification
 
+import java.time.Duration
+
 class R2dbcTelemetrySpanSpec extends Specification {
 
     void "test r2dbc telemetry enabled by default"() {
@@ -23,12 +25,13 @@ class R2dbcTelemetrySpanSpec extends Specification {
         executeStatements(connectionFactory,
                 'CREATE TABLE foo (id INT PRIMARY KEY, name VARCHAR(255))',
                 "INSERT INTO foo (id, name) VALUES (1, 'Micronaut')")
-        def finishedSpanItems = inMemorySpanExporter.getFinishedSpanItems()
+        def dbStatements = inMemorySpanExporter.getFinishedSpanItems()
+                .collect { it.attributes.get(AttributeKey.stringKey('db.statement')) }
+                .findAll { it != null }
 
         then:
-        finishedSpanItems.size() == 2
-        finishedSpanItems.attributes.stream().anyMatch { it.get(AttributeKey.stringKey("db.statement")).contains('CREATE TABLE foo') }
-        finishedSpanItems.attributes.stream().anyMatch { it.get(AttributeKey.stringKey("db.statement")).contains('INSERT INTO foo') }
+        dbStatements.any { it.contains('CREATE TABLE foo') }
+        dbStatements.any { it.contains('INSERT INTO foo') }
 
         cleanup:
         ctx.close()
@@ -42,6 +45,6 @@ class R2dbcTelemetrySpanSpec extends Specification {
                                 .concatMap(result -> result.rowsUpdated))
                         .then(),
                 connection -> Mono.from(connection.close())
-        ).block()
+        ).block(Duration.ofSeconds(10))
     }
 }

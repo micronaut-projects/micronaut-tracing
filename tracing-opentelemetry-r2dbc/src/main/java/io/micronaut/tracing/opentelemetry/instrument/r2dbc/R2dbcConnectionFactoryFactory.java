@@ -18,8 +18,10 @@ package io.micronaut.tracing.opentelemetry.instrument.r2dbc;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.annotation.Replaces;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.r2dbc.R2dbcConnectionFactoryBean;
 import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
@@ -30,6 +32,7 @@ import io.r2dbc.spi.ConnectionFactoryOptions;
  */
 @Factory
 @Internal
+@Requires(property = R2dbcTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 class R2dbcConnectionFactoryFactory {
 
     @EachBean(ConnectionFactoryOptions.class)

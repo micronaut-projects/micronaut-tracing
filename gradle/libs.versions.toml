@@ -17,6 +17,8 @@ managed-opentelemetry-gcp-trace = '0.36.0-alpha'
 managed-opentelemetry-semconv = '1.37.0'
 managed-opentelemetry-instrumentation-api-semconv = '1.33.6-alpha'
 managed-protobuf = '0.9.5'
+managed-r2dbc-h2 = '1.0.0.RELEASE'
+managed-reactor = '3.7.12'
 managed-zipkin = '3.5.1'
 managed-zipkin-reporter = '3.5.1'
 
@@ -40,6 +42,7 @@ micronaut-serde = "3.0.0-M1"
 micronaut-sql = "6.2.2"
 micronaut-kafka = '6.0.0-M1'
 micronaut-gradle-plugin = "4.6.1"
+micronaut-r2dbc = "6.2.0"
 [libraries]
 # Core
 micronaut-core = { module = 'io.micronaut:micronaut-core-bom', version.ref = 'micronaut' }
@@ -69,6 +72,9 @@ javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.r
 junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
 protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'protobuf' }
 protobuf-java-util = { module = 'com.google.protobuf:protobuf-java-util', version.ref = 'protobuf' }
+reactor-core = { module = 'io.projectreactor:reactor-core', version.ref = 'managed-reactor' }
+r2dbc-h2 = { module = 'io.r2dbc:r2dbc-h2', version.ref = 'managed-r2dbc-h2' }
+micronaut-r2dbc-core = { module = 'io.micronaut.r2dbc:micronaut-r2dbc-core', version.ref = 'micronaut-r2dbc' }
 micronaut-docs-asciidoc-config-props = { module = 'io.micronaut.docs:micronaut-docs-asciidoc-config-props', version.ref = 'micronaut-docs' }
 opentracing = { module = 'io.opentracing:opentracing-api', version.ref = 'managed-opentracing' }
 opentracing-grpc = { module = 'io.opentracing.contrib:opentracing-grpc', version.ref = 'managed-opentracing-grpc' }
@@ -95,6 +101,7 @@ opentelemetry-instrumentation-api-semconv = { module = 'io.opentelemetry.instrum
 opentelemetry-instrumentation-semconv = { module = 'io.opentelemetry.semconv:opentelemetry-semconv', version.ref ='managed-opentelemetry-semconv' }
 opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrumentation: opentelemetry-instrumentation-annotations' }
 opentelemetry-instrumentation-jdbc = { module = 'io.opentelemetry.instrumentation:opentelemetry-jdbc' }
+opentelemetry-instrumentation-r2dbc = { module = 'io.opentelemetry.instrumentation:opentelemetry-r2dbc-1.0' }
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 testcontainers-kafka = { module = "org.testcontainers:testcontainers-kafka"}
 awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }

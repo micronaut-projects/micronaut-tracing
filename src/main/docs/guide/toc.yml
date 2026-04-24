@@ -13,6 +13,7 @@ opentelemetry:
   http: HTTP Server and Client
   grpc: gRPC Server and Client
   jdbc: JDBC
+  r2dbc: R2DBC
   kafka: Kafka
   awsSdkInstrumentation: AWS SDK Instrumentation
   awsResourceDetectors: AWS Resource Detectors

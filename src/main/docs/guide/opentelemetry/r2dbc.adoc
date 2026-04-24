@@ -1,0 +1,4 @@
+To enable creating span objects on every R2DBC query, add the following dependency:
+dependency:micronaut-tracing-opentelemetry-r2dbc[scope="implementation", groupId="io.micronaut.tracing"]
+
+The dependency instruments `io.r2dbc.spi.ConnectionFactory` beans for intercepting database queries.

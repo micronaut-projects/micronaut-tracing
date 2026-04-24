@@ -42,7 +42,7 @@ class OpenTelemetryLogbackAppenderInstallerSpec extends Specification {
         appender.context = loggerContext
         appender.start()
         rootLogger.addAppender(appender)
-        readOpenTelemetry(appender) == null
+        assert readOpenTelemetry(appender) == null
 
         when:
         context = ApplicationContext.run()
@@ -66,7 +66,7 @@ class OpenTelemetryLogbackAppenderInstallerSpec extends Specification {
         appender.context = loggerContext
         appender.start()
         rootLogger.addAppender(appender)
-        readOpenTelemetry(appender) == null
+        assert readOpenTelemetry(appender) == null
 
         when:
         context = ApplicationContext.run(

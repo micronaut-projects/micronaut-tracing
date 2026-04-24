@@ -24,7 +24,7 @@ import io.micronaut.http.client.HttpClientConfiguration;
 public abstract class HttpClientSenderConfiguration extends HttpClientConfiguration {
 
     @ConfigurationBuilder(prefixes = "")
-    private final HttpClientSender.Builder clientSenderBuilder;
+    protected final HttpClientSender.Builder clientSenderBuilder;
 
     /**
      * Initialize the builder with client configurations.

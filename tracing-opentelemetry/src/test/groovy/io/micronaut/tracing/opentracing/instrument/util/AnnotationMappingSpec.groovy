@@ -124,11 +124,12 @@ class AnnotationMappingSpec extends Specification {
         interfaceLevel == 'interface-level'
         interfaceLevelOverride == 'interface-level-override'
         conditions.eventually {
-            testExporter.finishedSpanItems.size() == 4
-            testExporter.finishedSpanItems.name.any(x -> x.contains('classLevel'))
-            testExporter.finishedSpanItems.name.any(x -> x.contains('classLevelOverride#class-level-override'))
-            testExporter.finishedSpanItems.name.any(x -> x.contains('interfaceLevel'))
-            testExporter.finishedSpanItems.name.any(x -> x.contains('interfaceLevelOverride#interface-level-override'))
+            def spanNames = testExporter.finishedSpanItems*.name
+            spanNames.size() == 4
+            spanNames.contains('ClassLevelNewSpanService.classLevel')
+            spanNames.contains('ClassLevelNewSpanService.classLevelOverride#class-level-override')
+            spanNames.contains('InterfaceLevelNewSpanServiceImpl.interfaceLevel')
+            spanNames.contains('InterfaceLevelNewSpanServiceImpl.interfaceLevelOverride#interface-level-override')
         }
 
         cleanup:

@@ -6,7 +6,7 @@ Micronaut features integration with both Zipkin and Jaeger (via the Open Tracing
 
 == Tracing Annotations
 
-The pkg:tracing.annotation[] package contains annotations that can be declared on methods to create new spans or continue existing spans.
+The pkg:tracing.annotation[] package contains annotations for creating new spans, continuing existing spans, and adding span tags.
 You can also declare ann:tracing.annotation.NewSpan[] on a class or interface to create a new span for each method invocation.
 
 The available annotations are:

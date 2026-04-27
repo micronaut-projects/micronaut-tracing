@@ -91,10 +91,11 @@ class TraceInterceptorSpec extends Specification {
         interfaceLevel == 'interface-level'
         interfaceLevelOverride == 'interface-level-override'
         reporter.spans.size() == 4
-        reporter.spans.collect { it.name() }.contains('classlevelnewspanservice.classlevel')
-        reporter.spans.collect { it.name() }.contains('class-level-override')
-        reporter.spans.collect { it.name() }.contains('interfacelevelnewspanserviceimpl.interfacelevel')
-        reporter.spans.collect { it.name() }.contains('interface-level-override')
+        def spanNames = reporter.spans.collect { it.name() }
+        spanNames.contains('classlevelnewspanservice.classlevel')
+        spanNames.contains('class-level-override')
+        spanNames.contains('interfacelevelnewspanserviceimpl.interfacelevel')
+        spanNames.contains('interface-level-override')
     }
 
     private void buildContext() {

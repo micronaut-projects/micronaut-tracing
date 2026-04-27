@@ -2,23 +2,6 @@ You can provide a bean of type api:tracing.opentelemetry.OpenTelemetryBuilderCus
 
 For example, a customizer can register a metric view with explicit histogram bucket boundaries:
 
-[source,java]
-----
-@Singleton
-OpenTelemetryBuilderCustomizer histogramViewCustomizer() {
-    return builder -> builder.addMeterProviderCustomizer((meterProviderBuilder, configProperties) -> {
-        meterProviderBuilder.registerView(
-            InstrumentSelector.builder()
-                .setType(InstrumentType.HISTOGRAM)
-                .setName("http.server.request.duration")
-                .build(),
-            View.builder()
-                .setAggregation(Aggregation.explicitBucketHistogram(Arrays.asList(0.005, 0.01, 0.025, 0.05, 0.1)))
-                .build()
-        );
-        return meterProviderBuilder;
-    });
-}
-----
+snippet::io.micronaut.tracing.opentelemetry.OpenTelemetryBuilderCustomizerExample[tags="imports,histogramViewCustomizer", project="test-suite-java"]
 
 The customizer receives the same `AutoConfiguredOpenTelemetrySdkBuilder` that Micronaut uses internally, so it can also use the OpenTelemetry SDK autoconfigure extension points such as tracer provider customizers, meter provider customizers, log record processor customizers, and property suppliers.

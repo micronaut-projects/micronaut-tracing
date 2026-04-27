@@ -78,28 +78,32 @@ class DefaultOpenTelemetryFactorySpec extends Specification {
     }
 
     void "nested Micronaut properties are visible as OpenTelemetry map properties"() {
-        when:
-        context = ApplicationContext.run([
-            'spec.name'                                  : 'DefaultOpenTelemetryFactorySpec',
-            'otel.exporter.otlp.headers.Authorization'   : 'Bearer token',
-            'otel.exporter.otlp.headers.Content-Type'    : 'application/x-protobuf',
-            'otel.resource.attributes.service.name'      : 'explicit-service',
-            'otel.resource.attributes.environment'       : 'test'
+        given:
+        ApplicationContext context = ApplicationContext.run([
+                'spec.name'                                  : 'DefaultOpenTelemetryFactorySpec',
+                'otel.exporter.otlp.headers.Authorization'   : 'Bearer token',
+                'otel.exporter.otlp.headers.Content-Type'    : 'application/x-protobuf',
+                'otel.resource.attributes.service.name'      : 'explicit-service',
+                'otel.resource.attributes.environment'       : 'test'
         ])
 
+        when:
         context.getBean(OpenTelemetry)
         ConfigProperties configProperties = CONFIG_PROPERTIES.get()
 
         then:
         configProperties.getMap('otel.exporter.otlp.headers') == [
-            'authorization': 'Bearer token',
-            'content-type' : 'application/x-protobuf'
+                'authorization': 'Bearer token',
+                'content-type' : 'application/x-protobuf'
         ]
         configProperties.getMap('otel.resource.attributes') == [
-            'service.name': 'explicit-service',
-            'environment' : 'test'
+                'service.name': 'explicit-service',
+                'environment' : 'test'
         ]
         configProperties.getString('otel.service.name') == null
+
+        cleanup:
+        context.close()
     }
 
     void "nested map properties are converted to OpenTelemetry map property format"() {
@@ -109,15 +113,15 @@ class DefaultOpenTelemetryFactorySpec extends Specification {
 
         when:
         Map<String, String> properties = DefaultOpenTelemetryFactory.resolveOpenTelemetryProperties(
-            applicationConfiguration,
-            [
-                'exporter.otlp.headers.Authorization'       : 'Bearer token',
-                'exporter.otlp.headers.Content-Type'        : 'application/x-protobuf',
-                'exporter.otlp.traces.headers.Authorization': 'Bearer traces-token',
-                'resource.attributes.service.name'          : 'explicit-service',
-                'resource.attributes.environment'           : 'test',
-                'traces.exporter'                           : 'otlp'
-            ]
+                applicationConfiguration,
+                [
+                        'exporter.otlp.headers.Authorization'       : 'Bearer token',
+                        'exporter.otlp.headers.Content-Type'        : 'application/x-protobuf',
+                        'exporter.otlp.traces.headers.Authorization': 'Bearer traces-token',
+                        'resource.attributes.service.name'          : 'explicit-service',
+                        'resource.attributes.environment'           : 'test',
+                        'traces.exporter'                           : 'otlp'
+                ]
         )
 
         then:
@@ -137,22 +141,66 @@ class DefaultOpenTelemetryFactorySpec extends Specification {
 
         when:
         Map<String, String> properties = DefaultOpenTelemetryFactory.resolveOpenTelemetryProperties(
-            applicationConfiguration,
-            [:]
+                applicationConfiguration,
+                [:]
         )
 
         then:
         properties['otel.service.name'] == 'default-app'
     }
 
-    @Requires(property = "spec.name", value = "DefaultOpenTelemetryFactorySpec")
-    @Singleton
-    static class TestService {
+    void "application name is used as default service name when resource service name is blank"() {
+        given:
+        ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration()
+        applicationConfiguration.name = 'default-app'
 
-        @NewSpan("invoke")
-        String invoke(@SpanTag("value") String value) {
-            return value
-        }
+        when:
+        Map<String, String> properties = DefaultOpenTelemetryFactory.resolveOpenTelemetryProperties(
+                applicationConfiguration,
+                [
+                        'resource.attributes.service.name': '  ',
+                        'resource.attributes.environment' : 'test'
+                ]
+        )
+
+        then:
+        properties['otel.resource.attributes'] == 'service.name=  ,environment=test'
+        properties['otel.service.name'] == 'default-app'
+    }
+
+    void "application name replaces blank service name property"() {
+        given:
+        ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration()
+        applicationConfiguration.name = 'default-app'
+
+        when:
+        Map<String, String> properties = DefaultOpenTelemetryFactory.resolveOpenTelemetryProperties(
+                applicationConfiguration,
+                [
+                        'service.name': ' '
+                ]
+        )
+
+        then:
+        properties['otel.service.name'] == 'default-app'
+    }
+
+    void "existing map properties are normalized before nested map properties are appended"() {
+        given:
+        ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration()
+        applicationConfiguration.name = 'default-app'
+
+        when:
+        Map<String, String> properties = DefaultOpenTelemetryFactory.resolveOpenTelemetryProperties(
+                applicationConfiguration,
+                [
+                        'exporter.otlp.headers'              : ' Existing=present, ',
+                        'exporter.otlp.headers.Authorization': 'Bearer token'
+                ]
+        )
+
+        then:
+        properties['otel.exporter.otlp.headers'] == 'Existing=present,Authorization=Bearer token'
     }
 
     @Factory
@@ -167,6 +215,16 @@ class DefaultOpenTelemetryFactorySpec extends Specification {
                     return resource
                 } as BiFunction)
             } as OpenTelemetryBuilderCustomizer
+        }
+    }
+
+    @Requires(property = 'spec.name', value = 'DefaultOpenTelemetryFactorySpec')
+    @Singleton
+    static class TestService {
+
+        @NewSpan('invoke')
+        String invoke(@SpanTag('value') String value) {
+            return value
         }
     }
 }

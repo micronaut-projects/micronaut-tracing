@@ -25,7 +25,6 @@ managed-jaeger = '1.8.1'
 managed-opentracing = '0.33.0'
 managed-opentracing-grpc = '0.2.3'
 managed-brave-opentracing = '1.0.1'
-
 javax-annotation = '1.3.2'
 grpc = '1.80.0'
 protobuf = '3.25.8'
@@ -112,7 +111,6 @@ boms-opentelemetry-instrumentation = { module = 'io.opentelemetry.instrumentatio
 boms-opentelemetry-instrumentation-alpha = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha', version.ref = 'managed-opentelemetry-instrumentation-alpha' }
 boms-brave = { module = 'io.zipkin.brave:brave-bom', version.ref = 'managed-brave-instrumentation' }
 boms-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter-bom', version.ref = 'managed-zipkin-reporter' }
-
 #plugins
 micronaut-gradle-plugin = { module = "io.micronaut.gradle:micronaut-gradle-plugin", version.ref="micronaut-gradle-plugin" }
 [plugins]

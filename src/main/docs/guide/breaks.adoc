@@ -7,7 +7,7 @@ That release moved `@WithSpan` and `@SpanAttribute` from `io.opentelemetry.exten
 
 If your application uses `micronaut-tracing-opentelemetry-annotation` and imports the old package, update those imports to the new package before upgrading to Micronaut Tracing `4.5.0` or newer.
 
-If you upgrade to Micronaut Tracing `4.5.0` independently from the Micronaut Platform version used by your application, import `io.micronaut.tracing:micronaut-tracing-bom:4.5.0` in dependency management.
+If you upgrade to Micronaut Tracing `4.5.0` independently from the Micronaut Platform version used by your application, import the matching `io.micronaut.tracing:micronaut-tracing-bom` version (the same version as your Micronaut Tracing version) in dependency management.
 Applications that keep an older Micronaut Platform-managed tracing BOM while forcing only the Micronaut Tracing OpenTelemetry module version can resolve incompatible OpenTelemetry instrumentation, semantic conventions, SDK, and exporter artifacts.
 
 == Micronaut Tracing 5.0.0-M2 breaking changes

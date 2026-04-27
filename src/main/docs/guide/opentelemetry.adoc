@@ -5,8 +5,8 @@ The Micronaut Open Telemetry module uses https://github.com/open-telemetry/opent
 - otel.logs.exporter = none
 - otel.service.name = value of the application.name
 
-OpenTelemetry libraries must be resolved from the same dependency-management line as the Micronaut Tracing OpenTelemetry modules.
-If an application overrides the Micronaut Tracing version supplied by the Micronaut Platform, also import the matching `io.micronaut.tracing:micronaut-tracing-bom` version.
+OpenTelemetry libraries must be resolved using the same BOM or platform dependency management as the Micronaut Tracing OpenTelemetry modules.
+If an application overrides the Micronaut Tracing version supplied by the Micronaut Platform BOM, also import the matching `io.micronaut.tracing:micronaut-tracing-bom` version.
 This keeps OpenTelemetry instrumentation, semantic conventions, SDK, and exporter dependencies aligned.
 
 == OpenTelemetry annotations

@@ -254,6 +254,23 @@ public final class KafkaTelemetry {
         }
     }
 
+    <K, V> ConsumerRecordContext startConsumerRecordSpan(ConsumerRecord<K, V> record, Consumer<K, V> consumer) {
+        return startConsumerRecordSpan(record, KafkaUtil.getConsumerGroup(consumer), KafkaUtil.getClientId(consumer));
+    }
+
+    <K, V> ConsumerRecordContext startConsumerRecordSpan(ConsumerRecord<K, V> record, String consumerGroup, String clientId) {
+        Context parentContext = Context.current();
+        KafkaProcessRequest request = KafkaProcessRequest.create(record, consumerGroup, clientId);
+        if (!consumerProcessInstrumenter.shouldStart(parentContext, request)) {
+            return null;
+        }
+        return new ConsumerRecordContext(request, consumerProcessInstrumenter.start(parentContext, request));
+    }
+
+    void endConsumerRecordSpan(ConsumerRecordContext consumerRecordContext) {
+        consumerProcessInstrumenter.end(consumerRecordContext.context(), consumerRecordContext.request(), null, null);
+    }
+
     private <K, V> void processConsumerRecord(Context parentContext, ConsumerRecord<K, V> record, String consumerGroup, String clientId) {
         KafkaProcessRequest request = KafkaProcessRequest.create(record, consumerGroup, clientId);
         if (!consumerProcessInstrumenter.shouldStart(parentContext, request)) {
@@ -345,6 +362,9 @@ public final class KafkaTelemetry {
 
     public KafkaTelemetryConfiguration getKafkaTelemetryProperties() {
         return kafkaTelemetryConfiguration;
+    }
+
+    record ConsumerRecordContext(KafkaProcessRequest request, Context context) {
     }
 
     private final class ProducerCallback implements Callback {

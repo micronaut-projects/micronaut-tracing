@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 original authors
+ * Copyright 2017-2026 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,43 +23,34 @@ import io.opentelemetry.instrumentation.awssdk.v2_2.AwsSdkTelemetry;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.core.client.builder.SdkClientBuilder;
+import software.amazon.awssdk.services.sqs.SqsClient;
 
 /**
- * Configures a Tracing Interceptor for all sdk client builders.
- * @see <a href="https://aws-otel.github.io/docs/getting-started/java-sdk/trace-manual-instr">Instrumenting the AWS SDK</a>
+ * Wraps SQS clients for OpenTelemetry message propagation.
  *
- * @author Sergio del Amo
- * @since 4.2.0
+ * @author Nemanja Mikic
+ * @since 8.0.0
  */
 @Internal
-@Requires(classes = {AwsSdkTelemetry.class, SdkClientBuilder.class})
+@Requires(classes = {AwsSdkTelemetry.class, SqsClient.class})
 @Singleton
-public class SdkClientBuilderListener implements BeanCreatedEventListener<SdkClientBuilder<?, ?>> {
-    private static final Logger LOG = LoggerFactory.getLogger(SdkClientBuilderListener.class);
+public class SqsClientBeanCreatedEventListener implements BeanCreatedEventListener<SqsClient> {
+    private static final Logger LOG = LoggerFactory.getLogger(SqsClientBeanCreatedEventListener.class);
 
     private final AwsSdkTelemetry awsSdkTelemetry;
 
     /**
-     *
      * @param awsSdkTelemetry AWS SDK telemetry
      */
-    public SdkClientBuilderListener(AwsSdkTelemetry awsSdkTelemetry) {
+    public SqsClientBeanCreatedEventListener(AwsSdkTelemetry awsSdkTelemetry) {
         this.awsSdkTelemetry = awsSdkTelemetry;
     }
 
-    /**
-     * Add an OpenTelemetry execution interceptor to {@link SdkClientBuilder}.
-     *
-     * @param event bean created event
-     * @return sdk client builder
-     */
     @Override
-    public SdkClientBuilder<?, ?> onCreated(BeanCreatedEvent<SdkClientBuilder<?, ?>> event) {
+    public SqsClient onCreated(BeanCreatedEvent<SqsClient> event) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Registering OpenTelemetry tracing interceptor to {}", event.getBean().getClass().getSimpleName());
+            LOG.trace("Wrapping OpenTelemetry SQS client {}", event.getBean().getClass().getSimpleName());
         }
-        return event.getBean().overrideConfiguration(builder ->
-            builder.addExecutionInterceptor(awsSdkTelemetry.newExecutionInterceptor()));
+        return awsSdkTelemetry.wrap(event.getBean());
     }
 }

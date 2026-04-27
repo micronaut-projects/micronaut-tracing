@@ -64,7 +64,7 @@ class JdbcTelemetrySpanSpec  extends Specification {
         def finishedSpanItems = inMemorySpanExporter.getFinishedSpanItems()
 
         finishedSpanItems.size() == 0
-        !jdbcTelemetryConfiguration.builder.statementSanitizationEnabled
+        !jdbcTelemetryConfiguration.builder.querySanitizationEnabled
         !jdbcTelemetryConfiguration.builder.statementInstrumenterEnabled
         !jdbcTelemetryConfiguration.builder.dataSourceInstrumenterEnabled
 

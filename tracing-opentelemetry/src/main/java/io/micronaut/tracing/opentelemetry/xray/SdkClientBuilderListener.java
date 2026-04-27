@@ -62,6 +62,6 @@ public class SdkClientBuilderListener implements BeanCreatedEventListener<SdkCli
             LOG.trace("Registering OpenTelemetry tracing interceptor to {}", event.getBean().getClass().getSimpleName());
         }
         return event.getBean().overrideConfiguration(builder ->
-            builder.addExecutionInterceptor(AwsSdkTelemetry.create(openTelemetry.get()).newExecutionInterceptor()));
+            builder.addExecutionInterceptor(AwsSdkTelemetry.create(openTelemetry.get()).createExecutionInterceptor()));
     }
 }

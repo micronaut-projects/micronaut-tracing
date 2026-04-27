@@ -55,4 +55,11 @@ class JdbcTelemetryConfiguration {
         this.enabled = enabled;
     }
 
+    /**
+     * @param enabled enables SQL query sanitization.
+     */
+    public void setStatementSanitizationEnabled(boolean enabled) {
+        builder.setQuerySanitizationEnabled(enabled);
+    }
+
 }

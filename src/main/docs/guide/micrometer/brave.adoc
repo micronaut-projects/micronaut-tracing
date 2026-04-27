@@ -1,0 +1,17 @@
+To expose Micrometer Tracing beans backed by Brave, add the following dependency:
+
+dependency:micronaut-tracing-micrometer-brave[scope="implementation", groupId="io.micronaut.tracing"]
+
+You also need Brave tracing enabled.
+For example, add the Brave HTTP integration and enable Zipkin tracing:
+
+dependency:micronaut-tracing-brave-http[scope="implementation", groupId="io.micronaut.tracing"]
+
+[configuration]
+----
+tracing:
+  zipkin:
+    enabled: true
+----
+
+The bridge creates Micrometer `Tracer`, `CurrentTraceContext`, `BaggageManager`, and `Propagator` beans from the existing Brave `Tracing` bean.

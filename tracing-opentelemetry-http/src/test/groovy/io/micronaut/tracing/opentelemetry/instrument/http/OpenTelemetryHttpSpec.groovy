@@ -9,6 +9,7 @@ import io.micronaut.core.order.Ordered
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
+import io.micronaut.http.MutableHttpResponse
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -542,7 +543,7 @@ class OpenTelemetryHttpSpec extends Specification {
         }
 
         @ResponseFilter
-        void traceResponse(HttpRequest<?> request, HttpResponse<?> response) {
+        void traceResponse(HttpRequest<?> request, MutableHttpResponse<?> response) {
             response.headers.add('X-Request-Filter-Recording', request.getAttribute('request-filter-recording', String).orElse('missing'))
             response.headers.add('X-Response-Filter-Recording', Boolean.toString(Span.current().isRecording()))
             Span.current().setAttribute('response-filter', 'recorded')

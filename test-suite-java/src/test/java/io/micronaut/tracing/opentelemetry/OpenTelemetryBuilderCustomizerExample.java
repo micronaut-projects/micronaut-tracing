@@ -1,6 +1,7 @@
 package io.micronaut.tracing.opentelemetry;
 
 //tag::imports[]
+import io.micronaut.context.annotation.Factory;
 import io.opentelemetry.sdk.metrics.Aggregation;
 import io.opentelemetry.sdk.metrics.InstrumentSelector;
 import io.opentelemetry.sdk.metrics.InstrumentType;
@@ -10,9 +11,10 @@ import jakarta.inject.Singleton;
 import java.util.Arrays;
 //end::imports[]
 
+//tag::histogramViewCustomizer[]
+@Factory
 class OpenTelemetryBuilderCustomizerExample {
 
-    //tag::histogramViewCustomizer[]
     @Singleton
     OpenTelemetryBuilderCustomizer histogramViewCustomizer() {
         return builder -> builder.addMeterProviderCustomizer((meterProviderBuilder, configProperties) -> {
@@ -28,5 +30,5 @@ class OpenTelemetryBuilderCustomizerExample {
             return meterProviderBuilder;
         });
     }
-    //end::histogramViewCustomizer[]
 }
+//end::histogramViewCustomizer[]

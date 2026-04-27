@@ -3,6 +3,7 @@ package io.micronaut.tracing.opentelemetry
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Factory
 import io.micronaut.context.annotation.Requires
+import io.micronaut.context.env.PropertySource
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.common.AttributeKey
@@ -11,19 +12,16 @@ import io.opentelemetry.sdk.resources.Resource
 import io.opentelemetry.sdk.trace.SpanProcessor
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor
 import jakarta.inject.Singleton
-import spock.lang.AutoCleanup
 import spock.lang.Specification
 
 class OpenTelemetryResourceAttributesSpec extends Specification {
 
-    @AutoCleanup
-    ApplicationContext context = ApplicationContext.run(
-            'spec.name': 'OpenTelemetryResourceAttributesSpec',
-            'otel.resource.attributes': 'deployment.environment=test,service.namespace=orders'
-    )
-
-    void 'otel resource attributes are attached to exported spans'() {
+    void 'otel resource attributes from #sourceName are attached to exported spans'() {
         given:
+        ApplicationContext context = ApplicationContext.builder()
+                .properties('spec.name': 'OpenTelemetryResourceAttributesSpec')
+                .propertySources(propertySource)
+                .start()
         InMemorySpanExporter spanExporter = context.getBean(InMemorySpanExporter)
         OpenTelemetry openTelemetry = context.getBean(OpenTelemetry)
 
@@ -41,6 +39,12 @@ class OpenTelemetryResourceAttributesSpec extends Specification {
 
         cleanup:
         spanExporter.reset()
+        context.close()
+
+        where:
+        sourceName            | propertySource
+        'Micronaut property'  | PropertySource.of('test-properties', ['otel.resource.attributes': 'deployment.environment=test,service.namespace=orders'])
+        'environment variable' | PropertySource.of('test-environment', ['OTEL_RESOURCE_ATTRIBUTES': 'deployment.environment=test,service.namespace=orders'], PropertySource.PropertyConvention.ENVIRONMENT_VARIABLE, null)
     }
 
     @Requires(property = 'spec.name', value = 'OpenTelemetryResourceAttributesSpec')

@@ -26,7 +26,6 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.TracerProvider;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
-import io.opentelemetry.sdk.autoconfigure.ResourceConfiguration;
 import io.opentelemetry.sdk.trace.IdGenerator;
 import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.samplers.Sampler;
@@ -34,6 +33,7 @@ import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -46,6 +46,7 @@ import java.util.Map;
 public class DefaultOpenTelemetryFactory {
 
     private static final String SERVICE_NAME_KEY = "otel.service.name";
+    private static final String RESOURCE_ATTRIBUTES_KEY = "otel.resource.attributes";
     private static final String DEFAULT_TRACES_EXPORTER = "otel.traces.exporter";
     private static final String DEFAULT_METRICS_EXPORTER = "otel.metrics.exporter";
     private static final String DEFAULT_LOGS_EXPORTER = "otel.logs.exporter";
@@ -92,7 +93,6 @@ public class DefaultOpenTelemetryFactory {
         }
 
         sdk.addResourceCustomizer((resource, config) -> {
-                resource = resource.merge(ResourceConfiguration.createEnvironmentResource(config));
                 if (resourceProvider != null) {
                     resource = resource.merge(resourceProvider.resource());
                 }
@@ -132,12 +132,21 @@ public class DefaultOpenTelemetryFactory {
     }
 
     private Map<String, String> resolveOtelProperties(Environment environment) {
-        return environment.getProperties("otel", StringConvention.RAW).entrySet().stream().collect(
+        Map<String, String> otel = environment.getProperties("otel", StringConvention.RAW).entrySet().stream().collect(
             java.util.stream.Collectors.toMap(
-                entry -> "otel." + entry.getKey(),
-                entry -> String.valueOf(entry.getValue())
+                entry -> "otel." + normalizeOtelProperty(entry.getKey()),
+                entry -> String.valueOf(entry.getValue()),
+                (existing, replacement) -> existing
             )
         );
+        environment.getProperty(RESOURCE_ATTRIBUTES_KEY, String.class).ifPresent(attributes ->
+            otel.putIfAbsent(RESOURCE_ATTRIBUTES_KEY, attributes)
+        );
+        return otel;
+    }
+
+    private String normalizeOtelProperty(String property) {
+        return property.toLowerCase(Locale.ENGLISH).replace('_', '.');
     }
 
     /**

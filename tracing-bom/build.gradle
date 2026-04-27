@@ -55,5 +55,14 @@ micronautBom {
         ])
         dependencies.add("io.zipkin.brave:brave-instrumentation-benchmarks:6.3.1")
         dependencies.add("io.zipkin.reporter2:zipkin-reporter-bom:3.5.3")
+        bomAuthorizedGroupIds.put(
+                "io.micrometer:micrometer-tracing-bom",
+                [
+                        "io.micrometer"
+                ] as Set
+        )
+        dependencies.add("io.micrometer:micrometer-tracing-bom:1.5.4")
+        dependencies.add("io.micrometer:micrometer-bom:1.15.4")
+        dependencies.add("io.micrometer:docs:1.5.4")
     }
 }

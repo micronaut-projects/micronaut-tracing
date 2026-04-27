@@ -19,21 +19,25 @@ class RabbitMQHeadersSpec extends Specification {
     }
 
     void "getter reads carrier keys and string values"() {
+        given:
+        def getter = new RabbitMQHeadersGetter()
+
         expect:
-        RabbitMQHeadersGetter.INSTANCE.keys([traceparent: "abc", retry: 3]).toSet() == ["traceparent", "retry"].toSet()
-        RabbitMQHeadersGetter.INSTANCE.get([retry: 3], "retry") == "3"
-        RabbitMQHeadersGetter.INSTANCE.get([retry: null], "retry") == null
-        RabbitMQHeadersGetter.INSTANCE.get(null, "traceparent") == null
-        !RabbitMQHeadersGetter.INSTANCE.keys(null).iterator().hasNext()
+        getter.keys([traceparent: "abc", retry: 3]).toSet() == ["traceparent", "retry"].toSet()
+        getter.get([retry: 3], "retry") == "3"
+        getter.get([retry: null], "retry") == null
+        getter.get(null, "traceparent") == null
+        !getter.keys(null).iterator().hasNext()
     }
 
     void "setter writes only when carrier is available"() {
         given:
         def headers = [:]
+        def setter = new RabbitMQHeadersSetter()
 
         when:
-        RabbitMQHeadersSetter.INSTANCE.set(headers, "traceparent", "abc")
-        RabbitMQHeadersSetter.INSTANCE.set(null, "ignored", "value")
+        setter.set(headers, "traceparent", "abc")
+        setter.set(null, "ignored", "value")
 
         then:
         headers == [traceparent: "abc"]

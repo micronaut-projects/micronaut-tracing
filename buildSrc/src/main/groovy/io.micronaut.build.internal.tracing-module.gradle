@@ -6,7 +6,7 @@ ossIndexAudit {
     excludeCoordinates = [
         "com.squareup.okio:okio:2.8.0", // no okio 2.x version patched
         "com.squareup.okio:okio:2.10.0", // no okio 2.x version patched
-        "org.lz4:lz4-java:1.8.0", // CVE-2025-12183
+        "org.lz4:lz4-java:1.8.1", // CVE-2025-12183
         "org.lz4:lz4-java:1.8.1" // CVE-2025-12183
     ]
 }

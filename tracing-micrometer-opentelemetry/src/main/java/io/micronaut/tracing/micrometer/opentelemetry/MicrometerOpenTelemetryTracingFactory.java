@@ -39,12 +39,6 @@ import jakarta.inject.Singleton;
 public class MicrometerOpenTelemetryTracingFactory {
 
     /**
-     * Constructs Micrometer OpenTelemetry tracing factory.
-     */
-    public MicrometerOpenTelemetryTracingFactory() {
-    }
-
-    /**
      * Creates a Micrometer current trace context.
      *
      * @return Micrometer current trace context
@@ -85,7 +79,9 @@ public class MicrometerOpenTelemetryTracingFactory {
     io.micrometer.tracing.Tracer micrometerTracer(io.opentelemetry.api.trace.Tracer tracer,
                                                   OtelCurrentTraceContext currentTraceContext,
                                                   OtelBaggageManager baggageManager) {
-        return new OtelTracer(tracer, currentTraceContext, event -> { }, baggageManager);
+        return new OtelTracer(tracer, currentTraceContext, event -> {
+            // Micronaut does not publish Micrometer span events for this bridge.
+        }, baggageManager);
     }
 
     /**

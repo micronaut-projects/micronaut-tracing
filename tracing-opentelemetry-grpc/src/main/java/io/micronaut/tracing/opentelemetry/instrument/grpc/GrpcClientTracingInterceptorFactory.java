@@ -40,6 +40,6 @@ public class GrpcClientTracingInterceptorFactory {
     @Singleton
     @Requires(beans = OpenTelemetry.class)
     protected ClientInterceptor clientTracingInterceptor(OpenTelemetry openTelemetry) {
-        return GrpcTelemetry.builder(openTelemetry).build().newClientInterceptor();
+        return GrpcTelemetry.builder(openTelemetry).build().createClientInterceptor();
     }
 }

@@ -22,8 +22,7 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.api.incubator.semconv.net.PeerServiceAttributesExtractor;
-import io.opentelemetry.instrumentation.api.incubator.semconv.net.PeerServiceResolver;
+import io.opentelemetry.instrumentation.api.incubator.semconv.http.HttpClientServicePeerAttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.instrumenter.InstrumenterBuilder;
@@ -38,7 +37,6 @@ import jakarta.inject.Qualifier;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
-import java.util.Collections;
 import java.util.List;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -85,13 +83,14 @@ public class MicronautHttpClientTelemetryFactory {
     }
 
     /**
-     * Builds the PeerServiceAttributesExtractor.
-     * @return the {@link PeerServiceAttributesExtractor}
+     * Builds the HttpClientServicePeerAttributesExtractor.
+     * @param openTelemetry the {@link OpenTelemetry}
+     * @return the {@link HttpClientServicePeerAttributesExtractor}
      */
     @Client
     @Prototype
-    AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> peerServiceAttributesExtractor() {
-        return PeerServiceAttributesExtractor.create(MicronautHttpClientAttributesGetter.INSTANCE, PeerServiceResolver.create(Collections.emptyMap()));
+    AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> peerServiceAttributesExtractor(OpenTelemetry openTelemetry) {
+        return HttpClientServicePeerAttributesExtractor.create(MicronautHttpClientAttributesGetter.INSTANCE, openTelemetry);
     }
 
     /**

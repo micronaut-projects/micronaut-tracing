@@ -274,7 +274,11 @@ class HelloService {
 <h2 id="_micronaut_tracing_4_5_0_breaking_changes">Micronaut Tracing 4.5.0 breaking changes</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In version <code>1.19.0</code> of OpenTelemetry annotations have moved from <code>io.opentelemetry.extension.annotations</code> to <code>io.opentelemetry.instrumentation.annotations</code>. If you want to continue to use them, you have to update package name.</p>
+<p>Micronaut Tracing <code>4.5.0</code> upgrades the OpenTelemetry annotation support to OpenTelemetry Instrumentation <code>1.19.0</code>.
+That release moved <code>@WithSpan</code> and <code>@SpanAttribute</code> from <code>io.opentelemetry.extension.annotations</code> to <code>io.opentelemetry.instrumentation.annotations</code>.</p>
+</div>
+<div class="paragraph">
+<p>If your application uses <code>micronaut-tracing-opentelemetry-annotation</code> and imports the old package, update those imports to the new package before upgrading to Micronaut Tracing <code>4.5.0</code> or newer.</p>
 </div>
 </div>
 </div>
@@ -1239,6 +1243,18 @@ tracing.exclusions[1]=/env/.*</code></pre>
 
 <div class="paragraph">
 <p>The <a href="../api/io/micronaut/tracing/opentelemetry/processing/package-summary.html">io.micronaut.tracing.opentelemetry.processing</a> package contains transformers and mappers that enables usage of Open Telemetry annotations.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Since Micronaut Tracing <code>4.5.0</code>, OpenTelemetry&#8217;s <code>@WithSpan</code> and <code>@SpanAttribute</code> annotations must be imported from <code>io.opentelemetry.instrumentation.annotations</code>. Older applications that still import <code>io.opentelemetry.extension.annotations</code> need to update those imports when upgrading.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>To enable Open telemetry annotations you have to add next annotation processor in your dependency block:

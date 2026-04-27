@@ -24,7 +24,7 @@ import io.micronaut.http.client.HttpClientConfiguration;
 public abstract class HttpClientSenderConfiguration extends HttpClientConfiguration {
 
     @ConfigurationBuilder(prefixes = "")
-    protected final HttpClientSender.Builder clientSenderBuilder;
+    public final HttpClientSender.Builder clientSenderBuilder;
 
     /**
      * Initialize the builder with client configurations.
@@ -36,15 +36,6 @@ public abstract class HttpClientSenderConfiguration extends HttpClientConfigurat
     @Override
     public ConnectionPoolConfiguration getConnectionPoolConfiguration() {
         return new ConnectionPoolConfiguration();
-    }
-
-    /**
-     * Creates builder.
-     *
-     * @return the builder
-     */
-    public HttpClientSender.Builder getClientSenderBuilder() {
-        return clientSenderBuilder;
     }
 
     /**

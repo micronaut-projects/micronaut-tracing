@@ -27,6 +27,8 @@ import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
 import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
@@ -97,8 +99,18 @@ public final class OpenTelemetryServerFilter implements HttpServerFilter {
             .propagate()) {
             var propagatedContext = PropagatedContext.get();
             return Mono.from(chain.proceed(request))
+                .doOnError(throwable -> onError(request, context, throwable))
                 .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext));
         }
+    }
+
+    private void onError(HttpRequest<?> request, Context context, Throwable e) {
+        Span.fromContext(context)
+            .setStatus(StatusCode.ERROR)
+            .recordException(e);
+        instrumenter.end(context, request, null, e);
+        request.setAttribute(OpenTelemetryServerResponseFilter.FINISHED, true);
+        request.setAttribute(CONTINUE, true);
     }
 
     private boolean shouldExclude(@Nullable String path) {

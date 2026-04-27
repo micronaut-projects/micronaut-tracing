@@ -26,7 +26,7 @@ import java.io.IOException;
 /**
  * Tracing wrapper for {@link Consumer}.
  *
- * @since 5.1.0
+ * @since 8.0.0
  */
 @Internal
 final class TracingConsumer implements Consumer {

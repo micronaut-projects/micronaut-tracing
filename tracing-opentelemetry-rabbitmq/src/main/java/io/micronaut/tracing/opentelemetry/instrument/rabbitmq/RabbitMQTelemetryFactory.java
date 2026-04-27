@@ -22,7 +22,7 @@ import jakarta.inject.Singleton;
 /**
  * Factory for RabbitMQ telemetry support.
  *
- * @since 5.1.0
+ * @since 8.0.0
  */
 @Factory
 public final class RabbitMQTelemetryFactory {

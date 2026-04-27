@@ -22,7 +22,7 @@ import io.micronaut.core.util.StringUtils;
 /**
  * Configuration properties for RabbitMQ telemetry.
  *
- * @since 5.1.0
+ * @since 8.0.0
  */
 @Requires(property = RabbitMQTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @ConfigurationProperties(RabbitMQTelemetryConfiguration.PREFIX)

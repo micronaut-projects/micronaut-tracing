@@ -31,4 +31,12 @@ class OtelHttpClientSenderFactorySpec extends Specification {
         sender instanceof HttpClientSender
         spanProcessor instanceof BatchSpanProcessor
     }
+
+    void "okhttp is not a transitive dependency"() {
+        when:
+        Class.forName('okhttp3.OkHttpClient')
+
+        then:
+        thrown(ClassNotFoundException)
+    }
 }

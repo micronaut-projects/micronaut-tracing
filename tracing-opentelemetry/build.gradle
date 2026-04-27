@@ -25,8 +25,11 @@ dependencies {
     implementation(platform(libs.micronaut.aws))
     compileOnly(libs.opentelemetry.aws.sdk)
     compileOnly(libs.awssdk.core)
+    compileOnly(libs.awssdk.sqs)
     testImplementation(libs.opentelemetry.aws.sdk)
+    testImplementation(libs.awssdk.bedrockruntime)
     testImplementation(libs.awssdk.core)
+    testImplementation(libs.awssdk.sqs)
 
     compileOnly mn.kotlinx.coroutines.core
     compileOnly mn.kotlinx.coroutines.reactor

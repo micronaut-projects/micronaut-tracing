@@ -17,15 +17,19 @@ package io.micronaut.tracing.opentelemetry.instrument.rabbitmq;
 
 import io.opentelemetry.context.propagation.TextMapGetter;
 
-import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
-enum RabbitMQHeadersGetter implements TextMapGetter<Map<String, Object>> {
-    INSTANCE;
+final class RabbitMQHeadersGetter implements TextMapGetter<Map<String, Object>> {
+
+    static final RabbitMQHeadersGetter INSTANCE = new RabbitMQHeadersGetter();
+
+    private RabbitMQHeadersGetter() {
+    }
 
     @Override
     public Iterable<String> keys(Map<String, Object> carrier) {
-        return carrier == null ? Collections.emptyList() : carrier.keySet();
+        return carrier == null ? Set.of() : carrier.keySet();
     }
 
     @Override

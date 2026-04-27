@@ -48,7 +48,7 @@ import java.util.function.Function;
 /**
  * RabbitMQ telemetry support based on bean wrappers.
  *
- * @since 5.1.0
+ * @since 8.0.0
  */
 @Internal
 public final class RabbitMQTelemetry {

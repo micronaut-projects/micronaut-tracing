@@ -25,7 +25,7 @@ import jakarta.inject.Singleton;
 /**
  * Wraps reactive RabbitMQ publishers with tracing.
  *
- * @since 5.1.0
+ * @since 8.0.0
  */
 @Requires(property = RabbitMQTelemetryConfiguration.PREFIX + ".wrapper", notEquals = StringUtils.FALSE)
 @Singleton

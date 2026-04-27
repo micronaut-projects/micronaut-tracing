@@ -16,7 +16,7 @@
 /**
  * Contains configuration that provides integration with R2DBC OpenTelemetry.
  *
- * @since 7.1.0
+ * @since 8.0.0
  */
 @Configuration
 @Requires(classes = {OpenTelemetry.class, ConnectionFactory.class, R2dbcTelemetry.class})

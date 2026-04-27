@@ -17,8 +17,6 @@ managed-opentelemetry-gcp-trace = '0.36.0-alpha'
 managed-opentelemetry-semconv = '1.37.0'
 managed-opentelemetry-instrumentation-api-semconv = '1.33.6-alpha'
 managed-protobuf = '0.9.5'
-managed-r2dbc-h2 = '1.0.0.RELEASE'
-managed-reactor = '3.7.12'
 managed-zipkin = '3.5.1'
 managed-zipkin-reporter = '3.5.1'
 
@@ -60,6 +58,7 @@ micronaut-rxjava2 = { module = 'io.micronaut.rxjava2:micronaut-rxjava2-bom', ver
 micronaut-serde = { module = 'io.micronaut.serde:micronaut-serde-bom', version.ref = 'micronaut-serde'}
 micronaut-sql = { module = 'io.micronaut.sql:micronaut-sql-bom', version.ref = 'micronaut-sql' }
 micronaut-kafka = { module = 'io.micronaut.kafka:micronaut-kafka-bom', version.ref = 'micronaut-kafka'}
+micronaut-r2dbc = { module = 'io.micronaut.r2dbc:micronaut-r2dbc-bom', version.ref = 'micronaut-r2dbc'}
 
 brave-instrumentation-http = { module = 'io.zipkin.brave:brave-instrumentation-http' }
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
@@ -71,9 +70,6 @@ javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.r
 junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
 protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'protobuf' }
 protobuf-java-util = { module = 'com.google.protobuf:protobuf-java-util', version.ref = 'protobuf' }
-reactor-core = { module = 'io.projectreactor:reactor-core', version.ref = 'managed-reactor' }
-r2dbc-h2 = { module = 'io.r2dbc:r2dbc-h2', version.ref = 'managed-r2dbc-h2' }
-micronaut-r2dbc-core = { module = 'io.micronaut.r2dbc:micronaut-r2dbc-core', version.ref = 'micronaut-r2dbc' }
 micronaut-docs-asciidoc-config-props = { module = 'io.micronaut.docs:micronaut-docs-asciidoc-config-props', version.ref = 'micronaut-docs' }
 opentracing = { module = 'io.opentracing:opentracing-api', version.ref = 'managed-opentracing' }
 opentracing-grpc = { module = 'io.opentracing.contrib:opentracing-grpc', version.ref = 'managed-opentracing-grpc' }

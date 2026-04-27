@@ -19,6 +19,7 @@ import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;
+import io.micronaut.core.util.Toggleable;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.r2dbc.v1_0.R2dbcTelemetry;
 import io.opentelemetry.instrumentation.r2dbc.v1_0.R2dbcTelemetryBuilder;
@@ -28,14 +29,15 @@ import io.opentelemetry.instrumentation.r2dbc.v1_0.R2dbcTelemetryBuilder;
  */
 @Requires(property = R2dbcTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @ConfigurationProperties(R2dbcTelemetryConfiguration.PREFIX)
-class R2dbcTelemetryConfiguration {
+class R2dbcTelemetryConfiguration implements Toggleable {
 
     public static final String PREFIX = "otel.instrumentation.r2dbc";
+    public static final boolean DEFAULT_ENABLED = true;
 
     @ConfigurationBuilder(prefixes = "set")
     final R2dbcTelemetryBuilder builder;
 
-    private Boolean enabled;
+    private boolean enabled = DEFAULT_ENABLED;
 
     R2dbcTelemetryConfiguration(OpenTelemetry openTelemetry) {
         builder = R2dbcTelemetry.builder(openTelemetry);
@@ -44,14 +46,15 @@ class R2dbcTelemetryConfiguration {
     /**
      * @return Whether R2DBC telemetry is enabled.
      */
-    public Boolean getEnabled() {
+    @Override
+    public boolean isEnabled() {
         return enabled;
     }
 
     /**
      * @param enabled Enables the R2DBC telemetry.
      */
-    public void setEnabled(Boolean enabled) {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 }

@@ -12,15 +12,6 @@ dependencies {
     api mnKafka.micronaut.kafka
     api(libs.opentelemetry.instrumentation.kafka.common)
 
-    constraints {
-        api("org.apache.kafka:kafka-clients") {
-            version {
-                require("[3.9.1,)")
-            }
-            because("3.9.0 has a vulnerability")
-        }
-    }
-
     testImplementation mnSerde.micronaut.serde.jackson
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing

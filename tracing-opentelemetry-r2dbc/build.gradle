@@ -11,12 +11,12 @@ dependencies {
     api libs.opentelemetry.api
     api libs.opentelemetry.instrumentation.r2dbc
 
-    implementation libs.micronaut.r2dbc.core
+    implementation mnR2dbc.micronaut.r2dbc.core
 
-    testImplementation libs.reactor.core
+    testImplementation mn.reactor
     testImplementation libs.opentelemetry.sdk
     testImplementation libs.opentelemetry.sdk.testing
-    testRuntimeOnly libs.r2dbc.h2
+    testRuntimeOnly mnR2dbc.r2dbc.h2
 }
 
 micronautBuild {

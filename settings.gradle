@@ -48,5 +48,6 @@ micronautBuild {
     importMicronautCatalog("micronaut-serde")
     importMicronautCatalog("micronaut-kafka")
     importMicronautCatalog("micronaut-data")
+    importMicronautCatalog("micronaut-r2dbc")
     importMicronautCatalog("micronaut-sql")
 }

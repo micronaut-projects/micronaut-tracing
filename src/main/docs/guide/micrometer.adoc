@@ -1,0 +1,34 @@
+https://micrometer.io/docs/tracing[Micrometer Tracing] provides a facade over tracer implementations.
+Micronaut Tracing can expose Micrometer Tracing beans backed by the existing OpenTelemetry or Brave integrations.
+
+When `micronaut-micrometer-observation` is on the classpath, its observation support automatically creates tracing observation handlers from the Micrometer `Tracer` and `Propagator` beans.
+
+== Configuration
+
+Micrometer Tracing bridge beans are enabled by default when a bridge module and its backing tracer are available.
+You can disable only the Micrometer bridge beans with:
+
+[configuration]
+----
+tracing:
+  micrometer:
+    enabled: false
+----
+
+You can also configure baggage fields shared by the Micrometer bridge implementations:
+
+[configuration]
+----
+tracing:
+  micrometer:
+    baggage:
+      remote-fields:
+        - x-request-id
+        - tenant
+      correlation-fields:
+        - tenant
+----
+
+include::{includedir}configurationProperties/io.micronaut.tracing.micrometer.MicrometerTracingConfigurationProperties.adoc[]
+
+include::{includedir}configurationProperties/io.micronaut.tracing.micrometer.MicrometerTracingConfigurationProperties$Baggage.adoc[]

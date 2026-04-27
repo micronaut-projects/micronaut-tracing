@@ -5,11 +5,9 @@
             <pattern>%d{HH:mm:ss.SSS} trace_id=%X{trace_id} span_id=%X{span_id} trace_flags=%X{trace_flags} %msg%n</pattern>
         </encoder>
     </appender>
-
     <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.mdc.v1_0.OpenTelemetryAppender">
         <appender-ref ref="CONSOLE"/>
     </appender>
-
     <root level="INFO">
         <appender-ref ref="OTEL"/>
     </root>

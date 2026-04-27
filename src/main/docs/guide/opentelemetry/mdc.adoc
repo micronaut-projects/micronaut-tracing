@@ -9,9 +9,7 @@ Then wrap your Logback appender with the OpenTelemetry MDC appender and include 
 
 .Configuring Logback MDC trace correlation
 [source,xml]
-----
 include::src/main/docs/guide/opentelemetry/logback-mdc.xml[]
-----
 
 The default MDC keys are `trace_id`, `span_id`, and `trace_flags`.
 These values are only added when a valid span is current, so logs written outside traced execution may not contain trace correlation fields.

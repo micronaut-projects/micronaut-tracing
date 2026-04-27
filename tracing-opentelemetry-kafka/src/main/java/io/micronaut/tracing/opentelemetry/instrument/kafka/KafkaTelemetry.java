@@ -254,13 +254,13 @@ public final class KafkaTelemetry {
         }
     }
 
-    <K, V> ConsumerRecordContext startConsumerRecordSpan(ConsumerRecord<K, V> record, Consumer<K, V> consumer) {
-        return startConsumerRecordSpan(record, KafkaUtil.getConsumerGroup(consumer), KafkaUtil.getClientId(consumer));
+    <K, V> ConsumerRecordContext startConsumerRecordSpan(ConsumerRecord<K, V> consumerRecord, Consumer<K, V> consumer) {
+        return startConsumerRecordSpan(consumerRecord, KafkaUtil.getConsumerGroup(consumer), KafkaUtil.getClientId(consumer));
     }
 
-    <K, V> ConsumerRecordContext startConsumerRecordSpan(ConsumerRecord<K, V> record, String consumerGroup, String clientId) {
+    <K, V> ConsumerRecordContext startConsumerRecordSpan(ConsumerRecord<K, V> consumerRecord, String consumerGroup, String clientId) {
         Context parentContext = Context.current();
-        KafkaProcessRequest request = KafkaProcessRequest.create(record, consumerGroup, clientId);
+        KafkaProcessRequest request = KafkaProcessRequest.create(consumerRecord, consumerGroup, clientId);
         if (!consumerProcessInstrumenter.shouldStart(parentContext, request)) {
             return null;
         }

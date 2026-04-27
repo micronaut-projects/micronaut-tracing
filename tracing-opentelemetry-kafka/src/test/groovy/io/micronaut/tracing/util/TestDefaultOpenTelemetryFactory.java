@@ -21,6 +21,8 @@ import io.micronaut.context.annotation.Replaces;
 import io.micronaut.tracing.opentelemetry.DefaultOpenTelemetryFactory;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.context.propagation.ContextPropagators;
+import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
@@ -45,7 +47,9 @@ public class TestDefaultOpenTelemetryFactory {
             .setTracerProvider(SdkTracerProvider.builder()
                 .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter))
                 .build()
-            ).build();
+            )
+            .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
+            .build();
     }
 
     @Singleton

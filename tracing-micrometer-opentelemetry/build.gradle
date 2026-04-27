@@ -1,0 +1,19 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api platform(libs.boms.micrometer.tracing)
+    api projects.micronautTracingMicrometer
+    api projects.micronautTracingOpentelemetry
+    api libs.micrometer.tracing.bridge.otel
+
+    testImplementation libs.opentelemetry.sdk
+    testImplementation libs.opentelemetry.sdk.testing
+}
+
+micronautBuild {
+    binaryCompatibility {
+        enabledAfter '8.0.0'
+    }
+}

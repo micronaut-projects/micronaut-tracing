@@ -16,6 +16,12 @@ include 'tracing-bom'
 include 'tracing-core'
 include 'tracing-zipkin-http-client'
 
+// Micrometer Tracing
+
+include 'tracing-micrometer'
+include 'tracing-micrometer-brave'
+include 'tracing-micrometer-opentelemetry'
+
 // OpenTelemetry
 
 include 'tracing-opentelemetry'

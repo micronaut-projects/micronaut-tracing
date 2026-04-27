@@ -19,8 +19,12 @@ import io.opentelemetry.context.propagation.TextMapSetter;
 
 import java.util.Map;
 
-enum RabbitMQHeadersSetter implements TextMapSetter<Map<String, Object>> {
-    INSTANCE;
+final class RabbitMQHeadersSetter implements TextMapSetter<Map<String, Object>> {
+
+    static final RabbitMQHeadersSetter INSTANCE = new RabbitMQHeadersSetter();
+
+    private RabbitMQHeadersSetter() {
+    }
 
     @Override
     public void set(Map<String, Object> carrier, String key, String value) {

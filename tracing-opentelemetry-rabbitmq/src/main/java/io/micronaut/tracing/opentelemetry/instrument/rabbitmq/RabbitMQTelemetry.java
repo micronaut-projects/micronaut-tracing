@@ -119,15 +119,9 @@ public final class RabbitMQTelemetry {
         setSpanAttributes(span, "process", envelope == null ? "" : envelope.getExchange(), envelope == null ? "" : envelope.getRoutingKey());
         try (Scope ignored = parentContext.with(span).makeCurrent()) {
             consumer.handleDelivery(consumerTag, envelope, properties, body);
-        } catch (Throwable e) {
+        } catch (IOException | RuntimeException e) {
             markFailed(span, e);
-            if (e instanceof IOException ioException) {
-                throw ioException;
-            }
-            if (e instanceof RuntimeException runtimeException) {
-                throw runtimeException;
-            }
-            throw new IOException("Failed to process RabbitMQ delivery", e);
+            throw e;
         } finally {
             span.end();
         }
@@ -150,7 +144,7 @@ public final class RabbitMQTelemetry {
             return Mono.from(publisher)
                 .doOnError(error -> markFailed(span, error))
                 .doFinally(signalType -> span.end());
-        } catch (Throwable e) {
+        } catch (RuntimeException e) {
             markFailed(span, e);
             span.end();
             throw e;

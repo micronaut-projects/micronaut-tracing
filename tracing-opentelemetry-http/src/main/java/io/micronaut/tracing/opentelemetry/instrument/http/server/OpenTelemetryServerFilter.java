@@ -20,7 +20,6 @@ import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.async.propagation.ReactorPropagation;
 import io.micronaut.core.propagation.PropagatedContext;
-import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
@@ -50,13 +49,14 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTel
 @Requires(beans = Tracer.class)
 public final class OpenTelemetryServerFilter implements HttpServerFilter {
 
-    private static final String APPLIED = OpenTelemetryServerFilter.class.getName() + "-applied";
-    private static final String CONTINUE = OpenTelemetryServerFilter.class.getName() + "-continue";
     static final String CONTEXT = OpenTelemetryServerFilter.class.getName() + "-context";
 
-    private final Instrumenter<HttpRequest<?>, Object> instrumenter;
+    private static final String APPLIED = OpenTelemetryServerFilter.class.getName() + "-applied";
+    private static final String CONTINUE = OpenTelemetryServerFilter.class.getName() + "-continue";
+
     @Nullable
     private final Predicate<String> pathExclusionTest;
+    private final Instrumenter<HttpRequest<?>, Object> instrumenter;
 
     /**
      * @param exclusionsConfig The {@link OpenTelemetryExclusionsConfiguration}

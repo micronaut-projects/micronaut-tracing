@@ -40,12 +40,6 @@ import jakarta.inject.Singleton;
 public class MicrometerBraveTracingFactory {
 
     /**
-     * Constructs Micrometer Brave tracing factory.
-     */
-    public MicrometerBraveTracingFactory() {
-    }
-
-    /**
      * Creates a Micrometer current trace context.
      *
      * @param currentTraceContext Brave current trace context

@@ -109,7 +109,7 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         1 * consumer.commitSync()
 
         when:
-        micronautConsumer.commitSync(null)
+        micronautConsumer.commitSync((Duration) null)
 
         then:
         1 * consumer.commitSync(null)
@@ -271,6 +271,12 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         1 * consumer.groupMetadata()
 
         when:
+        micronautConsumer.clientInstanceId(null)
+
+        then:
+        1 * consumer.clientInstanceId(null)
+
+        when:
         micronautConsumer.enforceRebalance()
 
         then:
@@ -397,6 +403,81 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         !hasNext
         Context.current().get(contextKey) == null
         1 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        def listIterator = tracedRecords.records(partition).listIterator()
+        def listRecord = listIterator.next()
+
+        then:
+        listRecord == firstRecord
+        Context.current().get(contextKey) == "active"
+
+        when:
+        int nextIndex = listIterator.nextIndex()
+        int previousIndex = listIterator.previousIndex()
+
+        then:
+        nextIndex == 1
+        previousIndex == 0
+        Context.current().get(contextKey) == "active"
+
+        when:
+        def previousRecord = listIterator.previous()
+
+        then:
+        previousRecord == firstRecord
+        Context.current().get(contextKey) == "active"
+        1 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        boolean hasPrevious = listIterator.hasPrevious()
+
+        then:
+        !hasPrevious
+        Context.current().get(contextKey) == null
+        1 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        tracedRecords.records(partition).listIterator().remove()
+
+        then:
+        thrown(UnsupportedOperationException)
+
+        when:
+        tracedRecords.records(partition).listIterator().set(firstRecord)
+
+        then:
+        thrown(UnsupportedOperationException)
+
+        when:
+        tracedRecords.records(partition).listIterator().add(firstRecord)
+
+        then:
+        thrown(UnsupportedOperationException)
+    }
+
+    void "poll returns original records when no records should be traced"() {
+        given:
+        def configuration = Mock(KafkaTelemetryConfiguration)
+        def kafkaTelemetry = new KafkaTelemetry(
+                Mock(OpenTelemetry),
+                Mock(Instrumenter),
+                Mock(Instrumenter),
+                new ArrayList<KafkaTelemetryProducerTracingFilter>(),
+                new ArrayList<KafkaTelemetryConsumerTracingFilter>(),
+                configuration,
+                true
+        )
+        def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
+        def partition = new TopicPartition("topic", 0)
+        def records = new ConsumerRecords<String, String>([(partition): [new ConsumerRecord<String, String>("topic", 0, 0, "key", "value")]])
+
+        configuration.getIncludedTopics() >> Collections.emptyList()
+        configuration.getExcludedTopics() >> ["topic"]
+        consumer.poll(Duration.ZERO) >> records
+
+        expect:
+        micronautConsumer.poll(Duration.ZERO).is(records)
     }
 
 }

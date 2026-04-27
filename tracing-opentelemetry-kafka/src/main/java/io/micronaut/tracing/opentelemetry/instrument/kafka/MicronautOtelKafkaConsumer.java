@@ -132,9 +132,9 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
         for (TopicPartition topicPartition : consumerRecords.partitions()) {
             List<ConsumerRecord<K, V>> partitionRecords = consumerRecords.records(topicPartition);
             recordsByPartition.put(topicPartition, partitionRecords);
-            for (ConsumerRecord<K, V> record : partitionRecords) {
-                if (!kafkaTelemetry.excludeTopic(record.topic()) && kafkaTelemetry.filterConsumerRecord(record, consumer)) {
-                    tracedRecords.add(record);
+            for (ConsumerRecord<K, V> consumerRecord : partitionRecords) {
+                if (!kafkaTelemetry.excludeTopic(consumerRecord.topic()) && kafkaTelemetry.filterConsumerRecord(consumerRecord, consumer)) {
+                    tracedRecords.add(consumerRecord);
                 }
             }
         }
@@ -344,14 +344,6 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
         runWithInactiveContext(consumer::wakeup);
     }
 
-    private void activateRecordContext(ConsumerRecord<K, V> record) {
-        KafkaTelemetry.ConsumerRecordContext consumerRecordContext = kafkaTelemetry.startConsumerRecordSpan(record, consumer);
-        if (consumerRecordContext == null) {
-            return;
-        }
-        activeRecordContext = new ActiveRecordContext(consumerRecordContext, consumerRecordContext.context().makeCurrent());
-    }
-
     private void closeActiveRecordContext() {
         if (activeRecordContext == null) {
             return;
@@ -376,6 +368,7 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
 
         private final Set<ConsumerRecord<K, V>> tracedRecords;
 
+        @SuppressWarnings("deprecation")
         private TracingConsumerRecords(Map<TopicPartition, List<ConsumerRecord<K, V>>> recordsByPartition, Set<ConsumerRecord<K, V>> tracedRecords) {
             super(recordsByPartition);
             this.tracedRecords = tracedRecords;
@@ -425,21 +418,12 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
             return new Iterator<>() {
                 @Override
                 public boolean hasNext() {
-                    boolean hasNext = iterator.hasNext();
-                    if (!hasNext) {
-                        closeActiveRecordContext();
-                    }
-                    return hasNext;
+                    return hasNextWithContext(iterator);
                 }
 
                 @Override
                 public ConsumerRecord<K, V> next() {
-                    closeActiveRecordContext();
-                    ConsumerRecord<K, V> record = iterator.next();
-                    if (tracedRecords.contains(record)) {
-                        activateRecordContext(record);
-                    }
-                    return record;
+                    return activateNextRecord(iterator.next());
                 }
             };
         }
@@ -449,21 +433,12 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
             return new ListIterator<>() {
                 @Override
                 public boolean hasNext() {
-                    boolean hasNext = iterator.hasNext();
-                    if (!hasNext) {
-                        closeActiveRecordContext();
-                    }
-                    return hasNext;
+                    return hasNextWithContext(iterator);
                 }
 
                 @Override
                 public ConsumerRecord<K, V> next() {
-                    closeActiveRecordContext();
-                    ConsumerRecord<K, V> record = iterator.next();
-                    if (tracedRecords.contains(record)) {
-                        activateRecordContext(record);
-                    }
-                    return record;
+                    return activateNextRecord(iterator.next());
                 }
 
                 @Override
@@ -477,12 +452,7 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
 
                 @Override
                 public ConsumerRecord<K, V> previous() {
-                    closeActiveRecordContext();
-                    ConsumerRecord<K, V> record = iterator.previous();
-                    if (tracedRecords.contains(record)) {
-                        activateRecordContext(record);
-                    }
-                    return record;
+                    return activateNextRecord(iterator.previous());
                 }
 
                 @Override
@@ -501,15 +471,34 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
                 }
 
                 @Override
-                public void set(ConsumerRecord<K, V> record) {
-                    iterator.set(record);
+                public void set(ConsumerRecord<K, V> consumerRecord) {
+                    iterator.set(consumerRecord);
                 }
 
                 @Override
-                public void add(ConsumerRecord<K, V> record) {
-                    iterator.add(record);
+                public void add(ConsumerRecord<K, V> consumerRecord) {
+                    iterator.add(consumerRecord);
                 }
             };
+        }
+
+        private ConsumerRecord<K, V> activateNextRecord(ConsumerRecord<K, V> consumerRecord) {
+            closeActiveRecordContext();
+            if (tracedRecords.contains(consumerRecord)) {
+                KafkaTelemetry.ConsumerRecordContext consumerRecordContext = kafkaTelemetry.startConsumerRecordSpan(consumerRecord, consumer);
+                if (consumerRecordContext != null) {
+                    activeRecordContext = new ActiveRecordContext(consumerRecordContext, consumerRecordContext.context().makeCurrent());
+                }
+            }
+            return consumerRecord;
+        }
+
+        private boolean hasNextWithContext(Iterator<ConsumerRecord<K, V>> iterator) {
+            boolean hasNext = iterator.hasNext();
+            if (!hasNext) {
+                closeActiveRecordContext();
+            }
+            return hasNext;
         }
     }
 

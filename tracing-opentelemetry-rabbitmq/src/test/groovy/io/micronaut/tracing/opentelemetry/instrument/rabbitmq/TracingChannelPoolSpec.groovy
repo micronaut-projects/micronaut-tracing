@@ -68,6 +68,20 @@ class TracingChannelPoolSpec extends Specification {
         1 * delegatePool.returnChannel(delegateChannel)
     }
 
+    void "channel wrapping is idempotent"() {
+        given:
+        def telemetry = new RabbitMQTelemetry(openTelemetry(InMemorySpanExporter.create()))
+        def delegateChannel = Mock(Channel)
+
+        when:
+        def wrapped = telemetry.wrap(delegateChannel)
+        def wrappedAgain = telemetry.wrap(wrapped)
+
+        then:
+        wrappedAgain.is(wrapped)
+        telemetry.unwrap(wrappedAgain).is(delegateChannel)
+    }
+
     void "channel pool instrumentation preserves existing tracing wrapper"() {
         given:
         def telemetry = new RabbitMQTelemetry(openTelemetry(InMemorySpanExporter.create()))

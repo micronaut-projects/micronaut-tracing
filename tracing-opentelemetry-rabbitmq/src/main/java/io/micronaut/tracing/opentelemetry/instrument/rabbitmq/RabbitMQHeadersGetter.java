@@ -22,11 +22,6 @@ import java.util.Set;
 
 final class RabbitMQHeadersGetter implements TextMapGetter<Map<String, Object>> {
 
-    static final RabbitMQHeadersGetter INSTANCE = new RabbitMQHeadersGetter();
-
-    private RabbitMQHeadersGetter() {
-    }
-
     @Override
     public Iterable<String> keys(Map<String, Object> carrier) {
         return carrier == null ? Set.of() : carrier.keySet();

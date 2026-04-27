@@ -21,11 +21,6 @@ import java.util.Map;
 
 final class RabbitMQHeadersSetter implements TextMapSetter<Map<String, Object>> {
 
-    static final RabbitMQHeadersSetter INSTANCE = new RabbitMQHeadersSetter();
-
-    private RabbitMQHeadersSetter() {
-    }
-
     @Override
     public void set(Map<String, Object> carrier, String key, String value) {
         if (carrier != null) {

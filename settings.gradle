@@ -24,6 +24,7 @@ include 'tracing-opentelemetry-grpc'
 include 'tracing-opentelemetry-http'
 include 'tracing-opentelemetry-jdbc'
 include 'tracing-opentelemetry-kafka'
+include 'tracing-opentelemetry-r2dbc'
 include 'tracing-opentelemetry-zipkin-exporter'
 
 // OpenTracing
@@ -47,5 +48,6 @@ micronautBuild {
     importMicronautCatalog("micronaut-serde")
     importMicronautCatalog("micronaut-kafka")
     importMicronautCatalog("micronaut-data")
+    importMicronautCatalog("micronaut-r2dbc")
     importMicronautCatalog("micronaut-sql")
 }

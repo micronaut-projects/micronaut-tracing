@@ -1,0 +1,26 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api platform(libs.boms.opentelemetry)
+    api platform(libs.boms.opentelemetry.alpha)
+    api platform(libs.boms.opentelemetry.instrumentation)
+    api platform(libs.boms.opentelemetry.instrumentation.alpha)
+    api projects.micronautTracingOpentelemetry
+    api libs.opentelemetry.api
+    api libs.opentelemetry.instrumentation.r2dbc
+
+    implementation mnR2dbc.micronaut.r2dbc.core
+
+    testImplementation mn.reactor
+    testImplementation libs.opentelemetry.sdk
+    testImplementation libs.opentelemetry.sdk.testing
+    testRuntimeOnly mnR2dbc.r2dbc.h2
+}
+
+micronautBuild {
+    binaryCompatibility {
+        enabled = false
+    }
+}

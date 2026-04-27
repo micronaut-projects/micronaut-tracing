@@ -2,6 +2,7 @@ package io.micronaut.tracing.opentelemetry.instrument.kafka
 
 import io.opentelemetry.api.OpenTelemetry
 import org.apache.kafka.clients.consumer.Consumer
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata
 import org.apache.kafka.clients.producer.Producer
 import spock.lang.Specification
 
@@ -77,10 +78,22 @@ class MicronautOtelKafkaProducerSpec extends Specification {
         1 * producer.partitionsFor(null)
 
         when:
-        micronautProducer.sendOffsetsToTransaction(null, "test")
+        micronautProducer.sendOffsetsToTransaction(null, (ConsumerGroupMetadata) null)
 
         then:
-        1 * producer.sendOffsetsToTransaction(null, "test")
+        1 * producer.sendOffsetsToTransaction(null, null)
+
+        when:
+        micronautProducer.registerMetricForSubscription(null)
+
+        then:
+        1 * producer.registerMetricForSubscription(null)
+
+        when:
+        micronautProducer.unregisterMetricFromSubscription(null)
+
+        then:
+        1 * producer.unregisterMetricFromSubscription(null)
 
     }
 

@@ -28,6 +28,7 @@ import io.micronaut.http.annotation.ServerFilter;
 import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
 import io.micronaut.web.router.RouteAttributes;
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
@@ -48,7 +49,7 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTel
 @Requires(beans = Tracer.class)
 final class OpenTelemetryServerRequestContextFilter implements Ordered {
 
-    private static final int ORDER_OFFSET = 100;
+    private static final int ORDER_STEP = 1;
 
     @RequestFilter
     void propagateRequestContext(HttpRequest<?> request, MutablePropagatedContext propagatedContext) {
@@ -60,7 +61,7 @@ final class OpenTelemetryServerRequestContextFilter implements Ordered {
 
     @Override
     public int getOrder() {
-        return TRACING.after() - ORDER_OFFSET;
+        return TRACING.after() - ORDER_STEP;
     }
 }
 
@@ -69,7 +70,7 @@ final class OpenTelemetryServerRequestContextFilter implements Ordered {
 @Requires(beans = Tracer.class)
 final class OpenTelemetryServerResponseContextFilter implements Ordered {
 
-    private static final int ORDER_OFFSET = 100;
+    private static final int ORDER_STEP = 1;
 
     @ResponseFilter
     void propagateResponseContext(HttpRequest<?> request, MutablePropagatedContext propagatedContext) {
@@ -81,7 +82,7 @@ final class OpenTelemetryServerResponseContextFilter implements Ordered {
 
     @Override
     public int getOrder() {
-        return TRACING.after() + ORDER_OFFSET;
+        return TRACING.after() + ORDER_STEP;
     }
 }
 
@@ -90,7 +91,7 @@ final class OpenTelemetryServerResponseContextFilter implements Ordered {
 @Requires(beans = Tracer.class)
 final class OpenTelemetryServerResponseFilter implements Ordered {
 
-    private static final String FINISHED = OpenTelemetryServerResponseFilter.class.getName() + "-finished";
+    static final String FINISHED = OpenTelemetryServerResponseFilter.class.getName() + "-finished";
 
     private final Instrumenter<HttpRequest<?>, Object> instrumenter;
 
@@ -123,8 +124,10 @@ final class OpenTelemetryServerResponseFilter implements Ordered {
                          HttpRequest<?> request,
                          @Nullable MutableHttpResponse<?> response,
                          @Nullable Throwable e) {
+        Span span = Span.fromContext(context)
+            .setStatus(StatusCode.ERROR);
         if (e != null) {
-            Span.fromContext(context).recordException(e);
+            span.recordException(e);
         }
         instrumenter.end(context, request, response, e);
     }

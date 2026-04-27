@@ -18,6 +18,7 @@ package io.micronaut.tracing.opentracing.instrument.http;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.propagation.ReactorPropagation;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpResponse;
@@ -91,17 +92,23 @@ public final class OpenTracingClientFilter extends AbstractOpenTracingFilter imp
             .plus(new OpenTracingPropagationContext(tracer, span))
             .propagate()) {
 
+            PropagatedContext propagatedContext = PropagatedContext.get();
             tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders()));
-            return Mono.from(chain.proceed(request))
-                .doOnNext(httpResponse -> setResponseTags(request, httpResponse, span))
-                .doOnError(throwable -> {
-                    if (throwable instanceof HttpClientResponseException e) {
-                        HttpResponse<?> response = e.getResponse();
-                        setResponseTags(request, response, span);
-                    }
-                    setErrorTags(span, throwable);
-                })
-                .doOnTerminate(span::finish);
+            return Mono.using(
+                propagatedContext::propagate,
+                ignored -> Mono.from(chain.proceed(request))
+                    .doOnNext(httpResponse -> setResponseTags(request, httpResponse, span))
+                    .doOnError(throwable -> {
+                        if (throwable instanceof HttpClientResponseException e) {
+                            HttpResponse<?> response = e.getResponse();
+                            setResponseTags(request, response, span);
+                        }
+                        setErrorTags(span, throwable);
+                    })
+                    .doOnTerminate(span::finish)
+                    .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext)),
+                PropagatedContext.Scope::close
+            );
 
         }
     }

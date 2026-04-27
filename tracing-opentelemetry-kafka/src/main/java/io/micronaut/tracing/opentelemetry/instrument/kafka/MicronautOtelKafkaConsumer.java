@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 original authors
+ * Copyright 2017-2026 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,12 +35,14 @@ import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.metrics.KafkaMetric;
 
 import java.time.Duration;
+import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.OptionalLong;
 import java.util.Set;
@@ -381,7 +383,45 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
 
         @Override
         public Iterator<ConsumerRecord<K, V>> iterator() {
-            Iterator<ConsumerRecord<K, V>> iterator = super.iterator();
+            return instrumentedIterator(super.iterator());
+        }
+
+        @Override
+        public List<ConsumerRecord<K, V>> records(TopicPartition partition) {
+            return instrumentedRecords(super.records(partition));
+        }
+
+        @Override
+        public Iterable<ConsumerRecord<K, V>> records(String topic) {
+            return () -> instrumentedIterator(super.records(topic).iterator());
+        }
+
+        private List<ConsumerRecord<K, V>> instrumentedRecords(List<ConsumerRecord<K, V>> records) {
+            return new AbstractList<>() {
+                @Override
+                public ConsumerRecord<K, V> get(int index) {
+                    return records.get(index);
+                }
+
+                @Override
+                public int size() {
+                    return records.size();
+                }
+
+                @Override
+                public Iterator<ConsumerRecord<K, V>> iterator() {
+                    return instrumentedIterator(records.iterator());
+                }
+
+                @Override
+                public ListIterator<ConsumerRecord<K, V>> listIterator(int index) {
+                    return instrumentedListIterator(records.listIterator(index));
+                }
+            };
+        }
+
+        private Iterator<ConsumerRecord<K, V>> instrumentedIterator(Iterator<ConsumerRecord<K, V>> iterator) {
+            closeActiveRecordContext();
             return new Iterator<>() {
                 @Override
                 public boolean hasNext() {
@@ -400,6 +440,74 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
                         activateRecordContext(record);
                     }
                     return record;
+                }
+            };
+        }
+
+        private ListIterator<ConsumerRecord<K, V>> instrumentedListIterator(ListIterator<ConsumerRecord<K, V>> iterator) {
+            closeActiveRecordContext();
+            return new ListIterator<>() {
+                @Override
+                public boolean hasNext() {
+                    boolean hasNext = iterator.hasNext();
+                    if (!hasNext) {
+                        closeActiveRecordContext();
+                    }
+                    return hasNext;
+                }
+
+                @Override
+                public ConsumerRecord<K, V> next() {
+                    closeActiveRecordContext();
+                    ConsumerRecord<K, V> record = iterator.next();
+                    if (tracedRecords.contains(record)) {
+                        activateRecordContext(record);
+                    }
+                    return record;
+                }
+
+                @Override
+                public boolean hasPrevious() {
+                    boolean hasPrevious = iterator.hasPrevious();
+                    if (!hasPrevious) {
+                        closeActiveRecordContext();
+                    }
+                    return hasPrevious;
+                }
+
+                @Override
+                public ConsumerRecord<K, V> previous() {
+                    closeActiveRecordContext();
+                    ConsumerRecord<K, V> record = iterator.previous();
+                    if (tracedRecords.contains(record)) {
+                        activateRecordContext(record);
+                    }
+                    return record;
+                }
+
+                @Override
+                public int nextIndex() {
+                    return iterator.nextIndex();
+                }
+
+                @Override
+                public int previousIndex() {
+                    return iterator.previousIndex();
+                }
+
+                @Override
+                public void remove() {
+                    iterator.remove();
+                }
+
+                @Override
+                public void set(ConsumerRecord<K, V> record) {
+                    iterator.set(record);
+                }
+
+                @Override
+                public void add(ConsumerRecord<K, V> record) {
+                    iterator.add(record);
                 }
             };
         }

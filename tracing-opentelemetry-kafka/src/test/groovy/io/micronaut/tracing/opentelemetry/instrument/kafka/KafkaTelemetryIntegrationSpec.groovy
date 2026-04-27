@@ -16,6 +16,8 @@ import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicReference
 
 @MicronautTest
 class KafkaTelemetryIntegrationSpec extends Specification implements TestPropertyProvider {
@@ -42,9 +44,9 @@ class KafkaTelemetryIntegrationSpec extends Specification implements TestPropert
         then:
         conditions.eventually {
             kafkaListener.text.contains(message)
-            kafkaListener.propagatedTraceId == testTracingService.traceId
-            kafkaListener.traceId == testTracingService.traceId
-            kafkaListener.traceparent
+            kafkaListener.propagatedTraceId.get() == testTracingService.traceId
+            kafkaListener.traceId.get() == testTracingService.traceId
+            kafkaListener.traceparent.get()
             exporter.finishedSpanItems.name.any { it.contains("publish") }
         }
     }
@@ -60,17 +62,19 @@ class KafkaTelemetryIntegrationSpec extends Specification implements TestPropert
     @KafkaListener(offsetReset = OffsetReset.EARLIEST)
     static class TestKafkaListener {
 
-        private final List<String> text = new ArrayList<>()
-        String traceId
-        String traceparent
-        String propagatedTraceId
+        private final List<String> text = new CopyOnWriteArrayList<>()
+        private final AtomicReference<String> traceId = new AtomicReference<>()
+        private final AtomicReference<String> traceparent = new AtomicReference<>()
+        private final AtomicReference<String> propagatedTraceId = new AtomicReference<>()
 
         @Topic("my-stream")
         void updateAnalytics(ConsumerRecord<?, String> record) {
             text.add(record.value())
-            traceId = Span.current().spanContext.traceId
-            traceparent = record.headers().lastHeader("traceparent") != null ? new String(record.headers().lastHeader("traceparent").value(), StandardCharsets.UTF_8) : null
-            propagatedTraceId = traceparent?.split('-')?.length > 1 ? traceparent.split('-')[1] : null
+            traceId.set(Span.current().spanContext.traceId)
+            String traceparentHeader = record.headers().lastHeader("traceparent") != null ? new String(record.headers().lastHeader("traceparent").value(), StandardCharsets.UTF_8) : null
+            traceparent.set(traceparentHeader)
+            String[] traceparentParts = traceparentHeader?.split('-')
+            propagatedTraceId.set(traceparentParts?.length == 4 ? traceparentParts[1] : null)
         }
     }
 

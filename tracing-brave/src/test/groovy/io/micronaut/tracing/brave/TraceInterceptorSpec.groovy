@@ -24,6 +24,8 @@ class TraceInterceptorSpec extends Specification {
     @AutoCleanup
     private ApplicationContext applicationContext
     private TracedService tracedService
+    private ClassLevelNewSpanService classLevelNewSpanService
+    private InterfaceLevelNewSpanService interfaceLevelNewSpanService
     private TestReporter reporter
 
     void 'test trace interceptor'() {
@@ -75,6 +77,26 @@ class TraceInterceptorSpec extends Specification {
         reporter.spans[0].tags()['method'] == 'noArgNewSpan'
     }
 
+    void 'test NewSpan declared on classes and interfaces'() {
+        when:
+        buildContext()
+        def classLevel = classLevelNewSpanService.classLevel()
+        def classLevelOverride = classLevelNewSpanService.classLevelOverride()
+        def interfaceLevel = interfaceLevelNewSpanService.interfaceLevel()
+        def interfaceLevelOverride = interfaceLevelNewSpanService.interfaceLevelOverride()
+
+        then:
+        classLevel == 'class-level'
+        classLevelOverride == 'class-level-override'
+        interfaceLevel == 'interface-level'
+        interfaceLevelOverride == 'interface-level-override'
+        reporter.spans.size() == 4
+        reporter.spans.collect { it.name() }.contains('classlevelnewspanservice.classlevel')
+        reporter.spans.collect { it.name() }.contains('class-level-override')
+        reporter.spans.collect { it.name() }.contains('interfacelevelnewspanserviceimpl.interfacelevel')
+        reporter.spans.collect { it.name() }.contains('interface-level-override')
+    }
+
     private void buildContext() {
         applicationContext = ApplicationContext
                 .builder('tracing.zipkin.enabled': true,
@@ -82,6 +104,8 @@ class TraceInterceptorSpec extends Specification {
                 .singletons(new TestReporter())
                 .start()
         tracedService = applicationContext.getBean(TracedService)
+        classLevelNewSpanService = applicationContext.getBean(ClassLevelNewSpanService)
+        interfaceLevelNewSpanService = applicationContext.getBean(InterfaceLevelNewSpanService)
         reporter = applicationContext.getBean(TestReporter)
     }
 
@@ -119,6 +143,43 @@ class TraceInterceptorSpec extends Specification {
                 spanCustomizer.tag('foo', 'bar')
                 return v
             })
+        }
+    }
+
+    @Singleton
+    @NewSpan
+    static class ClassLevelNewSpanService {
+
+        String classLevel() {
+            return 'class-level'
+        }
+
+        @NewSpan('class-level-override')
+        String classLevelOverride() {
+            return 'class-level-override'
+        }
+    }
+
+    @NewSpan
+    static interface InterfaceLevelNewSpanService {
+
+        String interfaceLevel()
+
+        String interfaceLevelOverride()
+    }
+
+    @Singleton
+    static class InterfaceLevelNewSpanServiceImpl implements InterfaceLevelNewSpanService {
+
+        @Override
+        String interfaceLevel() {
+            return 'interface-level'
+        }
+
+        @Override
+        @NewSpan('interface-level-override')
+        String interfaceLevelOverride() {
+            return 'interface-level-override'
         }
     }
 }

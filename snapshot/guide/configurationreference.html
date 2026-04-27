@@ -1039,6 +1039,12 @@
 <td class="tableblock halign-left valign-top"><p class="tableblock">is jdbc telemetry enabled.</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.jdbc.statement-sanitization-enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enables SQL query sanitization.</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
 </tbody>
 </table>
 <div style="page-break-after: always;"></div>
@@ -1073,7 +1079,7 @@
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.jdbc.statement-sanitization-enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.jdbc.query-sanitization-enabled</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
@@ -1202,14 +1208,14 @@
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.r2dbc.statement-sanitization-enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.r2dbc.query-sanitization-enabled</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.r2dbc.span-name-extractor</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.function.Function</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.r2dbc.span-name-extractor-customizer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.function.UnaryOperator</p></td>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>

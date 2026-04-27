@@ -1,5 +1,9 @@
 package io.micronaut.tracing.jaeger
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.LoggerContext
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.AppenderBase
 import io.jaegertracing.internal.JaegerSpan
 import io.jaegertracing.internal.JaegerTracer
 import io.jaegertracing.internal.metrics.InMemoryMetricsFactory
@@ -21,6 +25,7 @@ import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.opentracing.Tracer
 import jakarta.inject.Inject
+import org.slf4j.LoggerFactory
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -31,6 +36,7 @@ import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 import java.time.Duration
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit
 
 import static io.micronaut.http.HttpStatus.TOO_MANY_REQUESTS
@@ -721,6 +727,39 @@ class HttpTracingSpec extends Specification {
         response.body.get() == "1"
     }
 
+    void 'test netty client logs use current reactive request trace id'() {
+        given:
+        TracedController.reactiveClientTraceIds.clear()
+        ClientLogAppender.events.clear()
+        def logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger('io.micronaut.http.client.netty.DefaultHttpClient')
+        def previousLevel = logger.level
+        def appender = new ClientLogAppender()
+        appender.context = (LoggerContext) LoggerFactory.getILoggerFactory()
+        appender.start()
+        logger.addAppender(appender)
+        logger.level = Level.DEBUG
+
+        when:
+        new URL(embeddedServer.URL, '/traced/reactiveClient/John').text
+        new URL(embeddedServer.URL, '/traced/reactiveClient/Jane').text
+
+        then:
+        conditions.eventually {
+            TracedController.reactiveClientTraceIds.size() == 2
+            clientRequestEvents.size() >= 2
+        }
+        TracedController.reactiveClientTraceIds[0] != TracedController.reactiveClientTraceIds[1]
+        clientRequestTraceId('/traced/hello/John') == TracedController.reactiveClientTraceIds[0]
+        clientRequestTraceId('/traced/hello/Jane') == TracedController.reactiveClientTraceIds[1]
+
+        cleanup:
+        logger?.level = previousLevel
+        if (logger && appender) {
+            logger.detachAppender(appender)
+            appender.stop()
+        }
+    }
+
     private long getJaegerMetric(String name, Map tags = [:]) {
         context.getBean(InMemoryMetricsFactory).getCounter('jaeger_tracer_' + name, tags)
     }
@@ -741,6 +780,8 @@ class HttpTracingSpec extends Specification {
 
         @Inject
         TracedClient tracedClient
+
+        static final List<String> reactiveClientTraceIds = new CopyOnWriteArrayList<>()
 
         boolean failed
 
@@ -867,6 +908,13 @@ class HttpTracingSpec extends Specification {
             Mono.just(10)
         }
 
+        @Get('/reactiveClient/{name}')
+        @SingleResult
+        Publisher<String> reactiveClient(String name) {
+            reactiveClientTraceIds.add(spanCustomizer.activeSpan()?.context()?.toTraceId())
+            tracedClient.continuedRx(name)
+        }
+
         @Get('/quota-error')
         @SingleResult
         Publisher<String> quotaError() {
@@ -929,5 +977,25 @@ class HttpTracingSpec extends Specification {
         @Get('/nestedReactive2/{name}')
         @SingleResult
         Publisher<String> nestedReactive2(String name)
+    }
+
+    private List<ILoggingEvent> getClientRequestEvents() {
+        ClientLogAppender.events.findAll {
+            it.formattedMessage.contains('Sending HTTP GET') && it.formattedMessage.contains('/traced/hello/')
+        }
+    }
+
+    private String clientRequestTraceId(String path) {
+        clientRequestEvents.find { it.formattedMessage.contains(path) }?.mdcPropertyMap?.get('traceId')
+    }
+
+    static class ClientLogAppender extends AppenderBase<ILoggingEvent> {
+
+        static final List<ILoggingEvent> events = new CopyOnWriteArrayList<>()
+
+        @Override
+        protected void append(ILoggingEvent eventObject) {
+            events.add(eventObject)
+        }
     }
 }

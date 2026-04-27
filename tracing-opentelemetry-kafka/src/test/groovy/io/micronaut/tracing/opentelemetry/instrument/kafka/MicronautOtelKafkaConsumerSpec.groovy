@@ -1,12 +1,20 @@
 package io.micronaut.tracing.opentelemetry.instrument.kafka
 
 import io.opentelemetry.api.OpenTelemetry
+import io.opentelemetry.context.Context
+import io.opentelemetry.context.ContextKey
+import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter
 import org.apache.kafka.clients.consumer.CloseOptions
 import org.apache.kafka.clients.consumer.Consumer
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener
+import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.SubscriptionPattern
-import java.time.Duration
+import org.apache.kafka.common.TopicPartition
 import spock.lang.Specification
+
+import java.time.Duration
 
 class MicronautOtelKafkaConsumerSpec extends Specification {
 
@@ -321,6 +329,74 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
 
         then:
         1 * consumer.unsubscribe()
+    }
+
+    void "traced records activate context from partition and topic iterators and close stale context"() {
+        given:
+        def processInstrumenter = Mock(Instrumenter)
+        def configuration = Mock(KafkaTelemetryConfiguration)
+        def kafkaTelemetry = new KafkaTelemetry(
+                Mock(OpenTelemetry),
+                Mock(Instrumenter),
+                processInstrumenter,
+                new ArrayList<KafkaTelemetryProducerTracingFilter>(),
+                new ArrayList<KafkaTelemetryConsumerTracingFilter>(),
+                configuration,
+                true
+        )
+        def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
+        def partition = new TopicPartition("topic", 0)
+        def firstRecord = new ConsumerRecord<String, String>("topic", 0, 0, "key", "first")
+        def secondRecord = new ConsumerRecord<String, String>("topic", 0, 1, "key", "second")
+        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]])
+        ContextKey<String> contextKey = ContextKey.named("test-kafka-context")
+
+        configuration.getIncludedTopics() >> Collections.emptyList()
+        configuration.getExcludedTopics() >> Collections.emptyList()
+        consumer.poll(Duration.ZERO) >> records
+        consumer.groupMetadata() >> new ConsumerGroupMetadata("group")
+        consumer.metrics() >> Collections.emptyMap()
+        processInstrumenter.shouldStart(_, _) >> true
+        processInstrumenter.start(_, _) >> Context.current().with(contextKey, "active")
+
+        when:
+        def tracedRecords = micronautConsumer.poll(Duration.ZERO)
+        def partitionIterator = tracedRecords.records(partition).iterator()
+        def partitionRecord = partitionIterator.next()
+
+        then:
+        partitionRecord == firstRecord
+        Context.current().get(contextKey) == "active"
+
+        when:
+        tracedRecords.iterator()
+
+        then:
+        Context.current().get(contextKey) == null
+        1 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        def topicIterator = tracedRecords.records("topic").iterator()
+        def topicRecord = topicIterator.next()
+
+        then:
+        topicRecord == firstRecord
+        Context.current().get(contextKey) == "active"
+
+        when:
+        topicIterator.next()
+
+        then:
+        Context.current().get(contextKey) == "active"
+        1 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        boolean hasNext = topicIterator.hasNext()
+
+        then:
+        !hasNext
+        Context.current().get(contextKey) == null
+        1 * processInstrumenter.end(_, _, null, null)
     }
 
 }

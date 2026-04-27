@@ -39,6 +39,8 @@ public record OpenTracingPropagationContext(Tracer tracer,
 
     @Override
     public void restoreThreadContext(Scope oldScope) {
-        oldScope.close();
+        if (tracer.activeSpan() == span) {
+            oldScope.close();
+        }
     }
 }

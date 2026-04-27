@@ -343,6 +343,18 @@
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.http.max-initial-line-length</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.http.max-chunk-size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>tracing.zipkin.http.proxy-type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.net.Proxy$Type</p></td>
 <td class="tableblock halign-left valign-top"></td>
@@ -1143,10 +1155,73 @@
 <div style="page-break-after: always;"></div>
 </div>
 <div class="sect2">
+<h3 id="_micronaut_tracing_opentelemetry_r2dbc_config_properties">Micronaut Tracing Opentelemetry R2dbc Config Properties</h3>
+<a id="io.micronaut.tracing.opentelemetry.instrument.r2dbc.R2dbcTelemetryConfiguration" href="#io.micronaut.tracing.opentelemetry.instrument.r2dbc.R2dbcTelemetryConfiguration">&#128279;</a>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 23. Configuration Properties for <a href="../api/io/micronaut/tracing/opentelemetry/instrument/r2dbc/R2dbcTelemetryConfiguration.html">R2dbcTelemetryConfiguration</a></caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.r2dbc.enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether R2DBC telemetry is enabled.</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div style="page-break-after: always;"></div>
+<a id="io.opentelemetry.instrumentation.r2dbc.v1_0.R2dbcTelemetryBuilder" href="#io.opentelemetry.instrumentation.r2dbc.v1_0.R2dbcTelemetryBuilder">&#128279;</a>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 24. Configuration Properties for <a href="../api/io/micronaut/io/opentelemetry/instrumentation/r2dbc/v1_0/R2dbcTelemetryBuilder.html">R2dbcTelemetryBuilder</a></caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.r2dbc.statement-sanitization-enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.instrumentation.r2dbc.span-name-extractor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.function.Function</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect2">
 <h3 id="_micronaut_tracing_opentelemetry_zipkin_exporter_config_properties">Micronaut Tracing Opentelemetry Zipkin Exporter Config Properties</h3>
 <a id="io.micronaut.tracing.opentelemetry.exporter.zipkin.OtelHttpClientSenderConfiguration" href="#io.micronaut.tracing.opentelemetry.exporter.zipkin.OtelHttpClientSenderConfiguration">&#128279;</a>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 23. Configuration Properties for <a href="../api/io/micronaut/tracing/opentelemetry/exporter/zipkin/OtelHttpClientSenderConfiguration.html">OtelHttpClientSenderConfiguration</a></caption>
+<caption class="title">Table 25. Configuration Properties for <a href="../api/io/micronaut/tracing/opentelemetry/exporter/zipkin/OtelHttpClientSenderConfiguration.html">OtelHttpClientSenderConfiguration</a></caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -1295,6 +1370,18 @@
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.exporter.zipkin.max-initial-line-length</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.exporter.zipkin.max-chunk-size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>otel.exporter.zipkin.proxy-type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.net.Proxy$Type</p></td>
 <td class="tableblock halign-left valign-top"></td>
@@ -1365,7 +1452,7 @@
 <div style="page-break-after: always;"></div>
 <a id="io.micronaut.tracing.zipkin.http.client.HttpClientSender$Builder" href="#io.micronaut.tracing.zipkin.http.client.HttpClientSender$Builder">&#128279;</a>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 24. Configuration Properties for <a href="../api/io/micronaut/tracing/zipkin/http/client/HttpClientSender.Builder.html">HttpClientSender$Builder</a></caption>
+<caption class="title">Table 26. Configuration Properties for <a href="../api/io/micronaut/tracing/zipkin/http/client/HttpClientSender.Builder.html">HttpClientSender$Builder</a></caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">

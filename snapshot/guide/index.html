@@ -117,13 +117,15 @@
         
         <div class="toc-item" style="margin-left:10px" id="toc-item-jdbc"><a href="#jdbc"><strong>6.7</strong><span>JDBC</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-kafka"><a href="#kafka"><strong>6.8</strong><span>Kafka</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-r2dbc"><a href="#r2dbc"><strong>6.8</strong><span>R2DBC</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>6.9</strong><span>AWS SDK Instrumentation</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-kafka"><a href="#kafka"><strong>6.9</strong><span>Kafka</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>6.10</strong><span>AWS Resource Detectors</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>6.10</strong><span>AWS SDK Instrumentation</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-opentelemetryGuides"><a href="#opentelemetryGuides"><strong>6.11</strong><span>OpenTelemetry Guides</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>6.11</strong><span>AWS Resource Detectors</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-opentelemetryGuides"><a href="#opentelemetryGuides"><strong>6.12</strong><span>OpenTelemetry Guides</span></a></div>
         
         <div class="toc-item" style="margin-left:0px" id="toc-item-tracingGuides"><a href="#tracingGuides"><strong>7</strong><span>Micronaut Tracing Guides</span></a></div>
         
@@ -1921,7 +1923,38 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
 <p>The dependency instruments the <code>javax.sql.DataSource</code> beans for intercepting the queries to the database.</p>
 </div>
 
-<h2 id="kafka"><a class="anchor" href="#kafka"></a>6.8 Kafka</h2>
+<h2 id="r2dbc"><a class="anchor" href="#r2dbc"></a>6.8 R2DBC</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/r2dbc.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To enable creating spans for every R2DBC query, add the following dependency:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-r2dbc")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-tracing-opentelemetry-r2dbc&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</p>
+</div>
+<div class="paragraph">
+<p>The dependency instruments <code>io.r2dbc.spi.ConnectionFactory</code> beans to intercept database queries.</p>
+</div>
+
+<h2 id="kafka"><a class="anchor" href="#kafka"></a>6.9 Kafka</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/kafka.adoc"'>
@@ -2111,7 +2144,7 @@ You can&#8217;t use <code>included-topics</code> and <code>excluded-topics</code
 </div>
 </div>
 
-<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>6.9 AWS SDK Instrumentation</h2>
+<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>6.10 AWS SDK Instrumentation</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/awsSdkInstrumentation.adoc"'>
@@ -2165,7 +2198,7 @@ You can&#8217;t use <code>included-topics</code> and <code>excluded-topics</code
 via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.</p>
 </div>
 
-<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>6.10 AWS Resource Detectors</h2>
+<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>6.11 AWS Resource Detectors</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/awsResourceDetectors.adoc"'>
@@ -2223,7 +2256,7 @@ public class AwsResourceProvider implements ResourceProvider {
 </div>
 </div>
 
-<h2 id="opentelemetryGuides"><a class="anchor" href="#opentelemetryGuides"></a>6.11 OpenTelemetry Guides</h2>
+<h2 id="opentelemetryGuides"><a class="anchor" href="#opentelemetryGuides"></a>6.12 OpenTelemetry Guides</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/opentelemetryGuides.adoc"'>

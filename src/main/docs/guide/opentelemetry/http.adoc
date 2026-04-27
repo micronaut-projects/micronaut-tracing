@@ -1,6 +1,17 @@
 To enable creating span objects on the every HTTP server request, client request, server response and client response you have to add next depedency:
 dependency:micronaut-tracing-opentelemetry-http[scope="implementation", groupId="io.micronaut.tracing"]
 
+== Ordering custom server filters
+
+OpenTelemetry HTTP server tracing runs in the Micronaut `ServerFilterPhase.TRACING` phase.
+If a custom server filter reads from or writes to the current OpenTelemetry span, order the filter after the tracing phase so the server span is already current.
+
+`@Order` values must be compile-time constants, so use `Ordered` when you want to refer to `ServerFilterPhase.TRACING.after()` directly:
+
+[source, java]
+----
+include::tracing-opentelemetry-http/src/test/java/io/micronaut/tracing/opentelemetry/instrument/http/OrderedTracingServerFilter.java[]
+----
 
 == Filtering HTTP spans
 

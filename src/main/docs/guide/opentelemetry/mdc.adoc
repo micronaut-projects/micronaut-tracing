@@ -1,0 +1,34 @@
+OpenTelemetry provides Logback MDC instrumentation that can add the active span context to log events.
+This is useful when your log aggregation system reads application logs separately from traces and you want to correlate a log line with the trace and span that were active when the log event was created.
+
+Add the OpenTelemetry Logback MDC dependency to your application:
+
+dependency:opentelemetry-logback-mdc-1.0[scope="runtimeOnly", groupId="io.opentelemetry.instrumentation"]
+
+Then wrap your Logback appender with the OpenTelemetry MDC appender and include the MDC keys in your log pattern:
+
+.Configuring Logback MDC trace correlation
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} trace_id=%X{trace_id} span_id=%X{span_id} trace_flags=%X{trace_flags} %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.mdc.v1_0.OpenTelemetryAppender">
+        <appender-ref ref="CONSOLE"/>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="OTEL"/>
+    </root>
+</configuration>
+----
+
+The default MDC keys are `trace_id`, `span_id`, and `trace_flags`.
+These values are only added when a valid span is current, so logs written outside traced execution may not contain trace correlation fields.
+
+See the https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md[OpenTelemetry logger MDC documentation] and the https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation/logback/logback-mdc-1.0/library[OpenTelemetry Logback MDC library documentation] for additional options, including custom MDC key names and baggage support.

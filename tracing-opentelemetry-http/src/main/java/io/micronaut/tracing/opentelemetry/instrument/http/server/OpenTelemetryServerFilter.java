@@ -36,6 +36,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.function.Predicate;
 
+import static io.micronaut.http.filter.ServerFilterPhase.TRACING;
 import static io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter.SERVER_PATH;
 
 /**
@@ -70,7 +71,7 @@ public final class OpenTelemetryServerFilter implements HttpServerFilter {
 
     @Override
     public int getOrder() {
-        return -1000;
+        return TRACING.order();
     }
 
     @Override

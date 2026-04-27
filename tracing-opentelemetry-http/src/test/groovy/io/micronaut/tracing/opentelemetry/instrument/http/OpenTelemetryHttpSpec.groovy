@@ -5,6 +5,7 @@ import io.micronaut.context.ApplicationContext
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.core.annotation.Nullable
 import io.micronaut.core.async.annotation.SingleResult
+import io.micronaut.core.order.Ordered
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
@@ -53,6 +54,8 @@ import spock.util.concurrent.PollingConditions
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import io.micronaut.scheduling.TaskExecutors
+
+import static io.micronaut.http.filter.ServerFilterPhase.TRACING
 
 @Slf4j("LOG")
 class OpenTelemetryHttpSpec extends Specification {
@@ -531,7 +534,7 @@ class OpenTelemetryHttpSpec extends Specification {
     }
 
     @ServerFilter('/filters/**')
-    static class FilterSpanServerFilter {
+    static class FilterSpanServerFilter implements Ordered {
         @RequestFilter
         void traceRequest(HttpRequest<?> request) {
             request.setAttribute('request-filter-recording', Boolean.toString(Span.current().isRecording()))
@@ -543,6 +546,11 @@ class OpenTelemetryHttpSpec extends Specification {
             response.headers.add('X-Request-Filter-Recording', request.getAttribute('request-filter-recording', String).orElse('missing'))
             response.headers.add('X-Response-Filter-Recording', Boolean.toString(Span.current().isRecording()))
             Span.current().setAttribute('response-filter', 'recorded')
+        }
+
+        @Override
+        int getOrder() {
+            TRACING.after()
         }
     }
 

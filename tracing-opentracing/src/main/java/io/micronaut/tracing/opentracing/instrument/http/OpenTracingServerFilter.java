@@ -41,6 +41,8 @@ import static io.micronaut.tracing.opentracing.instrument.http.AbstractOpenTraci
 import static io.micronaut.tracing.opentracing.instrument.http.TraceRequestAttributes.CURRENT_SPAN;
 import static io.micronaut.tracing.opentracing.instrument.http.TraceRequestAttributes.CURRENT_SPAN_CONTEXT;
 import static io.opentracing.propagation.Format.Builtin.HTTP_HEADERS;
+import static io.opentracing.tag.Tags.SPAN_KIND;
+import static io.opentracing.tag.Tags.SPAN_KIND_SERVER;
 
 /**
  * An HTTP server instrumentation filter that uses Open Tracing.
@@ -81,6 +83,7 @@ public final class OpenTracingServerFilter extends AbstractOpenTracingFilter imp
 
         Span span = spanBuilder.start();
         span.setTag(TAG_HTTP_SERVER, true);
+        span.setTag(SPAN_KIND.getKey(), SPAN_KIND_SERVER);
         request.setAttribute(CURRENT_SPAN_CONTEXT, span.context());
         request.setAttribute(CURRENT_SPAN, span);
 

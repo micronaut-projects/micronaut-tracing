@@ -32,9 +32,15 @@ import io.opentelemetry.sdk.trace.samplers.Sampler;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Registers an OpenTelemetry bean.
@@ -52,6 +58,13 @@ public class DefaultOpenTelemetryFactory {
     private static final String DEFAULT_LOGS_EXPORTER = "otel.logs.exporter";
     private static final String REGISTER_GLOBAL = "otel.register.global";
     private static final String NONE = "none";
+    private static final List<String> MAP_PROPERTY_KEYS = Collections.unmodifiableList(Arrays.asList(
+        RESOURCE_ATTRIBUTES_KEY,
+        "otel.exporter.otlp.headers",
+        "otel.exporter.otlp.traces.headers",
+        "otel.exporter.otlp.metrics.headers",
+        "otel.exporter.otlp.logs.headers"
+    ));
 
     /**
      * The OpenTelemetry bean with default values.
@@ -79,9 +92,7 @@ public class DefaultOpenTelemetryFactory {
             return existingGlobalOpenTelemetry;
         }
 
-        Map<String, String> otel = resolveOtelProperties(environment);
-
-        applicationConfiguration.getName().ifPresent(name -> otel.putIfAbsent(SERVICE_NAME_KEY, name));
+        Map<String, String> otel = resolveOpenTelemetryProperties(applicationConfiguration, resolveOtelProperties(environment));
         otel.putIfAbsent(DEFAULT_TRACES_EXPORTER, NONE);
         otel.putIfAbsent(DEFAULT_METRICS_EXPORTER, NONE);
         otel.putIfAbsent(DEFAULT_LOGS_EXPORTER, NONE);
@@ -121,6 +132,98 @@ public class DefaultOpenTelemetryFactory {
         return sdk.build().getOpenTelemetrySdk();
     }
 
+    static Map<String, String> resolveOpenTelemetryProperties(ApplicationConfiguration applicationConfiguration,
+                                                              Map<String, String> otelConfig) {
+        Map<String, String> otel = otelConfig.entrySet().stream().collect(Collectors.toMap(
+            e -> e.getKey().startsWith("otel.") ? e.getKey() : "otel." + e.getKey(),
+            Map.Entry::getValue,
+            (left, right) -> right,
+            LinkedHashMap::new
+        ));
+
+        collapseMapProperties(otel);
+
+        if (!hasServiceName(otel)) {
+            otel.put(SERVICE_NAME_KEY, applicationConfiguration.getName().orElse(""));
+        }
+
+        return otel;
+    }
+
+    private static void collapseMapProperties(Map<String, String> otel) {
+        for (String mapPropertyKey : MAP_PROPERTY_KEYS) {
+            Map<String, String> nestedValues = removeNestedValues(otel, mapPropertyKey);
+            if (!nestedValues.isEmpty()) {
+                String nestedConfig = toMapProperty(nestedValues);
+                otel.compute(
+                    mapPropertyKey,
+                    (key, value) -> {
+                        String normalizedValue = normalizeMapPropertyValue(value);
+                        return isBlank(normalizedValue) ? nestedConfig : normalizedValue + "," + nestedConfig;
+                    }
+                );
+            }
+        }
+    }
+
+    private static String normalizeMapPropertyValue(@Nullable String value) {
+        if (value == null) {
+            return null;
+        }
+        String normalized = value.trim();
+        while (!normalized.isEmpty() && normalized.charAt(normalized.length() - 1) == ',') {
+            normalized = normalized.substring(0, normalized.length() - 1).trim();
+        }
+        return normalized;
+    }
+
+    private static Map<String, String> removeNestedValues(Map<String, String> otel, String mapPropertyKey) {
+        String prefix = mapPropertyKey + ".";
+        Map<String, String> nestedValues = new LinkedHashMap<>();
+        otel.entrySet().removeIf(entry -> {
+            if (entry.getKey().startsWith(prefix)) {
+                nestedValues.put(entry.getKey().substring(prefix.length()), entry.getValue());
+                return true;
+            }
+            return false;
+        });
+        return nestedValues;
+    }
+
+    private static String toMapProperty(Map<String, String> nestedValues) {
+        return nestedValues.entrySet().stream()
+            .map(entry -> entry.getKey() + "=" + entry.getValue())
+            .collect(Collectors.joining(","));
+    }
+
+    private static boolean hasServiceName(Map<String, String> otel) {
+        String serviceName = otel.get(SERVICE_NAME_KEY);
+        if (!isBlank(serviceName)) {
+            return true;
+        }
+        String resourceAttributes = otel.get(RESOURCE_ATTRIBUTES_KEY);
+        return resourceAttributes != null && Stream.of(resourceAttributes.split(","))
+            .map(String::trim)
+            .anyMatch(DefaultOpenTelemetryFactory::hasNonBlankServiceNameAttribute);
+    }
+
+    private static boolean hasNonBlankServiceNameAttribute(String entry) {
+        int separatorIndex = entry.indexOf('=');
+        if (separatorIndex < 0) {
+            return false;
+        }
+        String key = entry.substring(0, separatorIndex).trim();
+        if (!"service.name".equals(key)) {
+            return false;
+        }
+        String value = entry.substring(separatorIndex + 1).trim();
+        return !isBlank(value);
+    }
+
+    private static boolean isBlank(@Nullable String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
     @Nullable
     private OpenTelemetry existingGlobalOpenTelemetry() {
         if (!GlobalOpenTelemetry.isSet()) {
@@ -131,12 +234,13 @@ public class DefaultOpenTelemetryFactory {
         return globalOpenTelemetry.getTracerProvider() == TracerProvider.noop() ? null : globalOpenTelemetry;
     }
 
-    private Map<String, String> resolveOtelProperties(Environment environment) {
+    private static Map<String, String> resolveOtelProperties(Environment environment) {
         Map<String, String> otel = environment.getProperties("otel", StringConvention.RAW).entrySet().stream().collect(
-            java.util.stream.Collectors.toMap(
+            Collectors.toMap(
                 entry -> "otel." + normalizeOtelProperty(entry.getKey()),
                 entry -> String.valueOf(entry.getValue()),
-                (existing, replacement) -> existing
+                (existing, replacement) -> existing,
+                LinkedHashMap::new
             )
         );
         environment.getProperty(RESOURCE_ATTRIBUTES_KEY, String.class).ifPresent(attributes ->
@@ -145,7 +249,7 @@ public class DefaultOpenTelemetryFactory {
         return otel;
     }
 
-    private String normalizeOtelProperty(String property) {
+    private static String normalizeOtelProperty(String property) {
         return property.toLowerCase(Locale.ENGLISH).replace('_', '.');
     }
 

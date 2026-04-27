@@ -78,8 +78,8 @@ public final class RabbitMQTelemetry {
     }
 
     Channel wrap(Channel channel) {
-        if (channel instanceof TracingChannel tracingChannel) {
-            return tracingChannel.getDelegate();
+        if (channel instanceof TracingChannel) {
+            return channel;
         }
         return (Channel) Proxy.newProxyInstance(
             Channel.class.getClassLoader(),
@@ -111,7 +111,7 @@ public final class RabbitMQTelemetry {
     }
 
     void handleDelivery(Consumer consumer, String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-        Context parentContext = propagator.extract(Context.root(), properties == null ? null : properties.getHeaders(), RabbitMQHeadersGetter.INSTANCE);
+        Context parentContext = propagator.extract(Context.root(), properties == null ? null : properties.getHeaders(), new RabbitMQHeadersGetter());
         Span span = tracer.spanBuilder("rabbitmq process")
             .setParent(parentContext)
             .setSpanKind(SpanKind.CONSUMER)
@@ -155,7 +155,7 @@ public final class RabbitMQTelemetry {
         Map<String, Object> headers = publishState.getProperties().getHeaders() == null
             ? new HashMap<>()
             : new HashMap<>(publishState.getProperties().getHeaders());
-        propagator.inject(context, headers, RabbitMQHeadersSetter.INSTANCE);
+        propagator.inject(context, headers, new RabbitMQHeadersSetter());
         AMQP.BasicProperties properties = publishState.getProperties().builder()
             .headers(headers)
             .build();

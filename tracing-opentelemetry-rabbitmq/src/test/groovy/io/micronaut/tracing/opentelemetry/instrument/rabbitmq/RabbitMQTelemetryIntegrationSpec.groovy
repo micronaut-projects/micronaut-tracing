@@ -15,6 +15,8 @@ import jakarta.inject.Inject
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
+import java.nio.charset.StandardCharsets
+
 @MicronautTest
 @Property(name = "spec.name", value = "RabbitMQTelemetryIntegrationSpec")
 class RabbitMQTelemetryIntegrationSpec extends Specification implements TestPropertyProvider {
@@ -60,7 +62,7 @@ class RabbitMQTelemetryIntegrationSpec extends Specification implements TestProp
 
         @Queue("product")
         void receive(byte[] data) {
-            messages.add(new String(data))
+            messages.add(new String(data, StandardCharsets.UTF_8))
         }
     }
 }

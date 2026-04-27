@@ -46,12 +46,6 @@ public class MicrometerTracingConfigurationProperties implements Toggleable {
     private boolean enabled = DEFAULT_ENABLED;
     private Baggage baggage = new Baggage();
 
-    /**
-     * Constructs Micrometer Tracing configuration properties.
-     */
-    public MicrometerTracingConfigurationProperties() {
-    }
-
     @Override
     public boolean isEnabled() {
         return enabled;
@@ -92,12 +86,6 @@ public class MicrometerTracingConfigurationProperties implements Toggleable {
 
         private List<String> remoteFields = Collections.emptyList();
         private List<String> correlationFields = Collections.emptyList();
-
-        /**
-         * Constructs baggage configuration.
-         */
-        public Baggage() {
-        }
 
         /**
          * Baggage field names propagated to remote services.

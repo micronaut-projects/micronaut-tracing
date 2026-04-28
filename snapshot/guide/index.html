@@ -283,6 +283,10 @@ That release moved <code>@WithSpan</code> and <code>@SpanAttribute</code> from <
 <div class="paragraph">
 <p>If your application uses <code>micronaut-tracing-opentelemetry-annotation</code> and imports the old package, update those imports to the new package before upgrading to Micronaut Tracing <code>4.5.0</code> or newer.</p>
 </div>
+<div class="paragraph">
+<p>If you upgrade to Micronaut Tracing <code>4.5.0</code> independently from the Micronaut Platform version used by your application, import the matching <code>io.micronaut.tracing:micronaut-tracing-bom</code> version (the same version as your Micronaut Tracing version) in dependency management.
+Applications that keep an older Micronaut Platform-managed tracing BOM while forcing only the Micronaut Tracing OpenTelemetry module version can resolve incompatible OpenTelemetry instrumentation, semantic conventions, SDK, and exporter artifacts.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1226,6 +1230,11 @@ tracing.exclusions[1]=/env/.*</code></pre>
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>OpenTelemetry libraries must be resolved using the same BOM or platform dependency management as the Micronaut Tracing OpenTelemetry modules.
+If an application overrides the Micronaut Tracing version supplied by the Micronaut Platform BOM, also import the matching <code>io.micronaut.tracing:micronaut-tracing-bom</code> version.
+This keeps OpenTelemetry instrumentation, semantic conventions, SDK, and exporter dependencies aligned.</p>
+</div>
 <div class="sect1">
 <h2 id="_opentelemetry_annotations">OpenTelemetry annotations</h2>
 <div class="sectionbody">
@@ -1299,6 +1308,10 @@ Since Micronaut Tracing <code>4.5.0</code>, OpenTelemetry&#8217;s <code>@WithSpa
 </div>
 <div class="paragraph">
 <p>For each exporter that you want to use you have to specify it inside configuration, and you have to add required dependency:</p>
+</div>
+<div class="paragraph">
+<p>The versionless exporter dependencies below rely on Micronaut dependency management.
+If you override the Micronaut Tracing version, import the matching <code>io.micronaut.tracing:micronaut-tracing-bom</code> as well so that exporters use the OpenTelemetry version expected by the tracing instrumentation.</p>
 </div>
 <div class="ulist">
 <ul>

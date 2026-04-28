@@ -19,6 +19,7 @@ import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import io.opentelemetry.sdk.trace.data.SpanData
 import jakarta.inject.Inject
+import jakarta.inject.Singleton
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.function.Tuple2
@@ -100,6 +101,35 @@ class AnnotationMappingSpec extends Specification {
             testExporter.finishedSpanItems.size() == 1
             testExporter.finishedSpanItems.get(0).name == "WarehouseClient.order"
             testExporter.finishedSpanItems.get(0).attributes.get(AttributeKey.stringKey("warehouse.order")) == "{testOrderKey=testOrderValue}"
+        }
+
+        cleanup:
+        testExporter.reset()
+    }
+
+    void 'new span can be declared on classes and interfaces'() {
+        def testExporter = embeddedServer.applicationContext.getBean(InMemorySpanExporter)
+        def classLevelNewSpanService = embeddedServer.applicationContext.getBean(ClassLevelNewSpanService)
+        def interfaceLevelNewSpanService = embeddedServer.applicationContext.getBean(InterfaceLevelNewSpanService)
+
+        when:
+        def classLevel = classLevelNewSpanService.classLevel()
+        def classLevelOverride = classLevelNewSpanService.classLevelOverride()
+        def interfaceLevel = interfaceLevelNewSpanService.interfaceLevel()
+        def interfaceLevelOverride = interfaceLevelNewSpanService.interfaceLevelOverride()
+
+        then:
+        classLevel == 'class-level'
+        classLevelOverride == 'class-level-override'
+        interfaceLevel == 'interface-level'
+        interfaceLevelOverride == 'interface-level-override'
+        conditions.eventually {
+            def spanNames = testExporter.finishedSpanItems*.name
+            spanNames.size() == 4
+            spanNames.contains('ClassLevelNewSpanService.classLevel')
+            spanNames.contains('ClassLevelNewSpanService.classLevelOverride#class-level-override')
+            spanNames.contains('InterfaceLevelNewSpanServiceImpl.interfaceLevel')
+            spanNames.contains('InterfaceLevelNewSpanServiceImpl.interfaceLevelOverride#interface-level-override')
         }
 
         cleanup:
@@ -189,5 +219,45 @@ class AnnotationMappingSpec extends Specification {
         @NewSpan
         void order(@SpanTag("warehouse.order") Map<String, ?> json);
 
+    }
+
+    @Requires(property = "spec.name", value = "AnnotationMappingSpec")
+    @Singleton
+    @NewSpan
+    static class ClassLevelNewSpanService {
+
+        String classLevel() {
+            return 'class-level'
+        }
+
+        @NewSpan("class-level-override")
+        String classLevelOverride() {
+            return 'class-level-override'
+        }
+    }
+
+    @Requires(property = "spec.name", value = "AnnotationMappingSpec")
+    @NewSpan
+    static interface InterfaceLevelNewSpanService {
+
+        String interfaceLevel()
+
+        String interfaceLevelOverride()
+    }
+
+    @Requires(property = "spec.name", value = "AnnotationMappingSpec")
+    @Singleton
+    static class InterfaceLevelNewSpanServiceImpl implements InterfaceLevelNewSpanService {
+
+        @Override
+        String interfaceLevel() {
+            return 'interface-level'
+        }
+
+        @Override
+        @NewSpan("interface-level-override")
+        String interfaceLevelOverride() {
+            return 'interface-level-override'
+        }
     }
 }

@@ -20,6 +20,11 @@ class ResultSpanNameSpec {
         Assertions.assertEquals("customSpan#helloworld", MethodNameFormatter.format(customMethod) + "#helloworld")
         Assertions.assertEquals("defaultSpan", MethodNameFormatter.format("defaultSpan-longerHash"))
         Assertions.assertEquals("defaultSpan", MethodNameFormatter.format("defaultSpan-longerHash\$default"))
+        Assertions.assertEquals("defaultSpan", MethodNameFormatter.format("defaultSpan-longer-Hash\$default"))
+        Assertions.assertEquals("defaultSpan-", MethodNameFormatter.format("defaultSpan-"))
+        Assertions.assertEquals("defaultSpan-\$default", MethodNameFormatter.format("defaultSpan-\$default"))
+        Assertions.assertEquals("defaultSpan-short", MethodNameFormatter.format("defaultSpan-short"))
+        Assertions.assertEquals("defaultSpan-hash\$other", MethodNameFormatter.format("defaultSpan-hash\$other"))
         Assertions.assertEquals("plainMethod", MethodNameFormatter.format("plainMethod"))
     }
 }

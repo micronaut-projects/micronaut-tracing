@@ -17,16 +17,14 @@ package io.micronaut.tracing.util;
 
 import io.micronaut.core.annotation.Internal;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Formats method names for tracing output.
  */
 @Internal
 public final class MethodNameFormatter {
 
-    private static final Pattern KOTLIN_INLINE_CLASS_MANGLING = Pattern.compile("^(?<name>.+)-[^$]+(?:\\$default)?$");
+    private static final String DEFAULT_METHOD_SUFFIX = "$default";
+    private static final int MINIMUM_MANGLING_SUFFIX_LENGTH = 7;
 
     private MethodNameFormatter() {
     }
@@ -38,10 +36,34 @@ public final class MethodNameFormatter {
      * @return The formatted method name
      */
     public static String format(String methodName) {
-        Matcher matcher = KOTLIN_INLINE_CLASS_MANGLING.matcher(methodName);
-        if (matcher.matches()) {
-            return matcher.group("name");
+        String name = methodName.endsWith(DEFAULT_METHOD_SUFFIX)
+            ? methodName.substring(0, methodName.length() - DEFAULT_METHOD_SUFFIX.length())
+            : methodName;
+        int manglingSeparator = name.indexOf('-');
+        if (manglingSeparator > 0 && isKotlinManglingSuffix(name, manglingSeparator + 1)) {
+            return name.substring(0, manglingSeparator);
         }
         return methodName;
+    }
+
+    private static boolean isKotlinManglingSuffix(String name, int suffixStart) {
+        if (name.length() - suffixStart < MINIMUM_MANGLING_SUFFIX_LENGTH) {
+            return false;
+        }
+        for (int i = suffixStart; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (!isUrlSafeBase64Character(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isUrlSafeBase64Character(char c) {
+        return c >= 'A' && c <= 'Z'
+            || c >= 'a' && c <= 'z'
+            || c >= '0' && c <= '9'
+            || c == '_'
+            || c == '-';
     }
 }

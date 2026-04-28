@@ -624,12 +624,17 @@ class OpenTelemetryHttpSpec extends Specification {
         @Get('/makeCurrent')
         Mono<String> makeCurrent() {
             def childSpan = tracer.spanBuilder('findAllBooks').startSpan()
-            def childScope = childSpan.makeCurrent()
 
             return Mono.delay(Duration.ofMillis(0))
-                .map { 'ok' }
+                .map {
+                    def childScope = childSpan.makeCurrent()
+                    try {
+                        return 'ok'
+                    } finally {
+                        childScope.close()
+                    }
+                }
                 .doFinally {
-                    childScope.close()
                     childSpan.end()
                 }
         }

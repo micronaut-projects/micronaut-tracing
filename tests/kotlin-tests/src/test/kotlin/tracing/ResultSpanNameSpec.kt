@@ -1,0 +1,32 @@
+package tracing
+
+import io.micronaut.tracing.annotation.NewSpan
+import io.micronaut.tracing.util.MethodNameFormatter
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+
+class ResultSpanNameSpec {
+
+    @Test
+    fun `formatter strips Kotlin Result mangling from method names`() {
+        val methodNames = ResultSpanService::class.java.declaredMethods.map { it.name }.toSet()
+        val defaultMethod = methodNames.first { it.startsWith("defaultSpan") }
+        val customMethod = methodNames.first { it.startsWith("customSpan") }
+
+        Assertions.assertNotEquals("defaultSpan", defaultMethod)
+        Assertions.assertNotEquals("customSpan", customMethod)
+        Assertions.assertEquals("defaultSpan", MethodNameFormatter.format(defaultMethod))
+        Assertions.assertEquals("customSpan", MethodNameFormatter.format(customMethod))
+        Assertions.assertEquals("customSpan#helloworld", MethodNameFormatter.format(customMethod) + "#helloworld")
+        Assertions.assertEquals("plainMethod", MethodNameFormatter.format("plainMethod"))
+    }
+}
+
+open class ResultSpanService {
+
+    @NewSpan
+    open fun defaultSpan(): Result<String> = Result.success("hello")
+
+    @NewSpan("helloworld")
+    open fun customSpan(): Result<String> = Result.success("hello")
+}

@@ -88,20 +88,24 @@ public final class OpenTracingServerFilter extends AbstractOpenTracingFilter imp
         request.setAttribute(CURRENT_SPAN_CONTEXT, span.context());
         request.setAttribute(CURRENT_SPAN, span);
 
-        PropagatedContext propagatedContext = PropagatedContext.getOrEmpty()
-            .plus(new OpenTracingPropagationContext(tracer, span));
-        return propagatedContext.propagate(() -> Mono.using(
-            propagatedContext::propagate,
-            ignored -> Mono.from(chain.proceed(request))
-                .doOnNext(response -> {
-                    tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(response.getHeaders()));
-                    setResponseTags(request, response, span);
-                })
-                .doOnError(throwable -> setErrorTags(span, throwable))
-                .doFinally(signalType -> span.finish())
-                .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext)),
-            PropagatedContext.Scope::close
-        ));
+        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
+            .plus(new OpenTracingPropagationContext(tracer, span))
+            .propagate()) {
+
+            PropagatedContext propagatedContext = PropagatedContext.get();
+            return Mono.using(
+                () -> propagate(propagatedContext),
+                ignored -> Mono.from(chain.proceed(request))
+                    .doOnNext(response -> {
+                        tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(response.getHeaders()));
+                        setResponseTags(request, response, span);
+                    })
+                    .doOnError(throwable -> setErrorTags(span, throwable))
+                    .doFinally(signalType -> span.finish())
+                    .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext)),
+                PropagatedContext.Scope::close
+            );
+        }
     }
 
     @Override
@@ -117,6 +121,11 @@ public final class OpenTracingServerFilter extends AbstractOpenTracingFilter imp
         );
         request.setAttribute(CURRENT_SPAN_CONTEXT, spanContext);
         return spanContext;
+    }
+
+    @SuppressWarnings("deprecation")
+    private static PropagatedContext.Scope propagate(PropagatedContext propagatedContext) {
+        return propagatedContext.propagate();
     }
 
 }

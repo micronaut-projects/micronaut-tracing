@@ -1,3 +1,5 @@
+== Logback MDC
+
 OpenTelemetry provides Logback MDC instrumentation that can add the active span context to log events.
 This is useful when your log aggregation system reads application logs separately from traces and you want to correlate a log line with the trace and span that were active when the log event was created.
 

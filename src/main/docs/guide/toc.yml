@@ -8,6 +8,7 @@ opentelemetry:
   title: Tracing with OpenTelemetry
   annotations: OpenTelemetry Annotations
   exporters: OpenTelemetry Exporters
+  logback: Logback
   propagators: OpenTelemetry Propagators
   idgenerator: ID Generator
   http: HTTP Server and Client

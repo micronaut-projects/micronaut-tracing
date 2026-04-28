@@ -13,6 +13,8 @@ dependency:exporter-auto[scope="implementation", groupId="com.google.cloud.opent
 - Zipkin exporter: `zipkin`
 dependency:opentelemetry-exporter-zipkin[scope="implementation", groupId="io.opentelemetry"]
 
+For Logback integration details, see the Logback section in this guide.
+
 Example configuration for the Zipkin exporter:
 
 [configuration]

@@ -27,7 +27,6 @@ dependencies {
     compileOnly(libs.awssdk.core)
     compileOnly(libs.awssdk.sqs)
     testImplementation(libs.opentelemetry.aws.sdk)
-    testImplementation(libs.awssdk.bedrockruntime)
     testImplementation(libs.awssdk.core)
     testImplementation(libs.awssdk.sqs)
 

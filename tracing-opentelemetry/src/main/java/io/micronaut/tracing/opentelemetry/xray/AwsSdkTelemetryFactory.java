@@ -41,13 +41,13 @@ public class AwsSdkTelemetryFactory {
      * @return the AWS SDK telemetry instrumentation
      */
     @Singleton
-    AwsSdkTelemetry awsSdkTelemetry(OpenTelemetry openTelemetry,
-                                    AwsSdkTelemetryConfiguration awsSdkTelemetryConfiguration,
-                                    MessagingTelemetryConfiguration messagingTelemetryConfiguration) {
-        return AwsSdkTelemetry.builder(openTelemetry)
+    AwsSdkTelemetryProvider awsSdkTelemetryProvider(OpenTelemetry openTelemetry,
+                                                    AwsSdkTelemetryConfiguration awsSdkTelemetryConfiguration,
+                                                    MessagingTelemetryConfiguration messagingTelemetryConfiguration) {
+        return new AwsSdkTelemetryProvider(AwsSdkTelemetry.builder(openTelemetry)
             .setCaptureExperimentalSpanAttributes(awsSdkTelemetryConfiguration.isExperimentalSpanAttributes())
             .setUseConfiguredPropagatorForMessaging(awsSdkTelemetryConfiguration.isExperimentalUsePropagatorForMessaging())
-            .setMessagingReceiveInstrumentationEnabled(messagingTelemetryConfiguration.isEnabled())
-            .build();
+            .setMessagingReceiveTelemetryEnabled(messagingTelemetryConfiguration.isEnabled())
+            .build());
     }
 }

@@ -18,7 +18,6 @@ package io.micronaut.tracing.opentelemetry.instrument.http.client;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.async.propagation.ReactorPropagation;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpResponseProvider;
@@ -96,7 +95,6 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
                 .plus(new OpenTelemetryPropagationContext(context))
                 .propagate()) {
 
-                var propagatedContext = PropagatedContext.get();
                 return Mono.from(chain.proceed(request))
                     .doOnNext(mutableHttpResponse -> instrumenter.end(context, request, mutableHttpResponse, null))
                     .doOnError(throwable -> {
@@ -105,8 +103,7 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
                         span.setStatus(StatusCode.ERROR);
                         HttpResponse<?> response = findResponseInThrowable(throwable).orElse(null);
                         instrumenter.end(context, request, response, throwable);
-                    })
-                    .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext));
+                    });
 
             }
         }

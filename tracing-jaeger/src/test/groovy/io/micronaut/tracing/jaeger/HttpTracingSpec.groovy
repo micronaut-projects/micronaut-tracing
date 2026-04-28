@@ -82,11 +82,13 @@ class HttpTracingSpec extends Specification {
             serverSpan != null
             serverSpan.tags['foo'] == 'bar'
             serverSpan.tags['http.path'] == '/traced/hello/John'
+            serverSpan.tags['span.kind'] == 'server'
 
             JaegerSpan clientSpan = reporter.spans.find { it.operationName == 'GET /traced/hello/John' && it.tags['http.client'] == true }
             clientSpan != null
             clientSpan.tags['foo'] == null
             clientSpan.tags['http.path'] == '/traced/hello/John'
+            clientSpan.tags['span.kind'] == 'client'
 
             nrOfStartedSpans > 0
             nrOfFinishedSpans == nrOfStartedSpans

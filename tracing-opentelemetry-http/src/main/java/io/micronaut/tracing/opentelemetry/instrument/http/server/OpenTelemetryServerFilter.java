@@ -113,7 +113,7 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
         return PropagatedContext.getOrEmpty()
             .find(OpenTelemetryPropagationContext.class)
             .map(OpenTelemetryPropagationContext::context)
-            .orElseGet(Context::root);
+            .orElseGet(Context::current);
     }
 
     private void onError(HttpRequest<?> request, Context context,

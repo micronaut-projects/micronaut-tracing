@@ -744,13 +744,12 @@ class HttpTracingSpec extends Specification {
         new URL(embeddedServer.URL, '/traced/reactiveClient/Jane').text
 
         then:
-        conditions.eventually {
+        new PollingConditions(timeout: 5).eventually {
             TracedController.reactiveClientTraceIds.size() == 2
-            clientRequestEvents.size() >= 2
+            clientRequestTraceId('/traced/hello/John') == TracedController.reactiveClientTraceIds[0]
+            clientRequestTraceId('/traced/hello/Jane') == TracedController.reactiveClientTraceIds[1]
+            TracedController.reactiveClientTraceIds[0] != TracedController.reactiveClientTraceIds[1]
         }
-        TracedController.reactiveClientTraceIds[0] != TracedController.reactiveClientTraceIds[1]
-        clientRequestTraceId('/traced/hello/John') == TracedController.reactiveClientTraceIds[0]
-        clientRequestTraceId('/traced/hello/Jane') == TracedController.reactiveClientTraceIds[1]
 
         cleanup:
         logger?.level = previousLevel

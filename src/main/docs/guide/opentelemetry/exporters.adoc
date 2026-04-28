@@ -2,6 +2,9 @@ In your project you can specify exporters that you want to use. The default one 
 
 For each exporter that you want to use you have to specify it inside configuration, and you have to add required dependency:
 
+The versionless exporter dependencies below rely on Micronaut dependency management.
+If you override the Micronaut Tracing version, import the matching `io.micronaut.tracing:micronaut-tracing-bom` as well so that exporters use the OpenTelemetry version expected by the tracing instrumentation.
+
 - OpenTelemetry Protocol exporter: `otlp`
 dependency:opentelemetry-exporter-otlp[scope="implementation", groupId="io.opentelemetry"]
 - Logging exporter: `logging`

@@ -93,7 +93,7 @@ public final class OpenTracingClientFilter extends AbstractOpenTracingFilter imp
         return propagatedContext.propagate(() -> {
             tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders()));
             return Mono.using(
-                propagatedContext::propagate,
+                () -> propagationScope(propagatedContext),
                 ignored -> Mono.from(chain.proceed(request))
                     .doOnNext(httpResponse -> setResponseTags(request, httpResponse, span))
                     .doOnError(throwable -> {

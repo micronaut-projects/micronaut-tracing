@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 original authors
+ * Copyright 2017-2026 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
+import io.micronaut.tracing.util.MethodNameFormatter;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.incubator.semconv.util.ClassAndMethod;
@@ -77,7 +78,7 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
         String operationName = newSpan.stringValue().orElse("");
         ClassAndMethod classAndMethod;
 
-        ClassAndMethod basicClassAndMethod = ClassAndMethod.create(context.getDeclaringType(), context.getMethodName());
+        ClassAndMethod basicClassAndMethod = ClassAndMethod.create(context.getDeclaringType(), MethodNameFormatter.format(context.getMethodName()));
         if (StringUtils.isNotEmpty(operationName)) {
             classAndMethod = ClassAndMethod.create(basicClassAndMethod.declaringClass(), basicClassAndMethod.methodName() + '#' + operationName);
         } else {

@@ -26,6 +26,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import spock.lang.AutoCleanup
+import spock.lang.Issue
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -483,6 +484,45 @@ class HttpTracingSpec extends Specification {
 
             nrOfStartedSpans > 0
             nrOfFinishedSpans == nrOfStartedSpans
+        }
+    }
+
+    @Issue('https://github.com/micronaut-projects/micronaut-tracing/issues/236')
+    void 'test nested HTTP tracing propagates trace context to the nested server span'() {
+        when:
+        HttpResponse<String> response = client.toBlocking().exchange('/traced/nested/John', String)
+
+        then:
+        response
+
+        conditions.eventually {
+            reporter.spans.size() == 4
+
+            List<JaegerSpan> spans = reporter.spans
+            spans.collect { it.context().traceId }.unique().size() == 1
+
+            JaegerSpan nestedClientSpan = spans.find {
+                it.operationName == 'GET /traced/nested/John' && it.tags['http.client']
+            }
+            nestedClientSpan != null
+
+            JaegerSpan nestedServerSpan = spans.find {
+                it.operationName == 'GET /traced/nested/{name}' && it.tags['http.server']
+            }
+            nestedServerSpan != null
+            nestedServerSpan.context().parentId == nestedClientSpan.context().spanId
+
+            JaegerSpan helloClientSpan = spans.find {
+                it.operationName == 'GET /traced/hello/{name}' && it.tags['http.client']
+            }
+            helloClientSpan != null
+            helloClientSpan.context().parentId == nestedServerSpan.context().spanId
+
+            JaegerSpan helloServerSpan = spans.find {
+                it.operationName == 'GET /traced/hello/{name}' && it.tags['http.server']
+            }
+            helloServerSpan != null
+            helloServerSpan.context().parentId == helloClientSpan.context().spanId
         }
     }
 

@@ -88,14 +88,12 @@ public final class OpenTracingClientFilter extends AbstractOpenTracingFilter imp
         request.setAttribute(CURRENT_SPAN_CONTEXT, span.context());
         request.setAttribute(CURRENT_SPAN, span);
 
-        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
-            .plus(new OpenTracingPropagationContext(tracer, span))
-            .propagate()) {
-
-            PropagatedContext propagatedContext = PropagatedContext.get();
+        PropagatedContext propagatedContext = PropagatedContext.getOrEmpty()
+            .plus(new OpenTracingPropagationContext(tracer, span));
+        return propagatedContext.propagate(() -> {
             tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders()));
             return Mono.using(
-                () -> propagate(propagatedContext),
+                propagatedContext::propagate,
                 ignored -> Mono.from(chain.proceed(request))
                     .doOnNext(httpResponse -> setResponseTags(request, httpResponse, span))
                     .doOnError(throwable -> {
@@ -109,12 +107,6 @@ public final class OpenTracingClientFilter extends AbstractOpenTracingFilter imp
                     .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext)),
                 PropagatedContext.Scope::close
             );
-
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    private static PropagatedContext.Scope propagate(PropagatedContext propagatedContext) {
-        return propagatedContext.propagate();
+        });
     }
 }

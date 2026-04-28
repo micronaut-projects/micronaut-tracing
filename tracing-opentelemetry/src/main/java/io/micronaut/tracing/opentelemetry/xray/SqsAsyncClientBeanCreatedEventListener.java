@@ -37,20 +37,35 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 public class SqsAsyncClientBeanCreatedEventListener implements BeanCreatedEventListener<SqsAsyncClient> {
     private static final Logger LOG = LoggerFactory.getLogger(SqsAsyncClientBeanCreatedEventListener.class);
 
-    private final AwsSdkTelemetry awsSdkTelemetry;
+    private final AwsSdkTelemetryProvider awsSdkTelemetryProvider;
+    private final AwsSdkTelemetryConfiguration awsSdkTelemetryConfiguration;
+    private final MessagingTelemetryConfiguration messagingTelemetryConfiguration;
 
     /**
-     * @param awsSdkTelemetry AWS SDK telemetry
+     * @param awsSdkTelemetryProvider AWS SDK telemetry provider
+     * @param awsSdkTelemetryConfiguration AWS SDK instrumentation configuration
+     * @param messagingTelemetryConfiguration messaging instrumentation configuration
      */
-    public SqsAsyncClientBeanCreatedEventListener(AwsSdkTelemetry awsSdkTelemetry) {
-        this.awsSdkTelemetry = awsSdkTelemetry;
+    public SqsAsyncClientBeanCreatedEventListener(AwsSdkTelemetryProvider awsSdkTelemetryProvider,
+                                                  AwsSdkTelemetryConfiguration awsSdkTelemetryConfiguration,
+                                                  MessagingTelemetryConfiguration messagingTelemetryConfiguration) {
+        this.awsSdkTelemetryProvider = awsSdkTelemetryProvider;
+        this.awsSdkTelemetryConfiguration = awsSdkTelemetryConfiguration;
+        this.messagingTelemetryConfiguration = messagingTelemetryConfiguration;
     }
 
     @Override
     public SqsAsyncClient onCreated(BeanCreatedEvent<SqsAsyncClient> event) {
+        if (!shouldWrap()) {
+            return event.getBean();
+        }
         if (LOG.isTraceEnabled()) {
             LOG.trace("Wrapping OpenTelemetry asynchronous SQS client {}", event.getBean().getClass().getSimpleName());
         }
-        return awsSdkTelemetry.wrap(event.getBean());
+        return awsSdkTelemetryProvider.wrap(event.getBean());
+    }
+
+    private boolean shouldWrap() {
+        return awsSdkTelemetryConfiguration.isExperimentalUsePropagatorForMessaging() || messagingTelemetryConfiguration.isEnabled();
     }
 }

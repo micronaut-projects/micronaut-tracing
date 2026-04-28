@@ -166,7 +166,8 @@
 <h2 id="_tracing_annotations">Tracing Annotations</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <a href="../api/io/micronaut/tracing/annotation/package-summary.html">io.micronaut.tracing.annotation</a> package contains annotations that can be declared on methods to create new spans or continue existing spans.</p>
+<p>The <a href="../api/io/micronaut/tracing/annotation/package-summary.html">io.micronaut.tracing.annotation</a> package contains annotations for creating new spans, continuing existing spans, and adding span tags.
+You can also declare <a href="../api/io/micronaut/tracing/annotation/NewSpan.html">@NewSpan</a> on a class or interface to create a new span for each method invocation.</p>
 </div>
 <div class="paragraph">
 <p>The available annotations are:</p>
@@ -174,7 +175,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>The <a href="../api/io/micronaut/tracing/annotation/NewSpan.html">@NewSpan</a> annotation creates a new span, wrapping the method call or reactive type.</p>
+<p>The <a href="../api/io/micronaut/tracing/annotation/NewSpan.html">@NewSpan</a> annotation creates a new span, wrapping the method call or reactive type. It can be declared on a method, class, or interface. Method-level annotations take precedence over class-level or interface-level annotations.</p>
 </li>
 <li>
 <p>The <a href="../api/io/micronaut/tracing/annotation/ContinueSpan.html">@ContinueSpan</a> annotation continues an existing span, wrapping the method call or reactive type.</p>

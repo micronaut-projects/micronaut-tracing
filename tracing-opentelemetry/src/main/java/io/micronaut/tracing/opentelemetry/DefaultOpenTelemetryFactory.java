@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 original authors
+ * Copyright 2017-2026 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import io.micronaut.core.util.StringUtils;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.TracerProvider;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
 import io.opentelemetry.sdk.trace.IdGenerator;
@@ -75,6 +76,11 @@ public class DefaultOpenTelemetryFactory {
                                                  @Nullable Sampler sampler,
                                                  Collection<OpenTelemetryBuilderCustomizer> builderCustomizers) {
 
+        OpenTelemetry existingGlobalOpenTelemetry = existingGlobalOpenTelemetry();
+        if (existingGlobalOpenTelemetry != null) {
+            return existingGlobalOpenTelemetry;
+        }
+
         Map<String, String> otel = otelConfig.entrySet().stream().collect(Collectors.toMap(
             e -> "otel." + e.getKey(),
             Map.Entry::getValue
@@ -87,7 +93,7 @@ public class DefaultOpenTelemetryFactory {
 
         AutoConfiguredOpenTelemetrySdkBuilder sdk = AutoConfiguredOpenTelemetrySdk.builder();
 
-        if (Boolean.parseBoolean(otel.getOrDefault(REGISTER_GLOBAL, StringUtils.FALSE))) {
+        if (Boolean.parseBoolean(otel.getOrDefault(REGISTER_GLOBAL, StringUtils.FALSE)) && !GlobalOpenTelemetry.isSet()) {
             sdk.setResultAsGlobal();
         }
 
@@ -115,6 +121,16 @@ public class DefaultOpenTelemetryFactory {
         }
 
         return sdk.build().getOpenTelemetrySdk();
+    }
+
+    @Nullable
+    private OpenTelemetry existingGlobalOpenTelemetry() {
+        if (!GlobalOpenTelemetry.isSet()) {
+            return null;
+        }
+
+        OpenTelemetry globalOpenTelemetry = GlobalOpenTelemetry.get();
+        return globalOpenTelemetry.getTracerProvider() == TracerProvider.noop() ? null : globalOpenTelemetry;
     }
 
     /**

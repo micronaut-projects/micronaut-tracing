@@ -1,6 +1,6 @@
 You can provide a bean of type api:tracing.opentelemetry.OpenTelemetryBuilderCustomizer[] to customize the OpenTelemetry autoconfigured SDK builder before Micronaut creates the `io.opentelemetry.api.OpenTelemetry` bean.
 
-For example, a customizer can register a metric view with explicit histogram bucket boundaries:
+For example, a customizer can register a metric view with an explicit histogram aggregation:
 
 snippet::io.micronaut.tracing.opentelemetry.OpenTelemetryBuilderCustomizerExample[tags="imports,histogramViewCustomizer", project="test-suite-java"]
 

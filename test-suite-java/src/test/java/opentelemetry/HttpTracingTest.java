@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.UUID;
 
 import static opentelemetry.HttpTracingTest.TRACING_ID;
@@ -55,18 +56,29 @@ public class HttpTracingTest {
 
         client.toBlocking().exchange(request);
 
-        Assertions.assertEquals(spanNumbers, exporter.getFinishedSpanItems().size());
-        Assertions.assertEquals(internalSpanCount, exporter.getFinishedSpanItems().stream().filter(x -> x.getKind().equals(SpanKind.INTERNAL)).toList().size());
-        Assertions.assertEquals(serverSpanCount, exporter.getFinishedSpanItems().stream().filter(x -> x.getKind().equals(SpanKind.SERVER)).toList().size());
-        Assertions.assertEquals(clientSpanCount, exporter.getFinishedSpanItems().stream().filter(x -> x.getKind().equals(SpanKind.CLIENT)).toList().size());
+        List<SpanData> spans = exporter.getFinishedSpanItems();
+        Assertions.assertEquals(spanNumbers, spans.size());
+        Assertions.assertEquals(internalSpanCount, spans.stream().filter(x -> x.getKind() == SpanKind.INTERNAL).toList().size());
+        Assertions.assertEquals(serverSpanCount, spans.stream().filter(x -> x.getKind() == SpanKind.SERVER).toList().size());
+        Assertions.assertEquals(clientSpanCount, spans.stream().filter(x -> x.getKind() == SpanKind.CLIENT).toList().size());
+        assertServerSpanExists("POST /annotations/enter", spans);
+        assertServerSpanExists("GET /annotations/test", spans);
+        assertServerSpanExists("GET /annotations/test2", spans);
 
-        Assertions.assertEquals(serverSpanCount + clientSpanCount, exporter.getFinishedSpanItems().stream().map(SpanData::getAttributes).filter(x-> x.asMap().keySet().stream().anyMatch(y-> y.getKey().equals(TRACING_ID_IN_SPAN))).toList().size());
+        Assertions.assertEquals(serverSpanCount + clientSpanCount, spans.stream().map(SpanData::getAttributes).filter(x-> x.asMap().keySet().stream().anyMatch(y-> y.getKey().equals(TRACING_ID_IN_SPAN))).toList().size());
 
-        Assertions.assertTrue(exporter.getFinishedSpanItems().stream().map(SpanData::getAttributes).anyMatch(x-> x.asMap().keySet().stream().anyMatch(y-> y.getKey().equals("tracing-annotation-span-attribute"))));
-        Assertions.assertFalse(exporter.getFinishedSpanItems().stream().map(SpanData::getAttributes).anyMatch(x-> x.asMap().keySet().stream().anyMatch(y-> y.getKey().equals("tracing-annotation-span-tag-no-withspan"))));
-        Assertions.assertTrue(exporter.getFinishedSpanItems().stream().map(SpanData::getAttributes).anyMatch(x-> x.asMap().keySet().stream().anyMatch(y-> y.getKey().equals("tracing-annotation-span-tag-with-withspan"))));
-        Assertions.assertTrue(exporter.getFinishedSpanItems().stream().map(SpanData::getAttributes).anyMatch(x-> x.asMap().keySet().stream().anyMatch(y-> y.getKey().equals("privateMethodTestAttribute"))));
-        Assertions.assertTrue(exporter.getFinishedSpanItems().stream().anyMatch(x -> x.getName().contains("#test-withspan-mapping")));
+        Assertions.assertTrue(spans.stream().map(SpanData::getAttributes).anyMatch(x-> x.asMap().keySet().stream().anyMatch(y-> y.getKey().equals("tracing-annotation-span-attribute"))));
+        Assertions.assertFalse(spans.stream().map(SpanData::getAttributes).anyMatch(x-> x.asMap().keySet().stream().anyMatch(y-> y.getKey().equals("tracing-annotation-span-tag-no-withspan"))));
+        Assertions.assertTrue(spans.stream().map(SpanData::getAttributes).anyMatch(x-> x.asMap().keySet().stream().anyMatch(y-> y.getKey().equals("tracing-annotation-span-tag-with-withspan"))));
+        Assertions.assertTrue(spans.stream().map(SpanData::getAttributes).anyMatch(x-> x.asMap().keySet().stream().anyMatch(y-> y.getKey().equals("privateMethodTestAttribute"))));
+        Assertions.assertTrue(spans.stream().anyMatch(x -> x.getName().contains("#test-withspan-mapping")));
+    }
+
+    private static void assertServerSpanExists(String spanName, List<SpanData> spans) {
+        Assertions.assertTrue(
+            spans.stream().anyMatch(span -> span.getKind() == SpanKind.SERVER && span.getName().equals(spanName)),
+            () -> "Expected server span " + spanName + ", got " + spans.stream().map(span -> span.getName() + ": " + span.getKind()).toList()
+        );
     }
 
 }

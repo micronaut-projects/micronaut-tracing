@@ -38,14 +38,14 @@ import software.amazon.awssdk.core.client.builder.SdkClientBuilder;
 public class SdkClientBuilderListener implements BeanCreatedEventListener<SdkClientBuilder<?, ?>> {
     private static final Logger LOG = LoggerFactory.getLogger(SdkClientBuilderListener.class);
 
-    private final AwsSdkTelemetry awsSdkTelemetry;
+    private final AwsSdkTelemetryProvider awsSdkTelemetryProvider;
 
     /**
      *
-     * @param awsSdkTelemetry AWS SDK telemetry
+     * @param awsSdkTelemetryProvider AWS SDK telemetry provider
      */
-    public SdkClientBuilderListener(AwsSdkTelemetry awsSdkTelemetry) {
-        this.awsSdkTelemetry = awsSdkTelemetry;
+    public SdkClientBuilderListener(AwsSdkTelemetryProvider awsSdkTelemetryProvider) {
+        this.awsSdkTelemetryProvider = awsSdkTelemetryProvider;
     }
 
     /**
@@ -60,6 +60,6 @@ public class SdkClientBuilderListener implements BeanCreatedEventListener<SdkCli
             LOG.trace("Registering OpenTelemetry tracing interceptor to {}", event.getBean().getClass().getSimpleName());
         }
         return event.getBean().overrideConfiguration(builder ->
-            builder.addExecutionInterceptor(awsSdkTelemetry.newExecutionInterceptor()));
+            builder.addExecutionInterceptor(awsSdkTelemetryProvider.newExecutionInterceptor()));
     }
 }

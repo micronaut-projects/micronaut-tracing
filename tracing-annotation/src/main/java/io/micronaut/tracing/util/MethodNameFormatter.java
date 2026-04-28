@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 @Internal
 public final class MethodNameFormatter {
 
-    private static final Pattern KOTLIN_INLINE_CLASS_MANGLING = Pattern.compile("^(?<name>.+)-(?:\\w{7})(?:\\$default)?$");
+    private static final Pattern KOTLIN_INLINE_CLASS_MANGLING = Pattern.compile("^(?<name>.+)-[^$]+(?:\\$default)?$");
 
     private MethodNameFormatter() {
     }

@@ -21,7 +21,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.http.context.ServerRequestContext
 import io.micronaut.reactor.http.client.ReactorHttpClient
 import io.micronaut.runtime.server.EmbeddedServer
-import io.micronaut.rxjava2.http.client.RxHttpClient
+import io.micronaut.rxjava3.http.client.Rx3HttpClient
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
 import io.micronaut.tracing.annotation.NewSpan
@@ -36,7 +36,7 @@ import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import io.opentelemetry.semconv.HttpAttributes
 import io.opentelemetry.semconv.ServerAttributes
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import jakarta.inject.Inject
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
@@ -175,13 +175,13 @@ class OpenTelemetryHttpSpec extends Specification {
         exporter.reset()
     }
 
-    void 'test openTelemetry rxjava2'() {
+    void 'test openTelemetry rxjava3'() {
         def serverSpanCount = 2
         def clientSpanCount = 1
         def internalSpanCount = 1
 
         when:
-        HttpResponse<String> response = reactorHttpClient.toBlocking().exchange('/rxjava2/test', String)
+        HttpResponse<String> response = reactorHttpClient.toBlocking().exchange('/rxjava3/test', String)
 
         then:
         conditions.eventually {
@@ -685,18 +685,18 @@ class OpenTelemetryHttpSpec extends Specification {
         void excludeTest() {}
     }
 
-    @Controller('/rxjava2')
-    static class RxJava2 {
+    @Controller('/rxjava3')
+    static class RxJava3 {
 
         @Inject
         @Client("/")
-        RxHttpClient rxHttpClient
+        Rx3HttpClient rxHttpClient
 
         @Get("/test")
         Single<String> test() {
             return Single.fromPublisher(
                     rxHttpClient.retrieve(HttpRequest
-                            .GET("/rxjava2/test2"), String)
+                            .GET("/rxjava3/test2"), String)
             )
         }
 

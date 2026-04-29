@@ -7,8 +7,8 @@ dependencies {
     api projects.micronautTracingAnnotation
 
     testImplementation mnReactor.micronaut.reactor
-    testImplementation "io.reactivex.rxjava2:rxjava"
-    testImplementation mnRxjava2.micronaut.rxjava2.http.client
+    testImplementation "io.reactivex.rxjava3:rxjava"
+    testImplementation mnRxjava3.micronaut.rxjava3.http.client
     testImplementation mnReactor.micronaut.reactor.http.client
     testRuntimeOnly mnSerde.micronaut.serde.jackson
 }

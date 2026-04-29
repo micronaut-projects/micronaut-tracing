@@ -18,7 +18,7 @@ managed-opentelemetry-semconv = '1.40.0'
 managed-opentelemetry-instrumentation-api-semconv = '1.33.6-alpha'
 managed-protobuf = '0.10.0'
 managed-zipkin = '3.5.1'
-managed-zipkin-reporter = '3.5.1'
+managed-zipkin-reporter = '3.5.3'
 
 
 managed-jaeger = '1.8.1'

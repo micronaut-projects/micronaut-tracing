@@ -21,6 +21,6 @@ dependencies {
 
 micronautBuild {
     binaryCompatibility {
-        enabledAfter '7.2.2'
+        enabledAfter '8.0.0'
     }
 }

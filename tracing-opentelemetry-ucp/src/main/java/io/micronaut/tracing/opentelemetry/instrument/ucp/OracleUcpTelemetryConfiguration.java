@@ -25,7 +25,7 @@ import io.opentelemetry.instrumentation.oracleucp.v11_2.OracleUcpTelemetry;
  * Configuration class for Oracle UCP telemetry.
  *
  * @author Andreas Brenk
- * @since 7.2.1
+ * @since 8.0.0
  */
 @Requires(property = OracleUcpTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @ConfigurationProperties(OracleUcpTelemetryConfiguration.PREFIX)

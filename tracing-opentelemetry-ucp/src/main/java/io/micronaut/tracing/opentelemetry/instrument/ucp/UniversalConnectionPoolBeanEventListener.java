@@ -30,7 +30,7 @@ import oracle.ucp.UniversalConnectionPool;
  *
  * @param oracleUcpTelemetryConfiguration the Oracle UCP telemetry configuration
  * @author Andreas Brenk
- * @since 7.2.1
+ * @since 8.0.0
  */
 @Singleton
 @Internal

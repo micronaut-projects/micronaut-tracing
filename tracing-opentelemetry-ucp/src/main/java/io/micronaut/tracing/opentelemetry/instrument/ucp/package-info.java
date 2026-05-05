@@ -17,7 +17,7 @@
  * Classes related to the integration with the OpenTelemetry Library Instrumentation for Oracle UCP.
  *
  * @author Andreas Brenk
- * @since 7.2.1
+ * @since 8.0.0
  */
 @Configuration
 @Requires(property = OracleUcpTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)

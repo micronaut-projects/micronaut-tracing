@@ -11,6 +11,10 @@ dependencies {
     // gson is a transitive dependency of io.jaegertracing:jaeger-core
     // https://ossindex.sonatype.org/component/pkg:maven/com.google.code.gson/gson
     implementation(libs.gson)
+    // force okio to a non-vulnerable version (GHSA-w33c-445m-f8w7)
+    // okio is a transitive dependency of io.jaegertracing:jaeger-thrift via okhttp3
+    // https://osv.dev/GHSA-w33c-445m-f8w7
+    implementation(libs.okio)
     testImplementation mnReactor.micronaut.reactor
     testImplementation mn.micronaut.http.server.netty
     testRuntimeOnly mnSerde.micronaut.serde.jackson

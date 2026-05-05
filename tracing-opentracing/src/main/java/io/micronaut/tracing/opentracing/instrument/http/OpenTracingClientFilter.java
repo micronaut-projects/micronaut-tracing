@@ -103,7 +103,7 @@ public final class OpenTracingClientFilter extends AbstractOpenTracingFilter imp
                         }
                         setErrorTags(span, throwable);
                     })
-                    .doOnTerminate(span::finish)
+                    .doFinally(signalType -> span.finish())
                     .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext)),
                 PropagatedContext.Scope::close
             );

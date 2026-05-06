@@ -11,6 +11,7 @@ import io.micronaut.http.MutableHttpRequest
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.inject.qualifiers.Qualifiers
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.tracing.opentelemetry.instrument.http.client.MicronautHttpClientTelemetryFactory
@@ -20,6 +21,7 @@ import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.common.AttributesBuilder
 import io.opentelemetry.api.trace.SpanContext
 import io.opentelemetry.api.trace.SpanKind
+import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.api.trace.TraceFlags
 import io.opentelemetry.api.trace.TraceState
 import io.opentelemetry.context.Context
@@ -29,6 +31,8 @@ import io.opentelemetry.instrumentation.api.instrumenter.OperationListener
 import io.opentelemetry.instrumentation.api.instrumenter.SpanLinksBuilder
 import io.opentelemetry.instrumentation.api.instrumenter.SpanLinksExtractor
 import io.opentelemetry.instrumentation.api.instrumenter.SpanNameExtractor
+import io.opentelemetry.instrumentation.api.instrumenter.SpanStatusBuilder
+import io.opentelemetry.instrumentation.api.instrumenter.SpanStatusExtractor
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import io.opentelemetry.semconv.HttpAttributes
 import jakarta.inject.Singleton
@@ -122,6 +126,34 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
         server?.stop()
     }
 
+    void "uses replacement client and server span status extractors on failures"() {
+        given:
+        context = startContext()
+        def server = context.getBean(EmbeddedServer).start()
+        def client = context.getBean(TestClient)
+
+        when:
+        client.failure()
+
+        then:
+        thrown(HttpClientResponseException)
+        new PollingConditions().eventually {
+            def spans = context.getBean(InMemorySpanExporter).finishedSpanItems
+            def clientSpan = spans.find { it.kind == SpanKind.CLIENT }
+            def serverSpan = spans.find { it.kind == SpanKind.SERVER }
+            clientSpan
+            serverSpan
+            clientSpan.status.statusCode == StatusCode.OK
+            serverSpan.status.statusCode == StatusCode.OK
+            serverSpan.attributes.get(HttpAttributes.HTTP_ROUTE) == "/failure"
+            CustomHttpTelemetryFactory.clientStatusExtractor.get() == 1
+            CustomHttpTelemetryFactory.serverStatusExtractor.get() == 1
+        }
+
+        cleanup:
+        server?.stop()
+    }
+
     private static ApplicationContext startContext() {
         ApplicationContext.run([
             "spec.name"                 : SPEC_NAME,
@@ -139,6 +171,9 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
 
         @Get("/route/{id}")
         String route(String id)
+
+        @Get("/failure")
+        String failure()
     }
 
     @Controller
@@ -154,6 +189,11 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
         String route(String id) {
             id
         }
+
+        @Get("/failure")
+        String failure() {
+            throw new IllegalStateException("failure")
+        }
     }
 
     @Requires(property = "spec.name", value = SPEC_NAME)
@@ -164,12 +204,16 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
         static AtomicInteger clientListenerEnd = new AtomicInteger()
         static AtomicInteger serverListenerStart = new AtomicInteger()
         static AtomicInteger serverListenerEnd = new AtomicInteger()
+        static AtomicInteger clientStatusExtractor = new AtomicInteger()
+        static AtomicInteger serverStatusExtractor = new AtomicInteger()
 
         static void reset() {
             clientListenerStart.set(0)
             clientListenerEnd.set(0)
             serverListenerStart.set(0)
             serverListenerEnd.set(0)
+            clientStatusExtractor.set(0)
+            serverStatusExtractor.set(0)
         }
 
         @MicronautHttpClientTelemetryFactory.Client
@@ -184,6 +228,26 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
         @Replaces(bean = SpanNameExtractor, factory = MicronautHttpServerTelemetryFactory, qualifier = MicronautHttpServerTelemetryFactory.Server)
         SpanNameExtractor<HttpRequest<Object>> serverSpanNameExtractor() {
             { HttpRequest<Object> ignored -> "custom-server-span" } as SpanNameExtractor<HttpRequest<Object>>
+        }
+
+        @MicronautHttpClientTelemetryFactory.Client
+        @Singleton
+        @Replaces(bean = SpanStatusExtractor, factory = MicronautHttpClientTelemetryFactory, qualifier = MicronautHttpClientTelemetryFactory.Client)
+        SpanStatusExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> clientSpanStatusExtractor() {
+            { SpanStatusBuilder spanStatusBuilder, MutableHttpRequest<Object> request, HttpResponse<Object> response, Throwable error ->
+                clientStatusExtractor.incrementAndGet()
+                spanStatusBuilder.setStatus(StatusCode.OK)
+            } as SpanStatusExtractor<MutableHttpRequest<Object>, HttpResponse<Object>>
+        }
+
+        @MicronautHttpServerTelemetryFactory.Server
+        @Singleton
+        @Replaces(bean = SpanStatusExtractor, factory = MicronautHttpServerTelemetryFactory, qualifier = MicronautHttpServerTelemetryFactory.Server)
+        SpanStatusExtractor<HttpRequest<Object>, HttpResponse<Object>> serverSpanStatusExtractor() {
+            { SpanStatusBuilder spanStatusBuilder, HttpRequest<Object> request, HttpResponse<Object> response, Throwable error ->
+                serverStatusExtractor.incrementAndGet()
+                spanStatusBuilder.setStatus(StatusCode.OK)
+            } as SpanStatusExtractor<HttpRequest<Object>, HttpResponse<Object>>
         }
 
         @MicronautHttpClientTelemetryFactory.Client

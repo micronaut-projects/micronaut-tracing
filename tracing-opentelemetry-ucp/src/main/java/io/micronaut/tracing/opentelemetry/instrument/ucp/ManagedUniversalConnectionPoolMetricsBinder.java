@@ -57,8 +57,13 @@ final class ManagedUniversalConnectionPoolMetricsBinder {
         Collection<DataSource> dataSources) {
         this.universalConnectionPoolMetricsRegistry = universalConnectionPoolMetricsRegistry;
         this.dataSourceResolver = dataSourceResolver == null ? DataSourceResolver.DEFAULT : dataSourceResolver;
-        for (DataSource dataSource : dataSources) {
-            register(connectionPoolManager, dataSource);
+        try {
+            for (DataSource dataSource : dataSources) {
+                register(connectionPoolManager, dataSource);
+            }
+        } catch (RuntimeException e) {
+            close();
+            throw e;
         }
     }
 
@@ -99,5 +104,7 @@ final class ManagedUniversalConnectionPoolMetricsBinder {
         for (UniversalConnectionPool connectionPool : registeredPools) {
             universalConnectionPoolMetricsRegistry.unregister(connectionPool);
         }
+        registeredPools.clear();
+        registeredPoolNames.clear();
     }
 }

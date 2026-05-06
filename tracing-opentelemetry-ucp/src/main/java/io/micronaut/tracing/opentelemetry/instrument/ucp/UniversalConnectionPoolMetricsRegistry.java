@@ -19,7 +19,7 @@ import io.micronaut.core.annotation.Internal;
 import jakarta.inject.Singleton;
 import oracle.ucp.UniversalConnectionPool;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
@@ -30,43 +30,36 @@ import java.util.Map;
 final class UniversalConnectionPoolMetricsRegistry {
 
     private final OracleUcpTelemetryConfiguration oracleUcpTelemetryConfiguration;
-    private final Map<String, Registration> registrations = new HashMap<>();
+    private final Map<UniversalConnectionPool, Registration> registrations = new IdentityHashMap<>();
 
     UniversalConnectionPoolMetricsRegistry(OracleUcpTelemetryConfiguration oracleUcpTelemetryConfiguration) {
         this.oracleUcpTelemetryConfiguration = oracleUcpTelemetryConfiguration;
     }
 
     synchronized void register(UniversalConnectionPool connectionPool) {
-        String poolName = connectionPool.getName();
-        Registration registration = registrations.get(poolName);
+        Registration registration = registrations.get(connectionPool);
         if (registration == null) {
             oracleUcpTelemetryConfiguration.oracleUcpTelemetry.registerMetrics(connectionPool);
-            registrations.put(poolName, new Registration(connectionPool));
+            registrations.put(connectionPool, new Registration());
         } else {
             registration.retain();
         }
     }
 
     synchronized void unregister(UniversalConnectionPool connectionPool) {
-        String poolName = connectionPool.getName();
-        Registration registration = registrations.get(poolName);
+        Registration registration = registrations.get(connectionPool);
         if (registration == null) {
             return;
         }
         if (registration.release()) {
-            oracleUcpTelemetryConfiguration.oracleUcpTelemetry.unregisterMetrics(registration.connectionPool);
-            registrations.remove(poolName);
+            oracleUcpTelemetryConfiguration.oracleUcpTelemetry.unregisterMetrics(connectionPool);
+            registrations.remove(connectionPool);
         }
     }
 
     private static final class Registration {
 
-        private final UniversalConnectionPool connectionPool;
         private int references = 1;
-
-        private Registration(UniversalConnectionPool connectionPool) {
-            this.connectionPool = connectionPool;
-        }
 
         private void retain() {
             references++;

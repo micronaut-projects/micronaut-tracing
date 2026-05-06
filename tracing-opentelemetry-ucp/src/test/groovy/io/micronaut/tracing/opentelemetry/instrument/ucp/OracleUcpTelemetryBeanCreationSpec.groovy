@@ -1,12 +1,17 @@
 package io.micronaut.tracing.opentelemetry.instrument.ucp
 
 import io.micronaut.context.ApplicationContext
+import io.micronaut.context.exceptions.ConfigurationException
 import io.micronaut.inject.qualifiers.Qualifiers
 import io.micronaut.tracing.opentelemetry.instrument.ucp.fixture.TestUniversalConnectionPoolFactory
 import io.opentelemetry.api.common.AttributeKey
+import io.opentelemetry.sdk.OpenTelemetrySdk
+import io.opentelemetry.sdk.metrics.SdkMeterProvider
 import io.opentelemetry.sdk.metrics.data.MetricData
 import io.opentelemetry.sdk.testing.exporter.InMemoryMetricReader
 import oracle.ucp.UniversalConnectionPool
+import oracle.ucp.UniversalConnectionPoolException
+import oracle.ucp.admin.UniversalConnectionPoolManager
 import oracle.ucp.jdbc.PoolDataSource
 import spock.lang.Specification
 
@@ -78,18 +83,30 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         ctx.close()
     }
 
+    void "test Oracle UCP telemetry unregisters metrics when context closes"() {
+        given:
+        ApplicationContext ctx = ApplicationContext.run()
+        def reader = ctx.getBean(InMemoryMetricReader)
+        def connectionPool = ctx.getBean(UniversalConnectionPool)
+
+        expect:
+        connectionPool.name == TestUniversalConnectionPoolFactory.FINAL_POOL_NAME
+        hasMetricForPool(reader.collectAllMetrics(), TestUniversalConnectionPoolFactory.FINAL_POOL_NAME)
+
+        when:
+        ctx.close()
+
+        then:
+        !hasMetricForPool(reader.collectAllMetrics(), TestUniversalConnectionPoolFactory.FINAL_POOL_NAME)
+
+        cleanup:
+        ctx.close()
+    }
+
     void "test Oracle UCP telemetry registers metrics for Micronaut UCP datasource"() {
         given:
         String poolName = "real-ucp-pool"
-        ApplicationContext ctx = ApplicationContext.run([
-                "datasources.default.connection-pool-name": poolName,
-                "datasources.default.url": "jdbc:h2:mem:ucpSmoke;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE",
-                "datasources.default.username": "sa",
-                "datasources.default.connection-factory-class-name": "org.h2.jdbcx.JdbcDataSource",
-                "datasources.default.initial-pool-size": 0,
-                "datasources.default.min-pool-size": 0,
-                "datasources.default.max-pool-size": 7,
-        ])
+        ApplicationContext ctx = ApplicationContext.run(ucpDataSourceConfiguration(poolName, "ucpSmoke"))
         def reader = ctx.getBean(InMemoryMetricReader)
         def poolDataSource = ctx.getBean(PoolDataSource)
 
@@ -97,10 +114,19 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         poolDataSource.getConnectionPoolName() == poolName
 
         when:
+        def connection = poolDataSource.connection
+        def statement = connection.createStatement()
+        try {
+            statement.execute("SELECT 1")
+        } finally {
+            statement.close()
+            connection.close()
+        }
         def metrics = reader.collectAllMetrics()
 
         then:
         metricValue(metrics, CONNECTION_MAX_METRICS, poolName, null) == 7
+        metricValue(metrics, CONNECTION_COUNT_METRICS, poolName, "used") != null
 
         cleanup:
         ctx.close()
@@ -109,15 +135,8 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
     void "test datasource and UCP bean paths share metric registration"() {
         given:
         String poolName = "shared-ucp-pool"
-        ApplicationContext ctx = ApplicationContext.run([
+        ApplicationContext ctx = ApplicationContext.run(ucpDataSourceConfiguration(poolName, "ucpShared") + [
                 "test.ucp.shared-pool.enabled": "true",
-                "datasources.default.connection-pool-name": poolName,
-                "datasources.default.url": "jdbc:h2:mem:ucpShared;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE",
-                "datasources.default.username": "sa",
-                "datasources.default.connection-factory-class-name": "org.h2.jdbcx.JdbcDataSource",
-                "datasources.default.initial-pool-size": 0,
-                "datasources.default.min-pool-size": 0,
-                "datasources.default.max-pool-size": 7,
         ])
         def reader = ctx.getBean(InMemoryMetricReader)
         PoolDataSource poolDataSource = ctx.getBean(PoolDataSource)
@@ -138,8 +157,99 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         then:
         metricValue(reader.collectAllMetrics(), CONNECTION_MAX_METRICS, poolName, null) == 7
 
+        when:
+        ctx.close()
+
+        then:
+        !hasMetricForPool(reader.collectAllMetrics(), poolName)
+
         cleanup:
         ctx.close()
+    }
+
+    void "test distinct UCP pool objects with same name have independent registrations"() {
+        given:
+        def reader = InMemoryMetricReader.create()
+        def openTelemetry = OpenTelemetrySdk.builder()
+                .setMeterProvider(SdkMeterProvider.builder()
+                        .registerMetricReader(reader)
+                        .build())
+                .build()
+        def metricsRegistry = new UniversalConnectionPoolMetricsRegistry(new OracleUcpTelemetryConfiguration(openTelemetry))
+        def firstConnectionPool = TestUniversalConnectionPoolFactory.connectionPool("same-pool-name", 1, 2, 3, 4)
+        def secondConnectionPool = TestUniversalConnectionPoolFactory.connectionPool("same-pool-name", 5, 6, 7, 8)
+
+        when:
+        metricsRegistry.register(firstConnectionPool)
+        metricsRegistry.register(secondConnectionPool)
+        metricsRegistry.unregister(firstConnectionPool)
+        def metrics = reader.collectAllMetrics()
+
+        then:
+        metricValue(metrics, CONNECTION_COUNT_METRICS, "same-pool-name", "used") == 5
+        metricValue(metrics, CONNECTION_MAX_METRICS, "same-pool-name", null) == 7
+
+        cleanup:
+        metricsRegistry.unregister(secondConnectionPool)
+    }
+
+    void "test unregister ignores unknown and already released UCP pool"() {
+        given:
+        def reader = InMemoryMetricReader.create()
+        def openTelemetry = OpenTelemetrySdk.builder()
+                .setMeterProvider(SdkMeterProvider.builder()
+                        .registerMetricReader(reader)
+                        .build())
+                .build()
+        def metricsRegistry = new UniversalConnectionPoolMetricsRegistry(new OracleUcpTelemetryConfiguration(openTelemetry))
+        def connectionPool = TestUniversalConnectionPoolFactory.connectionPool("removed-pool", 1, 2, 3, 4)
+
+        when:
+        metricsRegistry.unregister(connectionPool)
+
+        then:
+        noExceptionThrown()
+        !hasUcpMetrics(reader.collectAllMetrics())
+
+        when:
+        metricsRegistry.register(connectionPool)
+        metricsRegistry.unregister(connectionPool)
+        metricsRegistry.unregister(connectionPool)
+
+        then:
+        noExceptionThrown()
+        !hasMetricForPool(reader.collectAllMetrics(), "removed-pool")
+    }
+
+    void "test managed datasource registrations are cleaned up when a later registration fails"() {
+        given:
+        def reader = InMemoryMetricReader.create()
+        def openTelemetry = OpenTelemetrySdk.builder()
+                .setMeterProvider(SdkMeterProvider.builder()
+                        .registerMetricReader(reader)
+                        .build())
+                .build()
+        def metricsRegistry = new UniversalConnectionPoolMetricsRegistry(new OracleUcpTelemetryConfiguration(openTelemetry))
+        def registeredConnectionPool = TestUniversalConnectionPoolFactory.connectionPool("registered-pool", 1, 2, 3, 4)
+        UniversalConnectionPoolManager connectionPoolManager = [
+                getConnectionPool: { String poolName ->
+                    if (poolName == "registered-pool") {
+                        return registeredConnectionPool
+                    }
+                    throw new UniversalConnectionPoolException("missing pool")
+                }
+        ] as UniversalConnectionPoolManager
+
+        when:
+        new ManagedUniversalConnectionPoolMetricsBinder(
+                metricsRegistry,
+                connectionPoolManager,
+                null,
+                [poolDataSource("registered-pool"), poolDataSource("missing-pool")])
+
+        then:
+        thrown(ConfigurationException)
+        !hasMetricForPool(reader.collectAllMetrics(), "registered-pool")
     }
 
     void "test Oracle UCP telemetry disabled with property"() {
@@ -158,6 +268,25 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         oracleUcpTelemetryConfiguration.isEmpty()
         ctx.findBean(ManagedUniversalConnectionPoolMetricsBinder).isEmpty()
         ctx.getBean(UniversalConnectionPool)
+        !hasUcpMetrics(reader.collectAllMetrics())
+
+        cleanup:
+        ctx.close()
+    }
+
+    void "test Oracle UCP telemetry disabled for managed datasource"() {
+        given:
+        String poolName = "disabled-ucp-pool"
+        ApplicationContext ctx = ApplicationContext.run(ucpDataSourceConfiguration(poolName, "ucpDisabled") + [
+                "otel.instrumentation.ucp.enabled": "false",
+        ])
+        def reader = ctx.getBean(InMemoryMetricReader)
+
+        expect:
+        ctx.getBean(PoolDataSource).getConnectionPoolName() == poolName
+        ctx.findBean(UniversalConnectionPoolBeanEventListener).isEmpty()
+        ctx.findBean(OracleUcpTelemetryConfiguration).isEmpty()
+        ctx.findBean(ManagedUniversalConnectionPoolMetricsBinder).isEmpty()
         !hasUcpMetrics(reader.collectAllMetrics())
 
         cleanup:
@@ -194,5 +323,23 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
 
     private static String attribute(io.opentelemetry.api.common.Attributes attributes, List<String> names) {
         names.collect { attributes.get(AttributeKey.stringKey(it)) }.find { it != null }
+    }
+
+    private static PoolDataSource poolDataSource(String poolName) {
+        [
+                getConnectionPoolName: { poolName }
+        ] as PoolDataSource
+    }
+
+    private static Map<String, Object> ucpDataSourceConfiguration(String poolName, String databaseName) {
+        [
+                "datasources.default.connection-pool-name": poolName,
+                "datasources.default.url": "jdbc:h2:mem:${databaseName};LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE",
+                "datasources.default.username": "sa",
+                "datasources.default.connection-factory-class-name": "org.h2.jdbcx.JdbcDataSource",
+                "datasources.default.initial-pool-size": 0,
+                "datasources.default.min-pool-size": 0,
+                "datasources.default.max-pool-size": 7,
+        ]
     }
 }

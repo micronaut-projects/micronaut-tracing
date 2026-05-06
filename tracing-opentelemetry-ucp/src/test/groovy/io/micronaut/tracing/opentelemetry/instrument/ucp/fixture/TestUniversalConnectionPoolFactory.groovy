@@ -24,8 +24,8 @@ class TestUniversalConnectionPoolFactory {
         connectionPool(FINAL_POOL_NAME, 5, 6, 7, 8)
     }
 
-    private static UniversalConnectionPool connectionPool(String name, int borrowedConnections, int availableConnections,
-                                                          int maxPoolSize, int pendingRequests) {
+    static UniversalConnectionPool connectionPool(String name, int borrowedConnections, int availableConnections,
+                                                  int maxPoolSize, int pendingRequests) {
         UniversalConnectionPoolStatistics statistics = [
                 getPeakConnectionsCount: { maxPoolSize },
                 getPendingRequestsCount: { pendingRequests }

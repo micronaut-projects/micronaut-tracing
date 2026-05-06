@@ -45,17 +45,17 @@ import java.util.Set;
 @Requires(beans = {UniversalConnectionPoolManager.class, DataSource.class})
 final class ManagedUniversalConnectionPoolMetricsBinder {
 
-    private final OracleUcpTelemetryConfiguration oracleUcpTelemetryConfiguration;
+    private final UniversalConnectionPoolMetricsRegistry universalConnectionPoolMetricsRegistry;
     private final DataSourceResolver dataSourceResolver;
     private final List<UniversalConnectionPool> registeredPools = new ArrayList<>();
     private final Set<String> registeredPoolNames = new HashSet<>();
 
     ManagedUniversalConnectionPoolMetricsBinder(
-        OracleUcpTelemetryConfiguration oracleUcpTelemetryConfiguration,
+        UniversalConnectionPoolMetricsRegistry universalConnectionPoolMetricsRegistry,
         UniversalConnectionPoolManager connectionPoolManager,
         @Nullable DataSourceResolver dataSourceResolver,
         Collection<DataSource> dataSources) {
-        this.oracleUcpTelemetryConfiguration = oracleUcpTelemetryConfiguration;
+        this.universalConnectionPoolMetricsRegistry = universalConnectionPoolMetricsRegistry;
         this.dataSourceResolver = dataSourceResolver == null ? DataSourceResolver.DEFAULT : dataSourceResolver;
         for (DataSource dataSource : dataSources) {
             register(connectionPoolManager, dataSource);
@@ -84,7 +84,7 @@ final class ManagedUniversalConnectionPoolMetricsBinder {
         }
         try {
             UniversalConnectionPool connectionPool = connectionPoolManager.getConnectionPool(poolName);
-            oracleUcpTelemetryConfiguration.oracleUcpTelemetry.registerMetrics(connectionPool);
+            universalConnectionPoolMetricsRegistry.register(connectionPool);
             registeredPools.add(connectionPool);
         } catch (UniversalConnectionPoolException e) {
             throw new ConfigurationException(String.format("Failed to register metrics for UCP connection pool named: %s", poolName), e);
@@ -97,7 +97,7 @@ final class ManagedUniversalConnectionPoolMetricsBinder {
     @PreDestroy
     void close() {
         for (UniversalConnectionPool connectionPool : registeredPools) {
-            oracleUcpTelemetryConfiguration.oracleUcpTelemetry.unregisterMetrics(connectionPool);
+            universalConnectionPoolMetricsRegistry.unregister(connectionPool);
         }
     }
 }

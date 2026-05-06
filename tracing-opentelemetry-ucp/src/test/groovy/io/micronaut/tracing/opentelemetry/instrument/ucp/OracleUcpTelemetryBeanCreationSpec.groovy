@@ -1,6 +1,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.ucp
 
 import io.micronaut.context.ApplicationContext
+import io.micronaut.inject.qualifiers.Qualifiers
 import io.micronaut.tracing.opentelemetry.instrument.ucp.fixture.TestUniversalConnectionPoolFactory
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.sdk.metrics.data.MetricData
@@ -100,6 +101,42 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
 
         then:
         metricValue(metrics, CONNECTION_MAX_METRICS, poolName, null) == 7
+
+        cleanup:
+        ctx.close()
+    }
+
+    void "test datasource and UCP bean paths share metric registration"() {
+        given:
+        String poolName = "shared-ucp-pool"
+        ApplicationContext ctx = ApplicationContext.run([
+                "test.ucp.shared-pool.enabled": "true",
+                "datasources.default.connection-pool-name": poolName,
+                "datasources.default.url": "jdbc:h2:mem:ucpShared;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE",
+                "datasources.default.username": "sa",
+                "datasources.default.connection-factory-class-name": "org.h2.jdbcx.JdbcDataSource",
+                "datasources.default.initial-pool-size": 0,
+                "datasources.default.min-pool-size": 0,
+                "datasources.default.max-pool-size": 7,
+        ])
+        def reader = ctx.getBean(InMemoryMetricReader)
+        PoolDataSource poolDataSource = ctx.getBean(PoolDataSource)
+        UniversalConnectionPool connectionPool = ctx.getBean(UniversalConnectionPool, Qualifiers.byName("sharedConnectionPool"))
+
+        expect:
+        poolDataSource.getConnectionPoolName() == poolName
+
+        when:
+        def metrics = reader.collectAllMetrics()
+
+        then:
+        metricValue(metrics, CONNECTION_MAX_METRICS, poolName, null) == 7
+
+        when:
+        ctx.destroyBean(connectionPool)
+
+        then:
+        metricValue(reader.collectAllMetrics(), CONNECTION_MAX_METRICS, poolName, null) == 7
 
         cleanup:
         ctx.close()

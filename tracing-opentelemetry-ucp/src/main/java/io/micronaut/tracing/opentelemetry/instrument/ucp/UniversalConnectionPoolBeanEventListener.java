@@ -28,20 +28,20 @@ import oracle.ucp.UniversalConnectionPool;
 /**
  * Registers the UniversalConnectionPool bean so OpenTelemetry can collect metrics.
  *
- * @param oracleUcpTelemetryConfiguration the Oracle UCP telemetry configuration
+ * @param universalConnectionPoolMetricsRegistry the shared UCP metrics registry
  * @author Andreas Brenk
  * @since 8.0.0
  */
 @Singleton
 @Internal
 record UniversalConnectionPoolBeanEventListener(
-    OracleUcpTelemetryConfiguration oracleUcpTelemetryConfiguration)
+    UniversalConnectionPoolMetricsRegistry universalConnectionPoolMetricsRegistry)
     implements BeanCreatedEventListener<UniversalConnectionPool>, BeanDestroyedEventListener<UniversalConnectionPool>, Ordered {
 
     @Override
     public UniversalConnectionPool onCreated(@NonNull BeanCreatedEvent<UniversalConnectionPool> event) {
         final UniversalConnectionPool connectionPool = event.getBean();
-        oracleUcpTelemetryConfiguration.oracleUcpTelemetry.registerMetrics(connectionPool);
+        universalConnectionPoolMetricsRegistry.register(connectionPool);
 
         return connectionPool;
     }
@@ -49,7 +49,7 @@ record UniversalConnectionPoolBeanEventListener(
     @Override
     public void onDestroyed(@NonNull BeanDestroyedEvent<UniversalConnectionPool> event) {
         final UniversalConnectionPool connectionPool = event.getBean();
-        oracleUcpTelemetryConfiguration.oracleUcpTelemetry.unregisterMetrics(connectionPool);
+        universalConnectionPoolMetricsRegistry.unregister(connectionPool);
     }
 
     @Override

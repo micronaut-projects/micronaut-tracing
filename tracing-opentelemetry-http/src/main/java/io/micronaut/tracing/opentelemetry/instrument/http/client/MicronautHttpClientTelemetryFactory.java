@@ -16,7 +16,6 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Order;
@@ -40,7 +39,6 @@ import io.opentelemetry.instrumentation.api.semconv.http.HttpClientAttributesExt
 import io.opentelemetry.instrumentation.api.semconv.http.HttpClientMetrics;
 import io.opentelemetry.instrumentation.api.semconv.http.HttpSpanNameExtractor;
 import io.opentelemetry.instrumentation.api.semconv.http.HttpSpanStatusExtractor;
-import io.opentelemetry.sdk.common.internal.OtelVersion;
 import jakarta.inject.Named;
 import jakarta.inject.Qualifier;
 import jakarta.inject.Singleton;
@@ -83,17 +81,17 @@ public class MicronautHttpClientTelemetryFactory {
      * @param spanLinksExtractors the list of {@link SpanLinksExtractor}
      * @return the http client Open Telemetry instrumenter
      */
-    @Prototype
+    @Singleton
     @Requires(beans = OpenTelemetry.class)
     @SuppressWarnings("DuplicatedCode")
     @Named("micronautHttpClientTelemetryInstrumenter")
     Instrumenter<MutableHttpRequest<Object>, HttpResponse<Object>> instrumenter(
         OpenTelemetry openTelemetry,
-        @Client SpanNameExtractor<MutableHttpRequest<?>> spanNameExtractor,
-        @Client @Nullable SpanStatusExtractor<MutableHttpRequest<?>, HttpResponse<?>> spanStatusExtractor,
+        @Client SpanNameExtractor<MutableHttpRequest<Object>> spanNameExtractor,
+        @Client @Nullable SpanStatusExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> spanStatusExtractor,
         @Client @Nullable ErrorCauseExtractor errorCauseExtractor,
-        @Client List<AttributesExtractor<MutableHttpRequest<?>, HttpResponse<?>>> attributesExtractors,
-        @Client List<ContextCustomizer<MutableHttpRequest<?>>> contextCustomizers,
+        @Client List<AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>>> attributesExtractors,
+        @Client List<ContextCustomizer<MutableHttpRequest<Object>>> contextCustomizers,
         @Client List<OperationMetrics> operationMetrics,
         @Client List<OperationListener> operationListeners,
         @Client List<SpanLinksExtractor<MutableHttpRequest<Object>>> spanLinksExtractors) {
@@ -101,7 +99,6 @@ public class MicronautHttpClientTelemetryFactory {
         InstrumenterBuilder<MutableHttpRequest<Object>, HttpResponse<Object>> builder =
             Instrumenter.builder(openTelemetry, INSTRUMENTATION_NAME, spanNameExtractor);
 
-        builder.setInstrumentationVersion(OtelVersion.VERSION);
         if (spanStatusExtractor != null) {
             builder.setSpanStatusExtractor(spanStatusExtractor);
         }
@@ -115,6 +112,35 @@ public class MicronautHttpClientTelemetryFactory {
         spanLinksExtractors.forEach(builder::addSpanLinksExtractor);
 
         return builder.buildClientInstrumenter(HttpRequestSetter.INSTANCE);
+    }
+
+    /**
+     * Builds the HttpClientServicePeerAttributesExtractor.
+     * @param openTelemetry the {@link OpenTelemetry}
+     * @return the {@link HttpClientServicePeerAttributesExtractor}
+     */
+    @Client
+    @Singleton
+    AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> peerServiceAttributesExtractor(OpenTelemetry openTelemetry) {
+        return HttpClientServicePeerAttributesExtractor.create(MicronautHttpClientAttributesGetter.INSTANCE, openTelemetry);
+    }
+
+    /**
+     * Builds the HttpClientAttributesExtractor.
+     * @param openTelemetryHttpClientConfig the {@link OpenTelemetryHttpClientConfig}
+     * @return the {@link HttpClientAttributesExtractor}
+     */
+    @Client
+    @Singleton
+    AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> mutableHttpRequestHttpResponseHttpClientAttributesExtractorBuilder(@Nullable OpenTelemetryHttpClientConfig openTelemetryHttpClientConfig) {
+        HttpClientAttributesExtractorBuilder<MutableHttpRequest<Object>, HttpResponse<Object>> httpAttributesExtractorBuilder =
+            HttpClientAttributesExtractor.builder(MicronautHttpClientAttributesGetter.INSTANCE);
+
+        if (openTelemetryHttpClientConfig != null) {
+            httpAttributesExtractorBuilder.setCapturedRequestHeaders(openTelemetryHttpClientConfig.getRequestHeaders());
+            httpAttributesExtractorBuilder.setCapturedResponseHeaders(openTelemetryHttpClientConfig.getResponseHeaders());
+        }
+        return httpAttributesExtractorBuilder.build();
     }
 
     /**
@@ -147,34 +173,5 @@ public class MicronautHttpClientTelemetryFactory {
     @Singleton
     OperationMetrics httpClientMetrics() {
         return HttpClientMetrics.get();
-    }
-
-    /**
-     * Builds the HttpClientServicePeerAttributesExtractor.
-     * @param openTelemetry the {@link OpenTelemetry}
-     * @return the {@link HttpClientServicePeerAttributesExtractor}
-     */
-    @Client
-    @Prototype
-    AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> peerServiceAttributesExtractor(OpenTelemetry openTelemetry) {
-        return HttpClientServicePeerAttributesExtractor.create(MicronautHttpClientAttributesGetter.INSTANCE, openTelemetry);
-    }
-
-    /**
-     * Builds the HttpClientAttributesExtractor.
-     * @param openTelemetryHttpClientConfig the {@link OpenTelemetryHttpClientConfig}
-     * @return the {@link HttpClientAttributesExtractor}
-     */
-    @Client
-    @Prototype
-    AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> mutableHttpRequestHttpResponseHttpClientAttributesExtractorBuilder(@Nullable OpenTelemetryHttpClientConfig openTelemetryHttpClientConfig) {
-        HttpClientAttributesExtractorBuilder<MutableHttpRequest<Object>, HttpResponse<Object>> httpAttributesExtractorBuilder =
-            HttpClientAttributesExtractor.builder(MicronautHttpClientAttributesGetter.INSTANCE);
-
-        if (openTelemetryHttpClientConfig != null) {
-            httpAttributesExtractorBuilder.setCapturedRequestHeaders(openTelemetryHttpClientConfig.getRequestHeaders());
-            httpAttributesExtractorBuilder.setCapturedResponseHeaders(openTelemetryHttpClientConfig.getResponseHeaders());
-        }
-        return httpAttributesExtractorBuilder.build();
     }
 }

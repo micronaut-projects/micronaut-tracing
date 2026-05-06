@@ -16,7 +16,6 @@
 package io.micronaut.tracing.opentelemetry.instrument.util;
 
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
 import io.opentelemetry.api.OpenTelemetry;
@@ -32,7 +31,7 @@ import io.opentelemetry.instrumentation.api.instrumenter.OperationMetrics;
 import io.opentelemetry.instrumentation.api.instrumenter.SpanLinksExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.SpanNameExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.SpanStatusExtractor;
-import io.opentelemetry.sdk.common.internal.OtelVersion;
+import io.opentelemetry.instrumentation.api.semconv.http.HttpClientMetrics;
 import jakarta.inject.Named;
 import jakarta.inject.Qualifier;
 import jakarta.inject.Singleton;
@@ -75,7 +74,7 @@ public final class MicronautCodeTelemetryFactory {
      * @param spanLinksExtractors the list of {@link SpanLinksExtractor}
      * @return the OpenTelemetry bean with default values
      */
-    @Prototype
+    @Singleton
     @Requires(beans = OpenTelemetry.class)
     @SuppressWarnings("DuplicatedCode")
     @Named("micronautCodeTelemetryInstrumenter")
@@ -93,7 +92,6 @@ public final class MicronautCodeTelemetryFactory {
         InstrumenterBuilder<ClassAndMethod, Object> builder = Instrumenter.builder(
             openTelemetry, INSTRUMENTATION_NAME, spanNameExtractor);
 
-        builder.setInstrumentationVersion(OtelVersion.VERSION);
         if (spanStatusExtractor != null) {
             builder.setSpanStatusExtractor(spanStatusExtractor);
         }
@@ -107,6 +105,22 @@ public final class MicronautCodeTelemetryFactory {
         spanLinksExtractors.forEach(builder::addSpanLinksExtractor);
 
         return builder.buildInstrumenter();
+    }
+
+    /**
+     * Builds the code Open Telemetry instrumenter.
+     * @param openTelemetry the {@link OpenTelemetry}
+     * @return the OpenTelemetry bean with default values
+     * @deprecated Use the bean factory method that accepts all builder collaborators.
+     */
+    @Deprecated
+    public Instrumenter<ClassAndMethod, Object> instrumenter(OpenTelemetry openTelemetry) {
+        return Instrumenter.builder(
+                openTelemetry,
+                INSTRUMENTATION_NAME,
+                CodeSpanNameExtractor.create(ClassAndMethod.codeAttributesGetter()))
+            .addOperationMetrics(HttpClientMetrics.get())
+            .buildInstrumenter();
     }
 
     /**

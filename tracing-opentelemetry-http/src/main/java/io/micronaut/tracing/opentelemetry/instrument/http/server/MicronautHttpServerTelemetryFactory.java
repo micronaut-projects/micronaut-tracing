@@ -16,7 +16,6 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Order;
@@ -40,7 +39,6 @@ import io.opentelemetry.instrumentation.api.semconv.http.HttpServerMetrics;
 import io.opentelemetry.instrumentation.api.semconv.http.HttpServerRoute;
 import io.opentelemetry.instrumentation.api.semconv.http.HttpSpanNameExtractor;
 import io.opentelemetry.instrumentation.api.semconv.http.HttpSpanStatusExtractor;
-import io.opentelemetry.sdk.common.internal.OtelVersion;
 import jakarta.inject.Named;
 import jakarta.inject.Qualifier;
 import jakarta.inject.Singleton;
@@ -83,17 +81,17 @@ public final class MicronautHttpServerTelemetryFactory {
      * @param spanLinksExtractors the list of {@link SpanLinksExtractor}
      * @return the http server Open Telemetry instrumenter
      */
-    @Prototype
+    @Singleton
     @Requires(beans = OpenTelemetry.class)
     @SuppressWarnings("DuplicatedCode")
     @Named("micronautHttpServerTelemetryInstrumenter")
     public Instrumenter<HttpRequest<Object>, HttpResponse<Object>> instrumenter(
         OpenTelemetry openTelemetry,
-        @Server SpanNameExtractor<HttpRequest<?>> spanNameExtractor,
-        @Server @Nullable SpanStatusExtractor<HttpRequest<?>, HttpResponse<?>> spanStatusExtractor,
+        @Server SpanNameExtractor<HttpRequest<Object>> spanNameExtractor,
+        @Server @Nullable SpanStatusExtractor<HttpRequest<Object>, HttpResponse<Object>> spanStatusExtractor,
         @Server @Nullable ErrorCauseExtractor errorCauseExtractor,
-        @Server List<AttributesExtractor<HttpRequest<?>, HttpResponse<?>>> attributesExtractors,
-        @Server List<ContextCustomizer<HttpRequest<?>>> contextCustomizers,
+        @Server List<AttributesExtractor<HttpRequest<Object>, HttpResponse<Object>>> attributesExtractors,
+        @Server List<ContextCustomizer<HttpRequest<Object>>> contextCustomizers,
         @Server List<OperationMetrics> operationMetrics,
         @Server List<OperationListener> operationListeners,
         @Server List<SpanLinksExtractor<HttpRequest<Object>>> spanLinksExtractors) {
@@ -101,7 +99,6 @@ public final class MicronautHttpServerTelemetryFactory {
         InstrumenterBuilder<HttpRequest<Object>, HttpResponse<Object>> builder =
             Instrumenter.builder(openTelemetry, INSTRUMENTATION_NAME, spanNameExtractor);
 
-        builder.setInstrumentationVersion(OtelVersion.VERSION);
         if (spanStatusExtractor != null) {
             builder.setSpanStatusExtractor(spanStatusExtractor);
         }
@@ -115,6 +112,49 @@ public final class MicronautHttpServerTelemetryFactory {
         spanLinksExtractors.forEach(builder::addSpanLinksExtractor);
 
         return builder.buildServerInstrumenter(HttpRequestGetter.INSTANCE);
+    }
+
+    /**
+     * Builds the http server Open Telemetry instrumenter.
+     * @param openTelemetry the {@link OpenTelemetry}
+     * @param extractors the list of {@link AttributesExtractor}
+     * @return the http server Open Telemetry instrumenter
+     * @deprecated Use the bean factory method that accepts all builder collaborators.
+     */
+    @Deprecated
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Instrumenter<HttpRequest<Object>, HttpResponse<Object>> instrumenter(
+        OpenTelemetry openTelemetry,
+        @Server List<AttributesExtractor<HttpRequest<?>, HttpResponse<?>>> extractors) {
+
+        InstrumenterBuilder<HttpRequest<Object>, HttpResponse<Object>> builder =
+            Instrumenter.builder(openTelemetry, INSTRUMENTATION_NAME,
+                HttpSpanNameExtractor.create(MicronautHttpServerAttributesGetter.INSTANCE));
+
+        return builder
+            .addAttributesExtractors((List) extractors)
+            .setSpanStatusExtractor(HttpSpanStatusExtractor.create(MicronautHttpServerAttributesGetter.INSTANCE))
+            .addOperationMetrics(HttpServerMetrics.get())
+            .addContextCustomizer(HttpServerRoute.create(MicronautHttpServerAttributesGetter.INSTANCE))
+            .buildServerInstrumenter(HttpRequestGetter.INSTANCE);
+    }
+
+    /**
+     * Builds the HttpServerAttributesExtractor.
+     * @param openTelemetryHttpServerConfig the {@link OpenTelemetryHttpServerConfig}
+     * @return the {@link HttpServerAttributesExtractor}
+     */
+    @Singleton
+    @Server
+    AttributesExtractor<HttpRequest<Object>, HttpResponse<Object>> httpServerAttributesExtractor(@Nullable OpenTelemetryHttpServerConfig openTelemetryHttpServerConfig) {
+        HttpServerAttributesExtractorBuilder<HttpRequest<Object>, HttpResponse<Object>> httpAttributesExtractorBuilder =
+            HttpServerAttributesExtractor.builder(MicronautHttpServerAttributesGetter.INSTANCE);
+
+        if (openTelemetryHttpServerConfig != null) {
+            httpAttributesExtractorBuilder.setCapturedRequestHeaders(openTelemetryHttpServerConfig.getRequestHeaders());
+            httpAttributesExtractorBuilder.setCapturedResponseHeaders(openTelemetryHttpServerConfig.getResponseHeaders());
+        }
+        return httpAttributesExtractorBuilder.build();
     }
 
     /**
@@ -135,24 +175,6 @@ public final class MicronautHttpServerTelemetryFactory {
     @Singleton
     SpanStatusExtractor<HttpRequest<Object>, HttpResponse<Object>> defaultSpanStatusExtractor() {
         return HttpSpanStatusExtractor.create(MicronautHttpServerAttributesGetter.INSTANCE);
-    }
-
-    /**
-     * Builds the HttpServerAttributesExtractor.
-     * @param openTelemetryHttpServerConfig the {@link OpenTelemetryHttpServerConfig}
-     * @return the {@link HttpServerAttributesExtractor}
-     */
-    @Prototype
-    @Server
-    AttributesExtractor<HttpRequest<Object>, HttpResponse<Object>> httpServerAttributesExtractor(@Nullable OpenTelemetryHttpServerConfig openTelemetryHttpServerConfig) {
-        HttpServerAttributesExtractorBuilder<HttpRequest<Object>, HttpResponse<Object>> httpAttributesExtractorBuilder =
-            HttpServerAttributesExtractor.builder(MicronautHttpServerAttributesGetter.INSTANCE);
-
-        if (openTelemetryHttpServerConfig != null) {
-            httpAttributesExtractorBuilder.setCapturedRequestHeaders(openTelemetryHttpServerConfig.getRequestHeaders());
-            httpAttributesExtractorBuilder.setCapturedResponseHeaders(openTelemetryHttpServerConfig.getResponseHeaders());
-        }
-        return httpAttributesExtractorBuilder.build();
     }
 
     /**

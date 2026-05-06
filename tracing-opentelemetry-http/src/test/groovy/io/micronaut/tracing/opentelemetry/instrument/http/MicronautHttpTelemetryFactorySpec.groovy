@@ -6,6 +6,7 @@ import io.micronaut.context.annotation.Replaces
 import io.micronaut.context.annotation.Requires
 import io.micronaut.context.env.Environment
 import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
 import io.micronaut.http.MutableHttpRequest
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -14,12 +15,15 @@ import io.micronaut.inject.qualifiers.Qualifiers
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.tracing.opentelemetry.instrument.http.client.MicronautHttpClientTelemetryFactory
 import io.micronaut.tracing.opentelemetry.instrument.http.server.MicronautHttpServerTelemetryFactory
+import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.common.Attributes
+import io.opentelemetry.api.common.AttributesBuilder
 import io.opentelemetry.api.trace.SpanContext
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.TraceFlags
 import io.opentelemetry.api.trace.TraceState
 import io.opentelemetry.context.Context
+import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter
 import io.opentelemetry.instrumentation.api.instrumenter.OperationListener
 import io.opentelemetry.instrumentation.api.instrumenter.SpanLinksBuilder
@@ -36,6 +40,8 @@ import java.util.concurrent.atomic.AtomicInteger
 class MicronautHttpTelemetryFactorySpec extends Specification {
 
     private static final String SPEC_NAME = "MicronautHttpTelemetryFactorySpec"
+    private static final AttributeKey<String> CLIENT_WILDCARD_ATTRIBUTE = AttributeKey.stringKey("test.client.wildcard")
+    private static final AttributeKey<String> SERVER_WILDCARD_ATTRIBUTE = AttributeKey.stringKey("test.server.wildcard")
     private static final SpanContext CLIENT_LINKED_CONTEXT = SpanContext.create(
         "00000000000000000000000000000001",
         "0000000000000001",
@@ -103,6 +109,8 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
             serverSpan
             clientSpan.links*.spanContext == [CLIENT_LINKED_CONTEXT]
             serverSpan.links*.spanContext == [SERVER_LINKED_CONTEXT]
+            clientSpan.attributes.get(CLIENT_WILDCARD_ATTRIBUTE) == "client"
+            serverSpan.attributes.get(SERVER_WILDCARD_ATTRIBUTE) == "server"
             serverSpan.attributes.get(HttpAttributes.HTTP_ROUTE) == "/route/{id}"
             CustomHttpTelemetryFactory.clientListenerStart.get() == 1
             CustomHttpTelemetryFactory.clientListenerEnd.get() == 1
@@ -220,12 +228,42 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
             } as SpanLinksExtractor<MutableHttpRequest<Object>>
         }
 
+        @MicronautHttpClientTelemetryFactory.Client
+        @Singleton
+        AttributesExtractor<MutableHttpRequest<?>, HttpResponse<?>> clientWildcardAttributesExtractor() {
+            new AttributesExtractor<MutableHttpRequest<?>, HttpResponse<?>>() {
+                @Override
+                void onStart(AttributesBuilder attributes, Context parentContext, MutableHttpRequest<?> request) {
+                    attributes.put(CLIENT_WILDCARD_ATTRIBUTE, "client")
+                }
+
+                @Override
+                void onEnd(AttributesBuilder attributes, Context context, MutableHttpRequest<?> request, HttpResponse<?> response, Throwable error) {
+                }
+            }
+        }
+
         @MicronautHttpServerTelemetryFactory.Server
         @Singleton
         SpanLinksExtractor<HttpRequest<Object>> serverSpanLinksExtractor() {
             { SpanLinksBuilder spanLinks, Context parentContext, HttpRequest<Object> request ->
                 spanLinks.addLink(SERVER_LINKED_CONTEXT)
             } as SpanLinksExtractor<HttpRequest<Object>>
+        }
+
+        @MicronautHttpServerTelemetryFactory.Server
+        @Singleton
+        AttributesExtractor<HttpRequest<?>, HttpResponse<?>> serverWildcardAttributesExtractor() {
+            new AttributesExtractor<HttpRequest<?>, HttpResponse<?>>() {
+                @Override
+                void onStart(AttributesBuilder attributes, Context parentContext, HttpRequest<?> request) {
+                    attributes.put(SERVER_WILDCARD_ATTRIBUTE, "server")
+                }
+
+                @Override
+                void onEnd(AttributesBuilder attributes, Context context, HttpRequest<?> request, HttpResponse<?> response, Throwable error) {
+                }
+            }
         }
     }
 }

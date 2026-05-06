@@ -1235,6 +1235,9 @@ tracing.exclusions[1]=/env/.*</code></pre>
 If an application overrides the Micronaut Tracing version supplied by the Micronaut Platform BOM, also import the matching <code>io.micronaut.tracing:micronaut-tracing-bom</code> version.
 This keeps OpenTelemetry instrumentation, semantic conventions, SDK, and exporter dependencies aligned.</p>
 </div>
+<div class="paragraph">
+<p>Standard OpenTelemetry resource configuration is also supported. For example, you can set <code>otel.resource.attributes=deployment.environment=prod,service.namespace=payments</code> or use the equivalent <code>OTEL_RESOURCE_ATTRIBUTES</code> environment variable.</p>
+</div>
 <div class="sect1">
 <h2 id="_opentelemetry_annotations">OpenTelemetry annotations</h2>
 <div class="sectionbody">

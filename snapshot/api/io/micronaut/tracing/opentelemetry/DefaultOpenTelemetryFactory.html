@@ -63,7 +63,7 @@ loadScripts(document, 'script');</script>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration,java.util.Map,io.opentelemetry.sdk.trace.IdGenerator,io.opentelemetry.sdk.trace.SpanProcessor,io.micronaut.tracing.opentelemetry.ResourceProvider,io.opentelemetry.sdk.trace.samplers.Sampler,java.util.Collection)" tabindex="0">defaultOpenTelemetry(ApplicationConfiguration, Map, IdGenerator, SpanProcessor, ResourceProvider, Sampler, Collection)</a></li>
+<li><a href="#defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration,io.micronaut.context.env.Environment,io.opentelemetry.sdk.trace.IdGenerator,io.opentelemetry.sdk.trace.SpanProcessor,io.micronaut.tracing.opentelemetry.ResourceProvider,io.opentelemetry.sdk.trace.samplers.Sampler,java.util.Collection)" tabindex="0">defaultOpenTelemetry(ApplicationConfiguration, Environment, IdGenerator, SpanProcessor, ResourceProvider, Sampler, Collection)</a></li>
 </ol>
 </li>
 </ol>
@@ -118,8 +118,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected io.opentelemetry.api.OpenTelemetry</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration,java.util.Map,io.opentelemetry.sdk.trace.IdGenerator,io.opentelemetry.sdk.trace.SpanProcessor,io.micronaut.tracing.opentelemetry.ResourceProvider,io.opentelemetry.sdk.trace.samplers.Sampler,java.util.Collection)" class="member-name-link">defaultOpenTelemetry</a><wbr>(io.micronaut.runtime.ApplicationConfiguration&nbsp;applicationConfiguration,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;otelConfig,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration,io.micronaut.context.env.Environment,io.opentelemetry.sdk.trace.IdGenerator,io.opentelemetry.sdk.trace.SpanProcessor,io.micronaut.tracing.opentelemetry.ResourceProvider,io.opentelemetry.sdk.trace.samplers.Sampler,java.util.Collection)" class="member-name-link">defaultOpenTelemetry</a><wbr>(io.micronaut.runtime.ApplicationConfiguration&nbsp;applicationConfiguration,
+ io.micronaut.context.env.Environment&nbsp;environment,
  @Nullable io.opentelemetry.sdk.trace.IdGenerator&nbsp;idGenerator,
  @Nullable io.opentelemetry.sdk.trace.SpanProcessor&nbsp;spanProcessor,
  @Nullable <a href="ResourceProvider.html" title="interface in io.micronaut.tracing.opentelemetry">ResourceProvider</a>&nbsp;resourceProvider,
@@ -162,13 +162,12 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration,java.util.Map,io.opentelemetry.sdk.trace.IdGenerator,io.opentelemetry.sdk.trace.SpanProcessor,io.micronaut.tracing.opentelemetry.ResourceProvider,io.opentelemetry.sdk.trace.samplers.Sampler,java.util.Collection)">
+<section class="detail" id="defaultOpenTelemetry(io.micronaut.runtime.ApplicationConfiguration,io.micronaut.context.env.Environment,io.opentelemetry.sdk.trace.IdGenerator,io.opentelemetry.sdk.trace.SpanProcessor,io.micronaut.tracing.opentelemetry.ResourceProvider,io.opentelemetry.sdk.trace.samplers.Sampler,java.util.Collection)">
 <h3>defaultOpenTelemetry</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="annotations">@Singleton
 </span><span class="modifiers">protected</span>&nbsp;<span class="return-type">io.opentelemetry.api.OpenTelemetry</span>&nbsp;<span class="element-name">defaultOpenTelemetry</span><wbr><span class="parameters">(io.micronaut.runtime.ApplicationConfiguration&nbsp;applicationConfiguration,
- @Property(name="otel") @MapFormat(transformation=FLAT)
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;otelConfig,
+ io.micronaut.context.env.Environment&nbsp;environment,
  @Nullable
  @Nullable io.opentelemetry.sdk.trace.IdGenerator&nbsp;idGenerator,
  @Nullable
@@ -182,7 +181,7 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>applicationConfiguration</code> - the <code>ApplicationConfiguration</code></dd>
-<dd><code>otelConfig</code> - the configuration values for the opentelemetry autoconfigure</dd>
+<dd><code>environment</code> - the environment property resolver</dd>
 <dd><code>idGenerator</code> - the <code>IdGenerator</code></dd>
 <dd><code>spanProcessor</code> - the <code>SpanProcessor</code></dd>
 <dd><code>resourceProvider</code> - Resource Provider</dd>

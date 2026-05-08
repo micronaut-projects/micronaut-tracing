@@ -57,6 +57,7 @@ import java.util.stream.Stream;
 @Factory
 public class DefaultOpenTelemetryFactory {
 
+    private static final String OTEL_PREFIX = "otel.";
     private static final String SERVICE_NAME_KEY = "otel.service.name";
     private static final String RESOURCE_ATTRIBUTES_KEY = "otel.resource.attributes";
     private static final String DEFAULT_TRACES_EXPORTER = "otel.traces.exporter";
@@ -144,7 +145,7 @@ public class DefaultOpenTelemetryFactory {
     static Map<String, String> resolveOpenTelemetryProperties(ApplicationConfiguration applicationConfiguration,
                                                               Map<String, String> otelConfig) {
         Map<String, String> otel = otelConfig.entrySet().stream().collect(Collectors.toMap(
-            e -> e.getKey().startsWith("otel.") ? e.getKey() : "otel." + e.getKey(),
+            e -> e.getKey().startsWith(OTEL_PREFIX) ? e.getKey() : OTEL_PREFIX + e.getKey(),
             Map.Entry::getValue,
             (left, right) -> right,
             LinkedHashMap::new
@@ -248,7 +249,7 @@ public class DefaultOpenTelemetryFactory {
     private static Map<String, String> resolveOtelProperties(Environment environment) {
         Map<String, String> otel = environment.getProperty("otel", OTEL_PROPERTIES).orElse(Collections.emptyMap()).entrySet().stream().collect(
             Collectors.toMap(
-                entry -> "otel." + normalizeOtelProperty(entry.getKey()),
+                entry -> OTEL_PREFIX + normalizeOtelProperty(entry.getKey()),
                 entry -> String.valueOf(entry.getValue()),
                 (existing, replacement) -> existing,
                 LinkedHashMap::new

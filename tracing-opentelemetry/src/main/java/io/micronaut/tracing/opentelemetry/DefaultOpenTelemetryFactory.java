@@ -17,9 +17,15 @@ package io.micronaut.tracing.opentelemetry;
 
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.env.Environment;
+import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.convert.ArgumentConversionContext;
+import io.micronaut.core.convert.ConversionContext;
+import io.micronaut.core.convert.format.MapFormat;
 import io.micronaut.core.naming.conventions.StringConvention;
+import io.micronaut.core.type.Argument;
 import io.micronaut.core.util.StringUtils;
+import io.micronaut.inject.annotation.MutableAnnotationMetadata;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
@@ -58,6 +64,9 @@ public class DefaultOpenTelemetryFactory {
     private static final String DEFAULT_LOGS_EXPORTER = "otel.logs.exporter";
     private static final String REGISTER_GLOBAL = "otel.register.global";
     private static final String NONE = "none";
+    private static final ArgumentConversionContext<Map<String, Object>> OTEL_PROPERTIES = ConversionContext.of(
+        Argument.mapOf(String.class, Object.class).withAnnotationMetadata(mapFormatMetadata())
+    );
     private static final List<String> MAP_PROPERTY_KEYS = Collections.unmodifiableList(Arrays.asList(
         RESOURCE_ATTRIBUTES_KEY,
         "otel.exporter.otlp.headers",
@@ -144,7 +153,9 @@ public class DefaultOpenTelemetryFactory {
         collapseMapProperties(otel);
 
         if (!hasServiceName(otel)) {
-            otel.put(SERVICE_NAME_KEY, applicationConfiguration.getName().orElse(""));
+            applicationConfiguration.getName()
+                .filter(name -> !isBlank(name))
+                .ifPresent(name -> otel.put(SERVICE_NAME_KEY, name));
         }
 
         return otel;
@@ -235,7 +246,7 @@ public class DefaultOpenTelemetryFactory {
     }
 
     private static Map<String, String> resolveOtelProperties(Environment environment) {
-        Map<String, String> otel = environment.getProperties("otel", StringConvention.RAW).entrySet().stream().collect(
+        Map<String, String> otel = environment.getProperty("otel", OTEL_PROPERTIES).orElse(Collections.emptyMap()).entrySet().stream().collect(
             Collectors.toMap(
                 entry -> "otel." + normalizeOtelProperty(entry.getKey()),
                 entry -> String.valueOf(entry.getValue()),
@@ -251,6 +262,15 @@ public class DefaultOpenTelemetryFactory {
 
     private static String normalizeOtelProperty(String property) {
         return property.toLowerCase(Locale.ENGLISH).replace('_', '.');
+    }
+
+    private static AnnotationMetadata mapFormatMetadata() {
+        MutableAnnotationMetadata metadata = new MutableAnnotationMetadata();
+        metadata.addAnnotation(MapFormat.class.getName(), Map.of(
+            "transformation", MapFormat.MapTransformation.FLAT,
+            "keyFormat", StringConvention.RAW
+        ));
+        return metadata;
     }
 
     /**

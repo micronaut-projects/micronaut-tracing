@@ -33,15 +33,6 @@ dependencies {
 
 }
 
-sourceSets {
-    test {
-        java {
-            srcDirs 'build/generated/source/proto/test/grpc'
-            srcDirs 'build/generated/source/proto/test/java'
-        }
-    }
-}
-
 protobuf {
     protoc { artifact = libs.protoc.asProvider().get() }
     plugins {

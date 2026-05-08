@@ -118,6 +118,8 @@ class DefaultOpenTelemetryFactorySpec extends Specification {
                         'exporter.otlp.headers.Authorization'       : 'Bearer token',
                         'exporter.otlp.headers.Content-Type'        : 'application/x-protobuf',
                         'exporter.otlp.traces.headers.Authorization': 'Bearer traces-token',
+                        'exporter.otlp.metrics.headers.Authorization': 'Bearer metrics-token',
+                        'exporter.otlp.logs.headers.Authorization'  : 'Bearer logs-token',
                         'resource.attributes.service.name'          : 'explicit-service',
                         'resource.attributes.environment'           : 'test',
                         'traces.exporter'                           : 'otlp'
@@ -127,6 +129,8 @@ class DefaultOpenTelemetryFactorySpec extends Specification {
         then:
         properties['otel.exporter.otlp.headers'] == 'Authorization=Bearer token,Content-Type=application/x-protobuf'
         properties['otel.exporter.otlp.traces.headers'] == 'Authorization=Bearer traces-token'
+        properties['otel.exporter.otlp.metrics.headers'] == 'Authorization=Bearer metrics-token'
+        properties['otel.exporter.otlp.logs.headers'] == 'Authorization=Bearer logs-token'
         properties['otel.resource.attributes'] == 'service.name=explicit-service,environment=test'
         properties['otel.traces.exporter'] == 'otlp'
         !properties.containsKey('otel.exporter.otlp.headers.Authorization')
@@ -147,6 +151,20 @@ class DefaultOpenTelemetryFactorySpec extends Specification {
 
         then:
         properties['otel.service.name'] == 'default-app'
+    }
+
+    void "service name is not configured when application name is absent"() {
+        given:
+        ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration()
+
+        when:
+        Map<String, String> properties = DefaultOpenTelemetryFactory.resolveOpenTelemetryProperties(
+                applicationConfiguration,
+                [:]
+        )
+
+        then:
+        !properties.containsKey('otel.service.name')
     }
 
     void "application name is used as default service name when resource service name is blank"() {

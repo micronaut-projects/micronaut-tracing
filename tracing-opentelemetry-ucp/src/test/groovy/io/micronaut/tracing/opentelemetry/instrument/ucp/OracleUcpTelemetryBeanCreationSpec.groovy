@@ -15,6 +15,9 @@ import oracle.ucp.admin.UniversalConnectionPoolManager
 import oracle.ucp.jdbc.PoolDataSource
 import spock.lang.Specification
 
+import javax.sql.DataSource
+import java.sql.SQLException
+
 class OracleUcpTelemetryBeanCreationSpec extends Specification {
 
     private static final List<String> CONNECTION_COUNT_METRICS = [
@@ -108,7 +111,7 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         String poolName = "real-ucp-pool"
         ApplicationContext ctx = ApplicationContext.run(ucpDataSourceConfiguration(poolName, "ucpSmoke"))
         def reader = ctx.getBean(InMemoryMetricReader)
-        def poolDataSource = ctx.getBean(PoolDataSource)
+        def poolDataSource = ctx.getBean(DataSource).unwrap(PoolDataSource)
 
         expect:
         poolDataSource.getConnectionPoolName() == poolName
@@ -139,7 +142,7 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
                 "test.ucp.shared-pool.enabled": "true",
         ])
         def reader = ctx.getBean(InMemoryMetricReader)
-        PoolDataSource poolDataSource = ctx.getBean(PoolDataSource)
+        PoolDataSource poolDataSource = ctx.getBean(DataSource).unwrap(PoolDataSource)
         UniversalConnectionPool connectionPool = ctx.getBean(UniversalConnectionPool, Qualifiers.byName("sharedConnectionPool"))
 
         expect:
@@ -252,6 +255,97 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         !hasMetricForPool(reader.collectAllMetrics(), "registered-pool")
     }
 
+    void "test managed datasource unwraps wrapped PoolDataSource"() {
+        given:
+        def reader = InMemoryMetricReader.create()
+        def openTelemetry = OpenTelemetrySdk.builder()
+                .setMeterProvider(SdkMeterProvider.builder()
+                        .registerMetricReader(reader)
+                        .build())
+                .build()
+        def metricsRegistry = new UniversalConnectionPoolMetricsRegistry(new OracleUcpTelemetryConfiguration(openTelemetry))
+        def registeredConnectionPool = TestUniversalConnectionPoolFactory.connectionPool("wrapped-pool", 1, 2, 3, 4)
+        UniversalConnectionPoolManager connectionPoolManager = [
+                getConnectionPool: { String poolName ->
+                    if (poolName == "wrapped-pool") {
+                        return registeredConnectionPool
+                    }
+                    throw new UniversalConnectionPoolException("missing pool")
+                }
+        ] as UniversalConnectionPoolManager
+        def binder = new ManagedUniversalConnectionPoolMetricsBinder(
+                metricsRegistry,
+                connectionPoolManager,
+                null,
+                [wrappedDataSource(poolDataSource("wrapped-pool"))])
+
+        expect:
+        metricValue(reader.collectAllMetrics(), CONNECTION_MAX_METRICS, "wrapped-pool", null) == 3
+
+        cleanup:
+        binder?.close()
+    }
+
+    void "test managed datasource creates missing UCP manager pool from unwrapped adapter"() {
+        given:
+        String poolName = "wrapped-real-ucp-pool"
+        ApplicationContext ctx = ApplicationContext.run(ucpDataSourceConfiguration(poolName, "ucpWrappedWithJdbc"))
+        def reader = ctx.getBean(InMemoryMetricReader)
+        def poolDataSource = ctx.getBean(DataSource).unwrap(PoolDataSource)
+
+        expect:
+        poolDataSource.getConnectionPoolName() == poolName
+
+        when:
+        def connection = poolDataSource.connection
+        def statement = connection.createStatement()
+        try {
+            statement.execute("SELECT 1")
+        } finally {
+            statement.close()
+            connection.close()
+        }
+        def metrics = reader.collectAllMetrics()
+
+        then:
+        metricValue(metrics, CONNECTION_MAX_METRICS, poolName, null) == 7
+        metricValue(metrics, CONNECTION_COUNT_METRICS, poolName, "used") != null
+
+        cleanup:
+        ctx.close()
+    }
+
+    void "test SQLException from wrapped datasource unwrap fails and cleans up earlier registrations"() {
+        given:
+        def reader = InMemoryMetricReader.create()
+        def openTelemetry = OpenTelemetrySdk.builder()
+                .setMeterProvider(SdkMeterProvider.builder()
+                        .registerMetricReader(reader)
+                        .build())
+                .build()
+        def metricsRegistry = new UniversalConnectionPoolMetricsRegistry(new OracleUcpTelemetryConfiguration(openTelemetry))
+        def registeredConnectionPool = TestUniversalConnectionPoolFactory.connectionPool("registered-pool", 1, 2, 3, 4)
+        UniversalConnectionPoolManager connectionPoolManager = [
+                getConnectionPool: { String poolName ->
+                    if (poolName == "registered-pool") {
+                        return registeredConnectionPool
+                    }
+                    throw new UniversalConnectionPoolException("missing pool")
+                }
+        ] as UniversalConnectionPoolManager
+
+        when:
+        new ManagedUniversalConnectionPoolMetricsBinder(
+                metricsRegistry,
+                connectionPoolManager,
+                null,
+                [poolDataSource("registered-pool"), throwingWrappedDataSource()])
+
+        then:
+        thrown(ConfigurationException)
+        !hasMetricForPool(reader.collectAllMetrics(), "registered-pool")
+    }
+
     void "test Oracle UCP telemetry disabled with property"() {
         given:
         ApplicationContext ctx = ApplicationContext.builder([
@@ -279,11 +373,12 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         String poolName = "disabled-ucp-pool"
         ApplicationContext ctx = ApplicationContext.run(ucpDataSourceConfiguration(poolName, "ucpDisabled") + [
                 "otel.instrumentation.ucp.enabled": "false",
+                "otel.instrumentation.jdbc.enabled": "false",
         ])
         def reader = ctx.getBean(InMemoryMetricReader)
 
         expect:
-        ctx.getBean(PoolDataSource).getConnectionPoolName() == poolName
+        ctx.getBean(DataSource).unwrap(PoolDataSource).getConnectionPoolName() == poolName
         ctx.findBean(UniversalConnectionPoolBeanEventListener).isEmpty()
         ctx.findBean(OracleUcpTelemetryConfiguration).isEmpty()
         ctx.findBean(ManagedUniversalConnectionPoolMetricsBinder).isEmpty()
@@ -329,6 +424,25 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         [
                 getConnectionPoolName: { poolName }
         ] as PoolDataSource
+    }
+
+    private static DataSource wrappedDataSource(PoolDataSource poolDataSource) {
+        [
+                isWrapperFor: { Class<?> type -> type == PoolDataSource },
+                unwrap: { Class<?> type ->
+                    if (type == PoolDataSource) {
+                        return poolDataSource
+                    }
+                    throw new SQLException("Unsupported unwrap type")
+                }
+        ] as DataSource
+    }
+
+    private static DataSource throwingWrappedDataSource() {
+        [
+                isWrapperFor: { Class<?> type -> type == PoolDataSource },
+                unwrap: { Class<?> type -> throw new SQLException("Cannot unwrap ${type.name}") }
+        ] as DataSource
     }
 
     private static Map<String, Object> ucpDataSourceConfiguration(String poolName, String databaseName) {

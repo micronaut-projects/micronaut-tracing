@@ -25,6 +25,9 @@ import oracle.ucp.UniversalConnectionPoolException;
 import oracle.ucp.admin.UniversalConnectionPoolManager;
 import oracle.ucp.jdbc.PoolDataSource;
 
+import javax.sql.DataSource;
+import java.sql.SQLException;
+
 /**
  * Exposes the Micronaut datasource-managed UCP pool as a bean for duplicate-registration tests.
  */
@@ -34,15 +37,17 @@ public final class SharedUniversalConnectionPoolFactory {
 
     /**
      * @param connectionPoolManager the UCP connection pool manager
-     * @param poolDataSource        the configured pool datasource
+     * @param dataSource            the configured datasource
      * @return the datasource-managed connection pool
      * @throws UniversalConnectionPoolException if the UCP pool cannot be found
+     * @throws SQLException                     if the datasource cannot be unwrapped
      */
     @Singleton
     @Named("sharedConnectionPool")
     UniversalConnectionPool sharedConnectionPool(
         UniversalConnectionPoolManager connectionPoolManager,
-        PoolDataSource poolDataSource) throws UniversalConnectionPoolException {
+        DataSource dataSource) throws UniversalConnectionPoolException, SQLException {
+        PoolDataSource poolDataSource = dataSource.unwrap(PoolDataSource.class);
         return connectionPoolManager.getConnectionPool(poolDataSource.getConnectionPoolName());
     }
 }

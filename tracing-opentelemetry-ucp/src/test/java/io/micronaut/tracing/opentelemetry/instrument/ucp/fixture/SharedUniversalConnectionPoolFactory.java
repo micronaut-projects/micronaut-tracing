@@ -50,4 +50,17 @@ public final class SharedUniversalConnectionPoolFactory {
         PoolDataSource poolDataSource = dataSource.unwrap(PoolDataSource.class);
         return connectionPoolManager.getConnectionPool(poolDataSource.getConnectionPoolName());
     }
+
+    /**
+     * @param connectionPoolManager the UCP connection pool manager
+     * @param poolName              the connection pool name
+     * @return true if the UCP manager has a connection pool with the supplied name
+     */
+    public static boolean hasConnectionPool(UniversalConnectionPoolManager connectionPoolManager, String poolName) {
+        try {
+            return connectionPoolManager.getConnectionPool(poolName) != null;
+        } catch (UniversalConnectionPoolException e) {
+            return false;
+        }
+    }
 }

@@ -3,6 +3,7 @@ package io.micronaut.tracing.opentelemetry.instrument.ucp
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.exceptions.ConfigurationException
 import io.micronaut.inject.qualifiers.Qualifiers
+import io.micronaut.tracing.opentelemetry.instrument.ucp.fixture.SharedUniversalConnectionPoolFactory
 import io.micronaut.tracing.opentelemetry.instrument.ucp.fixture.TestUniversalConnectionPoolFactory
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.sdk.OpenTelemetrySdk
@@ -291,10 +292,16 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         String poolName = "wrapped-real-ucp-pool"
         ApplicationContext ctx = ApplicationContext.run(ucpDataSourceConfiguration(poolName, "ucpWrappedWithJdbc"))
         def reader = ctx.getBean(InMemoryMetricReader)
-        def poolDataSource = ctx.getBean(DataSource).unwrap(PoolDataSource)
+        def dataSource = ctx.getBean(DataSource)
+        def poolDataSource = dataSource.unwrap(PoolDataSource)
+        def connectionPoolManager = ctx.getBean(UniversalConnectionPoolManager)
+        boolean poolRegisteredAtStartup = SharedUniversalConnectionPoolFactory.hasConnectionPool(connectionPoolManager, poolName)
 
         expect:
+        !(dataSource instanceof PoolDataSource)
+        dataSource.isWrapperFor(PoolDataSource)
         poolDataSource.getConnectionPoolName() == poolName
+        poolRegisteredAtStartup
 
         when:
         def connection = poolDataSource.connection

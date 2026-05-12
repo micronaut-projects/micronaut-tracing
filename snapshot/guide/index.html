@@ -109,27 +109,29 @@
         
         <div class="toc-item" style="margin-left:10px" id="toc-item-logback"><a href="#logback"><strong>6.3</strong><span>Logback</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-propagators"><a href="#propagators"><strong>6.4</strong><span>OpenTelemetry Propagators</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-customization"><a href="#customization"><strong>6.4</strong><span>OpenTelemetry SDK Customization</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-idgenerator"><a href="#idgenerator"><strong>6.5</strong><span>ID Generator</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-propagators"><a href="#propagators"><strong>6.5</strong><span>OpenTelemetry Propagators</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-http"><a href="#http"><strong>6.6</strong><span>HTTP Server and Client</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-idgenerator"><a href="#idgenerator"><strong>6.6</strong><span>ID Generator</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-mdc"><a href="#mdc"><strong>6.7</strong><span>Logback MDC</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-http"><a href="#http"><strong>6.7</strong><span>HTTP Server and Client</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-grpc"><a href="#grpc"><strong>6.8</strong><span>gRPC Server and Client</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-mdc"><a href="#mdc"><strong>6.8</strong><span>Logback MDC</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-jdbc"><a href="#jdbc"><strong>6.9</strong><span>JDBC</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-grpc"><a href="#grpc"><strong>6.9</strong><span>gRPC Server and Client</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-r2dbc"><a href="#r2dbc"><strong>6.10</strong><span>R2DBC</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-jdbc"><a href="#jdbc"><strong>6.10</strong><span>JDBC</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-kafka"><a href="#kafka"><strong>6.11</strong><span>Kafka</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-r2dbc"><a href="#r2dbc"><strong>6.11</strong><span>R2DBC</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>6.12</strong><span>AWS SDK Instrumentation</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-kafka"><a href="#kafka"><strong>6.12</strong><span>Kafka</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>6.13</strong><span>AWS Resource Detectors</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>6.13</strong><span>AWS SDK Instrumentation</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-opentelemetryGuides"><a href="#opentelemetryGuides"><strong>6.14</strong><span>OpenTelemetry Guides</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>6.14</strong><span>AWS Resource Detectors</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-opentelemetryGuides"><a href="#opentelemetryGuides"><strong>6.15</strong><span>OpenTelemetry Guides</span></a></div>
         
         <div class="toc-item" style="margin-left:0px" id="toc-item-tracingGuides"><a href="#tracingGuides"><strong>7</strong><span>Micronaut Tracing Guides</span></a></div>
         
@@ -1690,7 +1692,60 @@ Micronaut Zipkin exporter requires <code>otel.traces.exporter</code> property no
 </p>
 </div>
 
-<h2 id="propagators"><a class="anchor" href="#propagators"></a>6.4 OpenTelemetry Propagators</h2>
+<h2 id="customization"><a class="anchor" href="#customization"></a>6.4 OpenTelemetry SDK Customization</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/customization.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>You can provide a bean of type <a href="../api/io/micronaut/tracing/opentelemetry/OpenTelemetryBuilderCustomizer.html">OpenTelemetryBuilderCustomizer</a> to customize the OpenTelemetry autoconfigured SDK builder before Micronaut creates the <code>io.opentelemetry.api.OpenTelemetry</code> bean.</p>
+</div>
+<div class="paragraph">
+<p>For example, a customizer can register a metric view with an explicit histogram aggregation and custom bucket boundaries:</p>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.micronaut.context.annotation.Factory;
+import io.opentelemetry.sdk.metrics.Aggregation;
+import io.opentelemetry.sdk.metrics.InstrumentSelector;
+import io.opentelemetry.sdk.metrics.InstrumentType;
+import io.opentelemetry.sdk.metrics.View;
+import jakarta.inject.Singleton;
+
+import java.util.List;
+
+@Factory
+class OpenTelemetryBuilderCustomizerExample {
+
+    private static final List&lt;Double&gt; HISTOGRAM_BOUNDARIES = List.of(1.0d, 5.0d, 10.0d);
+
+    @Singleton
+    OpenTelemetryBuilderCustomizer histogramViewCustomizer() {
+        return builder -&gt; builder.addMeterProviderCustomizer((meterProviderBuilder, configProperties) -&gt; {
+            meterProviderBuilder.registerView(
+                InstrumentSelector.builder()
+                    .setType(InstrumentType.HISTOGRAM)
+                    .setName("http.server.request.duration")
+                    .build(),
+                View.builder()
+                    .setAggregation(Aggregation.explicitBucketHistogram(HISTOGRAM_BOUNDARIES))
+                    .build()
+            );
+            return meterProviderBuilder;
+        });
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The customizer receives the same <code>AutoConfiguredOpenTelemetrySdkBuilder</code> that Micronaut uses internally, so it can also use the OpenTelemetry SDK autoconfigure extension points such as tracer provider customizers, meter provider customizers, log record processor customizers, and property suppliers.</p>
+</div>
+
+<h2 id="propagators"><a class="anchor" href="#propagators"></a>6.5 OpenTelemetry Propagators</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/propagators.adoc"'>
@@ -1786,7 +1841,7 @@ otel.propagators=tracecontext, baggage, xray</code></pre>
 </div>
 </div>
 
-<h2 id="idgenerator"><a class="anchor" href="#idgenerator"></a>6.5 ID Generator</h2>
+<h2 id="idgenerator"><a class="anchor" href="#idgenerator"></a>6.6 ID Generator</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/idgenerator.adoc"'>
@@ -1825,7 +1880,7 @@ For an example, AWS X-Ray requires a specific format for their tracing identifie
 </div>
 </div>
 
-<h2 id="http"><a class="anchor" href="#http"></a>6.6 HTTP Server and Client</h2>
+<h2 id="http"><a class="anchor" href="#http"></a>6.7 HTTP Server and Client</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/http.adoc"'>
@@ -2024,7 +2079,7 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
 </div>
 </div>
 
-<h2 id="mdc"><a class="anchor" href="#mdc"></a>6.7 Logback MDC</h2>
+<h2 id="mdc"><a class="anchor" href="#mdc"></a>6.8 Logback MDC</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/mdc.adoc"'>
@@ -2093,7 +2148,7 @@ These values are only added when a valid span is current, so logs written outsid
 </div>
 </div>
 
-<h2 id="grpc"><a class="anchor" href="#grpc"></a>6.8 gRPC Server and Client</h2>
+<h2 id="grpc"><a class="anchor" href="#grpc"></a>6.9 gRPC Server and Client</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/grpc.adoc"'>
@@ -2121,7 +2176,7 @@ These values are only added when a valid span is current, so logs written outsid
 </p>
 </div>
 
-<h2 id="jdbc"><a class="anchor" href="#jdbc"></a>6.9 JDBC</h2>
+<h2 id="jdbc"><a class="anchor" href="#jdbc"></a>6.10 JDBC</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/jdbc.adoc"'>
@@ -2152,7 +2207,7 @@ These values are only added when a valid span is current, so logs written outsid
 <p>The dependency instruments the <code>javax.sql.DataSource</code> beans for intercepting the queries to the database.</p>
 </div>
 
-<h2 id="r2dbc"><a class="anchor" href="#r2dbc"></a>6.10 R2DBC</h2>
+<h2 id="r2dbc"><a class="anchor" href="#r2dbc"></a>6.11 R2DBC</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/r2dbc.adoc"'>
@@ -2183,7 +2238,7 @@ These values are only added when a valid span is current, so logs written outsid
 <p>The dependency instruments <code>io.r2dbc.spi.ConnectionFactory</code> beans to intercept database queries.</p>
 </div>
 
-<h2 id="kafka"><a class="anchor" href="#kafka"></a>6.11 Kafka</h2>
+<h2 id="kafka"><a class="anchor" href="#kafka"></a>6.12 Kafka</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/kafka.adoc"'>
@@ -2373,7 +2428,7 @@ You can&#8217;t use <code>included-topics</code> and <code>excluded-topics</code
 </div>
 </div>
 
-<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>6.12 AWS SDK Instrumentation</h2>
+<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>6.13 AWS SDK Instrumentation</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/awsSdkInstrumentation.adoc"'>
@@ -2427,7 +2482,7 @@ You can&#8217;t use <code>included-topics</code> and <code>excluded-topics</code
 via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.</p>
 </div>
 
-<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>6.13 AWS Resource Detectors</h2>
+<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>6.14 AWS Resource Detectors</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/awsResourceDetectors.adoc"'>
@@ -2485,7 +2540,7 @@ public class AwsResourceProvider implements ResourceProvider {
 </div>
 </div>
 
-<h2 id="opentelemetryGuides"><a class="anchor" href="#opentelemetryGuides"></a>6.14 OpenTelemetry Guides</h2>
+<h2 id="opentelemetryGuides"><a class="anchor" href="#opentelemetryGuides"></a>6.15 OpenTelemetry Guides</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/opentelemetryGuides.adoc"'>

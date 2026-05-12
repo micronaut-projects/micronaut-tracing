@@ -3,6 +3,7 @@ package io.micronaut.tracing.opentelemetry.instrument.ucp
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.exceptions.ConfigurationException
 import io.micronaut.inject.qualifiers.Qualifiers
+import io.micronaut.tracing.opentelemetry.instrument.ucp.fixture.CountingConnectionFactory
 import io.micronaut.tracing.opentelemetry.instrument.ucp.fixture.SharedUniversalConnectionPoolFactory
 import io.micronaut.tracing.opentelemetry.instrument.ucp.fixture.TestUniversalConnectionPoolFactory
 import io.opentelemetry.api.common.AttributeKey
@@ -328,7 +329,11 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
     void "test managed datasource creates missing UCP manager pool from unwrapped adapter"() {
         given:
         String poolName = "wrapped-real-ucp-pool"
-        ApplicationContext ctx = ApplicationContext.run(ucpDataSourceConfiguration(poolName, "ucpWrappedWithJdbc"))
+        CountingConnectionFactory.reset()
+        ApplicationContext ctx = ApplicationContext.run(ucpDataSourceConfiguration(
+                poolName,
+                "ucpWrappedWithJdbc",
+                CountingConnectionFactory.name))
         def reader = ctx.getBean(InMemoryMetricReader)
         def dataSource = ctx.getBean(DataSource)
         def poolDataSource = dataSource.unwrap(PoolDataSource)
@@ -340,6 +345,7 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         dataSource.isWrapperFor(PoolDataSource)
         poolDataSource.getConnectionPoolName() == poolName
         poolRegisteredAtStartup
+        CountingConnectionFactory.connectionsCreated == 0
 
         when:
         def connection = poolDataSource.connection
@@ -355,9 +361,11 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         then:
         metricValue(metrics, CONNECTION_MAX_METRICS, poolName, null) == 7
         metricValue(metrics, CONNECTION_COUNT_METRICS, poolName, "used") != null
+        CountingConnectionFactory.connectionsCreated > 0
 
         cleanup:
         ctx.close()
+        CountingConnectionFactory.reset()
     }
 
     void "test SQLException from wrapped datasource unwrap fails and cleans up earlier registrations"() {
@@ -490,12 +498,15 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         ] as DataSource
     }
 
-    private static Map<String, Object> ucpDataSourceConfiguration(String poolName, String databaseName) {
+    private static Map<String, Object> ucpDataSourceConfiguration(
+            String poolName,
+            String databaseName,
+            String connectionFactoryClassName = "org.h2.jdbcx.JdbcDataSource") {
         [
                 "datasources.default.connection-pool-name": poolName,
                 "datasources.default.url": "jdbc:h2:mem:${databaseName};LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE",
                 "datasources.default.username": "sa",
-                "datasources.default.connection-factory-class-name": "org.h2.jdbcx.JdbcDataSource",
+                "datasources.default.connection-factory-class-name": connectionFactoryClassName,
                 "datasources.default.initial-pool-size": 0,
                 "datasources.default.min-pool-size": 0,
                 "datasources.default.max-pool-size": 7,

@@ -45,6 +45,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -167,15 +168,19 @@ public class DefaultOpenTelemetryFactory {
             Map<String, String> nestedValues = removeNestedValues(otel, mapPropertyKey);
             if (!nestedValues.isEmpty()) {
                 String nestedConfig = toMapProperty(nestedValues);
-                otel.compute(
-                    mapPropertyKey,
-                    (key, value) -> {
-                        String normalizedValue = normalizeMapPropertyValue(value);
-                        return isBlank(normalizedValue) ? nestedConfig : normalizedValue + "," + nestedConfig;
-                    }
-                );
+                appendMapProperty(otel, mapPropertyKey, nestedConfig);
             }
         }
+    }
+
+    private static void appendMapProperty(Map<String, String> otel, String mapPropertyKey, String nestedConfig) {
+        otel.compute(
+            mapPropertyKey,
+            (key, value) -> {
+                String normalizedValue = normalizeMapPropertyValue(value);
+                return isBlank(normalizedValue) ? nestedConfig : normalizedValue + "," + nestedConfig;
+            }
+        );
     }
 
     private static String normalizeMapPropertyValue(@Nullable String value) {
@@ -247,18 +252,44 @@ public class DefaultOpenTelemetryFactory {
     }
 
     private static Map<String, String> resolveOtelProperties(Environment environment) {
-        Map<String, String> otel = environment.getProperty("otel", OTEL_PROPERTIES).orElse(Collections.emptyMap()).entrySet().stream().collect(
-            Collectors.toMap(
+        Map<String, String> otel = environment.getProperty("otel", OTEL_PROPERTIES).orElse(Collections.emptyMap()).entrySet().stream()
+            .filter(entry -> !isNestedMapProperty(entry.getKey()))
+            .collect(Collectors.toMap(
                 entry -> OTEL_PREFIX + normalizeOtelProperty(entry.getKey()),
                 entry -> String.valueOf(entry.getValue()),
                 (existing, replacement) -> existing,
                 LinkedHashMap::new
-            )
-        );
+            ));
         environment.getProperty(RESOURCE_ATTRIBUTES_KEY, String.class).ifPresent(attributes ->
             otel.putIfAbsent(RESOURCE_ATTRIBUTES_KEY, attributes)
         );
+        MAP_PROPERTY_KEYS.forEach(mapPropertyKey ->
+            getNestedMapProperty(environment, mapPropertyKey)
+                .filter(properties -> !properties.isEmpty())
+                .ifPresent(properties -> appendMapProperty(otel, mapPropertyKey, toMapProperty(properties)))
+        );
         return otel;
+    }
+
+    private static Optional<Map<String, String>> getNestedMapProperty(Environment environment, String mapPropertyKey) {
+        Map<String, Object> properties = environment.getProperties(mapPropertyKey, StringConvention.RAW);
+        if (properties.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(properties.entrySet().stream()
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                entry -> String.valueOf(entry.getValue()),
+                (existing, replacement) -> existing,
+                LinkedHashMap::new
+            )));
+    }
+
+    private static boolean isNestedMapProperty(String property) {
+        String normalized = normalizeOtelProperty(property);
+        return MAP_PROPERTY_KEYS.stream()
+            .map(key -> key.substring(OTEL_PREFIX.length()) + ".")
+            .anyMatch(normalized::startsWith);
     }
 
     private static String normalizeOtelProperty(String property) {

@@ -62,7 +62,7 @@ public class SqsAsyncClientBeanCreatedEventListener implements BeanCreatedEventL
         if (LOG.isTraceEnabled()) {
             LOG.trace("Wrapping OpenTelemetry asynchronous SQS client {}", event.getBean().getClass().getSimpleName());
         }
-        return awsSdkTelemetryProvider.wrap(event.getBean());
+        return awsSdkTelemetryProvider.withTelemetry(awsSdkTelemetry -> awsSdkTelemetry.wrap(event.getBean()));
     }
 
     private boolean shouldWrap() {

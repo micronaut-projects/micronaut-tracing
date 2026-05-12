@@ -18,8 +18,8 @@ package io.micronaut.tracing.opentelemetry.xray;
 import io.micronaut.core.annotation.Internal;
 import io.opentelemetry.instrumentation.awssdk.v2_2.AwsSdkTelemetry;
 import software.amazon.awssdk.core.interceptor.ExecutionInterceptor;
-import software.amazon.awssdk.services.sqs.SqsAsyncClient;
-import software.amazon.awssdk.services.sqs.SqsClient;
+
+import java.util.function.Function;
 
 /**
  * Provides AWS SDK telemetry operations without exposing the OpenTelemetry AWS SDK implementation as a bean.
@@ -39,11 +39,7 @@ final class AwsSdkTelemetryProvider {
         return awsSdkTelemetry.createExecutionInterceptor();
     }
 
-    SqsClient wrap(SqsClient sqsClient) {
-        return awsSdkTelemetry.wrap(sqsClient);
-    }
-
-    SqsAsyncClient wrap(SqsAsyncClient sqsAsyncClient) {
-        return awsSdkTelemetry.wrap(sqsAsyncClient);
+    <T> T withTelemetry(Function<AwsSdkTelemetry, T> function) {
+        return function.apply(awsSdkTelemetry);
     }
 }

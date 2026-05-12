@@ -33,9 +33,7 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Registers UCP pools created by Micronaut JDBC UCP so OpenTelemetry can collect metrics.
@@ -49,7 +47,6 @@ final class ManagedUniversalConnectionPoolMetricsBinder {
     private final UniversalConnectionPoolMetricsRegistry universalConnectionPoolMetricsRegistry;
     private final DataSourceResolver dataSourceResolver;
     private final List<UniversalConnectionPool> registeredPools = new ArrayList<>();
-    private final Set<String> registeredPoolNames = new HashSet<>();
 
     ManagedUniversalConnectionPoolMetricsBinder(
         UniversalConnectionPoolMetricsRegistry universalConnectionPoolMetricsRegistry,
@@ -85,9 +82,6 @@ final class ManagedUniversalConnectionPoolMetricsBinder {
 
     private void register(UniversalConnectionPoolManager connectionPoolManager, PoolDataSource poolDataSource) {
         String poolName = poolDataSource.getConnectionPoolName();
-        if (!registeredPoolNames.add(poolName)) {
-            return;
-        }
         try {
             UniversalConnectionPool connectionPool = getOrCreateConnectionPool(connectionPoolManager, poolDataSource, poolName);
             universalConnectionPoolMetricsRegistry.register(connectionPool);
@@ -122,6 +116,5 @@ final class ManagedUniversalConnectionPoolMetricsBinder {
             universalConnectionPoolMetricsRegistry.unregister(connectionPool);
         }
         registeredPools.clear();
-        registeredPoolNames.clear();
     }
 }

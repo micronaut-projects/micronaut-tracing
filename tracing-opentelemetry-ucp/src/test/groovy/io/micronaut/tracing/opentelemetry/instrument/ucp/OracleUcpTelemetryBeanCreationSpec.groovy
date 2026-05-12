@@ -287,6 +287,44 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         binder?.close()
     }
 
+    void "test managed datasource same pool names register distinct pool objects"() {
+        given:
+        def reader = InMemoryMetricReader.create()
+        def openTelemetry = OpenTelemetrySdk.builder()
+                .setMeterProvider(SdkMeterProvider.builder()
+                        .registerMetricReader(reader)
+                        .build())
+                .build()
+        def metricsRegistry = new UniversalConnectionPoolMetricsRegistry(new OracleUcpTelemetryConfiguration(openTelemetry))
+        def firstConnectionPool = TestUniversalConnectionPoolFactory.connectionPool("same-managed-pool", 1, 2, 3, 4)
+        def secondConnectionPool = TestUniversalConnectionPoolFactory.connectionPool("same-managed-pool", 5, 6, 7, 8)
+        def connectionPools = [firstConnectionPool, secondConnectionPool].iterator()
+        UniversalConnectionPoolManager connectionPoolManager = [
+                getConnectionPool: { String poolName ->
+                    if (poolName == "same-managed-pool" && connectionPools.hasNext()) {
+                        return connectionPools.next()
+                    }
+                    throw new UniversalConnectionPoolException("missing pool")
+                }
+        ] as UniversalConnectionPoolManager
+        def binder = new ManagedUniversalConnectionPoolMetricsBinder(
+                metricsRegistry,
+                connectionPoolManager,
+                null,
+                [poolDataSource("same-managed-pool"), poolDataSource("same-managed-pool")])
+
+        when:
+        metricsRegistry.unregister(firstConnectionPool)
+        def metrics = reader.collectAllMetrics()
+
+        then:
+        metricValue(metrics, CONNECTION_COUNT_METRICS, "same-managed-pool", "used") == 5
+        metricValue(metrics, CONNECTION_MAX_METRICS, "same-managed-pool", null) == 7
+
+        cleanup:
+        binder?.close()
+    }
+
     void "test managed datasource creates missing UCP manager pool from unwrapped adapter"() {
         given:
         String poolName = "wrapped-real-ucp-pool"

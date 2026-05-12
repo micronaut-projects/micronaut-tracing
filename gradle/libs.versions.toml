@@ -20,6 +20,7 @@ managed-protobuf = '0.10.0'
 managed-zipkin = '3.6.1'
 managed-zipkin-reporter = '3.5.3'
 managed-jaeger = '1.8.1'
+managed-libthrift = '0.23.0'
 managed-opentracing = '0.33.0'
 managed-opentracing-grpc = '0.2.3'
 managed-brave-opentracing = '1.0.1'
@@ -75,6 +76,7 @@ httpclient5 = { module = 'org.apache.httpcomponents.client5:httpclient5', versio
 httpcore5 = { module = 'org.apache.httpcomponents.core5:httpcore5', version.ref = 'httpcore5' }
 httpcore5-h2 = { module = 'org.apache.httpcomponents.core5:httpcore5-h2', version.ref = 'httpcore5' }
 jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'managed-jaeger' }
+libthrift = { module = 'org.apache.thrift:libthrift', version.ref = 'managed-libthrift' }
 javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation' }
 junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
 protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'protobuf' }

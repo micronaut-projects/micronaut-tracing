@@ -134,6 +134,27 @@ class DefaultOpenTelemetryFactorySpec extends Specification {
         context.close()
     }
 
+    void "nested Micronaut map property overrides duplicate existing OpenTelemetry map property key"() {
+        given:
+        ApplicationContext context = ApplicationContext.run([
+                'spec.name'                                : 'DefaultOpenTelemetryFactorySpec',
+                'otel.exporter.otlp.headers'               : 'Authorization=old',
+                'otel.exporter.otlp.headers.Authorization' : 'new'
+        ])
+
+        when:
+        context.getBean(OpenTelemetry)
+        ConfigProperties configProperties = CONFIG_PROPERTIES.get()
+
+        then:
+        configProperties.getMap('otel.exporter.otlp.headers') == [
+                'Authorization': 'new'
+        ]
+
+        cleanup:
+        context.close()
+    }
+
     void "nested map properties are converted to OpenTelemetry map property format"() {
         given:
         ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration()

@@ -16,10 +16,14 @@
 package io.micronaut.tracing.opentracing;
 
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.propagation.ThreadPropagatedContextElement;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+
+import java.util.List;
 
 /**
  * The open tracing propagated context.
@@ -32,6 +36,27 @@ import io.opentracing.Tracer;
 public record OpenTracingPropagationContext(Tracer tracer,
                                             Span span) implements ThreadPropagatedContextElement<Scope> {
 
+    /**
+     * Creates a propagated context with the current OpenTracing span.
+     *
+     * @param context The propagated context
+     * @param tracer  The tracer
+     * @param span    The span
+     * @return A propagated context with a single OpenTracing context element
+     */
+    @NonNull
+    public static PropagatedContext withSpan(@NonNull PropagatedContext context,
+                                             @NonNull Tracer tracer,
+                                             @NonNull Span span) {
+        OpenTracingPropagationContext element = new OpenTracingPropagationContext(tracer, span);
+        PropagatedContext newContext = context;
+        List<OpenTracingPropagationContext> existingContexts = context.findAll(OpenTracingPropagationContext.class).toList();
+        for (OpenTracingPropagationContext existingContext : existingContexts) {
+            newContext = newContext.minus(existingContext);
+        }
+        return newContext.plus(element);
+    }
+
     @Override
     public Scope updateThreadContext() {
         return tracer.activateSpan(span);
@@ -39,8 +64,6 @@ public record OpenTracingPropagationContext(Tracer tracer,
 
     @Override
     public void restoreThreadContext(Scope oldScope) {
-        if (tracer.activeSpan() == span) {
-            oldScope.close();
-        }
+        oldScope.close();
     }
 }

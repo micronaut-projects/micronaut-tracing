@@ -23,6 +23,7 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.filter.HttpFilter;
+import io.micronaut.tracing.opentracing.OpenTracingPropagationContext;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
@@ -158,6 +159,16 @@ public abstract sealed class AbstractOpenTracingFilter implements HttpFilter
      */
     protected boolean shouldExclude(@Nullable String path) {
         return pathExclusionTest != null && path != null && pathExclusionTest.test(path);
+    }
+
+    /**
+     * Creates the propagated context for the current OpenTracing span.
+     *
+     * @param span The span to propagate
+     * @return The propagated context
+     */
+    protected PropagatedContext propagationContext(Span span) {
+        return OpenTracingPropagationContext.withSpan(PropagatedContext.getOrEmpty(), tracer, span);
     }
 
     /**

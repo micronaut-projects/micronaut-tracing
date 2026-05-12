@@ -1,6 +1,7 @@
 package io.micronaut.tracing.jaeger
 
 import io.micronaut.context.ApplicationContext
+import io.micronaut.core.propagation.PropagatedContext
 import io.micronaut.tracing.opentracing.OpenTracingPropagationContext
 import io.opentracing.Scope
 import io.opentracing.Span
@@ -42,7 +43,7 @@ class OpenTracingInvocationInstrumenterSpec extends Specification {
         tracer.activeSpan() == null
     }
 
-    void "test out of order context restore does not restore stale MDC"() {
+    void "test propagated OpenTracing context keeps one active span element"() {
         given: 'Jaeger tracer is enabled'
         ApplicationContext context = ApplicationContext.run('tracing.jaeger.enabled': true)
         Tracer tracer = context.getBean(Tracer)
@@ -50,37 +51,47 @@ class OpenTracingInvocationInstrumenterSpec extends Specification {
         MDC.put('traceId', 'previous-trace')
         Span firstSpan = tracer.buildSpan('first').start()
         Span secondSpan = tracer.buildSpan('second').start()
-        def firstContext = new OpenTracingPropagationContext(tracer, firstSpan)
-        def secondContext = new OpenTracingPropagationContext(tracer, secondSpan)
+        PropagatedContext firstContext = OpenTracingPropagationContext.withSpan(PropagatedContext.getOrEmpty(), tracer, firstSpan)
+        PropagatedContext secondContext = OpenTracingPropagationContext.withSpan(firstContext, tracer, secondSpan)
+        PropagatedContext duplicatedContext = PropagatedContext.getOrEmpty()
+                .plus(new OpenTracingPropagationContext(tracer, firstSpan))
+                .plus(new OpenTracingPropagationContext(tracer, secondSpan))
+        PropagatedContext normalizedContext = OpenTracingPropagationContext.withSpan(duplicatedContext, tracer, secondSpan)
 
         expect: 'no active span'
         tracer.activeSpan() == null
         MDC.get('traceId') == 'previous-trace'
+        firstContext.findAll(OpenTracingPropagationContext).toList().size() == 1
+        firstContext.get(OpenTracingPropagationContext).span() == firstSpan
+        secondContext.findAll(OpenTracingPropagationContext).toList().size() == 1
+        secondContext.get(OpenTracingPropagationContext).span() == secondSpan
+        duplicatedContext.findAll(OpenTracingPropagationContext).toList().size() == 2
+        normalizedContext.findAll(OpenTracingPropagationContext).toList().size() == 1
+        normalizedContext.get(OpenTracingPropagationContext).span() == secondSpan
 
-        when: 'two contexts are activated'
-        Scope firstScope = firstContext.updateThreadContext()
-        Scope secondScope = secondContext.updateThreadContext()
+        when: 'the first context is activated'
+        PropagatedContext.Scope firstScope = firstContext.propagate()
+
+        then:
+        tracer.activeSpan() == firstSpan
+        MDC.get('traceId') == firstSpan.context().toTraceId()
+
+        when: 'the OpenTracing context element is replaced by another span'
+        PropagatedContext.Scope secondScope = secondContext.propagate()
 
         then:
         tracer.activeSpan() == secondSpan
         MDC.get('traceId') == secondSpan.context().toTraceId()
 
-        when: 'the first context is restored before the second'
-        firstContext.restoreThreadContext(firstScope)
-
-        then: 'the current MDC is retained instead of restoring a stale value'
-        tracer.activeSpan() == secondSpan
-        MDC.get('traceId') == secondSpan.context().toTraceId()
-
         when: 'contexts are restored in stack order'
-        secondContext.restoreThreadContext(secondScope)
+        secondScope.close()
 
         then:
         tracer.activeSpan() == firstSpan
         MDC.get('traceId') == firstSpan.context().toTraceId()
 
         when:
-        firstContext.restoreThreadContext(firstScope)
+        firstScope.close()
 
         then:
         tracer.activeSpan() == null

@@ -31,7 +31,6 @@ import io.micronaut.tracing.opentracing.OpenTracingPropagationContext;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
-import io.opentracing.Tracer.SpanBuilder;
 import io.opentracing.noop.NoopTracer;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
@@ -75,23 +74,24 @@ public final class OpenTracingServerFilter extends AbstractOpenTracingFilter imp
             return chain.proceed(request);
         }
 
-        Span currentSpan = tracer.activeSpan();
-        SpanBuilder spanBuilder = newSpan(request, initSpanContext(request));
-        if (currentSpan != null) {
-            spanBuilder.asChildOf(currentSpan);
+        SpanContext parentContext = initSpanContext(request);
+        if (parentContext == null) {
+            Span currentSpan = tracer.activeSpan();
+            if (currentSpan != null) {
+                parentContext = currentSpan.context();
+            }
         }
 
-        Span span = spanBuilder.start();
+        Span span = newSpan(request, parentContext).start();
         span.setTag(TAG_HTTP_SERVER, true);
         span.setTag(SPAN_KIND.getKey(), SPAN_KIND_SERVER);
         request.setAttribute(CURRENT_SPAN_CONTEXT, span.context());
         request.setAttribute(CURRENT_SPAN, span);
 
-        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
-            .plus(new OpenTracingPropagationContext(tracer, span))
-            .propagate()) {
-
-            PropagatedContext propagatedContext = PropagatedContext.get();
+        PropagatedContext propagatedContext = PropagatedContext.getOrEmpty()
+            .plus(new OpenTracingPropagationContext(tracer, span));
+        return propagatedContext.propagate(() -> {
+            PropagatedContext currentContext = PropagatedContext.get();
             return Mono.from(chain.proceed(request))
                 .doOnNext(response -> {
                     tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(response.getHeaders()));
@@ -99,8 +99,8 @@ public final class OpenTracingServerFilter extends AbstractOpenTracingFilter imp
                 })
                 .doOnError(throwable -> setErrorTags(span, throwable))
                 .doOnTerminate(span::finish)
-                .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext));
-        }
+                .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, currentContext));
+        });
     }
 
     @Override
@@ -108,7 +108,7 @@ public final class OpenTracingServerFilter extends AbstractOpenTracingFilter imp
         return TRACING.order();
     }
 
-    @NonNull
+    @Nullable
     private SpanContext initSpanContext(@NonNull HttpRequest<?> request) {
         SpanContext spanContext = tracer.extract(
             HTTP_HEADERS,

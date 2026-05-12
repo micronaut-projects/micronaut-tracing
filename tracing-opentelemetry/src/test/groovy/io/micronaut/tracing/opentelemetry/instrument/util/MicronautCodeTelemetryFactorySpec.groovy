@@ -7,6 +7,7 @@ import io.micronaut.context.annotation.Requires
 import io.micronaut.context.env.Environment
 import io.micronaut.inject.qualifiers.Qualifiers
 import io.micronaut.tracing.annotation.NewSpan
+import io.micronaut.tracing.opentelemetry.OpenTelemetryBuilderCustomizer
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.SpanContext
 import io.opentelemetry.api.trace.TraceFlags
@@ -20,6 +21,7 @@ import io.opentelemetry.instrumentation.api.instrumenter.OperationMetrics
 import io.opentelemetry.instrumentation.api.instrumenter.SpanLinksBuilder
 import io.opentelemetry.instrumentation.api.instrumenter.SpanLinksExtractor
 import io.opentelemetry.instrumentation.api.instrumenter.SpanNameExtractor
+import io.opentelemetry.sdk.testing.exporter.InMemoryMetricReader
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import io.opentelemetry.sdk.trace.IdGenerator
 import io.opentelemetry.sdk.trace.SpanProcessor
@@ -54,9 +56,23 @@ class MicronautCodeTelemetryFactorySpec extends Specification {
         context.getBean(Instrumenter, Qualifiers.byName("micronautCodeTelemetryInstrumenter"))
     }
 
-    void "uses replacement internal span name extractor"() {
+    void "records default code telemetry metrics"() {
         given:
         context = startContext()
+
+        when:
+        context.getBean(TestService).invoke()
+
+        then:
+        context.getBean(InMemoryMetricReader)
+            .collectAllMetrics()
+            *.name
+            .contains("http.client.request.duration")
+    }
+
+    void "uses replacement internal span name extractor"() {
+        given:
+        context = startContext(["custom.code.telemetry.enabled": true])
 
         when:
         context.getBean(TestService).invoke()
@@ -67,7 +83,7 @@ class MicronautCodeTelemetryFactorySpec extends Specification {
 
     void "applies internal operation listeners metrics error cause and span links"() {
         given:
-        context = startContext()
+        context = startContext(["custom.code.telemetry.enabled": true])
         def instrumenter = context.getBean(Instrumenter, Qualifiers.byName("micronautCodeTelemetryInstrumenter")) as Instrumenter<ClassAndMethod, Object>
         def request = ClassAndMethod.create(TestService, "failure")
         def actualError = new IllegalStateException("actual")
@@ -90,12 +106,12 @@ class MicronautCodeTelemetryFactorySpec extends Specification {
         span.events[0].attributes.get(io.opentelemetry.semconv.ExceptionAttributes.EXCEPTION_TYPE) == IllegalStateException.name
     }
 
-    private static ApplicationContext startContext() {
+    private static ApplicationContext startContext(Map<String, Object> properties = [:]) {
         ApplicationContext.run([
             "spec.name"                 : SPEC_NAME,
             "otel.register.global"      : false,
             "micronaut.application.name": "test-app"
-        ], Environment.TEST)
+        ] + properties, Environment.TEST)
     }
 
     @Requires(property = "spec.name", value = SPEC_NAME)
@@ -125,9 +141,23 @@ class MicronautCodeTelemetryFactorySpec extends Specification {
         InMemorySpanExporter inMemorySpanExporter() {
             InMemorySpanExporter.create()
         }
+
+        @Singleton
+        InMemoryMetricReader inMemoryMetricReader() {
+            InMemoryMetricReader.create()
+        }
+
+        @Singleton
+        OpenTelemetryBuilderCustomizer meterProviderCustomizer(InMemoryMetricReader metricReader) {
+            { builder -> builder.addMeterProviderCustomizer({ meterProviderBuilder, ignored ->
+                meterProviderBuilder.registerMetricReader(metricReader)
+                meterProviderBuilder
+            }) } as OpenTelemetryBuilderCustomizer
+        }
     }
 
     @Requires(property = "spec.name", value = SPEC_NAME)
+    @Requires(property = "custom.code.telemetry.enabled", value = "true")
     @Factory
     static class CustomCodeTelemetryFactory {
 

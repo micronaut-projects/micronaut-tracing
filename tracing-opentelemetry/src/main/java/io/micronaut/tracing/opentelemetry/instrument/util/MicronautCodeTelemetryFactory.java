@@ -18,6 +18,8 @@ package io.micronaut.tracing.opentelemetry.instrument.util;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.annotation.Order;
+import io.micronaut.core.order.Ordered;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.api.incubator.semconv.code.CodeSpanNameExtractor;
 import io.opentelemetry.instrumentation.api.incubator.semconv.util.ClassAndMethod;
@@ -131,5 +133,17 @@ public final class MicronautCodeTelemetryFactory {
     @Singleton
     SpanNameExtractor<ClassAndMethod> defaultSpanNameExtractor() {
         return CodeSpanNameExtractor.create(ClassAndMethod.codeAttributesGetter());
+    }
+
+    /**
+     * Returns an {@link OperationMetrics} instance which can be used to enable recording of {@link
+     * HttpClientMetrics}.
+     * @return the {@link OperationMetrics} instance
+     */
+    @Internal
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @Singleton
+    OperationMetrics httpClientMetrics() {
+        return HttpClientMetrics.get();
     }
 }

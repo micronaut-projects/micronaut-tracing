@@ -456,6 +456,59 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         thrown(UnsupportedOperationException)
     }
 
+    void "traced records activate context from partition indexed access"() {
+        given:
+        def processInstrumenter = Mock(Instrumenter)
+        def configuration = Mock(KafkaTelemetryConfiguration)
+        def kafkaTelemetry = new KafkaTelemetry(
+                Mock(OpenTelemetry),
+                Mock(Instrumenter),
+                processInstrumenter,
+                new ArrayList<KafkaTelemetryProducerTracingFilter>(),
+                new ArrayList<KafkaTelemetryConsumerTracingFilter>(),
+                configuration,
+                true
+        )
+        def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
+        def partition = new TopicPartition("topic", 0)
+        def firstRecord = new ConsumerRecord<String, String>("topic", 0, 0, "key", "first")
+        def secondRecord = new ConsumerRecord<String, String>("topic", 0, 1, "key", "second")
+        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]])
+        ContextKey<String> contextKey = ContextKey.named("test-kafka-index-context")
+
+        configuration.getIncludedTopics() >> Collections.emptyList()
+        configuration.getExcludedTopics() >> Collections.emptyList()
+        consumer.poll(Duration.ZERO) >> records
+        consumer.groupMetadata() >> new ConsumerGroupMetadata("group")
+        consumer.metrics() >> Collections.emptyMap()
+        processInstrumenter.shouldStart(_, _) >> true
+        processInstrumenter.start(_, _) >> Context.current().with(contextKey, "active")
+
+        when:
+        def tracedRecords = micronautConsumer.poll(Duration.ZERO)
+        def firstIndexedRecord = tracedRecords.records(partition).get(0)
+
+        then:
+        firstIndexedRecord == firstRecord
+        Context.current().get(contextKey) == "active"
+
+        when:
+        def secondIndexedRecord = tracedRecords.records(partition).get(1)
+
+        then:
+        secondIndexedRecord == secondRecord
+        Context.current().get(contextKey) == "active"
+        1 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        micronautConsumer.commitSync()
+
+        then:
+        Context.current().get(contextKey) == null
+        1 * processInstrumenter.end(_, _, null, null)
+        1 * consumer.commitSync()
+    }
+
     void "poll returns original records when no records should be traced"() {
         given:
         def configuration = Mock(KafkaTelemetryConfiguration)

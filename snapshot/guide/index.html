@@ -115,19 +115,21 @@
         
         <div class="toc-item" style="margin-left:10px" id="toc-item-http"><a href="#http"><strong>6.6</strong><span>HTTP Server and Client</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-grpc"><a href="#grpc"><strong>6.7</strong><span>gRPC Server and Client</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-mdc"><a href="#mdc"><strong>6.7</strong><span>Logback MDC</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-jdbc"><a href="#jdbc"><strong>6.8</strong><span>JDBC</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-grpc"><a href="#grpc"><strong>6.8</strong><span>gRPC Server and Client</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-r2dbc"><a href="#r2dbc"><strong>6.9</strong><span>R2DBC</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-jdbc"><a href="#jdbc"><strong>6.9</strong><span>JDBC</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-kafka"><a href="#kafka"><strong>6.10</strong><span>Kafka</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-r2dbc"><a href="#r2dbc"><strong>6.10</strong><span>R2DBC</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>6.11</strong><span>AWS SDK Instrumentation</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-kafka"><a href="#kafka"><strong>6.11</strong><span>Kafka</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>6.12</strong><span>AWS Resource Detectors</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>6.12</strong><span>AWS SDK Instrumentation</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-opentelemetryGuides"><a href="#opentelemetryGuides"><strong>6.13</strong><span>OpenTelemetry Guides</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>6.13</strong><span>AWS Resource Detectors</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-opentelemetryGuides"><a href="#opentelemetryGuides"><strong>6.14</strong><span>OpenTelemetry Guides</span></a></div>
         
         <div class="toc-item" style="margin-left:0px" id="toc-item-tracingGuides"><a href="#tracingGuides"><strong>7</strong><span>Micronaut Tracing Guides</span></a></div>
         
@@ -2022,7 +2024,76 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
 </div>
 </div>
 
-<h2 id="grpc"><a class="anchor" href="#grpc"></a>6.7 gRPC Server and Client</h2>
+<h2 id="mdc"><a class="anchor" href="#mdc"></a>6.7 Logback MDC</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/mdc.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="sect1">
+<h2 id="_logback_mdc">Logback MDC</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>OpenTelemetry provides Logback MDC instrumentation that can add the active span context to log events.
+This is useful when your log aggregation system reads application logs separately from traces and you want to correlate a log line with the trace and span that were active when the log event was created.</p>
+</div>
+<div class="paragraph">
+<p>Add the OpenTelemetry Logback MDC dependency to your application:</p>
+</div>
+<div class="paragraph">
+<p>        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">runtimeOnly(<span class="hljs-string">"io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.opentelemetry.instrumentation&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-logback-mdc-1.0&lt;/artifactId&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</p>
+</div>
+<div class="paragraph">
+<p>Then wrap your Logback appender with the OpenTelemetry MDC appender and include the MDC keys in your log pattern:</p>
+</div>
+<div class="listingblock">
+<div class="title">Configuring Logback MDC trace correlation</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;configuration&gt;
+    &lt;appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender"&gt;
+        &lt;encoder&gt;
+            &lt;pattern&gt;%d{HH:mm:ss.SSS} trace_id=%X{trace_id} span_id=%X{span_id} trace_flags=%X{trace_flags} %msg%n&lt;/pattern&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+    &lt;appender name="OTEL" class="io.opentelemetry.instrumentation.logback.mdc.v1_0.OpenTelemetryAppender"&gt;
+        &lt;appender-ref ref="CONSOLE"/&gt;
+    &lt;/appender&gt;
+    &lt;root level="INFO"&gt;
+        &lt;appender-ref ref="OTEL"/&gt;
+    &lt;/root&gt;
+&lt;/configuration&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The default MDC keys are <code>trace_id</code>, <code>span_id</code>, and <code>trace_flags</code>.
+These values are only added when a valid span is current, so logs written outside traced execution may not contain trace correlation fields.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md">OpenTelemetry logger MDC documentation</a> and the <a href="https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation/logback/logback-mdc-1.0/library">OpenTelemetry Logback MDC library documentation</a> for additional options, including custom MDC key names and baggage support.</p>
+</div>
+</div>
+</div>
+
+<h2 id="grpc"><a class="anchor" href="#grpc"></a>6.8 gRPC Server and Client</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/grpc.adoc"'>
@@ -2050,7 +2121,7 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
 </p>
 </div>
 
-<h2 id="jdbc"><a class="anchor" href="#jdbc"></a>6.8 JDBC</h2>
+<h2 id="jdbc"><a class="anchor" href="#jdbc"></a>6.9 JDBC</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/jdbc.adoc"'>
@@ -2081,7 +2152,7 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
 <p>The dependency instruments the <code>javax.sql.DataSource</code> beans for intercepting the queries to the database.</p>
 </div>
 
-<h2 id="r2dbc"><a class="anchor" href="#r2dbc"></a>6.9 R2DBC</h2>
+<h2 id="r2dbc"><a class="anchor" href="#r2dbc"></a>6.10 R2DBC</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/r2dbc.adoc"'>
@@ -2112,7 +2183,7 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
 <p>The dependency instruments <code>io.r2dbc.spi.ConnectionFactory</code> beans to intercept database queries.</p>
 </div>
 
-<h2 id="kafka"><a class="anchor" href="#kafka"></a>6.10 Kafka</h2>
+<h2 id="kafka"><a class="anchor" href="#kafka"></a>6.11 Kafka</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/kafka.adoc"'>
@@ -2302,7 +2373,7 @@ You can&#8217;t use <code>included-topics</code> and <code>excluded-topics</code
 </div>
 </div>
 
-<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>6.11 AWS SDK Instrumentation</h2>
+<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>6.12 AWS SDK Instrumentation</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/awsSdkInstrumentation.adoc"'>
@@ -2356,7 +2427,7 @@ You can&#8217;t use <code>included-topics</code> and <code>excluded-topics</code
 via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.</p>
 </div>
 
-<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>6.12 AWS Resource Detectors</h2>
+<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>6.13 AWS Resource Detectors</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/awsResourceDetectors.adoc"'>
@@ -2414,7 +2485,7 @@ public class AwsResourceProvider implements ResourceProvider {
 </div>
 </div>
 
-<h2 id="opentelemetryGuides"><a class="anchor" href="#opentelemetryGuides"></a>6.13 OpenTelemetry Guides</h2>
+<h2 id="opentelemetryGuides"><a class="anchor" href="#opentelemetryGuides"></a>6.14 OpenTelemetry Guides</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.0.x/src/main/docs/guide/opentelemetry/opentelemetryGuides.adoc"'>

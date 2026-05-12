@@ -27,7 +27,6 @@ import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
-import io.micronaut.tracing.opentracing.OpenTracingPropagationContext;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
@@ -88,8 +87,7 @@ public final class OpenTracingClientFilter extends AbstractOpenTracingFilter imp
         request.setAttribute(CURRENT_SPAN_CONTEXT, span.context());
         request.setAttribute(CURRENT_SPAN, span);
 
-        PropagatedContext propagatedContext = PropagatedContext.getOrEmpty()
-            .plus(new OpenTracingPropagationContext(tracer, span));
+        PropagatedContext propagatedContext = propagationContext(span);
         return propagatedContext.propagate(() -> {
             tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders()));
             return Mono.using(

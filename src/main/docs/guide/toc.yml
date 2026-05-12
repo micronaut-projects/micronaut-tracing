@@ -12,6 +12,7 @@ opentelemetry:
   propagators: OpenTelemetry Propagators
   idgenerator: ID Generator
   http: HTTP Server and Client
+  mdc: Logback MDC
   grpc: gRPC Server and Client
   jdbc: JDBC
   r2dbc: R2DBC

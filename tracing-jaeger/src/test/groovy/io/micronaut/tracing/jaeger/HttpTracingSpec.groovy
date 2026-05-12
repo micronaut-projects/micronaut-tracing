@@ -727,7 +727,7 @@ class HttpTracingSpec extends Specification {
         response.body.get() == "1"
     }
 
-    void 'test netty client logs use current reactive request trace id'() {
+    void 'test netty client request and response logs use current reactive request trace id'() {
         given:
         TracedController.reactiveClientTraceIds.clear()
         ClientLogAppender.events.clear()
@@ -737,7 +737,7 @@ class HttpTracingSpec extends Specification {
         appender.context = (LoggerContext) LoggerFactory.getILoggerFactory()
         appender.start()
         logger.addAppender(appender)
-        logger.level = Level.DEBUG
+        logger.level = Level.TRACE
 
         when:
         new URL(embeddedServer.URL, '/traced/reactiveClient/John').text
@@ -748,6 +748,8 @@ class HttpTracingSpec extends Specification {
             TracedController.reactiveClientTraceIds.size() == 2
             clientRequestTraceId('/traced/hello/John') == TracedController.reactiveClientTraceIds[0]
             clientRequestTraceId('/traced/hello/Jane') == TracedController.reactiveClientTraceIds[1]
+            clientResponseTraceId('/traced/hello/John') == TracedController.reactiveClientTraceIds[0]
+            clientResponseTraceId('/traced/hello/Jane') == TracedController.reactiveClientTraceIds[1]
             TracedController.reactiveClientTraceIds[0] != TracedController.reactiveClientTraceIds[1]
         }
 
@@ -986,6 +988,16 @@ class HttpTracingSpec extends Specification {
 
     private String clientRequestTraceId(String path) {
         clientRequestEvents.find { it.formattedMessage.contains(path) }?.mdcPropertyMap?.get('traceId')
+    }
+
+    private List<ILoggingEvent> getClientResponseEvents() {
+        ClientLogAppender.events.findAll {
+            it.formattedMessage.contains('HTTP Client Response Received') && it.formattedMessage.contains('/traced/hello/')
+        }
+    }
+
+    private String clientResponseTraceId(String path) {
+        clientResponseEvents.find { it.formattedMessage.contains(path) }?.mdcPropertyMap?.get('traceId')
     }
 
     static class ClientLogAppender extends AppenderBase<ILoggingEvent> {

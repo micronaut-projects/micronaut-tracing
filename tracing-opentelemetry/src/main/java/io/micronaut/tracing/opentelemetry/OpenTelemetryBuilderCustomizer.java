@@ -20,7 +20,10 @@ import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
 /**
  * Allows external configuration of the AutoConfiguredOpenTelemetrySdkBuilder
  * created in DefaultOpenTelemetryFactory.
+ *
+ * @since 7.1.0
  */
+@FunctionalInterface
 public interface OpenTelemetryBuilderCustomizer {
 
     /**

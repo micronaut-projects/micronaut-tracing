@@ -128,27 +128,29 @@ public final class RabbitMQTelemetry {
     }
 
     private <T> Publisher<T> tracePublisherOperation(String operation, RabbitPublishState publishState, Function<RabbitPublishState, Publisher<T>> publisherFactory) {
-        Context parentContext = Context.current();
-        Span span = tracer.spanBuilder("rabbitmq " + operation)
-            .setParent(parentContext)
-            .setSpanKind(SpanKind.PRODUCER)
-            .startSpan();
-        setSpanAttributes(span, operation, publishState.getExchange(), publishState.getRoutingKey());
-        Context context = parentContext.with(span);
-        RabbitPublishState tracedState = injectContext(context, publishState);
-        try {
-            Publisher<T> publisher;
-            try (Scope ignored = context.makeCurrent()) {
-                publisher = publisherFactory.apply(tracedState);
+        return Mono.defer(() -> {
+            Context parentContext = Context.current();
+            Span span = tracer.spanBuilder("rabbitmq " + operation)
+                .setParent(parentContext)
+                .setSpanKind(SpanKind.PRODUCER)
+                .startSpan();
+            setSpanAttributes(span, operation, publishState.getExchange(), publishState.getRoutingKey());
+            Context context = parentContext.with(span);
+            RabbitPublishState tracedState = injectContext(context, publishState);
+            try {
+                Publisher<T> publisher;
+                try (Scope ignored = context.makeCurrent()) {
+                    publisher = publisherFactory.apply(tracedState);
+                }
+                return Mono.from(publisher)
+                    .doOnError(error -> markFailed(span, error))
+                    .doFinally(signalType -> span.end());
+            } catch (RuntimeException e) {
+                markFailed(span, e);
+                span.end();
+                throw e;
             }
-            return Mono.from(publisher)
-                .doOnError(error -> markFailed(span, error))
-                .doFinally(signalType -> span.end());
-        } catch (RuntimeException e) {
-            markFailed(span, e);
-            span.end();
-            throw e;
-        }
+        });
     }
 
     private RabbitPublishState injectContext(Context context, RabbitPublishState publishState) {

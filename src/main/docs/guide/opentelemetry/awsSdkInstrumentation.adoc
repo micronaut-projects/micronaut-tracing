@@ -9,9 +9,9 @@ dependency:micronaut-aws-sdk-v2[groupId=io.micronaut.aws,scope=compile]
 `micronaut-aws-sdk-v2` dependency creates a bean of type `SdkClientBuilder`. To instrument the AWS SDK, Micronaut OpenTelemetry registers a tracing interceptor
 via a bean creation listener for the bean of type `SdkClientBuilder`.
 
-For SQS, Micronaut OpenTelemetry also wraps `SqsClient` and `SqsAsyncClient` beans so OpenTelemetry can propagate messaging context through SQS message attributes.
+For SQS, Micronaut OpenTelemetry also wraps `SqsClient` and `SqsAsyncClient` beans when messaging propagation or receive telemetry is enabled.
 
-To propagate the configured OpenTelemetry context through SQS messages, enable the AWS SDK messaging propagator:
+To propagate the configured OpenTelemetry context through sent SQS messages, enable the AWS SDK messaging propagator:
 
 [configuration]
 ----
@@ -20,6 +20,14 @@ otel:
   instrumentation:
     aws-sdk:
       experimental-use-propagator-for-messaging: true
+----
+
+Enable messaging receive telemetry separately when you want consumer-side receive telemetry for SQS messages:
+
+[configuration]
+----
+otel:
+  instrumentation:
     messaging:
       experimental:
         receive-telemetry:

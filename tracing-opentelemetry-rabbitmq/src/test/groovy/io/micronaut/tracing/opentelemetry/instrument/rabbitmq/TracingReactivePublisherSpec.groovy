@@ -7,12 +7,17 @@ import io.micronaut.rabbitmq.reactive.ReactivePublisher
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator
 import io.opentelemetry.context.propagation.ContextPropagators
+import io.opentelemetry.sdk.trace.ReadWriteSpan
+import io.opentelemetry.sdk.trace.ReadableSpan
 import io.opentelemetry.sdk.OpenTelemetrySdk
+import io.opentelemetry.sdk.trace.SpanProcessor
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import io.opentelemetry.sdk.trace.SdkTracerProvider
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor
 import reactor.core.publisher.Mono
 import spock.lang.Specification
+
+import java.util.concurrent.atomic.AtomicInteger
 
 class TracingReactivePublisherSpec extends Specification {
 
@@ -36,6 +41,34 @@ class TracingReactivePublisherSpec extends Specification {
         exporter.finishedSpanItems.size() == 1
         exporter.finishedSpanItems[0].kind.name() == "PRODUCER"
         exporter.finishedSpanItems[0].attributes.asMap().values().contains("rabbitmq")
+    }
+
+    void "publish does not start a span before subscription"() {
+        given:
+        def exporter = InMemorySpanExporter.create()
+        def spanProcessor = new CountingSpanProcessor()
+        def telemetry = new RabbitMQTelemetry(openTelemetry(exporter, spanProcessor))
+        def delegate = Mock(ReactivePublisher)
+        def publisher = new TracingReactivePublisher(delegate, telemetry)
+        def publishState = new RabbitPublishState("orders", "created", false, new AMQP.BasicProperties(), "hello".bytes)
+
+        when:
+        def result = publisher.publish(publishState)
+
+        then:
+        0 * delegate._
+        spanProcessor.started.get() == 0
+        spanProcessor.ended.get() == 0
+        exporter.finishedSpanItems.empty
+
+        when:
+        Mono.from(result).block()
+
+        then:
+        1 * delegate.publish(_) >> Mono.empty()
+        spanProcessor.started.get() == 1
+        spanProcessor.ended.get() == 1
+        exporter.finishedSpanItems.size() == 1
     }
 
     void "publish and confirm emits a producer span"() {
@@ -130,11 +163,41 @@ class TracingReactivePublisherSpec extends Specification {
     }
 
     private static OpenTelemetry openTelemetry(InMemorySpanExporter exporter) {
+        openTelemetry(exporter, [] as SpanProcessor[])
+    }
+
+    private static OpenTelemetry openTelemetry(InMemorySpanExporter exporter, SpanProcessor... spanProcessors) {
+        def tracerProviderBuilder = SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(exporter))
+        spanProcessors.each { tracerProviderBuilder.addSpanProcessor(it) }
         OpenTelemetrySdk.builder()
-                .setTracerProvider(SdkTracerProvider.builder()
-                        .addSpanProcessor(SimpleSpanProcessor.create(exporter))
-                        .build())
-                .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.instance))
-                .build()
+            .setTracerProvider(tracerProviderBuilder.build())
+            .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.instance))
+            .build()
+    }
+
+    private static final class CountingSpanProcessor implements SpanProcessor {
+        final AtomicInteger started = new AtomicInteger()
+        final AtomicInteger ended = new AtomicInteger()
+
+        @Override
+        void onStart(io.opentelemetry.context.Context parentContext, ReadWriteSpan span) {
+            started.incrementAndGet()
+        }
+
+        @Override
+        boolean isStartRequired() {
+            true
+        }
+
+        @Override
+        void onEnd(ReadableSpan span) {
+            ended.incrementAndGet()
+        }
+
+        @Override
+        boolean isEndRequired() {
+            true
+        }
     }
 }

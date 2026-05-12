@@ -66,9 +66,7 @@ public class DefaultOpenTelemetryFactory {
     private static final String DEFAULT_LOGS_EXPORTER = "otel.logs.exporter";
     private static final String REGISTER_GLOBAL = "otel.register.global";
     private static final String NONE = "none";
-    private static final ArgumentConversionContext<Map<String, Object>> OTEL_PROPERTIES = ConversionContext.of(
-        Argument.mapOf(String.class, Object.class).withAnnotationMetadata(mapFormatMetadata())
-    );
+    private static final ArgumentConversionContext<Map<String, Object>> OTEL_PROPERTIES = mapPropertyConversionContext();
     private static final List<String> MAP_PROPERTY_KEYS = Collections.unmodifiableList(Arrays.asList(
         RESOURCE_ATTRIBUTES_KEY,
         "otel.exporter.otlp.headers",
@@ -272,17 +270,27 @@ public class DefaultOpenTelemetryFactory {
     }
 
     private static Optional<Map<String, String>> getNestedMapProperty(Environment environment, String mapPropertyKey) {
-        Map<String, Object> properties = environment.getProperties(mapPropertyKey, StringConvention.RAW);
-        if (properties.isEmpty()) {
-            return Optional.empty();
+        // Preserve mixed aggregate+nested configuration; MapFormat conversion returns the aggregate value only.
+        if (environment.getProperty(mapPropertyKey, String.class).isPresent()) {
+            Map<String, Object> properties = environment.getProperties(mapPropertyKey, StringConvention.RAW);
+            if (properties.isEmpty()) {
+                return Optional.empty();
+            }
+            return Optional.of(toStringMap(properties));
         }
-        return Optional.of(properties.entrySet().stream()
+        return environment.getProperty(mapPropertyKey, OTEL_PROPERTIES)
+            .filter(properties -> !properties.isEmpty())
+            .map(DefaultOpenTelemetryFactory::toStringMap);
+    }
+
+    private static Map<String, String> toStringMap(Map<String, Object> properties) {
+        return properties.entrySet().stream()
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
                 entry -> String.valueOf(entry.getValue()),
                 (existing, replacement) -> existing,
                 LinkedHashMap::new
-            )));
+            ));
     }
 
     private static boolean isNestedMapProperty(String property) {
@@ -294,6 +302,12 @@ public class DefaultOpenTelemetryFactory {
 
     private static String normalizeOtelProperty(String property) {
         return property.toLowerCase(Locale.ENGLISH).replace('_', '.');
+    }
+
+    private static ArgumentConversionContext<Map<String, Object>> mapPropertyConversionContext() {
+        return ConversionContext.of(
+            Argument.mapOf(String.class, Object.class).withAnnotationMetadata(mapFormatMetadata())
+        );
     }
 
     private static AnnotationMetadata mapFormatMetadata() {

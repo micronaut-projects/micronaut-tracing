@@ -393,7 +393,7 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
             return new AbstractList<>() {
                 @Override
                 public ConsumerRecord<K, V> get(int index) {
-                    return records.get(index);
+                    return activateNextRecord(records.get(index));
                 }
 
                 @Override

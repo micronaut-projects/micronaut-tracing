@@ -93,14 +93,42 @@ class DefaultOpenTelemetryFactorySpec extends Specification {
 
         then:
         configProperties.getMap('otel.exporter.otlp.headers') == [
-                'authorization': 'Bearer token',
-                'content-type' : 'application/x-protobuf'
+                'Authorization': 'Bearer token',
+                'Content-Type' : 'application/x-protobuf'
         ]
         configProperties.getMap('otel.resource.attributes') == [
                 'service.name': 'explicit-service',
                 'environment' : 'test'
         ]
         configProperties.getString('otel.service.name') == null
+
+        cleanup:
+        context.close()
+    }
+
+    void "existing and nested Micronaut map properties are visible as OpenTelemetry map properties"() {
+        given:
+        ApplicationContext context = ApplicationContext.run([
+                'spec.name'                                : 'DefaultOpenTelemetryFactorySpec',
+                'otel.exporter.otlp.headers'               : 'Existing=present, ',
+                'otel.exporter.otlp.headers.Authorization' : 'Bearer token',
+                'otel.resource.attributes'                 : 'deployment.environment=prod, ',
+                'otel.resource.attributes.service.name'    : 'explicit-service'
+        ])
+
+        when:
+        context.getBean(OpenTelemetry)
+        ConfigProperties configProperties = CONFIG_PROPERTIES.get()
+
+        then:
+        configProperties.getMap('otel.exporter.otlp.headers') == [
+                'Existing'     : 'present',
+                'Authorization': 'Bearer token'
+        ]
+        configProperties.getMap('otel.resource.attributes') == [
+                'deployment.environment': 'prod',
+                'service.name'          : 'explicit-service'
+        ]
 
         cleanup:
         context.close()

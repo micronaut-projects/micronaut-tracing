@@ -4,7 +4,7 @@ dependency:micronaut-tracing-opentelemetry-http[scope="implementation", groupId=
 == Ordering custom server filters
 
 OpenTelemetry HTTP server tracing runs in the Micronaut `ServerFilterPhase.TRACING` phase.
-If a custom server filter reads from or writes to the current OpenTelemetry span, order the filter after the tracing phase so the server span is already current.
+If a custom server filter reads from or writes to the current OpenTelemetry span, order the filter after the tracing phase so the server span is already current in request and response filters.
 
 `@Order` values must be compile-time constants, so use `Ordered` when you want to refer to `ServerFilterPhase.TRACING.after()` directly:
 

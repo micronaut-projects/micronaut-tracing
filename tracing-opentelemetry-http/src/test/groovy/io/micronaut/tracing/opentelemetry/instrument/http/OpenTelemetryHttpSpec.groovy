@@ -471,6 +471,69 @@ class OpenTelemetryHttpSpec extends Specification {
         exporter.reset()
     }
 
+    void 'response filter with throwable can record to the current server span after controller throws'() {
+        def internalSpanCount = 0
+        def serverSpanCount = 1
+        def clientSpanCount = 0
+
+        when:
+        reactorHttpClient.toBlocking().exchange('/filters/throwing', String)
+
+        then:
+        def e = thrown(HttpClientResponseException)
+        e.status == HttpStatus.INTERNAL_SERVER_ERROR
+        e.response.header('X-Request-Filter-Recording') == 'true'
+        e.response.header('X-Response-Filter-Recording') == 'true'
+        e.response.header('X-Response-Filter-Throwable') == 'false'
+
+        and:
+        conditions.eventually {
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            def serverSpans = exporter.finishedSpanItems.findAll { it.kind == SpanKind.SERVER }
+            serverSpans.size() == 1
+            def serverSpan = serverSpans[0]
+            serverSpan.status.statusCode == StatusCode.ERROR
+            serverSpan.events.any { it.name == 'exception' }
+            serverSpan.attributes.get(AttributeKey.stringKey('response-filter')) == 'recorded'
+            serverSpan.attributes.get(AttributeKey.stringKey('response-filter-throwable')) == 'none'
+            hasHttpSemanticAttributes(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+
+        cleanup:
+        exporter.reset()
+    }
+
+    void 'response filter can record to the current server span for error responses'() {
+        def internalSpanCount = 0
+        def serverSpanCount = 1
+        def clientSpanCount = 0
+
+        when:
+        reactorHttpClient.toBlocking().exchange('/filters/bad-request', String)
+
+        then:
+        def e = thrown(HttpClientResponseException)
+        e.status == HttpStatus.BAD_REQUEST
+        e.response.header('X-Request-Filter-Recording') == 'true'
+        e.response.header('X-Response-Filter-Recording') == 'true'
+        e.response.header('X-Response-Filter-Throwable') == 'false'
+
+        and:
+        conditions.eventually {
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            def serverSpans = exporter.finishedSpanItems.findAll { it.kind == SpanKind.SERVER }
+            serverSpans.size() == 1
+            def serverSpan = serverSpans[0]
+            serverSpan.status.statusCode == StatusCode.ERROR
+            serverSpan.attributes.get(AttributeKey.stringKey('response-filter')) == 'recorded'
+            serverSpan.attributes.get(AttributeKey.stringKey('response-filter-throwable')) == 'none'
+            hasHttpSemanticAttributes(HttpStatus.BAD_REQUEST)
+        }
+
+        cleanup:
+        exporter.reset()
+    }
+
     void 'test consecutive sibling client calls'() {
         def internalSpanCount = 0
         def serverSpanCount = 3
@@ -532,6 +595,16 @@ class OpenTelemetryHttpSpec extends Specification {
         String recording() {
             'ok'
         }
+
+        @Get('/throwing')
+        String throwing() {
+            throw new RuntimeException('filter failure')
+        }
+
+        @Get('/bad-request')
+        MutableHttpResponse<String> badRequest() {
+            HttpResponse.badRequest('bad request')
+        }
     }
 
     @ServerFilter('/filters/**')
@@ -543,10 +616,12 @@ class OpenTelemetryHttpSpec extends Specification {
         }
 
         @ResponseFilter
-        void traceResponse(HttpRequest<?> request, MutableHttpResponse<?> response) {
+        void traceResponse(HttpRequest<?> request, MutableHttpResponse<?> response, @Nullable Throwable throwable) {
             response.headers.add('X-Request-Filter-Recording', request.getAttribute('request-filter-recording', String).orElse('missing'))
             response.headers.add('X-Response-Filter-Recording', Boolean.toString(Span.current().isRecording()))
+            response.headers.add('X-Response-Filter-Throwable', Boolean.toString(throwable != null))
             Span.current().setAttribute('response-filter', 'recorded')
+            Span.current().setAttribute('response-filter-throwable', throwable == null ? 'none' : throwable.class.simpleName)
         }
 
         @Override

@@ -7,6 +7,9 @@ dependencies {
     api(libs.jaeger) {
         exclude group: "org.jetbrains", module: "annotations"
     }
+    // update to first version of libthrift not vulnerable to GHSA-7pwc-h2j2-rjgj.
+    // libthrift is a transitive dependency of io.jaegertracing:jaeger-thrift.
+    api(libs.thrift)
     // update to first version of gson not vulernable.
     // gson is a transitive dependency of io.jaegertracing:jaeger-core
     // https://ossindex.sonatype.org/component/pkg:maven/com.google.code.gson/gson

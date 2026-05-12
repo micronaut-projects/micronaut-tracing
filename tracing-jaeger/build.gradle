@@ -15,6 +15,10 @@ dependencies {
     // okio is a transitive dependency of io.jaegertracing:jaeger-thrift via okhttp3
     // https://osv.dev/GHSA-w33c-445m-f8w7
     implementation(libs.okio)
+    // libthrift is a transitive dependency of io.jaegertracing:jaeger-thrift.
+    // jaeger-thrift 1.8.1 is the latest release, so use a current libthrift version to avoid GHSA-7pwc-h2j2-rjgj.
+    // https://osv.dev/GHSA-7pwc-h2j2-rjgj
+    implementation(libs.libthrift)
     testImplementation mnReactor.micronaut.reactor
     testImplementation mn.micronaut.http.server.netty
     testRuntimeOnly mnSerde.micronaut.serde.jackson

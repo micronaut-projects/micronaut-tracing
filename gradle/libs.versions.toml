@@ -22,6 +22,7 @@ managed-zipkin-reporter = '3.5.3'
 
 
 managed-jaeger = '1.8.1'
+managed-libthrift = '0.23.0'
 managed-opentracing = '0.33.0'
 managed-opentracing-grpc = '0.2.3'
 managed-brave-opentracing = '1.0.1'
@@ -70,6 +71,7 @@ grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'grpc' }
 gson = { module = 'com.google.code.gson:gson', version.ref = 'gson' }
 okio = { module = 'com.squareup.okio:okio', version.ref = 'okio' }
 jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'managed-jaeger' }
+libthrift = { module = 'org.apache.thrift:libthrift', version.ref = 'managed-libthrift' }
 javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation' }
 junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
 protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'protobuf' }

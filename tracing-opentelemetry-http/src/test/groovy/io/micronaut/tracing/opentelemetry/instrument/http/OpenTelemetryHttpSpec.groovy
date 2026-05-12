@@ -29,6 +29,7 @@ import io.micronaut.tracing.annotation.SpanTag
 import io.micronaut.tracing.opentelemetry.utils.OpenTelemetryReactorPropagation
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.trace.Span
+import io.opentelemetry.api.trace.SpanId
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.api.trace.Tracer
@@ -485,23 +486,30 @@ class OpenTelemetryHttpSpec extends Specification {
 
         and:
         conditions.eventually {
-            def serverSpanCount = exporter.finishedSpanItems.count {
-                it.kind == SpanKind.SERVER
-            }
-            def requestServerSpanCount = exporter.finishedSpanItems.count {
-                it.kind == SpanKind.SERVER && it.name == 'GET /propagate/makeCurrent'
-            }
-            def childSpanCount = exporter.finishedSpanItems.count {
-                it.kind == SpanKind.INTERNAL && it.name == 'findAllBooks'
-            }
-            def testSpanCount = exporter.finishedSpanItems.count {
+            def testSpans = exporter.finishedSpanItems.findAll {
                 it.kind == SpanKind.INTERNAL && it.name == 'test'
             }
+            def serverSpans = exporter.finishedSpanItems.findAll {
+                it.kind == SpanKind.SERVER && it.name == 'GET /propagate/makeCurrent'
+            }
+            def childSpans = exporter.finishedSpanItems.findAll {
+                it.kind == SpanKind.INTERNAL && it.name == 'findAllBooks'
+            }
 
-            assert serverSpanCount == 2
-            assert requestServerSpanCount == 2
-            assert childSpanCount == 2
-            assert testSpanCount == 2
+            assert testSpans.size() == 2
+            assert serverSpans.size() == 2
+            assert childSpans.size() == 2
+            assert serverSpans.every { it.parentSpanId == SpanId.getInvalid() }
+            assert serverSpans.every { serverSpan ->
+                childSpans.any { childSpan ->
+                    childSpan.traceId == serverSpan.traceId && childSpan.parentSpanId == serverSpan.spanId
+                }
+            }
+            assert childSpans.every { childSpan ->
+                serverSpans.any { serverSpan ->
+                    childSpan.traceId == serverSpan.traceId && childSpan.parentSpanId == serverSpan.spanId
+                }
+            }
             hasHttpSemanticAttributes(HttpStatus.OK)
         }
 

@@ -127,11 +127,13 @@
         
         <div class="toc-item" style="margin-left:10px" id="toc-item-kafka"><a href="#kafka"><strong>6.12</strong><span>Kafka</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>6.13</strong><span>AWS SDK Instrumentation</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-ucp"><a href="#ucp"><strong>6.13</strong><span>Oracle UCP</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>6.14</strong><span>AWS Resource Detectors</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsSdkInstrumentation"><a href="#awsSdkInstrumentation"><strong>6.14</strong><span>AWS SDK Instrumentation</span></a></div>
         
-        <div class="toc-item" style="margin-left:10px" id="toc-item-opentelemetryGuides"><a href="#opentelemetryGuides"><strong>6.15</strong><span>OpenTelemetry Guides</span></a></div>
+        <div class="toc-item" style="margin-left:10px" id="toc-item-awsResourceDetectors"><a href="#awsResourceDetectors"><strong>6.15</strong><span>AWS Resource Detectors</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-opentelemetryGuides"><a href="#opentelemetryGuides"><strong>6.16</strong><span>OpenTelemetry Guides</span></a></div>
         
         <div class="toc-item" style="margin-left:0px" id="toc-item-tracingGuides"><a href="#tracingGuides"><strong>7</strong><span>Micronaut Tracing Guides</span></a></div>
         
@@ -2428,7 +2430,110 @@ You can&#8217;t use <code>included-topics</code> and <code>excluded-topics</code
 </div>
 </div>
 
-<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>6.13 AWS SDK Instrumentation</h2>
+<h2 id="ucp"><a class="anchor" href="#ucp"></a>6.13 Oracle UCP</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.1.x/src/main/docs/guide/opentelemetry/ucp.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To enable the <a href="https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation/oracle-ucp-11.2/library">OpenTelemetry Library Instrumentation for Oracle UCP</a>,
+add the following dependency:
+        <div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-ucp")</span></code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
+    &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
+    &lt;artifactId&gt;micronaut-tracing-opentelemetry-ucp&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</p>
+</div>
+<div class="paragraph">
+<p>The dependency registers <code>oracle.ucp.UniversalConnectionPool</code> beans and Micronaut JDBC UCP-managed pools with OpenTelemetry so it can collect Oracle UCP connection pool metrics.
+For Micronaut JDBC UCP-managed datasources, the instrumentation registers metrics during application context startup.</p>
+</div>
+<div class="paragraph">
+<p>This instrumentation only registers Oracle UCP connection pool metrics; it does not create spans for SQL queries.
+To create spans for JDBC queries, also add the dependency described in the <a href="#jdbc">JDBC</a> section.</p>
+</div>
+<div class="paragraph">
+<p>The instrumentation is enabled by default but can be disabled with the <code>otel.instrumentation.ucp.enabled</code> setting:</p>
+</div>
+<div class="openblock">
+<div class="title">Disabling the Oracle UCP instrumentation</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">otel.instrumentation.ucp.enabled=false</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">otel:
+  instrumentation:
+    ucp:
+      enabled: false</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
+  [otel.instrumentation]
+    [otel.instrumentation.ucp]
+      enabled=false</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">otel {
+  instrumentation {
+    ucp {
+      enabled = false
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  otel {
+    instrumentation {
+      ucp {
+        enabled = false
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "otel": {
+    "instrumentation": {
+      "ucp": {
+        "enabled": false
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+<h2 id="awsSdkInstrumentation"><a class="anchor" href="#awsSdkInstrumentation"></a>6.14 AWS SDK Instrumentation</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.1.x/src/main/docs/guide/opentelemetry/awsSdkInstrumentation.adoc"'>
@@ -2482,7 +2587,7 @@ You can&#8217;t use <code>included-topics</code> and <code>excluded-topics</code
 via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.</p>
 </div>
 
-<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>6.14 AWS Resource Detectors</h2>
+<h2 id="awsResourceDetectors"><a class="anchor" href="#awsResourceDetectors"></a>6.15 AWS Resource Detectors</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.1.x/src/main/docs/guide/opentelemetry/awsResourceDetectors.adoc"'>
@@ -2540,7 +2645,7 @@ public class AwsResourceProvider implements ResourceProvider {
 </div>
 </div>
 
-<h2 id="opentelemetryGuides"><a class="anchor" href="#opentelemetryGuides"></a>6.15 OpenTelemetry Guides</h2>
+<h2 id="opentelemetryGuides"><a class="anchor" href="#opentelemetryGuides"></a>6.16 OpenTelemetry Guides</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-tracing/edit/8.1.x/src/main/docs/guide/opentelemetry/opentelemetryGuides.adoc"'>

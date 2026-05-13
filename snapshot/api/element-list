@@ -2,6 +2,7 @@ io.micronaut.tracing.annotation
 io.micronaut.tracing.brave
 io.micronaut.tracing.brave.http
 io.micronaut.tracing.brave.log
+io.micronaut.tracing.info
 io.micronaut.tracing.jaeger
 io.micronaut.tracing.opentelemetry
 io.micronaut.tracing.opentelemetry.conf

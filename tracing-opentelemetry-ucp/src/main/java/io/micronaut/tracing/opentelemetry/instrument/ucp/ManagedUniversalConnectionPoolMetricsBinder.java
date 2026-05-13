@@ -24,7 +24,6 @@ import io.micronaut.jdbc.DataSourceResolver;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 import oracle.ucp.UniversalConnectionPool;
-import oracle.ucp.UniversalConnectionPoolAdapter;
 import oracle.ucp.UniversalConnectionPoolException;
 import oracle.ucp.admin.UniversalConnectionPoolManager;
 import oracle.ucp.jdbc.PoolDataSource;
@@ -83,27 +82,11 @@ final class ManagedUniversalConnectionPoolMetricsBinder {
     private void register(UniversalConnectionPoolManager connectionPoolManager, PoolDataSource poolDataSource) {
         String poolName = poolDataSource.getConnectionPoolName();
         try {
-            UniversalConnectionPool connectionPool = getOrCreateConnectionPool(connectionPoolManager, poolDataSource, poolName);
+            UniversalConnectionPool connectionPool = connectionPoolManager.getConnectionPool(poolName);
             universalConnectionPoolMetricsRegistry.register(connectionPool);
             registeredPools.add(connectionPool);
         } catch (UniversalConnectionPoolException e) {
             throw new ConfigurationException(String.format("Failed to register metrics for UCP connection pool named: %s", poolName), e);
-        }
-    }
-
-    private UniversalConnectionPool getOrCreateConnectionPool(
-        UniversalConnectionPoolManager connectionPoolManager,
-        PoolDataSource poolDataSource,
-        String poolName) throws UniversalConnectionPoolException {
-        try {
-            return connectionPoolManager.getConnectionPool(poolName);
-        } catch (UniversalConnectionPoolException e) {
-            if (poolDataSource instanceof UniversalConnectionPoolAdapter connectionPoolAdapter) {
-                connectionPoolManager.createConnectionPool(connectionPoolAdapter);
-                connectionPoolManager.startConnectionPool(poolName);
-                return connectionPoolManager.getConnectionPool(poolName);
-            }
-            throw e;
         }
     }
 

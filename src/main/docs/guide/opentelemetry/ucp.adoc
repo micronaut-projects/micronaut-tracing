@@ -4,7 +4,6 @@ dependency:micronaut-tracing-opentelemetry-ucp[scope="implementation", groupId="
 
 The dependency registers `oracle.ucp.UniversalConnectionPool` beans and Micronaut JDBC UCP-managed pools with OpenTelemetry so it can collect Oracle UCP connection pool metrics.
 For Micronaut JDBC UCP-managed datasources, the instrumentation registers metrics during application context startup.
-If the UCP manager has not registered the pool yet, the instrumentation creates and starts the UCP manager pool before registering metrics.
 
 This instrumentation only registers Oracle UCP connection pool metrics; it does not create spans for SQL queries.
 To create spans for JDBC queries, also add the dependency described in the <<jdbc,JDBC>> section.

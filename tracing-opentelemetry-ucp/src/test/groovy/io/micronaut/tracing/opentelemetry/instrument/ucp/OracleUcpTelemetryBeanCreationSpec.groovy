@@ -12,9 +12,11 @@ import io.opentelemetry.sdk.metrics.SdkMeterProvider
 import io.opentelemetry.sdk.metrics.data.MetricData
 import io.opentelemetry.sdk.testing.exporter.InMemoryMetricReader
 import oracle.ucp.UniversalConnectionPool
+import oracle.ucp.UniversalConnectionPoolAdapter
 import oracle.ucp.UniversalConnectionPoolException
 import oracle.ucp.admin.UniversalConnectionPoolManager
 import oracle.ucp.jdbc.PoolDataSource
+import oracle.ucp.jdbc.PoolDataSourceFactory
 import spock.lang.Specification
 
 import javax.sql.DataSource
@@ -288,6 +290,72 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         binder?.close()
     }
 
+    void "test managed datasource skips non UCP datasources"() {
+        given:
+        def reader = InMemoryMetricReader.create()
+        def openTelemetry = OpenTelemetrySdk.builder()
+                .setMeterProvider(SdkMeterProvider.builder()
+                        .registerMetricReader(reader)
+                        .build())
+                .build()
+        def metricsRegistry = new UniversalConnectionPoolMetricsRegistry(new OracleUcpTelemetryConfiguration(openTelemetry))
+        def registeredConnectionPool = TestUniversalConnectionPoolFactory.connectionPool("mixed-ucp-pool", 1, 2, 3, 4)
+        UniversalConnectionPoolManager connectionPoolManager = [
+                getConnectionPool: { String poolName ->
+                    if (poolName == "mixed-ucp-pool") {
+                        return registeredConnectionPool
+                    }
+                    throw new UniversalConnectionPoolException("missing pool")
+                }
+        ] as UniversalConnectionPoolManager
+        def binder = new ManagedUniversalConnectionPoolMetricsBinder(
+                metricsRegistry,
+                connectionPoolManager,
+                null,
+                [nonUcpDataSource(), poolDataSource("mixed-ucp-pool")])
+
+        expect:
+        metricValue(reader.collectAllMetrics(), CONNECTION_MAX_METRICS, "mixed-ucp-pool", null) == 3
+
+        cleanup:
+        binder?.close()
+    }
+
+    void "test managed datasource does not create missing UCP manager pool from adapter"() {
+        given:
+        def reader = InMemoryMetricReader.create()
+        def openTelemetry = OpenTelemetrySdk.builder()
+                .setMeterProvider(SdkMeterProvider.builder()
+                        .registerMetricReader(reader)
+                        .build())
+                .build()
+        def metricsRegistry = new UniversalConnectionPoolMetricsRegistry(new OracleUcpTelemetryConfiguration(openTelemetry))
+        PoolDataSource poolDataSource = PoolDataSourceFactory.getPoolDataSource()
+        poolDataSource.setConnectionPoolName("missing-adapter-pool")
+        int createdPools = 0
+        int startedPools = 0
+        UniversalConnectionPoolManager connectionPoolManager = [
+                getConnectionPool: { String poolName -> throw new UniversalConnectionPoolException("missing pool") },
+                createConnectionPool: { UniversalConnectionPoolAdapter connectionPoolAdapter -> createdPools++ },
+                startConnectionPool: { String poolName -> startedPools++ }
+        ] as UniversalConnectionPoolManager
+
+        expect:
+        poolDataSource instanceof UniversalConnectionPoolAdapter
+
+        when:
+        new ManagedUniversalConnectionPoolMetricsBinder(
+                metricsRegistry,
+                connectionPoolManager,
+                null,
+                [poolDataSource])
+
+        then:
+        thrown(ConfigurationException)
+        createdPools == 0
+        startedPools == 0
+    }
+
     void "test managed datasource same pool names register distinct pool objects"() {
         given:
         def reader = InMemoryMetricReader.create()
@@ -326,7 +394,7 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         binder?.close()
     }
 
-    void "test managed datasource creates missing UCP manager pool from unwrapped adapter"() {
+    void "test managed datasource registers naturally-created UCP manager pool from unwrapped adapter"() {
         given:
         String poolName = "wrapped-real-ucp-pool"
         CountingConnectionFactory.reset()
@@ -495,6 +563,13 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         [
                 isWrapperFor: { Class<?> type -> type == PoolDataSource },
                 unwrap: { Class<?> type -> throw new SQLException("Cannot unwrap ${type.name}") }
+        ] as DataSource
+    }
+
+    private static DataSource nonUcpDataSource() {
+        [
+                isWrapperFor: { Class<?> type -> false },
+                unwrap: { Class<?> type -> throw new SQLException("Unsupported unwrap type") }
         ] as DataSource
     }
 

@@ -18,6 +18,7 @@ opentelemetry:
   jdbc: JDBC
   r2dbc: R2DBC
   kafka: Kafka
+  rabbitmq: RabbitMQ / AMQP
   awsSdkInstrumentation: AWS SDK Instrumentation
   awsResourceDetectors: AWS Resource Detectors
   opentelemetryGuides: OpenTelemetry Guides

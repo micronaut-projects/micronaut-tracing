@@ -22,6 +22,7 @@ managed-zipkin-reporter = '3.5.3'
 
 
 managed-jaeger = '1.8.1'
+managed-libthrift = '0.23.0'
 managed-opentracing = '0.33.0'
 managed-opentracing-grpc = '0.2.3'
 managed-brave-opentracing = '1.0.1'
@@ -39,6 +40,7 @@ micronaut-rxjava3 = "4.0.0-RC1"
 micronaut-serde = "3.0.0-RC2"
 micronaut-sql = "7.0.0-RC1"
 micronaut-kafka = '6.0.0-M2'
+micronaut-rabbitmq = '5.0.0-M1'
 micronaut-gradle-plugin = "5.0.0-M1"
 micronaut-r2dbc = "7.0.1-RC1"
 [libraries]
@@ -60,6 +62,7 @@ micronaut-serde = { module = 'io.micronaut.serde:micronaut-serde-bom', version.r
 micronaut-sql = { module = 'io.micronaut.sql:micronaut-sql-bom', version.ref = 'micronaut-sql' }
 micronaut-kafka = { module = 'io.micronaut.kafka:micronaut-kafka-bom', version.ref = 'micronaut-kafka'}
 micronaut-r2dbc = { module = 'io.micronaut.r2dbc:micronaut-r2dbc-bom', version.ref = 'micronaut-r2dbc'}
+micronaut-rabbitmq = { module = 'io.micronaut.rabbitmq:micronaut-rabbitmq', version.ref = 'micronaut-rabbitmq'}
 
 brave-instrumentation-http = { module = 'io.zipkin.brave:brave-instrumentation-http' }
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
@@ -68,6 +71,7 @@ grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'grpc' }
 gson = { module = 'com.google.code.gson:gson', version.ref = 'gson' }
 okio = { module = 'com.squareup.okio:okio', version.ref = 'okio' }
 jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'managed-jaeger' }
+libthrift = { module = 'org.apache.thrift:libthrift', version.ref = 'managed-libthrift' }
 javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation' }
 junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
 protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'protobuf' }

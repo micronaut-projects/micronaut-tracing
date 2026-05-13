@@ -1,0 +1,20 @@
+RabbitMQ / AMQP tracing is supported by the `micronaut-tracing-opentelemetry-rabbitmq` module.
+
+Add the dependency to enable OpenTelemetry tracing for Micronaut RabbitMQ publishers and listeners.
+
+[source,groovy]
+----
+implementation("io.micronaut.tracing:micronaut-tracing-opentelemetry-rabbitmq")
+----
+
+The module creates producer spans for `@RabbitClient` publications, injects the active trace context into AMQP headers, and creates consumer spans for `@RabbitListener` deliveries after extracting that propagated context.
+
+Instrumentation is enabled by default and can be disabled with:
+
+[configuration]
+----
+otel:
+  instrumentation:
+    rabbitmq:
+      enabled: false
+----

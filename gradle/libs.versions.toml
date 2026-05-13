@@ -30,6 +30,7 @@ grpc = '1.80.0'
 protobuf = '3.25.8'
 gson = '2.13.2'
 okio = '3.9.0'
+thrift = '0.23.0'
 
 micronaut-aws = "5.0.0-M3"
 micronaut-data = "5.0.0-RC1"
@@ -67,6 +68,7 @@ grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'grpc' }
 grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'grpc' }
 gson = { module = 'com.google.code.gson:gson', version.ref = 'gson' }
 okio = { module = 'com.squareup.okio:okio', version.ref = 'okio' }
+thrift = { module = 'org.apache.thrift:libthrift', version.ref = 'thrift' }
 jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'managed-jaeger' }
 javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation' }
 junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }
@@ -100,6 +102,7 @@ opentelemetry-instrumentation-semconv = { module = 'io.opentelemetry.semconv:ope
 opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrumentation: opentelemetry-instrumentation-annotations' }
 opentelemetry-instrumentation-jdbc = { module = 'io.opentelemetry.instrumentation:opentelemetry-jdbc' }
 opentelemetry-instrumentation-r2dbc = { module = 'io.opentelemetry.instrumentation:opentelemetry-r2dbc-1.0' }
+opentelemetry-instrumentation-ucp = { module = 'io.opentelemetry.instrumentation:opentelemetry-oracle-ucp-11.2' }
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 testcontainers-kafka = { module = "org.testcontainers:testcontainers-kafka"}
 awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }

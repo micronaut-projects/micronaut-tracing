@@ -1,0 +1,28 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api platform (libs.boms.opentelemetry)
+    api platform (libs.boms.opentelemetry.alpha)
+    api platform (libs.boms.opentelemetry.instrumentation)
+    api platform (libs.boms.opentelemetry.instrumentation.alpha)
+    api projects.micronautTracingOpentelemetry
+    api libs.opentelemetry.api
+    api libs.opentelemetry.instrumentation.semconv
+    api libs.opentelemetry.instrumentation.ucp
+    implementation mnSql.micronaut.jdbc.ucp
+
+    testAnnotationProcessor mnData.micronaut.data.processor
+
+    testImplementation projects.micronautTracingOpentelemetryJdbc
+    testImplementation libs.opentelemetry.sdk
+    testImplementation libs.opentelemetry.sdk.testing
+    testRuntimeOnly(mnSql.h2)
+}
+
+micronautBuild {
+    binaryCompatibility {
+        enabledAfter '8.0.0'
+    }
+}

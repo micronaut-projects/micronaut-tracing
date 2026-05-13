@@ -1,0 +1,20 @@
+To enable the https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation/oracle-ucp-11.2/library[OpenTelemetry Library Instrumentation for Oracle UCP],
+add the following dependency:
+dependency:micronaut-tracing-opentelemetry-ucp[scope="implementation", groupId="io.micronaut.tracing"]
+
+The dependency registers `oracle.ucp.UniversalConnectionPool` beans and Micronaut JDBC UCP-managed pools with OpenTelemetry so it can collect Oracle UCP connection pool metrics.
+For Micronaut JDBC UCP-managed datasources, the instrumentation registers metrics during application context startup.
+
+This instrumentation only registers Oracle UCP connection pool metrics; it does not create spans for SQL queries.
+To create spans for JDBC queries, also add the dependency described in the <<jdbc,JDBC>> section.
+
+The instrumentation is enabled by default but can be disabled with the `otel.instrumentation.ucp.enabled` setting:
+
+.Disabling the Oracle UCP instrumentation
+[configuration]
+----
+otel:
+  instrumentation:
+    ucp:
+      enabled: false
+----

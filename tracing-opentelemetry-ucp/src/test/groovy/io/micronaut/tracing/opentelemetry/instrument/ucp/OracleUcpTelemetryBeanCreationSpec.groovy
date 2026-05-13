@@ -174,6 +174,35 @@ class OracleUcpTelemetryBeanCreationSpec extends Specification {
         ctx.close()
     }
 
+    void "test shared datasource and UCP bean registration survives datasource cleanup first"() {
+        given:
+        String poolName = "shared-ucp-pool-datasource-first"
+        ApplicationContext ctx = ApplicationContext.run(ucpDataSourceConfiguration(poolName, "ucpSharedDatasourceFirst") + [
+                "test.ucp.shared-pool.enabled": "true",
+        ])
+        def reader = ctx.getBean(InMemoryMetricReader)
+        def binder = ctx.getBean(ManagedUniversalConnectionPoolMetricsBinder)
+        UniversalConnectionPool connectionPool = ctx.getBean(UniversalConnectionPool, Qualifiers.byName("sharedConnectionPool"))
+
+        expect:
+        metricValue(reader.collectAllMetrics(), CONNECTION_MAX_METRICS, poolName, null) == 7
+
+        when:
+        binder.close()
+
+        then:
+        metricValue(reader.collectAllMetrics(), CONNECTION_MAX_METRICS, poolName, null) == 7
+
+        when:
+        ctx.destroyBean(connectionPool)
+
+        then:
+        !hasMetricForPool(reader.collectAllMetrics(), poolName)
+
+        cleanup:
+        ctx.close()
+    }
+
     void "test distinct UCP pool objects with same name have independent registrations"() {
         given:
         def reader = InMemoryMetricReader.create()

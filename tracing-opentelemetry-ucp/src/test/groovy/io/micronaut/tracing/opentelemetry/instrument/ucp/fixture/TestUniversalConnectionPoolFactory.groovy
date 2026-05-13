@@ -46,7 +46,10 @@ class ReplacingUniversalConnectionPoolListener implements BeanCreatedEventListen
 
     @Override
     UniversalConnectionPool onCreated(@NonNull BeanCreatedEvent<UniversalConnectionPool> event) {
-        TestUniversalConnectionPoolFactory.replacementConnectionPool()
+        if (event.bean.name == TestUniversalConnectionPoolFactory.ORIGINAL_POOL_NAME) {
+            return TestUniversalConnectionPoolFactory.replacementConnectionPool()
+        }
+        event.bean
     }
 
     @Override

@@ -509,6 +509,63 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         1 * consumer.commitSync()
     }
 
+    void "next record dispatch closes context left active by failed listener"() {
+        given:
+        def processInstrumenter = Mock(Instrumenter)
+        def configuration = Mock(KafkaTelemetryConfiguration)
+        def kafkaTelemetry = new KafkaTelemetry(
+                Mock(OpenTelemetry),
+                Mock(Instrumenter),
+                processInstrumenter,
+                new ArrayList<KafkaTelemetryProducerTracingFilter>(),
+                new ArrayList<KafkaTelemetryConsumerTracingFilter>(),
+                configuration,
+                true
+        )
+        def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
+        def partition = new TopicPartition("topic", 0)
+        def firstRecord = new ConsumerRecord<String, String>("topic", 0, 0, "key", "first")
+        def secondRecord = new ConsumerRecord<String, String>("topic", 0, 1, "key", "second")
+        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]])
+        ContextKey<String> contextKey = ContextKey.named("test-kafka-listener-failure-context")
+        def observedContexts = []
+
+        configuration.getIncludedTopics() >> Collections.emptyList()
+        configuration.getExcludedTopics() >> Collections.emptyList()
+        consumer.poll(Duration.ZERO) >> records
+        consumer.groupMetadata() >> new ConsumerGroupMetadata("group")
+        consumer.metrics() >> Collections.emptyMap()
+        processInstrumenter.shouldStart(_, _) >> true
+        processInstrumenter.start(_, _) >>> [
+                Context.current().with(contextKey, "first"),
+                Context.current().with(contextKey, "second")
+        ]
+
+        when:
+        def tracedRecords = micronautConsumer.poll(Duration.ZERO)
+        def iterator = tracedRecords.iterator()
+        ConsumerRecord<String, String> firstDispatched
+        ConsumerRecord<String, String> secondDispatched
+        try {
+            firstDispatched = iterator.next()
+            observedContexts << Context.current().get(contextKey)
+            throw new IllegalStateException("listener failure")
+        } catch (IllegalStateException ignored) {
+            // Continue dispatching the next record, as a listener container can after a handled failure.
+        }
+        secondDispatched = iterator.next()
+        observedContexts << Context.current().get(contextKey)
+        boolean exhausted = !iterator.hasNext()
+
+        then:
+        firstDispatched == firstRecord
+        secondDispatched == secondRecord
+        observedContexts == ["first", "second"]
+        exhausted
+        Context.current().get(contextKey) == null
+        2 * processInstrumenter.end(_, _, null, null)
+    }
+
     void "poll returns original records when no records should be traced"() {
         given:
         def configuration = Mock(KafkaTelemetryConfiguration)

@@ -128,6 +128,7 @@ class TracingReactivePublisherSpec extends Specification {
         e.is(failure)
         exporter.finishedSpanItems.size() == 1
         exporter.finishedSpanItems[0].status.statusCode.name() == "ERROR"
+        exporter.finishedSpanItems[0].attributes.get(RabbitMQTelemetry.ERROR_TYPE) == IllegalStateException.name
     }
 
     void "asynchronous publish failure records span error"() {
@@ -146,6 +147,7 @@ class TracingReactivePublisherSpec extends Specification {
         thrown(IllegalArgumentException)
         exporter.finishedSpanItems.size() == 1
         exporter.finishedSpanItems[0].status.statusCode.name() == "ERROR"
+        exporter.finishedSpanItems[0].attributes.get(RabbitMQTelemetry.ERROR_TYPE) == IllegalArgumentException.name
     }
 
     void "reactive publisher instrumentation preserves existing tracing wrapper"() {

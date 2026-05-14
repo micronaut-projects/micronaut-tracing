@@ -74,12 +74,6 @@ public final class OpenTracingServerFilter extends AbstractOpenTracingFilter imp
         }
 
         SpanContext parentContext = initSpanContext(request);
-        if (parentContext == null) {
-            Span currentSpan = tracer.activeSpan();
-            if (currentSpan != null) {
-                parentContext = currentSpan.context();
-            }
-        }
 
         Span span = newSpan(request, parentContext).start();
         span.setTag(TAG_HTTP_SERVER, true);
@@ -88,7 +82,7 @@ public final class OpenTracingServerFilter extends AbstractOpenTracingFilter imp
         request.setAttribute(CURRENT_SPAN, span);
 
         PropagatedContext propagatedContext = propagationContext(span);
-        return propagatedContext.propagate(() -> Mono.using(
+        return Mono.using(
             () -> propagationScope(propagatedContext),
             ignored -> Mono.from(chain.proceed(request))
                 .doOnNext(response -> {
@@ -99,7 +93,7 @@ public final class OpenTracingServerFilter extends AbstractOpenTracingFilter imp
                 .doFinally(signalType -> span.finish())
                 .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext)),
             PropagatedContext.Scope::close
-        ));
+        );
     }
 
     @Override

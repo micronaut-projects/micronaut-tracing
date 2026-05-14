@@ -14,6 +14,7 @@ class ResultSpanNameSpec {
         val defaultMethod = methodNames.single { it.startsWith("defaultSpan-") }
         val customMethod = customMethodNames.single { it.startsWith("customSpan-") }
         val backtickMethod = methodNames.single { it == "hyphen-name" }
+        val longBacktickMethod = methodNames.single { it == "long-hyphenated-backtick-name" }
 
         Assertions.assertNotEquals("defaultSpan", defaultMethod)
         Assertions.assertNotEquals("customSpan", customMethod)
@@ -29,6 +30,7 @@ class ResultSpanNameSpec {
         Assertions.assertEquals("defaultSpan-hash\$other", MethodNameFormatter.format("defaultSpan-hash\$other"))
         Assertions.assertEquals("plainMethod", MethodNameFormatter.format("plainMethod"))
         Assertions.assertEquals("hyphen-name", MethodNameFormatter.format(backtickMethod))
+        Assertions.assertEquals("long-hyphenated-backtick-name", MethodNameFormatter.format(longBacktickMethod))
     }
 }
 
@@ -38,6 +40,8 @@ open class ResultSpanService {
     open fun defaultSpan(): Result<String> = Result.success("hello")
 
     open fun `hyphen-name`(): String = "hello"
+
+    open fun `long-hyphenated-backtick-name`(): String = "hello"
 }
 
 open class CustomResultSpanService {

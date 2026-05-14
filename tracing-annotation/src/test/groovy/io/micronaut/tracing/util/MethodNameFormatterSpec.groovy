@@ -23,6 +23,7 @@ class MethodNameFormatterSpec extends Specification {
         'defaultSpan-$default'             | 'defaultSpan-$default'
         '-leadingSeparator'                | '-leadingSeparator'
         'hyphen-name'                      | 'hyphen-name'
+        'long-hyphenated-backtick-name'    | 'long-hyphenated-backtick-name'
         'plainMethod'                      | 'plainMethod'
     }
 }

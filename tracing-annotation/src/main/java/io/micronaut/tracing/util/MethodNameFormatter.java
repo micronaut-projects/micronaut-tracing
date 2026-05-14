@@ -50,13 +50,17 @@ public final class MethodNameFormatter {
         if (name.length() - suffixStart < MINIMUM_MANGLING_SUFFIX_LENGTH) {
             return false;
         }
+        boolean containsHashMarker = false;
         for (int i = suffixStart; i < name.length(); i++) {
             char c = name.charAt(i);
             if (!isUrlSafeBase64Character(c)) {
                 return false;
             }
+            if (c != '-' && (c < 'a' || c > 'z')) {
+                containsHashMarker = true;
+            }
         }
-        return true;
+        return containsHashMarker;
     }
 
     private static boolean isUrlSafeBase64Character(char c) {

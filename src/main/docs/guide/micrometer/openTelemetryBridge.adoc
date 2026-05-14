@@ -1,0 +1,10 @@
+To expose Micrometer Tracing beans backed by OpenTelemetry, add the following dependency:
+
+dependency:micronaut-tracing-micrometer-opentelemetry[scope="implementation", groupId="io.micronaut.tracing"]
+
+You also need an OpenTelemetry tracer on the classpath.
+For example, add the base OpenTelemetry integration:
+
+dependency:micronaut-tracing-opentelemetry[scope="implementation", groupId="io.micronaut.tracing"]
+
+The bridge creates Micrometer `Tracer`, `CurrentTraceContext`, `BaggageManager`, and `Propagator` beans from the existing OpenTelemetry beans.

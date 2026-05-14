@@ -4,6 +4,7 @@ micronaut-platform = "5.0.0-RC1"
 micronaut-docs = '3.0.0'
 
 managed-brave-instrumentation = '6.3.1'
+managed-micrometer-tracing = '1.5.4'
 managed-opentelemetry = '1.61.0'
 managed-opentelemetry-alpha = '1.61.0-alpha'
 managed-opentelemetry-instrumentation = '2.27.0'
@@ -82,6 +83,10 @@ zipkin = { module = 'io.zipkin.zipkin2:zipkin', version.ref = 'managed-zipkin' }
 zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter' }
 zipkin-reporter-brave = { module = 'io.zipkin.reporter2:zipkin-reporter-brave' }
 
+micrometer-tracing = { module = 'io.micrometer:micrometer-tracing' }
+micrometer-tracing-bridge-brave = { module = 'io.micrometer:micrometer-tracing-bridge-brave' }
+micrometer-tracing-bridge-otel = { module = 'io.micrometer:micrometer-tracing-bridge-otel' }
+
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api' }
 opentelemetry-api-events = { module = 'io.opentelemetry:opentelemetry-api-events', version.ref = 'managed-opentelemetry-api-events' }
 opentelemetry-api-incubator = { module = 'io.opentelemetry:opentelemetry-api-incubator' }
@@ -110,6 +115,7 @@ boms-opentelemetry-alpha = { module = 'io.opentelemetry:opentelemetry-bom-alpha'
 boms-opentelemetry-instrumentation = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom', version.ref = 'managed-opentelemetry-instrumentation' }
 boms-opentelemetry-instrumentation-alpha = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha', version.ref = 'managed-opentelemetry-instrumentation-alpha' }
 boms-brave = { module = 'io.zipkin.brave:brave-bom', version.ref = 'managed-brave-instrumentation' }
+boms-micrometer-tracing = { module = 'io.micrometer:micrometer-tracing-bom', version.ref = 'managed-micrometer-tracing' }
 boms-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter-bom', version.ref = 'managed-zipkin-reporter' }
 #plugins
 micronaut-gradle-plugin = { module = "io.micronaut.gradle:micronaut-gradle-plugin", version.ref="micronaut-gradle-plugin" }

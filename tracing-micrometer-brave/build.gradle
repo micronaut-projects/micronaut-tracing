@@ -1,0 +1,16 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api platform(libs.boms.micrometer.tracing)
+    api projects.micronautTracingBrave
+    api projects.micronautTracingMicrometer
+    api libs.micrometer.tracing.bridge.brave
+}
+
+micronautBuild {
+    binaryCompatibility {
+        enabledAfter '8.0.0'
+    }
+}

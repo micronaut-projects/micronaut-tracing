@@ -44,11 +44,20 @@ micronautBom {
                         "io.zipkin.proto3"
                 ] as Set
         )
+        bomAuthorizedGroupIds.put(
+                "io.micrometer:micrometer-tracing-bom",
+                [
+                        "io.micrometer"
+                ] as Set
+        )
         dependencies.add("io.opentelemetry.semconv:opentelemetry-semconv:1.40.0")
         dependencies.add("io.opentelemetry:opentelemetry-bom:1.61.0")
         dependencies.add("io.opentelemetry:opentelemetry-bom-alpha:1.61.0-alpha")
         dependencies.add("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.27.0")
         dependencies.add("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha:2.27.0-alpha")
+        dependencies.add("io.micrometer:micrometer-tracing-bom:1.5.4")
+        dependencies.add("io.micrometer:micrometer-bom:1.15.4")
+        dependencies.add("io.micrometer:docs:1.5.4")
         dependencies.add("io.zipkin.brave:brave-instrumentation-benchmarks:6.1.0")
         dependencies.add("io.zipkin.reporter2:zipkin-reporter-bom:3.5.1")
     }

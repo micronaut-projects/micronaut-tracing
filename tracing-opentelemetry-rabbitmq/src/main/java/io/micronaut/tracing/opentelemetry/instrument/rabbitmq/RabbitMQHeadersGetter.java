@@ -15,12 +15,16 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.rabbitmq;
 
+import com.rabbitmq.client.LongString;
 import io.opentelemetry.context.propagation.TextMapGetter;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
 final class RabbitMQHeadersGetter implements TextMapGetter<Map<String, Object>> {
+
+    static final int MAX_PROPAGATION_HEADER_VALUE_BYTES = 8192;
 
     @Override
     public Iterable<String> keys(Map<String, Object> carrier) {
@@ -33,6 +37,21 @@ final class RabbitMQHeadersGetter implements TextMapGetter<Map<String, Object>> 
             return null;
         }
         Object value = carrier.get(key);
-        return value == null ? null : value.toString();
+        if (value instanceof String string) {
+            return string.length() <= MAX_PROPAGATION_HEADER_VALUE_BYTES ? string : null;
+        }
+        if (value instanceof LongString longString) {
+            if (longString.length() > MAX_PROPAGATION_HEADER_VALUE_BYTES) {
+                return null;
+            }
+            return new String(longString.getBytes(), StandardCharsets.UTF_8);
+        }
+        if (value instanceof byte[] bytes) {
+            if (bytes.length > MAX_PROPAGATION_HEADER_VALUE_BYTES) {
+                return null;
+            }
+            return new String(bytes, StandardCharsets.UTF_8);
+        }
+        return null;
     }
 }

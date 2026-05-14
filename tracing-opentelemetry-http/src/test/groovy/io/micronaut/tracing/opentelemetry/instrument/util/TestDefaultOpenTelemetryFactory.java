@@ -16,6 +16,8 @@
 package io.micronaut.tracing.opentelemetry.instrument.util;
 
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.tracing.opentelemetry.OpenTelemetryBuilderCustomizer;
+import io.opentelemetry.sdk.testing.exporter.InMemoryMetricReader;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
@@ -32,5 +34,16 @@ public class TestDefaultOpenTelemetryFactory {
     @Singleton
     InMemorySpanExporter inMemorySpanExporter() {
         return InMemorySpanExporter.create();
+    }
+
+    @Singleton
+    InMemoryMetricReader inMemoryMetricReader() {
+        return InMemoryMetricReader.create();
+    }
+
+    @Singleton
+    OpenTelemetryBuilderCustomizer meterProviderCustomizer(InMemoryMetricReader metricReader) {
+        return builder -> builder.addMeterProviderCustomizer((meterProviderBuilder, ignored) ->
+            meterProviderBuilder.registerMetricReader(metricReader));
     }
 }

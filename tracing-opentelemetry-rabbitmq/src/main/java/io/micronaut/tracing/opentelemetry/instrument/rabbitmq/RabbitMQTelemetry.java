@@ -55,8 +55,12 @@ public final class RabbitMQTelemetry {
 
     static final AttributeKey<String> MESSAGING_SYSTEM = AttributeKey.stringKey("messaging.system");
     static final AttributeKey<String> MESSAGING_OPERATION = AttributeKey.stringKey("messaging.operation");
+    static final AttributeKey<String> MESSAGING_OPERATION_NAME = AttributeKey.stringKey("messaging.operation.name");
+    static final AttributeKey<String> MESSAGING_OPERATION_TYPE = AttributeKey.stringKey("messaging.operation.type");
+    static final AttributeKey<String> ERROR_TYPE = AttributeKey.stringKey("error.type");
     static final AttributeKey<String> EXCHANGE = AttributeKey.stringKey("messaging.rabbitmq.destination.exchange");
     static final AttributeKey<String> ROUTING_KEY = AttributeKey.stringKey("messaging.rabbitmq.destination.routing_key");
+    static final AttributeKey<Long> DELIVERY_TAG = AttributeKey.longKey("messaging.rabbitmq.message.delivery_tag");
     static final AttributeKey<String> DESTINATION = AttributeKey.stringKey("messaging.destination.name");
 
     private static final String INSTRUMENTATION_NAME = "io.micronaut.tracing.rabbitmq";
@@ -117,6 +121,9 @@ public final class RabbitMQTelemetry {
             .setSpanKind(SpanKind.CONSUMER)
             .startSpan();
         setSpanAttributes(span, "process", envelope == null ? "" : envelope.getExchange(), envelope == null ? "" : envelope.getRoutingKey());
+        if (envelope != null) {
+            span.setAttribute(DELIVERY_TAG, envelope.getDeliveryTag());
+        }
         try (Scope ignored = parentContext.with(span).makeCurrent()) {
             consumer.handleDelivery(consumerTag, envelope, properties, body);
         } catch (IOException | RuntimeException e) {
@@ -173,11 +180,14 @@ public final class RabbitMQTelemetry {
     private static void setSpanAttributes(Span span, String operation, String exchange, String routingKey) {
         span.setAttribute(MESSAGING_SYSTEM, "rabbitmq");
         span.setAttribute(MESSAGING_OPERATION, operation);
+        span.setAttribute(MESSAGING_OPERATION_NAME, operation);
+        span.setAttribute(MESSAGING_OPERATION_TYPE, operationType(operation));
+        String destination = destination(exchange, routingKey);
+        if (!destination.isEmpty()) {
+            span.setAttribute(DESTINATION, destination);
+        }
         if (exchange != null && !exchange.isEmpty()) {
             span.setAttribute(EXCHANGE, exchange);
-            span.setAttribute(DESTINATION, exchange);
-        } else if (routingKey != null && !routingKey.isEmpty()) {
-            span.setAttribute(DESTINATION, routingKey);
         }
         if (routingKey != null && !routingKey.isEmpty()) {
             span.setAttribute(ROUTING_KEY, routingKey);
@@ -186,7 +196,25 @@ public final class RabbitMQTelemetry {
 
     private static void markFailed(Span span, Throwable error) {
         span.recordException(error);
+        span.setAttribute(ERROR_TYPE, error.getClass().getName());
         span.setStatus(StatusCode.ERROR);
+    }
+
+    private static String operationType(String operation) {
+        return "publish".equals(operation) ? "send" : operation;
+    }
+
+    private static String destination(String exchange, String routingKey) {
+        if (exchange != null && !exchange.isEmpty() && routingKey != null && !routingKey.isEmpty()) {
+            return exchange + ":" + routingKey;
+        }
+        if (exchange != null && !exchange.isEmpty()) {
+            return exchange;
+        }
+        if (routingKey != null && !routingKey.isEmpty()) {
+            return routingKey;
+        }
+        return "amq.default";
     }
 
     interface TracingChannel {

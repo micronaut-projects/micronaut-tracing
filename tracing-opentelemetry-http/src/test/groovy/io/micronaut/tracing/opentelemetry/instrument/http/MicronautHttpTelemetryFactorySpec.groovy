@@ -25,7 +25,10 @@ import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.api.trace.TraceFlags
 import io.opentelemetry.api.trace.TraceState
 import io.opentelemetry.context.Context
+import io.opentelemetry.context.ContextKey
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor
+import io.opentelemetry.instrumentation.api.instrumenter.ContextCustomizer
+import io.opentelemetry.instrumentation.api.instrumenter.ErrorCauseExtractor
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter
 import io.opentelemetry.instrumentation.api.instrumenter.OperationListener
 import io.opentelemetry.instrumentation.api.instrumenter.SpanLinksBuilder
@@ -33,7 +36,9 @@ import io.opentelemetry.instrumentation.api.instrumenter.SpanLinksExtractor
 import io.opentelemetry.instrumentation.api.instrumenter.SpanNameExtractor
 import io.opentelemetry.instrumentation.api.instrumenter.SpanStatusBuilder
 import io.opentelemetry.instrumentation.api.instrumenter.SpanStatusExtractor
+import io.opentelemetry.sdk.testing.exporter.InMemoryMetricReader
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
+import io.opentelemetry.semconv.ExceptionAttributes
 import io.opentelemetry.semconv.HttpAttributes
 import jakarta.inject.Singleton
 import spock.lang.Specification
@@ -46,6 +51,8 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
     private static final String SPEC_NAME = "MicronautHttpTelemetryFactorySpec"
     private static final AttributeKey<String> CLIENT_WILDCARD_ATTRIBUTE = AttributeKey.stringKey("test.client.wildcard")
     private static final AttributeKey<String> SERVER_WILDCARD_ATTRIBUTE = AttributeKey.stringKey("test.server.wildcard")
+    private static final ContextKey<Boolean> CLIENT_CONTEXT_KEY = ContextKey.named("test-client-context-customizer")
+    private static final ContextKey<Boolean> SERVER_CONTEXT_KEY = ContextKey.named("test-server-context-customizer")
     private static final SpanContext CLIENT_LINKED_CONTEXT = SpanContext.create(
         "00000000000000000000000000000001",
         "0000000000000001",
@@ -75,6 +82,26 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
         context.getBean(Instrumenter, Qualifiers.byName("micronautHttpServerTelemetryInstrumenter"))
     }
 
+    void "records default http request duration metrics"() {
+        given:
+        context = startContext()
+        def server = context.getBean(EmbeddedServer).start()
+        def client = context.getBean(TestClient)
+
+        when:
+        client.route("abc")
+
+        then:
+        new PollingConditions().eventually {
+            def metricNames = context.getBean(InMemoryMetricReader).collectAllMetrics()*.name
+            metricNames.contains("http.client.request.duration")
+            metricNames.contains("http.server.request.duration")
+        }
+
+        cleanup:
+        server?.stop()
+    }
+
     void "uses replacement client and server span name extractors"() {
         given:
         context = startContext()
@@ -95,7 +122,7 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
         server?.stop()
     }
 
-    void "applies server list contributors and preserves route attribute"() {
+    void "applies client and server list contributors and preserves route attribute"() {
         given:
         context = startContext()
         def server = context.getBean(EmbeddedServer).start()
@@ -116,10 +143,41 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
             clientSpan.attributes.get(CLIENT_WILDCARD_ATTRIBUTE) == "client"
             serverSpan.attributes.get(SERVER_WILDCARD_ATTRIBUTE) == "server"
             serverSpan.attributes.get(HttpAttributes.HTTP_ROUTE) == "/route/{id}"
+            CustomHttpTelemetryFactory.clientContextCustomizerInvocations.get() == 1
+            CustomHttpTelemetryFactory.clientContextVisible.get() == 1
+            CustomHttpTelemetryFactory.serverContextCustomizerInvocations.get() == 1
+            CustomHttpTelemetryFactory.serverContextVisible.get() == 1
             CustomHttpTelemetryFactory.clientListenerStart.get() == 1
             CustomHttpTelemetryFactory.clientListenerEnd.get() == 1
             CustomHttpTelemetryFactory.serverListenerStart.get() == 1
             CustomHttpTelemetryFactory.serverListenerEnd.get() == 1
+        }
+
+        cleanup:
+        server?.stop()
+    }
+
+    void "uses replacement client and server error cause extractors on failures"() {
+        given:
+        context = startContext()
+        def server = context.getBean(EmbeddedServer).start()
+        def client = context.getBean(TestClient)
+
+        when:
+        client.wrappedFailure()
+
+        then:
+        thrown(HttpClientResponseException)
+        new PollingConditions().eventually {
+            def spans = context.getBean(InMemorySpanExporter).finishedSpanItems
+            def clientSpan = spans.find { it.kind == SpanKind.CLIENT }
+            def serverSpan = spans.find { it.kind == SpanKind.SERVER }
+            clientSpan
+            serverSpan
+            clientSpan.events.any { it.attributes.get(ExceptionAttributes.EXCEPTION_TYPE) == ClientMappedException.canonicalName }
+            serverSpan.events.any { it.attributes.get(ExceptionAttributes.EXCEPTION_TYPE) == ServerMappedException.canonicalName }
+            CustomHttpTelemetryFactory.clientErrorCauseExtractorInvocations.get() == 1
+            CustomHttpTelemetryFactory.serverErrorCauseExtractorInvocations.get() == 1
         }
 
         cleanup:
@@ -174,6 +232,9 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
 
         @Get("/failure")
         String failure()
+
+        @Get("/wrapped-failure")
+        String wrappedFailure()
     }
 
     @Controller
@@ -194,6 +255,20 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
         String failure() {
             throw new IllegalStateException("failure")
         }
+
+        @Get("/wrapped-failure")
+        String wrappedFailure() {
+            throw new WrappedServerException()
+        }
+    }
+
+    static class WrappedServerException extends RuntimeException {
+    }
+
+    static class ClientMappedException extends RuntimeException {
+    }
+
+    static class ServerMappedException extends RuntimeException {
     }
 
     @Requires(property = "spec.name", value = SPEC_NAME)
@@ -206,6 +281,12 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
         static AtomicInteger serverListenerEnd = new AtomicInteger()
         static AtomicInteger clientStatusExtractor = new AtomicInteger()
         static AtomicInteger serverStatusExtractor = new AtomicInteger()
+        static AtomicInteger clientErrorCauseExtractorInvocations = new AtomicInteger()
+        static AtomicInteger serverErrorCauseExtractorInvocations = new AtomicInteger()
+        static AtomicInteger clientContextCustomizerInvocations = new AtomicInteger()
+        static AtomicInteger serverContextCustomizerInvocations = new AtomicInteger()
+        static AtomicInteger clientContextVisible = new AtomicInteger()
+        static AtomicInteger serverContextVisible = new AtomicInteger()
 
         static void reset() {
             clientListenerStart.set(0)
@@ -214,6 +295,12 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
             serverListenerEnd.set(0)
             clientStatusExtractor.set(0)
             serverStatusExtractor.set(0)
+            clientErrorCauseExtractorInvocations.set(0)
+            serverErrorCauseExtractorInvocations.set(0)
+            clientContextCustomizerInvocations.set(0)
+            serverContextCustomizerInvocations.set(0)
+            clientContextVisible.set(0)
+            serverContextVisible.set(0)
         }
 
         @MicronautHttpClientTelemetryFactory.Client
@@ -252,11 +339,50 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
 
         @MicronautHttpClientTelemetryFactory.Client
         @Singleton
+        ErrorCauseExtractor clientErrorCauseExtractor() {
+            { Throwable ignored ->
+                clientErrorCauseExtractorInvocations.incrementAndGet()
+                new ClientMappedException()
+            } as ErrorCauseExtractor
+        }
+
+        @MicronautHttpServerTelemetryFactory.Server
+        @Singleton
+        ErrorCauseExtractor serverErrorCauseExtractor() {
+            { Throwable ignored ->
+                serverErrorCauseExtractorInvocations.incrementAndGet()
+                new ServerMappedException()
+            } as ErrorCauseExtractor
+        }
+
+        @MicronautHttpClientTelemetryFactory.Client
+        @Singleton
+        ContextCustomizer<MutableHttpRequest<Object>> clientContextCustomizer() {
+            { Context context, MutableHttpRequest<Object> request, Attributes startAttributes ->
+                clientContextCustomizerInvocations.incrementAndGet()
+                context.with(CLIENT_CONTEXT_KEY, true)
+            } as ContextCustomizer<MutableHttpRequest<Object>>
+        }
+
+        @MicronautHttpServerTelemetryFactory.Server
+        @Singleton
+        ContextCustomizer<HttpRequest<Object>> serverContextCustomizer() {
+            { Context context, HttpRequest<Object> request, Attributes startAttributes ->
+                serverContextCustomizerInvocations.incrementAndGet()
+                context.with(SERVER_CONTEXT_KEY, true)
+            } as ContextCustomizer<HttpRequest<Object>>
+        }
+
+        @MicronautHttpClientTelemetryFactory.Client
+        @Singleton
         OperationListener clientOperationListener() {
             new OperationListener() {
                 @Override
                 Context onStart(Context context, Attributes startAttributes, long startNanos) {
                     clientListenerStart.incrementAndGet()
+                    if (context.get(CLIENT_CONTEXT_KEY)) {
+                        clientContextVisible.incrementAndGet()
+                    }
                     context
                 }
 
@@ -274,6 +400,9 @@ class MicronautHttpTelemetryFactorySpec extends Specification {
                 @Override
                 Context onStart(Context context, Attributes startAttributes, long startNanos) {
                     serverListenerStart.incrementAndGet()
+                    if (context.get(SERVER_CONTEXT_KEY)) {
+                        serverContextVisible.incrementAndGet()
+                    }
                     context
                 }
 

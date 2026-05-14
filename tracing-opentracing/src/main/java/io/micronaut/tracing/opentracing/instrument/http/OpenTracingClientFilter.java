@@ -88,23 +88,21 @@ public final class OpenTracingClientFilter extends AbstractOpenTracingFilter imp
         request.setAttribute(CURRENT_SPAN, span);
 
         PropagatedContext propagatedContext = propagationContext(span);
-        return propagatedContext.propagate(() -> {
-            tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders()));
-            return Mono.using(
-                () -> propagationScope(propagatedContext),
-                ignored -> Mono.from(chain.proceed(request))
-                    .doOnNext(httpResponse -> setResponseTags(request, httpResponse, span))
-                    .doOnError(throwable -> {
-                        if (throwable instanceof HttpClientResponseException e) {
-                            HttpResponse<?> response = e.getResponse();
-                            setResponseTags(request, response, span);
-                        }
-                        setErrorTags(span, throwable);
-                    })
-                    .doFinally(signalType -> span.finish())
-                    .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext)),
-                PropagatedContext.Scope::close
-            );
-        });
+        tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders()));
+        return Mono.using(
+            () -> propagationScope(propagatedContext),
+            ignored -> Mono.from(chain.proceed(request))
+                .doOnNext(httpResponse -> setResponseTags(request, httpResponse, span))
+                .doOnError(throwable -> {
+                    if (throwable instanceof HttpClientResponseException e) {
+                        HttpResponse<?> response = e.getResponse();
+                        setResponseTags(request, response, span);
+                    }
+                    setErrorTags(span, throwable);
+                })
+                .doFinally(signalType -> span.finish())
+                .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext)),
+            PropagatedContext.Scope::close
+        );
     }
 }

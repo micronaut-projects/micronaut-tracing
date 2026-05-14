@@ -143,6 +143,8 @@ public abstract sealed class AbstractOpenTracingFilter implements HttpFilter
         SpanBuilder spanBuilder = tracer.buildSpan(spanName);
         if (spanContext != null) {
             spanBuilder.asChildOf(spanContext);
+        } else {
+            spanBuilder.ignoreActiveSpan();
         }
 
         spanBuilder.withTag(TAG_METHOD, request.getMethodName());

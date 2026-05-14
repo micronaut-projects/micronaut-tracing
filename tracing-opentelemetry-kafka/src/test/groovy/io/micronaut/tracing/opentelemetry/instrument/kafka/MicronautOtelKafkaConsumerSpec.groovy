@@ -566,6 +566,61 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         2 * processInstrumenter.end(_, _, null, null)
     }
 
+    void "wakeup from another thread does not close active record context"() {
+        given:
+        def processInstrumenter = Mock(Instrumenter)
+        def configuration = Mock(KafkaTelemetryConfiguration)
+        def kafkaTelemetry = new KafkaTelemetry(
+                Mock(OpenTelemetry),
+                Mock(Instrumenter),
+                processInstrumenter,
+                new ArrayList<KafkaTelemetryProducerTracingFilter>(),
+                new ArrayList<KafkaTelemetryConsumerTracingFilter>(),
+                configuration,
+                true
+        )
+        def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
+        def partition = new TopicPartition("topic", 0)
+        def record = new ConsumerRecord<String, String>("topic", 0, 0, "key", "value")
+        def records = new ConsumerRecords<String, String>([(partition): [record]])
+        ContextKey<String> contextKey = ContextKey.named("test-kafka-wakeup-context")
+
+        configuration.getIncludedTopics() >> Collections.emptyList()
+        configuration.getExcludedTopics() >> Collections.emptyList()
+        consumer.poll(Duration.ZERO) >> records
+        consumer.groupMetadata() >> new ConsumerGroupMetadata("group")
+        consumer.metrics() >> Collections.emptyMap()
+        processInstrumenter.shouldStart(_, _) >> true
+        processInstrumenter.start(_, _) >> Context.current().with(contextKey, "active")
+
+        when:
+        def tracedRecords = micronautConsumer.poll(Duration.ZERO)
+        def dispatchedRecord = tracedRecords.iterator().next()
+
+        then:
+        dispatchedRecord == record
+        Context.current().get(contextKey) == "active"
+
+        when:
+        def wakeupThread = Thread.start {
+            micronautConsumer.wakeup()
+        }
+        wakeupThread.join()
+
+        then:
+        Context.current().get(contextKey) == "active"
+        1 * consumer.wakeup()
+        0 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        micronautConsumer.commitSync()
+
+        then:
+        Context.current().get(contextKey) == null
+        1 * processInstrumenter.end(_, _, null, null)
+        1 * consumer.commitSync()
+    }
+
     void "poll returns original records when no records should be traced"() {
         given:
         def configuration = Mock(KafkaTelemetryConfiguration)

@@ -31,14 +31,14 @@ protobuf = '3.25.8'
 gson = '2.13.2'
 okio = '3.9.0'
 
-micronaut-aws = "5.0.0-M3"
+micronaut-aws = "5.0.0-RC1"
 micronaut-data = "5.0.0-RC1"
 micronaut-grpc = "5.0.0-RC1"
-micronaut-reactor = "4.0.0-RC1"
-micronaut-rxjava3 = "4.0.0-RC1"
-micronaut-serde = "3.0.0-RC2"
+micronaut-reactor = "4.0.0"
+micronaut-rxjava3 = "4.0.0"
+micronaut-serde = "3.0.0"
 micronaut-sql = "7.0.0-RC1"
-micronaut-kafka = '6.0.0-M2'
+micronaut-kafka = "6.0.0-RC1"
 micronaut-gradle-plugin = "5.0.0-M1"
 micronaut-r2dbc = "7.0.1-RC1"
 [libraries]

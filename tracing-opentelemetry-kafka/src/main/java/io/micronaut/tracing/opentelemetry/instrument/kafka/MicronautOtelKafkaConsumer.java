@@ -341,7 +341,7 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
 
     @Override
     public void wakeup() {
-        runWithInactiveContext(consumer::wakeup);
+        consumer.wakeup();
     }
 
     private void closeActiveRecordContext() {

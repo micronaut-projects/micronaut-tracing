@@ -2,6 +2,7 @@ io.micronaut.tracing.annotation
 io.micronaut.tracing.brave
 io.micronaut.tracing.brave.http
 io.micronaut.tracing.brave.log
+io.micronaut.tracing.info
 io.micronaut.tracing.jaeger
 io.micronaut.tracing.opentelemetry
 io.micronaut.tracing.opentelemetry.conf
@@ -14,6 +15,7 @@ io.micronaut.tracing.opentelemetry.instrument.http.server
 io.micronaut.tracing.opentelemetry.instrument.kafka
 io.micronaut.tracing.opentelemetry.instrument.util
 io.micronaut.tracing.opentelemetry.interceptor
+io.micronaut.tracing.opentelemetry.log
 io.micronaut.tracing.opentelemetry.processing
 io.micronaut.tracing.opentelemetry.utils
 io.micronaut.tracing.opentelemetry.xray

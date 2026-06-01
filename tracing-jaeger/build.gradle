@@ -11,6 +11,11 @@ dependencies {
     // gson is a transitive dependency of io.jaegertracing:jaeger-core
     // https://ossindex.sonatype.org/component/pkg:maven/com.google.code.gson/gson
     implementation(libs.gson)
+    constraints {
+        api("org.apache.thrift:libthrift:0.23.0") {
+            because "libthrift versions before 0.23.0 are vulnerable"
+        }
+    }
     testImplementation mnReactor.micronaut.reactor
     testImplementation mn.micronaut.http.server.netty
     testRuntimeOnly mnSerde.micronaut.serde.jackson

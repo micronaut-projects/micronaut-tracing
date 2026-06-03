@@ -32,8 +32,8 @@ gson = '2.13.2'
 okio = '3.9.0'
 thrift = '0.23.0'
 
-micronaut-aws = "5.0.0-RC1"
 micronaut-data = "5.0.0-RC1"
+micronaut-aws = "5.0.0"
 micronaut-grpc = "5.0.0"
 micronaut-reactor = "4.0.0"
 micronaut-rxjava3 = "4.0.0"

@@ -1,3 +1,0 @@
-[[IgnoredVulns]]
-id = "GHSA-7pwc-h2j2-rjgj"
-reason = "org.apache.thrift:libthrift:0.15.0 (GHSA-7pwc-h2j2-rjgj; fixed: unknown fixed version"

@@ -11,6 +11,22 @@ This keeps OpenTelemetry instrumentation, semantic conventions, SDK, and exporte
 
 Standard OpenTelemetry resource configuration is also supported. For example, you can set `otel.resource.attributes=deployment.environment=prod,service.namespace=payments` or use the equivalent `OTEL_RESOURCE_ATTRIBUTES` environment variable.
 
+Map-style OpenTelemetry configuration can also use nested Micronaut configuration properties.
+For example:
+
+[configuration]
+----
+otel:
+  resource:
+    attributes:
+      service.name: orders
+      deployment.environment: prod
+  exporter:
+    otlp:
+      headers:
+        Authorization: "Bearer token"
+----
+
 == OpenTelemetry annotations
 
 The pkg:tracing.opentelemetry.processing[] package contains transformers and mappers that enables usage of Open Telemetry annotations.

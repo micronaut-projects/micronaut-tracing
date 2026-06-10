@@ -16,24 +16,32 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.annotation.Order;
+import io.micronaut.core.order.Ordered;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.api.incubator.semconv.http.HttpClientServicePeerAttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
+import io.opentelemetry.instrumentation.api.instrumenter.ContextCustomizer;
+import io.opentelemetry.instrumentation.api.instrumenter.ErrorCauseExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import io.opentelemetry.instrumentation.api.instrumenter.InstrumenterBuilder;
+import io.opentelemetry.instrumentation.api.instrumenter.OperationListener;
+import io.opentelemetry.instrumentation.api.instrumenter.OperationMetrics;
+import io.opentelemetry.instrumentation.api.instrumenter.SpanLinksExtractor;
+import io.opentelemetry.instrumentation.api.instrumenter.SpanNameExtractor;
+import io.opentelemetry.instrumentation.api.instrumenter.SpanStatusExtractor;
 import io.opentelemetry.instrumentation.api.semconv.http.HttpClientAttributesExtractor;
 import io.opentelemetry.instrumentation.api.semconv.http.HttpClientAttributesExtractorBuilder;
 import io.opentelemetry.instrumentation.api.semconv.http.HttpClientMetrics;
 import io.opentelemetry.instrumentation.api.semconv.http.HttpSpanNameExtractor;
 import io.opentelemetry.instrumentation.api.semconv.http.HttpSpanStatusExtractor;
-
 import jakarta.inject.Named;
 import jakarta.inject.Qualifier;
+import jakarta.inject.Singleton;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -63,21 +71,45 @@ public class MicronautHttpClientTelemetryFactory {
     /**
      * Builds the http client Open Telemetry instrumenter.
      * @param openTelemetry the {@link OpenTelemetry}
-     * @param extractors the list of {@link AttributesExtractor}
+     * @param spanNameExtractor the {@link SpanNameExtractor}
+     * @param spanStatusExtractor the {@link SpanStatusExtractor}, can be {@code null}
+     * @param errorCauseExtractor the {@link ErrorCauseExtractor}, can be {@code null}
+     * @param attributesExtractors the list of {@link AttributesExtractor}
+     * @param contextCustomizers the list of {@link ContextCustomizer}
+     * @param operationMetrics the list of {@link OperationMetrics}
+     * @param operationListeners the list of {@link OperationListener}
+     * @param spanLinksExtractors the list of {@link SpanLinksExtractor}
      * @return the http client Open Telemetry instrumenter
      */
-    @Prototype
+    @Singleton
     @Requires(beans = OpenTelemetry.class)
+    @SuppressWarnings("DuplicatedCode")
     @Named("micronautHttpClientTelemetryInstrumenter")
-    Instrumenter<MutableHttpRequest<Object>, HttpResponse<Object>> instrumenter(OpenTelemetry openTelemetry, @Client List<AttributesExtractor<MutableHttpRequest<?>, HttpResponse<?>>> extractors) {
+    Instrumenter<MutableHttpRequest<Object>, HttpResponse<Object>> instrumenter(
+        OpenTelemetry openTelemetry,
+        @Client SpanNameExtractor<MutableHttpRequest<Object>> spanNameExtractor,
+        @Client @Nullable SpanStatusExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> spanStatusExtractor,
+        @Client @Nullable ErrorCauseExtractor errorCauseExtractor,
+        @Client List<AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>>> attributesExtractors,
+        @Client List<ContextCustomizer<MutableHttpRequest<Object>>> contextCustomizers,
+        @Client List<OperationMetrics> operationMetrics,
+        @Client List<OperationListener> operationListeners,
+        @Client List<SpanLinksExtractor<MutableHttpRequest<Object>>> spanLinksExtractors) {
 
-        MicronautHttpClientAttributesGetter httpAttributesGetter = MicronautHttpClientAttributesGetter.INSTANCE;
+        InstrumenterBuilder<MutableHttpRequest<Object>, HttpResponse<Object>> builder =
+            Instrumenter.builder(openTelemetry, INSTRUMENTATION_NAME, spanNameExtractor);
 
-        InstrumenterBuilder<MutableHttpRequest<Object>, HttpResponse<Object>> builder = Instrumenter.builder(openTelemetry, INSTRUMENTATION_NAME, HttpSpanNameExtractor.create(httpAttributesGetter));
-
-        builder.setSpanStatusExtractor(HttpSpanStatusExtractor.create(httpAttributesGetter))
-            .addOperationMetrics(HttpClientMetrics.get());
-        builder.addAttributesExtractors(extractors);
+        if (spanStatusExtractor != null) {
+            builder.setSpanStatusExtractor(spanStatusExtractor);
+        }
+        if (errorCauseExtractor != null) {
+            builder.setErrorCauseExtractor(errorCauseExtractor);
+        }
+        builder.addAttributesExtractors(attributesExtractors);
+        contextCustomizers.forEach(builder::addContextCustomizer);
+        operationListeners.forEach(builder::addOperationListener);
+        operationMetrics.forEach(builder::addOperationMetrics);
+        spanLinksExtractors.forEach(builder::addSpanLinksExtractor);
 
         return builder.buildClientInstrumenter(HttpRequestSetter.INSTANCE);
     }
@@ -88,7 +120,7 @@ public class MicronautHttpClientTelemetryFactory {
      * @return the {@link HttpClientServicePeerAttributesExtractor}
      */
     @Client
-    @Prototype
+    @Singleton
     AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> peerServiceAttributesExtractor(OpenTelemetry openTelemetry) {
         return HttpClientServicePeerAttributesExtractor.create(MicronautHttpClientAttributesGetter.INSTANCE, openTelemetry);
     }
@@ -99,7 +131,7 @@ public class MicronautHttpClientTelemetryFactory {
      * @return the {@link HttpClientAttributesExtractor}
      */
     @Client
-    @Prototype
+    @Singleton
     AttributesExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> mutableHttpRequestHttpResponseHttpClientAttributesExtractorBuilder(@Nullable OpenTelemetryHttpClientConfig openTelemetryHttpClientConfig) {
         HttpClientAttributesExtractorBuilder<MutableHttpRequest<Object>, HttpResponse<Object>> httpAttributesExtractorBuilder =
             HttpClientAttributesExtractor.builder(MicronautHttpClientAttributesGetter.INSTANCE);
@@ -109,5 +141,37 @@ public class MicronautHttpClientTelemetryFactory {
             httpAttributesExtractorBuilder.setCapturedResponseHeaders(openTelemetryHttpClientConfig.getResponseHeaders());
         }
         return httpAttributesExtractorBuilder.build();
+    }
+
+    /**
+     * Builds the default {@link SpanNameExtractor}.
+     * @return the {@link HttpSpanNameExtractor}
+     */
+    @Client
+    @Singleton
+    SpanNameExtractor<MutableHttpRequest<Object>> defaultSpanNameExtractor() {
+        return HttpSpanNameExtractor.create(MicronautHttpClientAttributesGetter.INSTANCE);
+    }
+
+    /**
+     * Builds the default {@link SpanStatusExtractor}.
+     * @return the {@link HttpSpanStatusExtractor}
+     */
+    @Client
+    @Singleton
+    SpanStatusExtractor<MutableHttpRequest<Object>, HttpResponse<Object>> defaultSpanStatusExtractor() {
+        return HttpSpanStatusExtractor.create(MicronautHttpClientAttributesGetter.INSTANCE);
+    }
+
+    /**
+     * Returns an {@link OperationMetrics} instance which can be used to enable recording of {@link
+     * HttpClientMetrics}.
+     * @return the {@link OperationMetrics} instance
+     */
+    @Client
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @Singleton
+    OperationMetrics httpClientMetrics() {
+        return HttpClientMetrics.get();
     }
 }

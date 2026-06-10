@@ -36,3 +36,14 @@ otel:
       response-headers:
         - X-From-Server-Response
 ----
+
+== Customizing HTTP instrumentation
+
+HTTP client and server OpenTelemetry `Instrumenter` builders can be customized by defining beans with the appropriate qualifier:
+
+* ann:tracing.opentelemetry.instrument.http.client.MicronautHttpClientTelemetryFactory.Client[] for HTTP client instrumentation.
+* ann:tracing.opentelemetry.instrument.http.server.MicronautHttpServerTelemetryFactory.Server[] for HTTP server instrumentation.
+
+Qualified beans of type `SpanNameExtractor`, `SpanStatusExtractor`, `ErrorCauseExtractor`, `AttributesExtractor`, `ContextCustomizer`, `OperationMetrics`, `OperationListener`, and `SpanLinksExtractor` are applied when the Micronaut HTTP instrumenters are built. `SpanNameExtractor`, `SpanStatusExtractor`, and `ErrorCauseExtractor` are single collaborators and do not compose; if one already exists, replace it with ann:context.annotation.Replaces[]. `AttributesExtractor`, `ContextCustomizer`, `OperationMetrics`, `OperationListener`, and `SpanLinksExtractor` beans are additive contributors.
+
+NOTE: Custom extractors, customizers, metrics, listeners, and span link extractors can add request, response, exception, and application data to telemetry. Redact secrets such as authorization headers, cookies, API keys, tokens, and personally identifiable information before exporting telemetry.

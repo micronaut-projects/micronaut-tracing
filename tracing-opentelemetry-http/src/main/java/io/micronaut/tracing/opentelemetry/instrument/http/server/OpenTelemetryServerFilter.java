@@ -20,14 +20,12 @@ import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.async.propagation.ReactorPropagation;
 import io.micronaut.core.propagation.PropagatedContext;
-import io.micronaut.http.HttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
 import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
-import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
@@ -38,8 +36,10 @@ import jakarta.inject.Named;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
+import java.util.function.Predicate;
+
 import static io.micronaut.http.filter.ServerFilterPhase.TRACING;
-import static io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTelemetryServerFilter.SERVER_PATH;
+import static io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter.SERVER_PATH;
 
 /**
  * An HTTP server instrumentation filter that uses Open Telemetry.
@@ -50,11 +50,15 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.server.OpenTele
 @Internal
 @Filter(SERVER_PATH)
 @Requires(beans = Tracer.class)
-public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter implements HttpServerFilter {
+public final class OpenTelemetryServerFilter implements HttpServerFilter {
+
+    static final String CONTEXT = OpenTelemetryServerFilter.class.getName() + "-context";
 
     private static final String APPLIED = OpenTelemetryServerFilter.class.getName() + "-applied";
     private static final String CONTINUE = OpenTelemetryServerFilter.class.getName() + "-continue";
 
+    @Nullable
+    private final Predicate<String> pathExclusionTest;
     private final Instrumenter<HttpRequest<?>, Object> instrumenter;
 
     /**
@@ -63,8 +67,7 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
      */
     public OpenTelemetryServerFilter(@Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig,
                                      @Named("micronautHttpServerTelemetryInstrumenter") Instrumenter<HttpRequest<?>, Object> instrumenter) {
-        super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
-
+        this.pathExclusionTest = exclusionsConfig == null ? null : exclusionsConfig.exclusionTest();
         this.instrumenter = instrumenter;
     }
 
@@ -90,35 +93,27 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
         }
 
         Context context = instrumenter.start(parentContext, request);
-
+        request.setAttribute(CONTEXT, context);
         try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
             .plus(new OpenTelemetryPropagationContext(context))
             .propagate()) {
-
             var propagatedContext = PropagatedContext.get();
             return Mono.from(chain.proceed(request))
-                .doOnNext(mutableHttpResponse -> mutableHttpResponse.getAttribute(HttpAttributes.EXCEPTION, Exception.class)
-                    .ifPresentOrElse(
-                        e -> onError(request, context, mutableHttpResponse, e), () -> {
-                            if (mutableHttpResponse.status().getCode() >= 400) {
-                                onError(request, context, mutableHttpResponse, null);
-                            } else {
-                                instrumenter.end(context, request, mutableHttpResponse, null);
-                            }
-                        }))
-                .doOnError(throwable -> onError(request, context, null, throwable))
+                .doOnError(throwable -> onError(request, context, throwable))
                 .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext));
         }
     }
 
-    private void onError(HttpRequest<?> request, Context context,
-                         @Nullable MutableHttpResponse<?> mutableHttpResponse, @Nullable Throwable e) {
-        var span = Span.fromContext(context)
-            .setStatus(StatusCode.ERROR);
-        if (e != null) {
-            span.recordException(e);
-        }
-        instrumenter.end(context, request, mutableHttpResponse, e);
+    private void onError(HttpRequest<?> request, Context context, Throwable e) {
+        Span.fromContext(context)
+            .setStatus(StatusCode.ERROR)
+            .recordException(e);
+        instrumenter.end(context, request, null, e);
+        request.setAttribute(OpenTelemetryServerResponseFilter.FINISHED, true);
         request.setAttribute(CONTINUE, true);
+    }
+
+    private boolean shouldExclude(@Nullable String path) {
+        return pathExclusionTest != null && path != null && pathExclusionTest.test(path);
     }
 }

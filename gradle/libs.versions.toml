@@ -103,6 +103,7 @@ opentelemetry-instrumentation-r2dbc = { module = 'io.opentelemetry.instrumentati
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 testcontainers-kafka = { module = "org.testcontainers:testcontainers-kafka"}
 awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
+awssdk-sqs = { module = 'software.amazon.awssdk:sqs' }
 
 # BOMs
 boms-opentelemetry = { module = 'io.opentelemetry:opentelemetry-bom', version.ref = 'managed-opentelemetry' }

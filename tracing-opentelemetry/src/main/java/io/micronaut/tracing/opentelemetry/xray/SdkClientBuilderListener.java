@@ -15,12 +15,10 @@
  */
 package io.micronaut.tracing.opentelemetry.xray;
 
-import io.micronaut.context.BeanProvider;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.BeanCreatedEvent;
 import io.micronaut.context.event.BeanCreatedEventListener;
 import io.micronaut.core.annotation.Internal;
-import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.awssdk.v2_2.AwsSdkTelemetry;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
@@ -40,14 +38,14 @@ import software.amazon.awssdk.core.client.builder.SdkClientBuilder;
 public class SdkClientBuilderListener implements BeanCreatedEventListener<SdkClientBuilder<?, ?>> {
     private static final Logger LOG = LoggerFactory.getLogger(SdkClientBuilderListener.class);
 
-    private final BeanProvider<OpenTelemetry> openTelemetry;
+    private final AwsSdkTelemetryProvider awsSdkTelemetryProvider;
 
     /**
      *
-     * @param openTelemetry OpenTelemetry
+     * @param awsSdkTelemetryProvider AWS SDK telemetry provider
      */
-    public SdkClientBuilderListener(BeanProvider<OpenTelemetry> openTelemetry) {
-        this.openTelemetry = openTelemetry;
+    public SdkClientBuilderListener(AwsSdkTelemetryProvider awsSdkTelemetryProvider) {
+        this.awsSdkTelemetryProvider = awsSdkTelemetryProvider;
     }
 
     /**
@@ -62,6 +60,6 @@ public class SdkClientBuilderListener implements BeanCreatedEventListener<SdkCli
             LOG.trace("Registering OpenTelemetry tracing interceptor to {}", event.getBean().getClass().getSimpleName());
         }
         return event.getBean().overrideConfiguration(builder ->
-            builder.addExecutionInterceptor(AwsSdkTelemetry.create(openTelemetry.get()).createExecutionInterceptor()));
+            builder.addExecutionInterceptor(awsSdkTelemetryProvider.newExecutionInterceptor()));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 original authors
+ * Copyright 2017-2026 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.type.Argument;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.tracing.annotation.SpanTag;
+import io.micronaut.tracing.util.MethodNameFormatter;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 
@@ -71,7 +72,7 @@ public abstract sealed class AbstractTraceInterceptor implements MethodIntercept
     protected final void populateTags(MethodInvocationContext<Object, Object> context,
                                       Span span) {
         span.setTag(CLASS_TAG, context.getDeclaringType().getSimpleName());
-        span.setTag(METHOD_TAG, context.getMethodName());
+        span.setTag(METHOD_TAG, MethodNameFormatter.format(context.getMethodName()));
         tagArguments(span, context);
     }
 

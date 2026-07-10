@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 original authors
+ * Copyright 2017-2026 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.opentracing.OpenTracingPropagationContext;
+import io.micronaut.tracing.util.MethodNameFormatter;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import jakarta.inject.Singleton;
@@ -64,7 +65,7 @@ public final class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
         if (!isNew) {
             return context.proceed();
         }
-        String operationName = newSpan.stringValue().orElse(context.getDeclaringType().getSimpleName() + "." + context.getMethodName());
+        String operationName = newSpan.stringValue().orElse(context.getDeclaringType().getSimpleName() + "." + MethodNameFormatter.format(context.getMethodName()));
 
         Tracer.SpanBuilder builder = tracer.buildSpan(operationName);
         if (currentSpan != null) {

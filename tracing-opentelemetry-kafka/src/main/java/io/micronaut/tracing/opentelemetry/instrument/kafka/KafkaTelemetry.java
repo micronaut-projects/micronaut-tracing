@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 original authors
+ * Copyright 2017-2026 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -254,6 +254,23 @@ public final class KafkaTelemetry {
         }
     }
 
+    <K, V> ConsumerRecordContext startConsumerRecordSpan(ConsumerRecord<K, V> consumerRecord, Consumer<K, V> consumer) {
+        return startConsumerRecordSpan(consumerRecord, KafkaUtil.getConsumerGroup(consumer), KafkaUtil.getClientId(consumer));
+    }
+
+    <K, V> ConsumerRecordContext startConsumerRecordSpan(ConsumerRecord<K, V> consumerRecord, String consumerGroup, String clientId) {
+        Context parentContext = Context.current();
+        KafkaProcessRequest request = KafkaProcessRequest.create(consumerRecord, consumerGroup, clientId);
+        if (!consumerProcessInstrumenter.shouldStart(parentContext, request)) {
+            return null;
+        }
+        return new ConsumerRecordContext(request, consumerProcessInstrumenter.start(parentContext, request));
+    }
+
+    void endConsumerRecordSpan(ConsumerRecordContext consumerRecordContext) {
+        consumerProcessInstrumenter.end(consumerRecordContext.context(), consumerRecordContext.request(), null, null);
+    }
+
     private <K, V> void processConsumerRecord(Context parentContext, ConsumerRecord<K, V> record, String consumerGroup, String clientId) {
         KafkaProcessRequest request = KafkaProcessRequest.create(record, consumerGroup, clientId);
         if (!consumerProcessInstrumenter.shouldStart(parentContext, request)) {
@@ -345,6 +362,9 @@ public final class KafkaTelemetry {
 
     public KafkaTelemetryConfiguration getKafkaTelemetryProperties() {
         return kafkaTelemetryConfiguration;
+    }
+
+    record ConsumerRecordContext(KafkaProcessRequest request, Context context) {
     }
 
     private final class ProducerCallback implements Callback {

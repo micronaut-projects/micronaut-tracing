@@ -1,12 +1,20 @@
 package io.micronaut.tracing.opentelemetry.instrument.kafka
 
 import io.opentelemetry.api.OpenTelemetry
+import io.opentelemetry.context.Context
+import io.opentelemetry.context.ContextKey
+import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter
 import org.apache.kafka.clients.consumer.CloseOptions
 import org.apache.kafka.clients.consumer.Consumer
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener
+import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.SubscriptionPattern
-import java.time.Duration
+import org.apache.kafka.common.TopicPartition
 import spock.lang.Specification
+
+import java.time.Duration
 
 class MicronautOtelKafkaConsumerSpec extends Specification {
 
@@ -101,7 +109,7 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         1 * consumer.commitSync()
 
         when:
-        micronautConsumer.commitSync(null)
+        micronautConsumer.commitSync((Duration) null)
 
         then:
         1 * consumer.commitSync(null)
@@ -263,6 +271,12 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         1 * consumer.groupMetadata()
 
         when:
+        micronautConsumer.clientInstanceId(null)
+
+        then:
+        1 * consumer.clientInstanceId(null)
+
+        when:
         micronautConsumer.enforceRebalance()
 
         then:
@@ -321,6 +335,314 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
 
         then:
         1 * consumer.unsubscribe()
+    }
+
+    void "traced records activate context from partition and topic iterators and close stale context"() {
+        given:
+        def processInstrumenter = Mock(Instrumenter)
+        def configuration = Mock(KafkaTelemetryConfiguration)
+        def kafkaTelemetry = new KafkaTelemetry(
+                Mock(OpenTelemetry),
+                Mock(Instrumenter),
+                processInstrumenter,
+                new ArrayList<KafkaTelemetryProducerTracingFilter>(),
+                new ArrayList<KafkaTelemetryConsumerTracingFilter>(),
+                configuration,
+                true
+        )
+        def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
+        def partition = new TopicPartition("topic", 0)
+        def firstRecord = new ConsumerRecord<String, String>("topic", 0, 0, "key", "first")
+        def secondRecord = new ConsumerRecord<String, String>("topic", 0, 1, "key", "second")
+        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]])
+        ContextKey<String> contextKey = ContextKey.named("test-kafka-context")
+
+        configuration.getIncludedTopics() >> Collections.emptyList()
+        configuration.getExcludedTopics() >> Collections.emptyList()
+        consumer.poll(Duration.ZERO) >> records
+        consumer.groupMetadata() >> new ConsumerGroupMetadata("group")
+        consumer.metrics() >> Collections.emptyMap()
+        processInstrumenter.shouldStart(_, _) >> true
+        processInstrumenter.start(_, _) >> Context.current().with(contextKey, "active")
+
+        when:
+        def tracedRecords = micronautConsumer.poll(Duration.ZERO)
+        def partitionIterator = tracedRecords.records(partition).iterator()
+        def partitionRecord = partitionIterator.next()
+
+        then:
+        partitionRecord == firstRecord
+        Context.current().get(contextKey) == "active"
+
+        when:
+        tracedRecords.iterator()
+
+        then:
+        Context.current().get(contextKey) == null
+        1 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        def topicIterator = tracedRecords.records("topic").iterator()
+        def topicRecord = topicIterator.next()
+
+        then:
+        topicRecord == firstRecord
+        Context.current().get(contextKey) == "active"
+
+        when:
+        topicIterator.next()
+
+        then:
+        Context.current().get(contextKey) == "active"
+        1 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        boolean hasNext = topicIterator.hasNext()
+
+        then:
+        !hasNext
+        Context.current().get(contextKey) == null
+        1 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        def listIterator = tracedRecords.records(partition).listIterator()
+        def listRecord = listIterator.next()
+
+        then:
+        listRecord == firstRecord
+        Context.current().get(contextKey) == "active"
+
+        when:
+        int nextIndex = listIterator.nextIndex()
+        int previousIndex = listIterator.previousIndex()
+
+        then:
+        nextIndex == 1
+        previousIndex == 0
+        Context.current().get(contextKey) == "active"
+
+        when:
+        def previousRecord = listIterator.previous()
+
+        then:
+        previousRecord == firstRecord
+        Context.current().get(contextKey) == "active"
+        1 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        boolean hasPrevious = listIterator.hasPrevious()
+
+        then:
+        !hasPrevious
+        Context.current().get(contextKey) == null
+        1 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        tracedRecords.records(partition).listIterator().remove()
+
+        then:
+        thrown(UnsupportedOperationException)
+
+        when:
+        tracedRecords.records(partition).listIterator().set(firstRecord)
+
+        then:
+        thrown(UnsupportedOperationException)
+
+        when:
+        tracedRecords.records(partition).listIterator().add(firstRecord)
+
+        then:
+        thrown(UnsupportedOperationException)
+    }
+
+    void "traced records activate context from partition indexed access"() {
+        given:
+        def processInstrumenter = Mock(Instrumenter)
+        def configuration = Mock(KafkaTelemetryConfiguration)
+        def kafkaTelemetry = new KafkaTelemetry(
+                Mock(OpenTelemetry),
+                Mock(Instrumenter),
+                processInstrumenter,
+                new ArrayList<KafkaTelemetryProducerTracingFilter>(),
+                new ArrayList<KafkaTelemetryConsumerTracingFilter>(),
+                configuration,
+                true
+        )
+        def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
+        def partition = new TopicPartition("topic", 0)
+        def firstRecord = new ConsumerRecord<String, String>("topic", 0, 0, "key", "first")
+        def secondRecord = new ConsumerRecord<String, String>("topic", 0, 1, "key", "second")
+        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]])
+        ContextKey<String> contextKey = ContextKey.named("test-kafka-index-context")
+
+        configuration.getIncludedTopics() >> Collections.emptyList()
+        configuration.getExcludedTopics() >> Collections.emptyList()
+        consumer.poll(Duration.ZERO) >> records
+        consumer.groupMetadata() >> new ConsumerGroupMetadata("group")
+        consumer.metrics() >> Collections.emptyMap()
+        processInstrumenter.shouldStart(_, _) >> true
+        processInstrumenter.start(_, _) >> Context.current().with(contextKey, "active")
+
+        when:
+        def tracedRecords = micronautConsumer.poll(Duration.ZERO)
+        def firstIndexedRecord = tracedRecords.records(partition).get(0)
+
+        then:
+        firstIndexedRecord == firstRecord
+        Context.current().get(contextKey) == "active"
+
+        when:
+        def secondIndexedRecord = tracedRecords.records(partition).get(1)
+
+        then:
+        secondIndexedRecord == secondRecord
+        Context.current().get(contextKey) == "active"
+        1 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        micronautConsumer.commitSync()
+
+        then:
+        Context.current().get(contextKey) == null
+        1 * processInstrumenter.end(_, _, null, null)
+        1 * consumer.commitSync()
+    }
+
+    void "next record dispatch closes context left active by failed listener"() {
+        given:
+        def processInstrumenter = Mock(Instrumenter)
+        def configuration = Mock(KafkaTelemetryConfiguration)
+        def kafkaTelemetry = new KafkaTelemetry(
+                Mock(OpenTelemetry),
+                Mock(Instrumenter),
+                processInstrumenter,
+                new ArrayList<KafkaTelemetryProducerTracingFilter>(),
+                new ArrayList<KafkaTelemetryConsumerTracingFilter>(),
+                configuration,
+                true
+        )
+        def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
+        def partition = new TopicPartition("topic", 0)
+        def firstRecord = new ConsumerRecord<String, String>("topic", 0, 0, "key", "first")
+        def secondRecord = new ConsumerRecord<String, String>("topic", 0, 1, "key", "second")
+        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]])
+        ContextKey<String> contextKey = ContextKey.named("test-kafka-listener-failure-context")
+        def observedContexts = []
+
+        configuration.getIncludedTopics() >> Collections.emptyList()
+        configuration.getExcludedTopics() >> Collections.emptyList()
+        consumer.poll(Duration.ZERO) >> records
+        consumer.groupMetadata() >> new ConsumerGroupMetadata("group")
+        consumer.metrics() >> Collections.emptyMap()
+        processInstrumenter.shouldStart(_, _) >> true
+        processInstrumenter.start(_, _) >>> [
+                Context.current().with(contextKey, "first"),
+                Context.current().with(contextKey, "second")
+        ]
+
+        when:
+        def tracedRecords = micronautConsumer.poll(Duration.ZERO)
+        def iterator = tracedRecords.iterator()
+        ConsumerRecord<String, String> firstDispatched
+        ConsumerRecord<String, String> secondDispatched
+        try {
+            firstDispatched = iterator.next()
+            observedContexts << Context.current().get(contextKey)
+            throw new IllegalStateException("listener failure")
+        } catch (IllegalStateException ignored) {
+            // Continue dispatching the next record, as a listener container can after a handled failure.
+        }
+        secondDispatched = iterator.next()
+        observedContexts << Context.current().get(contextKey)
+        boolean exhausted = !iterator.hasNext()
+
+        then:
+        firstDispatched == firstRecord
+        secondDispatched == secondRecord
+        observedContexts == ["first", "second"]
+        exhausted
+        Context.current().get(contextKey) == null
+        2 * processInstrumenter.end(_, _, null, null)
+    }
+
+    void "wakeup from another thread does not close active record context"() {
+        given:
+        def processInstrumenter = Mock(Instrumenter)
+        def configuration = Mock(KafkaTelemetryConfiguration)
+        def kafkaTelemetry = new KafkaTelemetry(
+                Mock(OpenTelemetry),
+                Mock(Instrumenter),
+                processInstrumenter,
+                new ArrayList<KafkaTelemetryProducerTracingFilter>(),
+                new ArrayList<KafkaTelemetryConsumerTracingFilter>(),
+                configuration,
+                true
+        )
+        def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
+        def partition = new TopicPartition("topic", 0)
+        def record = new ConsumerRecord<String, String>("topic", 0, 0, "key", "value")
+        def records = new ConsumerRecords<String, String>([(partition): [record]])
+        ContextKey<String> contextKey = ContextKey.named("test-kafka-wakeup-context")
+
+        configuration.getIncludedTopics() >> Collections.emptyList()
+        configuration.getExcludedTopics() >> Collections.emptyList()
+        consumer.poll(Duration.ZERO) >> records
+        consumer.groupMetadata() >> new ConsumerGroupMetadata("group")
+        consumer.metrics() >> Collections.emptyMap()
+        processInstrumenter.shouldStart(_, _) >> true
+        processInstrumenter.start(_, _) >> Context.current().with(contextKey, "active")
+
+        when:
+        def tracedRecords = micronautConsumer.poll(Duration.ZERO)
+        def dispatchedRecord = tracedRecords.iterator().next()
+
+        then:
+        dispatchedRecord == record
+        Context.current().get(contextKey) == "active"
+
+        when:
+        def wakeupThread = Thread.start {
+            micronautConsumer.wakeup()
+        }
+        wakeupThread.join()
+
+        then:
+        Context.current().get(contextKey) == "active"
+        1 * consumer.wakeup()
+        0 * processInstrumenter.end(_, _, null, null)
+
+        when:
+        micronautConsumer.commitSync()
+
+        then:
+        Context.current().get(contextKey) == null
+        1 * processInstrumenter.end(_, _, null, null)
+        1 * consumer.commitSync()
+    }
+
+    void "poll returns original records when no records should be traced"() {
+        given:
+        def configuration = Mock(KafkaTelemetryConfiguration)
+        def kafkaTelemetry = new KafkaTelemetry(
+                Mock(OpenTelemetry),
+                Mock(Instrumenter),
+                Mock(Instrumenter),
+                new ArrayList<KafkaTelemetryProducerTracingFilter>(),
+                new ArrayList<KafkaTelemetryConsumerTracingFilter>(),
+                configuration,
+                true
+        )
+        def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
+        def partition = new TopicPartition("topic", 0)
+        def records = new ConsumerRecords<String, String>([(partition): [new ConsumerRecord<String, String>("topic", 0, 0, "key", "value")]])
+
+        configuration.getIncludedTopics() >> Collections.emptyList()
+        configuration.getExcludedTopics() >> ["topic"]
+        consumer.poll(Duration.ZERO) >> records
+
+        expect:
+        micronautConsumer.poll(Duration.ZERO).is(records)
     }
 
 }

@@ -15,6 +15,7 @@ dependencies {
     // okio is a transitive dependency of io.jaegertracing:jaeger-thrift via okhttp3
     // https://osv.dev/GHSA-w33c-445m-f8w7
     implementation(libs.okio)
+    testImplementation mnLogging.logback.classic
     testImplementation mnReactor.micronaut.reactor
     testImplementation mn.micronaut.http.server.netty
     testRuntimeOnly mnSerde.micronaut.serde.jackson

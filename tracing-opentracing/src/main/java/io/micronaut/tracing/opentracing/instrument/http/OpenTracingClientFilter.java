@@ -18,6 +18,7 @@ package io.micronaut.tracing.opentracing.instrument.http;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.propagation.ReactorPropagation;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpResponse;
@@ -26,7 +27,6 @@ import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
-import io.micronaut.tracing.opentracing.OpenTracingPropagationContext;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
@@ -87,12 +87,11 @@ public final class OpenTracingClientFilter extends AbstractOpenTracingFilter imp
         request.setAttribute(CURRENT_SPAN_CONTEXT, span.context());
         request.setAttribute(CURRENT_SPAN, span);
 
-        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
-            .plus(new OpenTracingPropagationContext(tracer, span))
-            .propagate()) {
-
-            tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders()));
-            return Mono.from(chain.proceed(request))
+        PropagatedContext propagatedContext = propagationContext(span);
+        tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders()));
+        return Mono.using(
+            () -> propagationScope(propagatedContext),
+            ignored -> Mono.from(chain.proceed(request))
                 .doOnNext(httpResponse -> setResponseTags(request, httpResponse, span))
                 .doOnError(throwable -> {
                     if (throwable instanceof HttpClientResponseException e) {
@@ -101,8 +100,9 @@ public final class OpenTracingClientFilter extends AbstractOpenTracingFilter imp
                     }
                     setErrorTags(span, throwable);
                 })
-                .doOnTerminate(span::finish);
-
-        }
+                .doFinally(signalType -> span.finish())
+                .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext)),
+            PropagatedContext.Scope::close
+        );
     }
 }

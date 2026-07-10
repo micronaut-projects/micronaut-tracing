@@ -18,10 +18,12 @@ package io.micronaut.tracing.opentracing.instrument.http;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.ConversionService;
+import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.filter.HttpFilter;
+import io.micronaut.tracing.opentracing.OpenTracingPropagationContext;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
@@ -141,6 +143,8 @@ public abstract sealed class AbstractOpenTracingFilter implements HttpFilter
         SpanBuilder spanBuilder = tracer.buildSpan(spanName);
         if (spanContext != null) {
             spanBuilder.asChildOf(spanContext);
+        } else {
+            spanBuilder.ignoreActiveSpan();
         }
 
         spanBuilder.withTag(TAG_METHOD, request.getMethodName());
@@ -157,5 +161,26 @@ public abstract sealed class AbstractOpenTracingFilter implements HttpFilter
      */
     protected boolean shouldExclude(@Nullable String path) {
         return pathExclusionTest != null && path != null && pathExclusionTest.test(path);
+    }
+
+    /**
+     * Creates the propagated context for the current OpenTracing span.
+     *
+     * @param span The span to propagate
+     * @return The propagated context
+     */
+    protected PropagatedContext propagationContext(Span span) {
+        return OpenTracingPropagationContext.withSpan(PropagatedContext.getOrEmpty(), tracer, span);
+    }
+
+    /**
+     * Opens a thread-local propagation scope for reactive HTTP filter subscription work.
+     *
+     * @param propagatedContext The context to propagate
+     * @return the opened propagation scope
+     */
+    @SuppressWarnings("deprecation")
+    protected static PropagatedContext.Scope propagationScope(PropagatedContext propagatedContext) {
+        return propagatedContext.propagate();
     }
 }

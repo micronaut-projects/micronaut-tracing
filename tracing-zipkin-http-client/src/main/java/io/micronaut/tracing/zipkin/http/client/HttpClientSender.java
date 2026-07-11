@@ -118,7 +118,7 @@ public final class HttpClientSender extends Sender {
             HttpResponse<Object> response = httpClient
                     .toBlocking()
                     .exchange(POST(endpoint, Collections.emptyList()));
-            if (response.getStatus().getCode() >= MULTIPLE_CHOICES.getCode()) {
+            if (response.code() >= MULTIPLE_CHOICES.getCode()) {
                 throw new IllegalStateException("check response failed: " + response);
             }
             return CheckResult.OK;
@@ -173,7 +173,7 @@ public final class HttpClientSender extends Sender {
         @Override
         public Void execute() {
             HttpResponse<Object> response = httpClient.toBlocking().exchange(prepareRequest());
-            if (response.getStatus().getCode() >= BAD_REQUEST.getCode()) {
+            if (response.code() >= BAD_REQUEST.getCode()) {
                 throw new IllegalStateException("Response return invalid status code: " + response.getStatus());
             }
             return null;
@@ -192,7 +192,7 @@ public final class HttpClientSender extends Sender {
 
                 @Override
                 public void onNext(HttpResponse<ByteBuffer> response) {
-                    if (response.getStatus().getCode() >= BAD_REQUEST.getCode()) {
+                    if (response.code() >= BAD_REQUEST.getCode()) {
                         callback.onError(new IllegalStateException("Response return invalid status code: " + response.getStatus()));
                     } else {
                         callback.onSuccess(null);

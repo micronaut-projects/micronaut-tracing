@@ -173,7 +173,7 @@ public final class BraveTracingServerFilter implements HttpServerFilter {
 
             @Override
             public int statusCode() {
-                return response.getStatus().getCode();
+                return response.code();
             }
         };
     }

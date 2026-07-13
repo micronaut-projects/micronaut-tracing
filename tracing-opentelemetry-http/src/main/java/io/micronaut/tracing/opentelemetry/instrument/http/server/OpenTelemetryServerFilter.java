@@ -100,7 +100,7 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
                 .doOnNext(mutableHttpResponse -> mutableHttpResponse.getAttribute(HttpAttributes.EXCEPTION, Exception.class)
                     .ifPresentOrElse(
                         e -> onError(request, context, mutableHttpResponse, e), () -> {
-                            if (mutableHttpResponse.status().getCode() >= 400) {
+                            if (mutableHttpResponse.code() >= 400) {
                                 onError(request, context, mutableHttpResponse, null);
                             } else {
                                 instrumenter.end(context, request, mutableHttpResponse, null);

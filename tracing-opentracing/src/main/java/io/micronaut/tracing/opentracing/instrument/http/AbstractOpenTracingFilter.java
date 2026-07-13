@@ -87,11 +87,10 @@ public abstract sealed class AbstractOpenTracingFilter implements HttpFilter
     protected void setResponseTags(HttpRequest<?> request,
                                    HttpResponse<?> response,
                                    Span span) {
-        HttpStatus status = response.getStatus();
-        int code = status.getCode();
+        int code = response.code();
         if (code > HTTP_SUCCESS_CODE_UPPER_LIMIT) {
             span.setTag(TAG_HTTP_STATUS_CODE, code);
-            span.setTag(TAG_ERROR, status.getReason());
+            span.setTag(TAG_ERROR, HttpStatus.getDefaultReason(code));
         }
         request.getAttribute(ERROR, Throwable.class)
                 .ifPresent(error -> setErrorTags(span, error));

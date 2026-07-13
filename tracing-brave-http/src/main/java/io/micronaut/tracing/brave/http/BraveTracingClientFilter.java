@@ -177,7 +177,7 @@ public final class BraveTracingClientFilter implements HttpClientFilter {
 
             @Override
             public int statusCode() {
-                return response.getStatus().getCode();
+                return response.code();
             }
         };
     }

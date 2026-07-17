@@ -40,7 +40,7 @@ micronaut-rxjava3 = "4.1.0"
 micronaut-serde = "3.1.0"
 micronaut-sql = "7.1.0"
 micronaut-kafka = "6.0.0"
-micronaut-gradle-plugin = "5.0.0"
+micronaut-gradle-plugin = "5.0.2"
 micronaut-r2dbc = "7.1.0"
 [libraries]
 # Core

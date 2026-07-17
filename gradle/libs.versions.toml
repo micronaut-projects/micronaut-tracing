@@ -1,6 +1,6 @@
 [versions]
 micronaut = "5.1.6"
-micronaut-platform = "5.0.2"
+micronaut-platform = "5.0.4"
 micronaut-docs = '3.0.0'
 
 managed-brave-instrumentation = '6.3.1'

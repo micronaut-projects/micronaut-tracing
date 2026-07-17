@@ -46,8 +46,8 @@ micronautBom {
         )
         dependencies.add("io.opentelemetry.semconv:opentelemetry-semconv:1.42.0")
         // OpenTelemetry instrumentation 2.27.0 still imports the 1.61 BOMs transitively.
-        dependencies.add("io.opentelemetry:opentelemetry-bom:1.63.0")
-        dependencies.add("io.opentelemetry:opentelemetry-bom-alpha:1.63.0-alpha")
+        dependencies.add("io.opentelemetry:opentelemetry-bom:1.64.0")
+        dependencies.add("io.opentelemetry:opentelemetry-bom-alpha:1.64.0-alpha")
         // The catalog imports the current OpenTelemetry BOMs directly.
         dependencies.add("io.opentelemetry:opentelemetry-bom:1.63.0")
         dependencies.add("io.opentelemetry:opentelemetry-bom-alpha:1.63.0-alpha")

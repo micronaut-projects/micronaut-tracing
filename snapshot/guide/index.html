@@ -456,9 +456,7 @@ Applications that keep an older Micronaut Platform-managed tracing BOM while for
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
-  [tracing.jaeger]
-    enabled=true</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">tracing = {jaeger = {enabled = true}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -540,18 +538,7 @@ tracing.jaeger.codecs=W3C,B3,JAEGER</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
-  [tracing.jaeger]
-    enabled=true
-    codecs="W3C,B3,JAEGER"
-    [tracing.jaeger.sampler]
-      probability=0.5
-    [tracing.jaeger.sender]
-      agentHost="foo"
-      agentPort=5775
-    [tracing.jaeger.reporter]
-      flushInterval=2000
-      maxQueueSize=200</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">tracing = {jaeger = {enabled = true, sampler = {probability = 0.5}, sender = {agentHost = "foo", agentPort = 5775}, reporter = {flushInterval = 2000, maxQueueSize = 200}, codecs = "W3C,B3,JAEGER"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -657,13 +644,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
-  exclusions=[
-    "/health",
-    "/env/.*"
-  ]
-  [tracing.jaeger]
-    enabled=true</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">tracing = {jaeger = {enabled = true}, exclusions = ["/health", "/env/.*"]}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -814,9 +795,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
-  [tracing.zipkin]
-    enabled=true</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">tracing = {zipkin = {enabled = true}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -880,11 +859,7 @@ tracing.zipkin.http.url=http://localhost:9411</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
-  [tracing.zipkin]
-    enabled=true
-    [tracing.zipkin.http]
-      url="http://localhost:9411"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">tracing = {zipkin = {enabled = true, http = {url = "http://localhost:9411"}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -955,14 +930,7 @@ tracing.zipkin.http.urls[1]=https://bar:9411</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
-  [tracing.zipkin]
-    enabled=true
-    [tracing.zipkin.http]
-      urls=[
-        "https://foo:9411",
-        "https://bar:9411"
-      ]</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">tracing = {zipkin = {enabled = true, http = {urls = ["https://foo:9411", "https://bar:9411"]}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1055,12 +1023,7 @@ tracing.zipkin.sampler.probability=1</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
-  [tracing.zipkin]
-    enabled=true
-    traceId128Bit=true
-    [tracing.zipkin.sampler]
-      probability=1</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">tracing = {zipkin = {enabled = true, traceId128Bit = true, sampler = {probability = 1}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1142,13 +1105,7 @@ tracing.exclusions[1]=/env/.*</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[tracing]
-  exclusions=[
-    "/health",
-    "/env/.*"
-  ]
-  [tracing.zipkin]
-    enabled=true</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">tracing = {zipkin = {enabled = true}, exclusions = ["/health", "/env/.*"]}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1438,9 +1395,7 @@ If you override the Micronaut Tracing version, import the matching <code>io.micr
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
-  [otel.traces]
-    exporter="zipkin"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">otel = {traces = {exporter = "zipkin"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1516,10 +1471,7 @@ If you override the Micronaut Tracing version, import the matching <code>io.micr
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
-  [otel.exporter]
-    [otel.exporter.zipkin]
-      url="&lt;url-to-zipkin-server&gt;"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">otel = {exporter = {zipkin = {url = "&lt;url-to-zipkin-server&gt;"}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1623,9 +1575,7 @@ Micronaut Zipkin exporter requires <code>otel.traces.exporter</code> property no
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
-  [otel.logs]
-    exporter="otlp"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">otel = {logs = {exporter = "otlp"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1800,10 +1750,7 @@ otel.propagators=tracecontext, baggage, xray</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
-  propagators="tracecontext, baggage, xray"
-  [otel.traces]
-    exporter="otlp"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">otel = {traces = {exporter = "otlp"}, propagators = "tracecontext, baggage, xray"}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1935,11 +1882,7 @@ otel.exclusions[1]=/env/.*</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
-  exclusions=[
-    "/health",
-    "/env/.*"
-  ]</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">otel = {exclusions = ["/health", "/env/.*"]}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2006,22 +1949,7 @@ otel.http.server.response-headers[0]=X-From-Server-Response</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
-  [otel.http]
-    [otel.http.client]
-      request-headers=[
-        "X-From-Client-Request"
-      ]
-      response-headers=[
-        "X-From-Client-Response"
-      ]
-    [otel.http.server]
-      request-headers=[
-        "X-From-Server-Request"
-      ]
-      response-headers=[
-        "X-From-Server-Response"
-      ]</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">otel = {http = {client = {request-headers = ["X-From-Client-Request"], response-headers = ["X-From-Client-Response"]}, server = {request-headers = ["X-From-Server-Request"], response-headers = ["X-From-Server-Response"]}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2312,25 +2240,7 @@ otel.instrumentation.kafka.excluded-topics[1]=topic2</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
-  [otel.instrumentation]
-    [otel.instrumentation.kafka]
-      wrapper=true
-      headers-as-lists=false
-      attribute-with-prefix=true
-      attribute-prefix="myPrefix"
-      captured-headers=[
-        "myHeader1",
-        "myHeader2"
-      ]
-      included-topics=[
-        "topic1",
-        "topic2"
-      ]
-      excluded-topics=[
-        "topic1",
-        "topic2"
-      ]</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">otel = {instrumentation = {kafka = {wrapper = true, headers-as-lists = false, attribute-with-prefix = true, attribute-prefix = "myPrefix", captured-headers = ["myHeader1", "myHeader2"], included-topics = ["topic1", "topic2"], excluded-topics = ["topic1", "topic2"]}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2487,10 +2397,7 @@ To create spans for JDBC queries, also add the dependency described in the <a hr
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[otel]
-  [otel.instrumentation]
-    [otel.instrumentation.ucp]
-      enabled=false</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">otel = {instrumentation = {ucp = {enabled = false}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">

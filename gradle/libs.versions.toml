@@ -1,6 +1,6 @@
 [versions]
-micronaut = "5.1.7"
-micronaut-platform = "5.0.5"
+micronaut = "5.2.1"
+micronaut-platform = "5.1.5"
 micronaut-docs = '3.0.0'
 
 managed-brave-instrumentation = '6.3.1'
@@ -30,14 +30,14 @@ gson = '2.14.0'
 okio = '3.17.0'
 thrift = '0.23.0'
 
-micronaut-aws = "5.0.2"
-micronaut-data = "5.1.0"
+micronaut-aws = "5.1.1"
+micronaut-data = "5.1.4"
 micronaut-grpc = "5.1.0"
-micronaut-reactor = "4.1.0"
+micronaut-reactor = "4.2.0"
 micronaut-rxjava3 = "4.1.0"
-micronaut-serde = "3.1.0"
-micronaut-sql = "7.1.0"
-micronaut-kafka = "6.0.0"
+micronaut-serde = "3.1.1"
+micronaut-sql = "7.1.2"
+micronaut-kafka = "6.1.0"
 micronaut-gradle-plugin = "5.0.2"
 micronaut-r2dbc = "7.1.0"
 [libraries]

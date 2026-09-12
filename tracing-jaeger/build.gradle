@@ -10,6 +10,13 @@ dependencies {
     // update to first version of libthrift not vulnerable to GHSA-7pwc-h2j2-rjgj.
     // libthrift is a transitive dependency of io.jaegertracing:jaeger-thrift.
     api(libs.thrift)
+    constraints {
+        // libthrift 0.24.0 still depends on httpclient5 5.2.1 and httpcore5 5.2, which are vulnerable to
+        // GHSA-hjcp-jmpx-g3qm, GHSA-hf6x-8p5f-cgmf and GHSA-v3jc-474w-2wm6.
+        api(libs.httpclient5)
+        api(libs.httpcore5)
+        api(libs.httpcore5.h2)
+    }
     // update to first version of gson not vulernable.
     // gson is a transitive dependency of io.jaegertracing:jaeger-core
     // https://ossindex.sonatype.org/component/pkg:maven/com.google.code.gson/gson

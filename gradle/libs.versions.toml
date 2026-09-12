@@ -28,7 +28,9 @@ grpc = '1.80.0'
 protobuf = '3.25.9'
 gson = '2.14.0'
 okio = '3.17.0'
-thrift = '0.23.0'
+thrift = '0.24.0'
+httpclient5 = '5.6.4'
+httpcore5 = '5.4.3'
 
 micronaut-aws = "5.1.1"
 micronaut-data = "5.1.4"
@@ -67,6 +69,9 @@ grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'grpc' }
 gson = { module = 'com.google.code.gson:gson', version.ref = 'gson' }
 okio = { module = 'com.squareup.okio:okio', version.ref = 'okio' }
 thrift = { module = 'org.apache.thrift:libthrift', version.ref = 'thrift' }
+httpclient5 = { module = 'org.apache.httpcomponents.client5:httpclient5', version.ref = 'httpclient5' }
+httpcore5 = { module = 'org.apache.httpcomponents.core5:httpcore5', version.ref = 'httpcore5' }
+httpcore5-h2 = { module = 'org.apache.httpcomponents.core5:httpcore5-h2', version.ref = 'httpcore5' }
 jaeger = { module = 'io.jaegertracing:jaeger-thrift', version.ref = 'managed-jaeger' }
 javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation' }
 junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine', version = '' }

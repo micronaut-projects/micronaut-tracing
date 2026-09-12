@@ -11,6 +11,7 @@ micronautBom {
                 [
                         "io.opentelemetry",
                         "io.opentelemetry.instrumentation",
+                        "io.opentelemetry.semconv",
                         "io.opentelemetry.javaagent",
                         "io.opentelemetry.javaagent.instrumentation"
                 ] as Set
@@ -44,15 +45,14 @@ micronautBom {
                         "io.zipkin.proto3"
                 ] as Set
         )
-        dependencies.add("io.opentelemetry.semconv:opentelemetry-semconv:1.42.0")
-        // OpenTelemetry instrumentation 2.27.0 still imports the 1.61 BOMs transitively.
-        dependencies.add("io.opentelemetry:opentelemetry-bom:1.64.0")
-        dependencies.add("io.opentelemetry:opentelemetry-bom-alpha:1.64.0-alpha")
-        // The catalog imports the current OpenTelemetry BOMs directly.
-        dependencies.add("io.opentelemetry:opentelemetry-bom:1.63.0")
-        dependencies.add("io.opentelemetry:opentelemetry-bom-alpha:1.63.0-alpha")
-        dependencies.add("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.29.0")
-        dependencies.add("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha:2.29.0-alpha")
+        // The OpenTelemetry BOMs import each other, and the catalog imports them directly.
+        // Versions come from the catalog so a version bump does not leave stale suppressions behind.
+        dependencies.addAll([
+                "io.opentelemetry:opentelemetry-bom:${libs.versions.managed.opentelemetry.asProvider().get()}",
+                "io.opentelemetry:opentelemetry-bom-alpha:${libs.versions.managed.opentelemetry.alpha.get()}",
+                "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:${libs.versions.managed.opentelemetry.instrumentation.asProvider().get()}",
+                "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha:${libs.versions.managed.opentelemetry.instrumentation.alpha.get()}",
+        ])
         dependencies.add("io.zipkin.brave:brave-instrumentation-benchmarks:6.3.1")
         dependencies.add("io.zipkin.reporter2:zipkin-reporter-bom:3.5.3")
     }

@@ -17,27 +17,14 @@ The available annotations are:
 
 The following snippet presents an example of using the annotations:
 
-.Using Trace Annotations
-[source,java]
-----
-@Singleton
-class HelloService {
-
-    @NewSpan("hello-world") // <1>
-    public String hello(@SpanTag("person.name") String name) { // <2>
-        return greet("Hello " + name);
-    }
-
-    @ContinueSpan // <3>
-    public String greet(@SpanTag("hello.greeting") String greet) {
-        return greet;
-    }
-}
-----
+snippet::io.micronaut.tracing.docs.HelloService[project-base="test-suite", tags="imports,clazz", title="Using Trace Annotations"]
 
 <1> The ann:tracing.annotation.NewSpan[] annotation starts a new span
 <2> Use ann:tracing.annotation.SpanTag[] to include method arguments as tags for the span
 <3> Use the ann:tracing.annotation.ContinueSpan[] annotation to continue an existing span and incorporate additional tags using `@SpanTag`
+
+[.lang-python]
+NOTE: In Python, a method invoked on `self` from within the same bean (`self.greet(...)` in `hello`) does not go through the bean's interceptors, so the `@ContinueSpan` tags of `greet` are only recorded when `greet` is invoked from another bean while a span is active.
 
 === Tracing Instrumentation
 

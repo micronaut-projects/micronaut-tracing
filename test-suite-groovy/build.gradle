@@ -1,0 +1,26 @@
+plugins {
+    id 'groovy'
+    id 'io.micronaut.build.internal.tracing-tests'
+}
+
+// The examples of the guide, in Groovy (Spock). The Groovy compiler picks up the Micronaut annotation
+// mappers of the tracing annotations from the compile classpath.
+dependencies {
+    testCompileOnly mn.micronaut.inject.groovy
+
+    testImplementation projects.micronautTracingOpentelemetryAnnotation
+    testImplementation projects.micronautTracingOpentelemetryHttp
+    testImplementation mn.micronaut.http.server.netty
+    testImplementation mnSerde.micronaut.serde.jackson
+    testImplementation libs.opentelemetry.sdk
+    testImplementation libs.opentelemetry.sdk.testing
+    testImplementation libs.managed.opentelemetry.contrib.aws.resources
+    testImplementation mnTest.micronaut.test.spock
+
+    testRuntimeOnly mnTest.junit.platform.launcher
+    testRuntimeOnly mnLogging.logback.classic
+}
+
+test {
+    useJUnitPlatform()
+}

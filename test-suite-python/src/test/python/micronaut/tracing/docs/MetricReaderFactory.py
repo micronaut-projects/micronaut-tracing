@@ -1,11 +1,7 @@
+from io.opentelemetry.sdk.testing.exporter import InMemoryMetricReader
 from jakarta.inject import Singleton
 from micronaut.context.annotation import Factory, Requires
 from micronaut.tracing.opentelemetry import OpenTelemetryBuilderCustomizer
-
-try:
-    from io.opentelemetry.sdk.testing.exporter import InMemoryMetricReader
-except ImportError:  # TODO(python): packages under `io.` other than `io.micronaut` cannot be imported at runtime
-    from opentelemetry.sdk.testing.exporter import InMemoryMetricReader
 
 
 @Factory

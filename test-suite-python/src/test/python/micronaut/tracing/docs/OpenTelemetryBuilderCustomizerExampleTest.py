@@ -1,16 +1,12 @@
 from typing import Annotated
 
+from io.opentelemetry.api import OpenTelemetry
+from io.opentelemetry.sdk.testing.exporter import InMemoryMetricReader
 from jakarta.inject import Inject
 from micronaut.context.annotation import Property
 from micronaut.test.extensions.junit5.annotation import MicronautTest
 from org.junit.jupiter.api import Test
 
-try:
-    from io.opentelemetry.api import OpenTelemetry
-    from io.opentelemetry.sdk.testing.exporter import InMemoryMetricReader
-except ImportError:  # TODO(python): packages under `io.` other than `io.micronaut` cannot be imported at runtime
-    from opentelemetry.api import OpenTelemetry
-    from opentelemetry.sdk.testing.exporter import InMemoryMetricReader
 
 HISTOGRAM_NAME = "http.server.request.duration"
 

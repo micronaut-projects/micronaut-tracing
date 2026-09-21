@@ -1,12 +1,8 @@
 # tag::imports[]
+from io.opentelemetry.sdk.metrics import Aggregation, InstrumentSelector, InstrumentType, View
 from jakarta.inject import Singleton
 from micronaut.context.annotation import Factory
 from micronaut.tracing.opentelemetry import OpenTelemetryBuilderCustomizer
-
-try:
-    from io.opentelemetry.sdk.metrics import Aggregation, InstrumentSelector, InstrumentType, View
-except ImportError:  # TODO(python): packages under `io.` other than `io.micronaut` cannot be imported at runtime
-    from opentelemetry.sdk.metrics import Aggregation, InstrumentSelector, InstrumentType, View
 # end::imports[]
 
 # tag::histogramViewCustomizer[]

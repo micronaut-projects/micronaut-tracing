@@ -1,21 +1,14 @@
 from typing import Annotated
 
+from io.opentelemetry.api import OpenTelemetry
+from io.opentelemetry.api.common import AttributeKey
+from io.opentelemetry.api.trace import SpanKind
+from io.opentelemetry.sdk.testing.exporter import InMemorySpanExporter
 from jakarta.inject import Inject
 from micronaut.test.extensions.junit5.annotation import MicronautTest
-from org.junit.jupiter.api import BeforeEach, Disabled, Test
+from org.junit.jupiter.api import BeforeEach, Test
 
 from .HelloService import HelloService
-
-try:
-    from io.opentelemetry.api import OpenTelemetry
-    from io.opentelemetry.api.common import AttributeKey
-    from io.opentelemetry.api.trace import SpanKind
-    from io.opentelemetry.sdk.testing.exporter import InMemorySpanExporter
-except ImportError:  # TODO(python): packages under `io.` other than `io.micronaut` cannot be imported at runtime
-    from opentelemetry.api import OpenTelemetry
-    from opentelemetry.api.common import AttributeKey
-    from opentelemetry.api.trace import SpanKind
-    from opentelemetry.sdk.testing.exporter import InMemorySpanExporter
 
 
 @MicronautTest
@@ -40,10 +33,6 @@ class HelloServiceTest:
         assert span.getKind() == SpanKind.INTERNAL
         assert span.getAttributes().get(AttributeKey.stringKey("person.name")) == "Fred"
 
-    # TODO(python): `self.greet(...)` inside `hello` invokes the Python method directly, not the intercepted
-    # Java proxy of the bean, so the @ContinueSpan interceptor of the nested call never runs (in Java the
-    # `this.greet(...)` call goes through the generated $Intercepted subclass)
-    @Disabled("TODO(python): self-invocations of a Python bean bypass its interceptors (see DISABLED_TESTS.md)")
     @Test
     def continue_span_adds_the_tag_of_the_nested_call_to_the_span(self) -> None:
         self.hello_service.hello("Fred")

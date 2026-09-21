@@ -17,23 +17,7 @@ The available annotations are:
 
 The following snippet presents an example of using the annotations:
 
-.Using Trace Annotations
-[source,java]
-----
-@Singleton
-class HelloService {
-
-    @NewSpan("hello-world") // <1>
-    public String hello(@SpanTag("person.name") String name) { // <2>
-        return greet("Hello " + name);
-    }
-
-    @ContinueSpan // <3>
-    public String greet(@SpanTag("hello.greeting") String greet) {
-        return greet;
-    }
-}
-----
+snippet::io.micronaut.tracing.docs.HelloService[project-base="test-suite", tags="imports,clazz", title="Using Trace Annotations"]
 
 <1> The ann:tracing.annotation.NewSpan[] annotation starts a new span
 <2> Use ann:tracing.annotation.SpanTag[] to include method arguments as tags for the span

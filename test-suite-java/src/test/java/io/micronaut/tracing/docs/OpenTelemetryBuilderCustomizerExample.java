@@ -1,7 +1,8 @@
-package io.micronaut.tracing.opentelemetry;
+package io.micronaut.tracing.docs;
 
 //tag::imports[]
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.tracing.opentelemetry.OpenTelemetryBuilderCustomizer;
 import io.opentelemetry.sdk.metrics.Aggregation;
 import io.opentelemetry.sdk.metrics.InstrumentSelector;
 import io.opentelemetry.sdk.metrics.InstrumentType;

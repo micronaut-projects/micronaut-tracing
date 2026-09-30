@@ -194,20 +194,91 @@ You can also declare <a href="../api/io/micronaut/tracing/annotation/NewSpan.htm
 <div class="paragraph">
 <p>The following snippet presents an example of using the annotations:</p>
 </div>
-<div class="listingblock">
+<div class="listingblock multi-language-sample">
 <div class="title">Using Trace Annotations</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Singleton
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.micronaut.tracing.annotation.ContinueSpan;
+import io.micronaut.tracing.annotation.NewSpan;
+import io.micronaut.tracing.annotation.SpanTag;
+import jakarta.inject.Singleton;
+
+@Singleton
 class HelloService {
 
-    @NewSpan("hello-world") <i class="conum" data-value="1"></i><b>(1)</b>
-    public String hello(@SpanTag("person.name") String name) { <i class="conum" data-value="2"></i><b>(2)</b>
+    @NewSpan("hello-world") // <b class="conum">(1)</b>
+    public String hello(@SpanTag("person.name") String name) { // <b class="conum">(2)</b>
         return greet("Hello " + name);
     }
 
-    @ContinueSpan <i class="conum" data-value="3"></i><b>(3)</b>
+    @ContinueSpan // <b class="conum">(3)</b>
     public String greet(@SpanTag("hello.greeting") String greet) {
         return greet;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using Trace Annotations</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from typing import Annotated
+
+from jakarta.inject import Singleton
+from micronaut.tracing.annotation import ContinueSpan, NewSpan, SpanTag
+
+@Singleton
+class HelloService:
+
+    @NewSpan("hello-world")  # <b class="conum">(1)</b>
+    def hello(self, name: Annotated[str, SpanTag("person.name")]) -&gt; str:  # <b class="conum">(2)</b>
+        return self.greet("Hello " + name)
+
+    @ContinueSpan  # <b class="conum">(3)</b>
+    def greet(self, greet: Annotated[str, SpanTag("hello.greeting")]) -&gt; str:
+        return greet</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using Trace Annotations</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import io.micronaut.tracing.annotation.ContinueSpan
+import io.micronaut.tracing.annotation.NewSpan
+import io.micronaut.tracing.annotation.SpanTag
+import jakarta.inject.Singleton
+
+@Singleton
+open class HelloService {
+
+    @NewSpan("hello-world") // <b class="conum">(1)</b>
+    open fun hello(@SpanTag("person.name") name: String): String { // <b class="conum">(2)</b>
+        return greet("Hello $name")
+    }
+
+    @ContinueSpan // <b class="conum">(3)</b>
+    open fun greet(@SpanTag("hello.greeting") greet: String): String {
+        return greet
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using Trace Annotations</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">import io.micronaut.tracing.annotation.ContinueSpan
+import io.micronaut.tracing.annotation.NewSpan
+import io.micronaut.tracing.annotation.SpanTag
+import jakarta.inject.Singleton
+
+@Singleton
+class HelloService {
+
+    @NewSpan("hello-world") // <b class="conum">(1)</b>
+    String hello(@SpanTag("person.name") String name) { // <b class="conum">(2)</b>
+        return greet("Hello " + name)
+    }
+
+    @ContinueSpan // <b class="conum">(3)</b>
+    String greet(@SpanTag("hello.greeting") String greet) {
+        return greet
     }
 }</code></pre>
 </div>
@@ -433,6 +504,15 @@ Applications that keep an older Micronaut Platform-managed tracing BOM while for
     &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
     &lt;artifactId&gt;micronaut-tracing-jaeger&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-jaeger"</span>,
+]</code></pre>
 </div>
 </div>
 </p>
@@ -772,6 +852,15 @@ tracing.exclusions[1]=/env/.*</code></pre>
     &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
     &lt;artifactId&gt;micronaut-tracing-brave-http&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-brave-http"</span>,
+]</code></pre>
 </div>
 </div>
 </p>
@@ -1254,6 +1343,15 @@ Since Micronaut Tracing <code>4.5.0</code>, OpenTelemetry&#8217;s <code>@WithSpa
 &lt;/annotationProcessorPaths&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+build = [
+    <span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-annotation:8.3.0-SNAPSHOT"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </div>
 <div class="paragraph">
@@ -1297,6 +1395,15 @@ If you override the Micronaut Tracing version, import the matching <code>io.micr
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.opentelemetry:opentelemetry-exporter-otlp"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </li>
 <li>
@@ -1313,6 +1420,15 @@ If you override the Micronaut Tracing version, import the matching <code>io.micr
     &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
     &lt;artifactId&gt;opentelemetry-exporter-logging&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.opentelemetry:opentelemetry-exporter-logging"</span>,
+]</code></pre>
 </div>
 </div>
 </p>
@@ -1333,6 +1449,15 @@ If you override the Micronaut Tracing version, import the matching <code>io.micr
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.opentelemetry:opentelemetry-exporter-jaeger"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </li>
 <li>
@@ -1351,6 +1476,15 @@ If you override the Micronaut Tracing version, import the matching <code>io.micr
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"com.google.cloud.opentelemetry:exporter-auto"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </li>
 <li>
@@ -1367,6 +1501,15 @@ If you override the Micronaut Tracing version, import the matching <code>io.micr
     &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
     &lt;artifactId&gt;opentelemetry-exporter-zipkin&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.opentelemetry:opentelemetry-exporter-zipkin"</span>,
+]</code></pre>
 </div>
 </div>
 </p>
@@ -1447,6 +1590,15 @@ If you override the Micronaut Tracing version, import the matching <code>io.micr
     &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
     &lt;artifactId&gt;micronaut-tracing-opentelemetry-zipkin-exporter&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-zipkin-exporter"</span>,
+]</code></pre>
 </div>
 </div>
 </p>
@@ -1551,6 +1703,15 @@ Micronaut Zipkin exporter requires <code>otel.traces.exporter</code> property no
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </div>
 <div class="paragraph">
@@ -1641,6 +1802,15 @@ Micronaut Zipkin exporter requires <code>otel.traces.exporter</code> property no
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </div>
 
@@ -1662,6 +1832,7 @@ Micronaut Zipkin exporter requires <code>otel.traces.exporter</code> property no
 <div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.micronaut.context.annotation.Factory;
+import io.micronaut.tracing.opentelemetry.OpenTelemetryBuilderCustomizer;
 import io.opentelemetry.sdk.metrics.Aggregation;
 import io.opentelemetry.sdk.metrics.InstrumentSelector;
 import io.opentelemetry.sdk.metrics.InstrumentType;
@@ -1689,6 +1860,106 @@ class OpenTelemetryBuilderCustomizerExample {
             );
             return meterProviderBuilder;
         });
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from io.opentelemetry.sdk.metrics import Aggregation, InstrumentSelector, InstrumentType, View
+from jakarta.inject import Singleton
+from micronaut.context.annotation import Factory
+from micronaut.tracing.opentelemetry import OpenTelemetryBuilderCustomizer
+
+HISTOGRAM_BOUNDARIES = [1.0, 5.0, 10.0]
+
+
+@Factory
+class OpenTelemetryBuilderCustomizerExample:
+
+    @Singleton
+    def histogram_view_customizer(self) -&gt; OpenTelemetryBuilderCustomizer:
+        def register_histogram_view(meter_provider_builder, config_properties):
+            meter_provider_builder.registerView(
+                InstrumentSelector.builder()
+                    .setType(InstrumentType.HISTOGRAM)
+                    .setName("http.server.request.duration")
+                    .build(),
+                View.builder()
+                    .setAggregation(Aggregation.explicitBucketHistogram(HISTOGRAM_BOUNDARIES))
+                    .build()
+            )
+            return meter_provider_builder
+
+        return lambda builder: builder.addMeterProviderCustomizer(register_histogram_view)</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import io.micronaut.context.annotation.Factory
+import io.micronaut.tracing.opentelemetry.OpenTelemetryBuilderCustomizer
+import io.opentelemetry.sdk.metrics.Aggregation
+import io.opentelemetry.sdk.metrics.InstrumentSelector
+import io.opentelemetry.sdk.metrics.InstrumentType
+import io.opentelemetry.sdk.metrics.View
+import jakarta.inject.Singleton
+
+@Factory
+class OpenTelemetryBuilderCustomizerExample {
+
+    private val histogramBoundaries = listOf(1.0, 5.0, 10.0)
+
+    @Singleton
+    fun histogramViewCustomizer(): OpenTelemetryBuilderCustomizer {
+        return OpenTelemetryBuilderCustomizer { builder -&gt;
+            builder.addMeterProviderCustomizer { meterProviderBuilder, _ -&gt;
+                meterProviderBuilder.registerView(
+                    InstrumentSelector.builder()
+                        .setType(InstrumentType.HISTOGRAM)
+                        .setName("http.server.request.duration")
+                        .build(),
+                    View.builder()
+                        .setAggregation(Aggregation.explicitBucketHistogram(histogramBoundaries))
+                        .build()
+                )
+                meterProviderBuilder
+            }
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">import io.micronaut.context.annotation.Factory
+import io.micronaut.tracing.opentelemetry.OpenTelemetryBuilderCustomizer
+import io.opentelemetry.sdk.metrics.Aggregation
+import io.opentelemetry.sdk.metrics.InstrumentSelector
+import io.opentelemetry.sdk.metrics.InstrumentType
+import io.opentelemetry.sdk.metrics.View
+import jakarta.inject.Singleton
+
+@Factory
+class OpenTelemetryBuilderCustomizerExample {
+
+    private static final List&lt;Double&gt; HISTOGRAM_BOUNDARIES = [1.0d, 5.0d, 10.0d]
+
+    @Singleton
+    OpenTelemetryBuilderCustomizer histogramViewCustomizer() {
+        return { builder -&gt;
+            builder.addMeterProviderCustomizer { meterProviderBuilder, configProperties -&gt;
+                meterProviderBuilder.registerView(
+                    InstrumentSelector.builder()
+                        .setType(InstrumentType.HISTOGRAM)
+                        .setName("http.server.request.duration")
+                        .build(),
+                    View.builder()
+                        .setAggregation(Aggregation.explicitBucketHistogram(HISTOGRAM_BOUNDARIES))
+                        .build()
+                )
+                meterProviderBuilder
+            }
+        } as OpenTelemetryBuilderCustomizer
     }
 }</code></pre>
 </div>
@@ -1725,6 +1996,15 @@ class OpenTelemetryBuilderCustomizerExample {
     &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
     &lt;artifactId&gt;opentelemetry-extension-aws&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.opentelemetry:opentelemetry-extension-aws"</span>,
+]</code></pre>
 </div>
 </div>
 </p>
@@ -1821,6 +2101,15 @@ For an example, AWS X-Ray requires a specific format for their tracing identifie
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.opentelemetry.contrib:opentelemetry-aws-xray"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </div>
 <div class="paragraph">
@@ -1852,6 +2141,15 @@ For an example, AWS X-Ray requires a specific format for their tracing identifie
     &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
     &lt;artifactId&gt;micronaut-tracing-opentelemetry-http&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-http"</span>,
+]</code></pre>
 </div>
 </div>
 </p>
@@ -2044,6 +2342,15 @@ This is useful when your log aggregation system reads application logs separatel
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </div>
 <div class="paragraph">
@@ -2103,6 +2410,15 @@ These values are only added when a valid span is current, so logs written outsid
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-grpc"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </div>
 
@@ -2129,6 +2445,15 @@ These values are only added when a valid span is current, so logs written outsid
     &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
     &lt;artifactId&gt;micronaut-tracing-opentelemetry-jdbc&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-jdbc"</span>,
+]</code></pre>
 </div>
 </div>
 </p>
@@ -2162,6 +2487,15 @@ These values are only added when a valid span is current, so logs written outsid
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-r2dbc"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </div>
 <div class="paragraph">
@@ -2191,6 +2525,15 @@ These values are only added when a valid span is current, so logs written outsid
     &lt;groupId&gt;io.micronaut.tracing&lt;/groupId&gt;
     &lt;artifactId&gt;micronaut-tracing-opentelemetry-kafka&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-kafka"</span>,
+]</code></pre>
 </div>
 </div>
 </p>
@@ -2366,6 +2709,15 @@ add the following dependency:
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.micronaut.tracing:micronaut-tracing-opentelemetry-ucp"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </div>
 <div class="paragraph">
@@ -2467,6 +2819,15 @@ To create spans for JDBC queries, also add the dependency described in the <a hr
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </div>
 <div class="paragraph">
@@ -2485,6 +2846,15 @@ To create spans for JDBC queries, also add the dependency described in the <a hr
     &lt;groupId&gt;io.micronaut.aws&lt;/groupId&gt;
     &lt;artifactId&gt;micronaut-aws-sdk-v2&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.micronaut.aws:micronaut-aws-sdk-v2"</span>,
+]</code></pre>
 </div>
 </div>
 </p>
@@ -2513,15 +2883,24 @@ via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.
 <p>        <div class="listingblock multi-language-sample">
 <div class="title"></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry:opentelemetry-sdk-extension-aws")</span></code></pre>
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.opentelemetry.contrib:opentelemetry-aws-resources")</span></code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
-    &lt;groupId&gt;io.opentelemetry&lt;/groupId&gt;
-    &lt;artifactId&gt;opentelemetry-sdk-extension-aws&lt;/artifactId&gt;
+    &lt;groupId&gt;io.opentelemetry.contrib&lt;/groupId&gt;
+    &lt;artifactId&gt;opentelemetry-aws-resources&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.opentelemetry.contrib:opentelemetry-aws-resources"</span>,
+]</code></pre>
 </div>
 </div>
 </p>
@@ -2529,14 +2908,12 @@ via a bean creation listener for the bean of type <code>SdkClientBuilder</code>.
 <div class="paragraph">
 <p>and provide a bean of type <a href="../api/io/micronaut/tracing/opentelemetry/ResourceProvider.html">ResourceProvider</a></p>
 </div>
-<div class="listingblock">
+<div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package io.micronaut.tracing.opentelemetry;
-
-import io.micronaut.core.annotation.NonNull;
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.micronaut.core.annotation.NonNull;
+import io.micronaut.tracing.opentelemetry.ResourceProvider;
 import io.opentelemetry.contrib.aws.resource.Ec2Resource;
 import io.opentelemetry.sdk.resources.Resource;
-
 import jakarta.inject.Singleton;
 
 @Singleton
@@ -2547,6 +2924,57 @@ public class AwsResourceProvider implements ResourceProvider {
     public Resource resource() {
         return Resource.getDefault()
             .merge(Ec2Resource.get());
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from io.opentelemetry.contrib.aws.resource import Ec2Resource
+from io.opentelemetry.sdk.resources import Resource
+from jakarta.inject import Singleton
+from micronaut.tracing.opentelemetry import ResourceProvider
+
+@Singleton
+class AwsResourceProvider(ResourceProvider):
+
+    def resource(self) -&gt; Resource:
+        return Resource.getDefault().merge(Ec2Resource.get())</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import io.micronaut.tracing.opentelemetry.ResourceProvider
+import io.opentelemetry.contrib.aws.resource.Ec2Resource
+import io.opentelemetry.sdk.resources.Resource
+import jakarta.inject.Singleton
+
+@Singleton
+class AwsResourceProvider : ResourceProvider {
+
+    override fun resource(): Resource {
+        return Resource.getDefault()
+            .merge(Ec2Resource.get())
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">import io.micronaut.core.annotation.NonNull
+import io.micronaut.tracing.opentelemetry.ResourceProvider
+import io.opentelemetry.contrib.aws.resource.Ec2Resource
+import io.opentelemetry.sdk.resources.Resource
+import jakarta.inject.Singleton
+
+@Singleton
+class AwsResourceProvider implements ResourceProvider {
+
+    @Override
+    @NonNull
+    Resource resource() {
+        return Resource.getDefault()
+            .merge(Ec2Resource.get())
     }
 }</code></pre>
 </div>

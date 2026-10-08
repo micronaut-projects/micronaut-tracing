@@ -97,6 +97,7 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
 
                 return Mono.from(chain.proceed(request))
                     .doOnNext(mutableHttpResponse -> instrumenter.end(context, request, mutableHttpResponse, null))
+                    .doOnCancel(() -> instrumenter.end(context, request, null, null))
                     .doOnError(throwable -> {
                         Span span = Span.fromContext(context);
                         span.recordException(throwable);

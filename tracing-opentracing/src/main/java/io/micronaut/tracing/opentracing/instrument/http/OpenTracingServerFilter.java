@@ -19,7 +19,6 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.async.propagation.ReactorPropagation;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpRequest;
@@ -82,18 +81,13 @@ public final class OpenTracingServerFilter extends AbstractOpenTracingFilter imp
         request.setAttribute(CURRENT_SPAN, span);
 
         PropagatedContext propagatedContext = propagationContext(span);
-        return Mono.using(
-            () -> propagationScope(propagatedContext),
-            ignored -> Mono.from(chain.proceed(request))
-                .doOnNext(response -> {
-                    tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(response.getHeaders()));
-                    setResponseTags(request, response, span);
-                })
-                .doOnError(throwable -> setErrorTags(span, throwable))
-                .doFinally(signalType -> span.finish())
-                .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext)),
-            PropagatedContext.Scope::close
-        );
+        return propagateOnSubscribe(propagatedContext, () -> Mono.from(chain.proceed(request))
+            .doOnNext(response -> {
+                tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(response.getHeaders()));
+                setResponseTags(request, response, span);
+            })
+            .doOnError(throwable -> setErrorTags(span, throwable))
+            .doFinally(signalType -> span.finish()));
     }
 
     @Override

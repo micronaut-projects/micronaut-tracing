@@ -17,6 +17,7 @@ package io.micronaut.tracing.opentracing.instrument.http;
 
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.propagation.ReactorPropagation;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpRequest;
@@ -28,9 +29,11 @@ import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static io.micronaut.http.HttpAttributes.ERROR;
 import static io.micronaut.http.HttpAttributes.URI_TEMPLATE;
@@ -173,13 +176,22 @@ public abstract sealed class AbstractOpenTracingFilter implements HttpFilter
     }
 
     /**
-     * Opens a thread-local propagation scope for reactive HTTP filter subscription work.
+     * Wraps the given source so that only the synchronous part of its subscription
+     * (invoking the filter chain and subscribing downstream) runs with the given
+     * context propagated on the subscribing thread. The thread-local state is restored
+     * as soon as {@code subscribe} returns, so it is never held open across asynchronous
+     * boundaries. Asynchronous signals rely on the Reactor context instead, which
+     * carries the propagated context via {@link ReactorPropagation}.
      *
      * @param propagatedContext The context to propagate
-     * @return the opened propagation scope
+     * @param source            The source publisher, invoked lazily on subscription
+     * @param <T>               The emitted type
+     * @return the wrapped publisher
      */
-    @SuppressWarnings("deprecation")
-    protected static PropagatedContext.Scope propagationScope(PropagatedContext propagatedContext) {
-        return propagatedContext.propagate();
+    protected static <T> Mono<T> propagateOnSubscribe(PropagatedContext propagatedContext,
+                                                      Supplier<Mono<T>> source) {
+        Mono<T> deferred = Mono.defer(source)
+            .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext));
+        return Mono.fromDirect(subscriber -> propagatedContext.propagate(() -> deferred.subscribe(subscriber)));
     }
 }

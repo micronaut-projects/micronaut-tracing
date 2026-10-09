@@ -17,6 +17,9 @@ dependencies {
     testImplementation mn.kotlinx.coroutines.core
     testImplementation mn.kotlinx.coroutines.reactor
     testImplementation projects.micronautTracingOpentelemetryHttp
+    testImplementation libs.opentelemetry.sdk
+    testImplementation libs.opentelemetry.sdk.testing
+    testImplementation projects.micronautTracingJaeger
 
     testImplementation mn.micronaut.http.server.netty
     testImplementation mnTest.micronaut.test.junit5

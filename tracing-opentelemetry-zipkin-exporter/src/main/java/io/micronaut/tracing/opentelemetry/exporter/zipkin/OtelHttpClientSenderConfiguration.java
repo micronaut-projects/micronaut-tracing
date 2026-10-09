@@ -20,7 +20,11 @@ import io.micronaut.tracing.zipkin.http.client.HttpClientSenderConfiguration;
 
 /**
  * Configuration properties for Zipkin exporter.
+ *
+ * @deprecated OpenTelemetry no longer publishes {@code opentelemetry-exporter-zipkin}. Use the OTLP exporter
+ * instead; Zipkin can receive OTLP data. Scheduled for removal in a future major release.
  */
+@Deprecated(since = "8.4.0", forRemoval = true)
 @ConfigurationProperties(OtelHttpClientSenderConfiguration.PREFIX)
 public class OtelHttpClientSenderConfiguration extends HttpClientSenderConfiguration {
     public static final String PREFIX =  "otel.exporter.zipkin";

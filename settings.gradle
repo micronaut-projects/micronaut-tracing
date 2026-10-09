@@ -48,10 +48,14 @@ include 'test-suite-kotlin'
 include 'test-suite-groovy'
 include 'test-suite-python'
 
+// JMH benchmarks: not published, not part of the BOM
+include 'benchmarks'
+
 enableFeaturePreview 'TYPESAFE_PROJECT_ACCESSORS'
 
 micronautBuild {
     useStandardizedProjectNames = true
+    nonStandardProjectNamePrefixes.add('benchmarks')
     importMicronautCatalog()
     importMicronautCatalog("micronaut-grpc")
     importMicronautCatalog("micronaut-reactor")

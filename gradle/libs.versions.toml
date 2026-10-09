@@ -5,18 +5,18 @@ micronaut-docs = '3.0.0'
 
 managed-brave-instrumentation = '6.3.1'
 managed-micrometer-tracing = '1.7.1'
-managed-opentelemetry = '1.64.0'
-managed-opentelemetry-alpha = '1.64.0-alpha'
-managed-opentelemetry-instrumentation = '2.30.0'
-managed-opentelemetry-instrumentation-alpha = '2.30.0-alpha'
-managed-opentelemetry-instrumentation-kafka-common = '2.13.3-alpha'
-managed-opentelemetry-contrib-aws-xray = '1.58.0'
-managed-opentelemetry-contrib-aws-xray-propagation = '1.58.0-alpha'
-managed-opentelemetry-contrib-aws-resources = '1.58.0-alpha'
-managed-opentelemetry-api-events = '1.36.0-alpha'
-managed-opentelemetry-gcp-trace = '0.36.0-alpha'
+managed-opentelemetry = '1.66.0'
+managed-opentelemetry-alpha = '1.66.0-alpha'
+managed-opentelemetry-instrumentation = '2.32.0'
+managed-opentelemetry-instrumentation-alpha = '2.32.0-alpha'
+managed-opentelemetry-contrib-aws-xray = '1.61.0'
+managed-opentelemetry-contrib-aws-xray-propagation = '1.61.0-alpha'
+managed-opentelemetry-contrib-aws-resources = '1.61.0-alpha'
+managed-opentelemetry-gcp-trace = '0.37.0-alpha'
 managed-opentelemetry-semconv = '1.44.0'
-managed-opentelemetry-instrumentation-api-semconv = '1.33.6-alpha'
+# opentelemetry-exporter-zipkin is no longer published or listed in opentelemetry-bom after 1.64.0 (see #952).
+# Pinned and managed so versionless declarations keep resolving; do not bump with managed-opentelemetry.
+managed-opentelemetry-exporter-zipkin = '1.64.0'
 managed-protobuf = '0.10.0'
 managed-zipkin = '3.6.1'
 managed-zipkin-reporter = '3.5.3'
@@ -51,6 +51,8 @@ micronaut-core = { module = 'io.micronaut:micronaut-core-bom', version.ref = 'mi
 managed-opentelemetry-contrib-aws-xray = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray', version.ref = 'managed-opentelemetry-contrib-aws-xray'}
 managed-opentelemetry-contrib-aws-xray-propagator = { module = 'io.opentelemetry.contrib:opentelemetry-aws-xray-propagator', version.ref = 'managed-opentelemetry-contrib-aws-xray-propagation'}
 managed-opentelemetry-contrib-aws-resources = { module = 'io.opentelemetry.contrib:opentelemetry-aws-resources', version.ref = 'managed-opentelemetry-contrib-aws-resources'}
+
+managed-opentelemetry-exporter-zipkin = { module = 'io.opentelemetry:opentelemetry-exporter-zipkin', version.ref = 'managed-opentelemetry-exporter-zipkin' }
 
 managed-opentelemetry-gcp-trace = { module = 'com.google.cloud.opentelemetry:exporter-auto', version.ref = 'managed-opentelemetry-gcp-trace'}
 
@@ -95,19 +97,16 @@ micrometer-tracing-bridge-brave = { module = 'io.micrometer:micrometer-tracing-b
 micrometer-tracing-bridge-otel = { module = 'io.micrometer:micrometer-tracing-bridge-otel' }
 
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api' }
-opentelemetry-api-events = { module = 'io.opentelemetry:opentelemetry-api-events', version.ref = 'managed-opentelemetry-api-events' }
 opentelemetry-api-incubator = { module = 'io.opentelemetry:opentelemetry-api-incubator' }
 opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk' }
 opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure' }
-opentelemetry-exporter-zipkin = { module = 'io.opentelemetry:opentelemetry-exporter-zipkin', version.ref = 'managed-opentelemetry' }
 
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api' }
 opentelemetry-instrumentation-api-incubator = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator' }
 opentelemetry-instrumentation-grpc = { module = 'io.opentelemetry.instrumentation:opentelemetry-grpc-1.6'}
-opentelemetry-instrumentation-kafka-common = { module = 'io.opentelemetry.instrumentation:opentelemetry-kafka-clients-common', version.ref = 'managed-opentelemetry-instrumentation-kafka-common' }
+opentelemetry-instrumentation-kafka-common = { module = 'io.opentelemetry.instrumentation:opentelemetry-kafka-clients-common-0.11' }
 opentelemetry-instrumentation-logback-appender = { module = 'io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0' }
-opentelemetry-instrumentation-api-semconv = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv', version.ref = 'managed-opentelemetry-instrumentation-api-semconv' }
 opentelemetry-instrumentation-semconv = { module = 'io.opentelemetry.semconv:opentelemetry-semconv', version.ref ='managed-opentelemetry-semconv' }
 opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrumentation: opentelemetry-instrumentation-annotations' }
 opentelemetry-instrumentation-jdbc = { module = 'io.opentelemetry.instrumentation:opentelemetry-jdbc' }

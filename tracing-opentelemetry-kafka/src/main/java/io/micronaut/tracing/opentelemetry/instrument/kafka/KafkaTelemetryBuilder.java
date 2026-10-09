@@ -22,9 +22,9 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
-import io.opentelemetry.instrumentation.kafka.internal.KafkaInstrumenterFactory;
-import io.opentelemetry.instrumentation.kafka.internal.KafkaProcessRequest;
-import io.opentelemetry.instrumentation.kafka.internal.KafkaProducerRequest;
+import io.opentelemetry.instrumentation.kafkaclients.common.v0_11.internal.KafkaInstrumenterFactory;
+import io.opentelemetry.instrumentation.kafkaclients.common.v0_11.internal.KafkaProcessRequest;
+import io.opentelemetry.instrumentation.kafkaclients.common.v0_11.internal.KafkaProducerRequest;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.util.ArrayList;

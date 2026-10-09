@@ -31,12 +31,12 @@ import io.opentelemetry.context.Scope;
 import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.context.propagation.TextMapSetter;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
-import io.opentelemetry.instrumentation.kafka.internal.KafkaHeadersSetter;
-import io.opentelemetry.instrumentation.kafka.internal.KafkaProcessRequest;
-import io.opentelemetry.instrumentation.kafka.internal.KafkaProducerRequest;
-import io.opentelemetry.instrumentation.kafka.internal.KafkaUtil;
-import io.opentelemetry.instrumentation.kafka.internal.OpenTelemetryMetricsReporter;
-import io.opentelemetry.instrumentation.kafka.internal.OpenTelemetrySupplier;
+import io.opentelemetry.instrumentation.kafkaclients.common.v0_11.internal.KafkaHeadersSetter;
+import io.opentelemetry.instrumentation.kafkaclients.common.v0_11.internal.KafkaProcessRequest;
+import io.opentelemetry.instrumentation.kafkaclients.common.v0_11.internal.KafkaProducerRequest;
+import io.opentelemetry.instrumentation.kafkaclients.common.v0_11.internal.KafkaUtil;
+import io.opentelemetry.instrumentation.kafkaclients.common.v0_11.internal.OpenTelemetryMetricsReporter;
+import io.opentelemetry.instrumentation.kafkaclients.common.v0_11.internal.OpenTelemetrySupplier;
 
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -174,7 +174,7 @@ public final class KafkaTelemetry {
      */
     public <K, V> void buildAndInjectSpan(ProducerRecord<K, V> record, String clientId) {
         Context parentContext = Context.current();
-        KafkaProducerRequest request = KafkaProducerRequest.create(record, clientId);
+        KafkaProducerRequest request = KafkaProducerRequest.create(record, clientId, null);
 
         if (!producerInstrumenter.shouldStart(parentContext, request)) {
             return;
@@ -207,7 +207,7 @@ public final class KafkaTelemetry {
     public <K, V> Future<RecordMetadata> buildAndInjectSpan(ProducerRecord<K, V> record, Producer<K, V> producer, Callback callback,
                                                             BiFunction<ProducerRecord<K, V>, Callback, Future<RecordMetadata>> sendFn) {
         Context parentContext = Context.current();
-        KafkaProducerRequest request = KafkaProducerRequest.create(record, producer);
+        KafkaProducerRequest request = KafkaProducerRequest.create(record, producer, KafkaUtil.extractBootstrapServers(producer));
         if (!producerInstrumenter.shouldStart(parentContext, request)) {
             return sendFn == null ? EMPTY_FUTURE : sendFn.apply(record, callback);
         }
@@ -256,7 +256,7 @@ public final class KafkaTelemetry {
 
     <K, V> ConsumerRecordContext startConsumerRecordSpan(ConsumerRecord<K, V> consumerRecord, String consumerGroup, String clientId) {
         Context parentContext = Context.current();
-        KafkaProcessRequest request = KafkaProcessRequest.create(consumerRecord, consumerGroup, clientId);
+        KafkaProcessRequest request = KafkaProcessRequest.create(consumerRecord, consumerGroup, clientId, null);
         if (!consumerProcessInstrumenter.shouldStart(parentContext, request)) {
             return null;
         }
@@ -268,7 +268,7 @@ public final class KafkaTelemetry {
     }
 
     private <K, V> void processConsumerRecord(Context parentContext, ConsumerRecord<K, V> record, String consumerGroup, String clientId) {
-        KafkaProcessRequest request = KafkaProcessRequest.create(record, consumerGroup, clientId);
+        KafkaProcessRequest request = KafkaProcessRequest.create(record, consumerGroup, clientId, null);
         if (!consumerProcessInstrumenter.shouldStart(parentContext, request)) {
             return;
         }

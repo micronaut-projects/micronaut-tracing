@@ -29,6 +29,11 @@ tracing:
         - tenant
 ----
 
+* `remote-fields` are baggage fields propagated to remote services together with the trace context.
+* `correlation-fields` are baggage fields kept local to the service and added as tags to the span that is current when the baggage is set. They are not propagated and are not added to the logging MDC.
+
+A field listed in both is propagated and tagged.
+
 include::{includedir}configurationProperties/io.micronaut.tracing.micrometer.MicrometerTracingConfigurationProperties.adoc[]
 
 include::{includedir}configurationProperties/io.micronaut.tracing.micrometer.MicrometerTracingConfigurationProperties$Baggage.adoc[]

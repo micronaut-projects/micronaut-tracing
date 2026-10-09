@@ -16,8 +16,8 @@
 /**
  * Micrometer Tracing integration backed by Brave.
  *
- * @author original authors
- * @since 8.0.0
+ * @author Nemanja Mikic
+ * @since 8.4.0
  */
 @Configuration
 @Requires(classes = {BraveTracer.class, Tracing.class})

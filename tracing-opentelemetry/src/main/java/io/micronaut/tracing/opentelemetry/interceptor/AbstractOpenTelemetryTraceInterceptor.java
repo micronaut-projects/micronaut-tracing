@@ -21,6 +21,7 @@ import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.type.Argument;
 import io.micronaut.tracing.annotation.SpanTag;
+import io.micronaut.tracing.util.TracedMethod;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.instrumentation.api.incubator.semconv.util.ClassAndMethod;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
@@ -52,6 +53,32 @@ public abstract sealed class AbstractOpenTelemetryTraceInterceptor implements Me
         return InterceptPhase.TRACE.getPosition();
     }
 
+    /**
+     * Adds the {@link SpanTag} parameters of the method as attributes of the span.
+     *
+     * @param span            the span
+     * @param tracedMethod    the span data of the method
+     * @param parameterValues the parameter values
+     */
+    static void tagArguments(Span span, TracedMethod tracedMethod, Object[] parameterValues) {
+        int[] tagIndexes = tracedMethod.getTagIndexes();
+        if (tagIndexes.length == 0) {
+            return;
+        }
+        String[] tagNames = tracedMethod.getTagNames();
+        for (int i = 0; i < tagIndexes.length; i++) {
+            Object value = parameterValues[tagIndexes[i]];
+            if (value != null) {
+                span.setAttribute(tagNames[i], value.toString());
+            }
+        }
+    }
+
+    /**
+     * Adds the {@link SpanTag} parameters of the method as attributes of the current span.
+     *
+     * @param context the invocation context
+     */
     public static void tagArguments(MethodInvocationContext<?, ?> context) {
         Argument<?>[] arguments = context.getArguments();
         Object[] parameterValues = context.getParameterValues();

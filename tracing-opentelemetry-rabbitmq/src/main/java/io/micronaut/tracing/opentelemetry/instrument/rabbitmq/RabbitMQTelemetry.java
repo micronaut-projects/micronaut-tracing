@@ -20,6 +20,8 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.Envelope;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.propagation.PropagatedContext;
+import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
 import io.micronaut.rabbitmq.bind.RabbitConsumerState;
 import io.micronaut.rabbitmq.connect.ChannelPool;
 import io.micronaut.rabbitmq.reactive.RabbitPublishState;
@@ -40,15 +42,18 @@ import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
  * RabbitMQ telemetry support based on bean wrappers.
  *
- * @since 8.0.0
+ * @since 8.4.0
  */
 @Internal
 public final class RabbitMQTelemetry {
@@ -63,7 +68,35 @@ public final class RabbitMQTelemetry {
     static final AttributeKey<Long> DELIVERY_TAG = AttributeKey.longKey("messaging.rabbitmq.message.delivery_tag");
     static final AttributeKey<String> DESTINATION = AttributeKey.stringKey("messaging.destination.name");
 
+    /**
+     * The RabbitMQ direct reply-to pseudo-queue used for RPC replies.
+     */
+    static final String DIRECT_REPLY_TO = "amq.rabbitmq.reply-to";
+
     private static final String INSTRUMENTATION_NAME = "io.micronaut.tracing.rabbitmq";
+
+    /**
+     * Proxy interfaces per channel implementation class. Preserves every public interface of the
+     * delegate (for example {@code RecoverableChannel}) so that {@code instanceof} checks performed by
+     * Micronaut RabbitMQ keep working on the tracing proxy.
+     */
+    private static final ClassValue<Class<?>[]> PROXY_INTERFACES = new ClassValue<>() {
+        @Override
+        protected Class<?>[] computeValue(Class<?> type) {
+            ClassLoader classLoader = RabbitMQTelemetry.class.getClassLoader();
+            Set<Class<?>> interfaces = new LinkedHashSet<>();
+            interfaces.add(Channel.class);
+            for (Class<?> current = type; current != null && current != Object.class; current = current.getSuperclass()) {
+                for (Class<?> candidate : current.getInterfaces()) {
+                    if (Modifier.isPublic(candidate.getModifiers()) && isVisible(classLoader, candidate)) {
+                        interfaces.add(candidate);
+                    }
+                }
+            }
+            interfaces.add(TracingChannel.class);
+            return interfaces.toArray(Class<?>[]::new);
+        }
+    };
 
     private final Tracer tracer;
     private final TextMapPropagator propagator;
@@ -86,10 +119,18 @@ public final class RabbitMQTelemetry {
             return channel;
         }
         return (Channel) Proxy.newProxyInstance(
-            Channel.class.getClassLoader(),
-            new Class<?>[] {Channel.class, TracingChannel.class},
+            RabbitMQTelemetry.class.getClassLoader(),
+            PROXY_INTERFACES.get(channel.getClass()),
             new TracingChannelInvocationHandler(channel, this)
         );
+    }
+
+    private static boolean isVisible(ClassLoader classLoader, Class<?> type) {
+        try {
+            return Class.forName(type.getName(), false, classLoader) == type;
+        } catch (ClassNotFoundException | LinkageError e) {
+            return false;
+        }
     }
 
     Channel unwrap(Channel channel) {
@@ -124,11 +165,23 @@ public final class RabbitMQTelemetry {
         if (envelope != null) {
             span.setAttribute(DELIVERY_TAG, envelope.getDeliveryTag());
         }
-        try (Scope ignored = parentContext.with(span).makeCurrent()) {
-            consumer.handleDelivery(consumerTag, envelope, properties, body);
+        Context context = parentContext.with(span);
+        // Also expose the context through Micronaut's propagated context so that work handed off to an
+        // executor (for example a listener declared with @RabbitConnection(executor = "...")) by an
+        // executor that propagates the Micronaut context runs with the delivery's trace context.
+        PropagatedContext propagatedContext = PropagatedContext.getOrEmpty()
+            .plus(new OpenTelemetryPropagationContext(context));
+        try (Scope ignored = context.makeCurrent()) {
+            propagatedContext.propagateCall(() -> {
+                consumer.handleDelivery(consumerTag, envelope, properties, body);
+                return null;
+            });
         } catch (IOException | RuntimeException e) {
             markFailed(span, e);
             throw e;
+        } catch (Exception e) {
+            markFailed(span, e);
+            throw new IOException(e);
         } finally {
             span.end();
         }
@@ -254,6 +307,10 @@ public final class RabbitMQTelemetry {
 
         private Object[] instrumentArgs(Method method, Object[] args) {
             if (args == null || !"basicConsume".equals(method.getName())) {
+                return args;
+            }
+            if (args.length > 0 && DIRECT_REPLY_TO.equals(args[0])) {
+                // RPC reply consumers registered by publishAndReply are covered by the producer span
                 return args;
             }
             Object[] instrumentedArgs = args.clone();

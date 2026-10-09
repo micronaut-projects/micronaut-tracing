@@ -25,7 +25,7 @@ import jakarta.inject.Singleton;
 /**
  * Wraps RabbitMQ channel pools with tracing-aware channels.
  *
- * @since 8.0.0
+ * @since 8.4.0
  */
 @Requires(property = RabbitMQTelemetryConfiguration.PREFIX + ".wrapper", notEquals = StringUtils.FALSE)
 @Singleton

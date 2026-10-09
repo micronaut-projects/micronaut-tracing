@@ -24,7 +24,7 @@ import org.reactivestreams.Publisher;
 /**
  * Tracing wrapper for {@link ReactivePublisher}.
  *
- * @since 8.0.0
+ * @since 8.4.0
  */
 @Internal
 final class TracingReactivePublisher implements ReactivePublisher {

@@ -4,9 +4,13 @@ import com.rabbitmq.client.AMQP
 import com.rabbitmq.client.Channel
 import com.rabbitmq.client.Consumer
 import com.rabbitmq.client.Envelope
+import com.rabbitmq.client.RecoverableChannel
+import com.rabbitmq.client.RecoveryListener
 import io.micronaut.context.event.BeanCreatedEvent
+import io.micronaut.core.propagation.PropagatedContext
 import io.micronaut.rabbitmq.connect.ChannelPool
 import io.opentelemetry.api.OpenTelemetry
+import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator
 import io.opentelemetry.context.propagation.ContextPropagators
 import io.opentelemetry.sdk.OpenTelemetrySdk
@@ -14,6 +18,8 @@ import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import io.opentelemetry.sdk.trace.SdkTracerProvider
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor
 import spock.lang.Specification
+
+import java.util.concurrent.Executors
 
 class TracingChannelPoolSpec extends Specification {
 
@@ -135,6 +141,82 @@ class TracingChannelPoolSpec extends Specification {
         exporter.finishedSpanItems.size() == 1
         exporter.finishedSpanItems[0].status.statusCode.name() == "ERROR"
         exporter.finishedSpanItems[0].attributes.get(RabbitMQTelemetry.ERROR_TYPE) == IOException.name
+    }
+
+    void "channel wrapper preserves RecoverableChannel so consumer recovery stays enabled"() {
+        given:
+        def telemetry = new RabbitMQTelemetry(openTelemetry(InMemorySpanExporter.create()))
+        def delegateChannel = Mock(RecoverableChannel)
+        def listener = Stub(RecoveryListener)
+
+        when:
+        def wrapped = telemetry.wrap(delegateChannel)
+        ((RecoverableChannel) wrapped).addRecoveryListener(listener)
+        ((RecoverableChannel) wrapped).removeRecoveryListener(listener)
+
+        then:
+        wrapped instanceof RecoverableChannel
+        wrapped instanceof RabbitMQTelemetry.TracingChannel
+        telemetry.unwrap(wrapped).is(delegateChannel)
+        1 * delegateChannel.addRecoveryListener(listener)
+        1 * delegateChannel.removeRecoveryListener(listener)
+    }
+
+    void "plain channel wrapper is not a RecoverableChannel"() {
+        given:
+        def telemetry = new RabbitMQTelemetry(openTelemetry(InMemorySpanExporter.create()))
+
+        expect:
+        !(telemetry.wrap(Mock(Channel)) instanceof RecoverableChannel)
+    }
+
+    void "direct reply-to consumers are not traced"() {
+        given:
+        def exporter = InMemorySpanExporter.create()
+        def telemetry = new RabbitMQTelemetry(openTelemetry(exporter))
+        def delegateChannel = Mock(Channel)
+        def consumer = Mock(Consumer)
+
+        when:
+        telemetry.wrap(delegateChannel).basicConsume(RabbitMQTelemetry.DIRECT_REPLY_TO, true, consumer)
+
+        then:
+        1 * delegateChannel.basicConsume(RabbitMQTelemetry.DIRECT_REPLY_TO, true, _ as Consumer) >> { String queue, boolean autoAck, Consumer registered ->
+            assert registered.is(consumer)
+            registered.handleDelivery("reply", new Envelope(1L, false, "", "amq.rabbitmq.reply-to.abc"), new AMQP.BasicProperties(), "reply".bytes)
+            "reply"
+        }
+        1 * consumer.handleDelivery("reply", _ as Envelope, _ as AMQP.BasicProperties, "reply".bytes)
+        exporter.finishedSpanItems.empty
+    }
+
+    void "delivery exposes the consumer span through the Micronaut propagated context"() {
+        given:
+        def exporter = InMemorySpanExporter.create()
+        def telemetry = new RabbitMQTelemetry(openTelemetry(exporter))
+        def delegate = Mock(Consumer)
+        def consumer = new TracingConsumer(delegate, telemetry)
+        def executor = Executors.newSingleThreadExecutor()
+        String executorTraceId = null
+        String executorSpanId = null
+
+        when:
+        consumer.handleDelivery("consumer", new Envelope(1L, false, "", "orders"), new AMQP.BasicProperties.Builder().headers([traceparent: "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"]).build(), "body".bytes)
+
+        then:
+        1 * delegate.handleDelivery("consumer", _ as Envelope, _ as AMQP.BasicProperties, "body".bytes) >> {
+            // simulates an executor that propagates the Micronaut context
+            executor.submit(PropagatedContext.wrapCurrent({
+                def spanContext = Span.current().spanContext
+                executorTraceId = spanContext.traceId
+                executorSpanId = spanContext.spanId
+            } as Runnable)).get()
+        }
+        executorTraceId == "4bf92f3577b34da6a3ce929d0e0e4736"
+        executorSpanId == exporter.finishedSpanItems[0].spanId
+
+        cleanup:
+        executor.shutdownNow()
     }
 
     private static OpenTelemetry openTelemetry(InMemorySpanExporter exporter) {

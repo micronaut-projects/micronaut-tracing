@@ -26,7 +26,26 @@ class MicrometerOpenTelemetryTracingFactorySpec extends Specification {
         context.getBean(BaggageManager) instanceof OtelBaggageManager
         context.getBean(Tracer) instanceof OtelTracer
         context.getBean(Propagator) instanceof OtelPropagator
-        context.getBean(Tracer).baggageFields.contains('x-request-id')
+        // the OpenTelemetry bridge reports only the remote fields as baggage fields
+        context.getBean(Tracer).baggageFields == ['x-request-id']
+
+        cleanup:
+        context.close()
+    }
+
+    void 'test user supplied non otel current trace context does not break startup'() {
+        given:
+        ApplicationContext context = ApplicationContext.builder()
+                .properties('micronaut.application.name': 'micrometer-otel-test')
+                .singletons(CurrentTraceContext.NOOP)
+                .start()
+
+        expect: 'the user bean is used and the bridge tracer, which needs an OtelCurrentTraceContext, backs off'
+        context.getBean(CurrentTraceContext).is(CurrentTraceContext.NOOP)
+        !context.containsBean(OtelCurrentTraceContext)
+        context.getBean(BaggageManager) instanceof OtelBaggageManager
+        !context.containsBean(Tracer)
+        context.getBean(Propagator) instanceof OtelPropagator
 
         cleanup:
         context.close()

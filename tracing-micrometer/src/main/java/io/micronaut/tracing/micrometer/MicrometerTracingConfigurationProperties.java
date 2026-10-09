@@ -26,8 +26,8 @@ import java.util.List;
 /**
  * Configuration properties for Micrometer Tracing.
  *
- * @author original authors
- * @since 8.0.0
+ * @author Nemanja Mikic
+ * @since 8.4.0
  */
 @Requires(property = MicrometerTracingConfigurationProperties.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @ConfigurationProperties(MicrometerTracingConfigurationProperties.PREFIX)
@@ -106,18 +106,18 @@ public class MicrometerTracingConfigurationProperties implements Toggleable {
         }
 
         /**
-         * Baggage field names correlated locally, for example with logging.
+         * Baggage field names kept local to the service (not propagated) and added as tags to the current span.
          *
-         * @return baggage field names correlated locally, for example with logging
+         * @return baggage field names kept local to the service and added as span tags
          */
         public List<String> getCorrelationFields() {
             return correlationFields;
         }
 
         /**
-         * Sets baggage field names correlated locally, for example with logging.
+         * Sets baggage field names kept local to the service and added as span tags.
          *
-         * @param correlationFields baggage field names correlated locally, for example with logging
+         * @param correlationFields baggage field names kept local to the service and added as span tags
          */
         public void setCorrelationFields(List<String> correlationFields) {
             this.correlationFields = correlationFields == null ? Collections.emptyList() : correlationFields;

@@ -16,8 +16,8 @@
 /**
  * Common configuration for Micrometer Tracing integrations.
  *
- * @author original authors
- * @since 8.0.0
+ * @author Nemanja Mikic
+ * @since 8.4.0
  */
 @Configuration
 @Requires(classes = Tracer.class)

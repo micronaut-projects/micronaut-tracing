@@ -16,6 +16,11 @@
 package io.micronaut.tracing.micrometer.brave;
 
 import brave.Tracing;
+import brave.baggage.BaggageField;
+import brave.baggage.BaggagePropagation;
+import brave.baggage.BaggagePropagationConfig;
+import brave.propagation.B3Propagation;
+import brave.propagation.Propagation;
 import io.micrometer.tracing.CurrentTraceContext;
 import io.micrometer.tracing.brave.bridge.BraveBaggageManager;
 import io.micrometer.tracing.brave.bridge.BraveCurrentTraceContext;
@@ -29,11 +34,15 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.tracing.micrometer.MicrometerTracingConfigurationProperties;
 import jakarta.inject.Singleton;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Creates Micrometer Tracing bridge beans backed by Brave.
  *
- * @author original authors
- * @since 8.0.0
+ * @author Nemanja Mikic
+ * @since 8.4.0
  */
 @Factory
 @Requires(beans = {MicrometerTracingConfigurationProperties.class, Tracing.class})
@@ -52,7 +61,40 @@ public class MicrometerBraveTracingFactory {
     }
 
     /**
-     * Creates a Micrometer baggage manager.
+     * Creates the Brave propagation factory that registers the configured baggage fields.
+     * Remote fields are propagated to remote services alongside the B3 headers, while
+     * correlation fields are kept local to the process. If no baggage fields are configured,
+     * Brave's default B3 propagation is returned unchanged.
+     *
+     * @param configuration Micrometer tracing configuration
+     * @return Brave propagation factory
+     */
+    @Singleton
+    @Requires(missingBeans = Propagation.Factory.class)
+    Propagation.Factory propagationFactory(MicrometerTracingConfigurationProperties configuration) {
+        MicrometerTracingConfigurationProperties.Baggage baggage = configuration.getBaggage();
+        List<String> remoteFields = baggage.getRemoteFields();
+        List<String> correlationFields = baggage.getCorrelationFields();
+        if (remoteFields.isEmpty() && correlationFields.isEmpty()) {
+            return B3Propagation.FACTORY;
+        }
+        BaggagePropagation.FactoryBuilder builder = BaggagePropagation.newFactoryBuilder(B3Propagation.FACTORY);
+        Set<String> registered = new HashSet<>();
+        for (String name : remoteFields) {
+            if (registered.add(name)) {
+                builder.add(BaggagePropagationConfig.SingleBaggageField.remote(BaggageField.create(name)));
+            }
+        }
+        for (String name : correlationFields) {
+            if (registered.add(name)) {
+                builder.add(BaggagePropagationConfig.SingleBaggageField.local(BaggageField.create(name)));
+            }
+        }
+        return builder.build();
+    }
+
+    /**
+     * Creates a Micrometer baggage manager. Correlation fields are added as span tags.
      *
      * @param configuration Micrometer tracing configuration
      * @return Micrometer baggage manager
@@ -63,7 +105,8 @@ public class MicrometerBraveTracingFactory {
     @Requires(missingBeans = BraveBaggageManager.class)
     BraveBaggageManager baggageManager(MicrometerTracingConfigurationProperties configuration) {
         MicrometerTracingConfigurationProperties.Baggage baggage = configuration.getBaggage();
-        return new BraveBaggageManager(baggage.getRemoteFields(), baggage.getCorrelationFields());
+        // BraveBaggageManager(tagFields, remoteFields)
+        return new BraveBaggageManager(baggage.getCorrelationFields(), baggage.getRemoteFields());
     }
 
     /**

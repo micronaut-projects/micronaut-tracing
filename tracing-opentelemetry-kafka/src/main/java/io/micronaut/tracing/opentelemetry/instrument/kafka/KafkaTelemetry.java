@@ -232,10 +232,6 @@ public final class KafkaTelemetry {
         return sendFn.apply(record, callback);
     }
 
-    private <K, V> void buildAndFinishSpan(ConsumerRecords<K, V> records, Consumer<K, V> consumer) {
-        buildAndFinishSpan(records, KafkaUtil.getConsumerGroup(consumer), KafkaUtil.getClientId(consumer));
-    }
-
     public <K, V> void buildAndFinishSpan(ConsumerRecords<K, V> records, String consumerGroup, String clientId) {
         Context currentContext = Context.current();
         for (ConsumerRecord<K, V> record : records) {

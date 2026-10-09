@@ -16,6 +16,11 @@
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.propagation.PropagatedContext;
+import io.micronaut.core.propagation.PropagatedContextConfiguration;
+import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
@@ -350,8 +355,41 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
         }
         ActiveRecordContext current = activeRecordContext;
         activeRecordContext = null;
-        current.scope.close();
-        kafkaTelemetry.endConsumerRecordSpan(current.consumerRecordContext);
+        try {
+            // close in reverse order of opening: Micronaut propagated context first, then the OTel scope
+            if (current.propagatedContextScope != null) {
+                current.propagatedContextScope.close();
+            }
+        } finally {
+            try {
+                current.scope.close();
+            } finally {
+                kafkaTelemetry.endConsumerRecordSpan(current.consumerRecordContext);
+            }
+        }
+    }
+
+    /**
+     * Populates the Micronaut {@link PropagatedContext} with the record's OpenTelemetry context so that
+     * {@code @Async} methods and Micronaut-instrumented executors invoked from the listener continue the
+     * record's trace.
+     *
+     * <p>The record context has to remain active across separate iterator calls (the listener body runs
+     * outside of this wrapper's call frames), so a callback-based propagation API cannot be used here and the
+     * scope-returning API is required. That API is only supported in thread-local propagation mode; in
+     * scoped-value mode only the OpenTelemetry context is made current.</p>
+     *
+     * @param context The record's OpenTelemetry context
+     * @return The propagated context scope, or {@code null} if propagation is not supported
+     */
+    @SuppressWarnings("deprecation")
+    private static @Nullable PropagatedContext.Scope propagate(Context context) {
+        if (PropagatedContextConfiguration.get() != PropagatedContextConfiguration.Mode.THREAD_LOCAL) {
+            return null;
+        }
+        return PropagatedContext.getOrEmpty()
+            .plus(new OpenTelemetryPropagationContext(context))
+            .propagate();
     }
 
     private <T> T withInactiveContext(Supplier<T> supplier) {
@@ -393,7 +431,7 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
             return new AbstractList<>() {
                 @Override
                 public ConsumerRecord<K, V> get(int index) {
-                    return activateNextRecord(records.get(index));
+                    return activateIndexedRecord(records.get(index));
                 }
 
                 @Override
@@ -482,15 +520,35 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
             };
         }
 
+        private ConsumerRecord<K, V> activateIndexedRecord(ConsumerRecord<K, V> consumerRecord) {
+            if (activeRecordContext != null && activeRecordContext.consumerRecord == consumerRecord) {
+                // repeated indexed access to the record being processed: keep its current process span
+                return consumerRecord;
+            }
+            return activateNextRecord(consumerRecord);
+        }
+
         private ConsumerRecord<K, V> activateNextRecord(ConsumerRecord<K, V> consumerRecord) {
             closeActiveRecordContext();
             if (tracedRecords.contains(consumerRecord)) {
                 KafkaTelemetry.ConsumerRecordContext consumerRecordContext = kafkaTelemetry.startConsumerRecordSpan(consumerRecord, consumer);
                 if (consumerRecordContext != null) {
-                    activeRecordContext = new ActiveRecordContext(consumerRecordContext, consumerRecordContext.context().makeCurrent());
+                    activeRecordContext = activate(consumerRecord, consumerRecordContext);
                 }
             }
             return consumerRecord;
+        }
+
+        private ActiveRecordContext activate(ConsumerRecord<K, V> consumerRecord, KafkaTelemetry.ConsumerRecordContext consumerRecordContext) {
+            Context context = consumerRecordContext.context();
+            Scope scope = context.makeCurrent();
+            try {
+                return new ActiveRecordContext(consumerRecord, consumerRecordContext, scope, propagate(context));
+            } catch (RuntimeException | Error e) {
+                scope.close();
+                kafkaTelemetry.endConsumerRecordSpan(consumerRecordContext);
+                throw e;
+            }
         }
 
         private boolean hasNextWithContext(Iterator<ConsumerRecord<K, V>> iterator) {
@@ -502,6 +560,9 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
         }
     }
 
-    private record ActiveRecordContext(KafkaTelemetry.ConsumerRecordContext consumerRecordContext, Scope scope) {
+    private record ActiveRecordContext(ConsumerRecord<?, ?> consumerRecord,
+                                       KafkaTelemetry.ConsumerRecordContext consumerRecordContext,
+                                       Scope scope,
+                                       @Nullable PropagatedContext.Scope propagatedContextScope) {
     }
 }

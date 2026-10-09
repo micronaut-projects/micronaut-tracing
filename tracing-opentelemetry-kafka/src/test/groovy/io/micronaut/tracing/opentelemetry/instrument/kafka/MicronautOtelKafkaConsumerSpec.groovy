@@ -1,5 +1,8 @@
 package io.micronaut.tracing.opentelemetry.instrument.kafka
 
+import io.micronaut.core.propagation.PropagatedContext
+import io.micronaut.core.propagation.PropagatedContextConfiguration
+import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.context.Context
 import io.opentelemetry.context.ContextKey
@@ -507,6 +510,118 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         Context.current().get(contextKey) == null
         1 * processInstrumenter.end(_, _, null, null)
         1 * consumer.commitSync()
+    }
+
+    void "repeated indexed access to the active record does not restart its process span"() {
+        given:
+        def processInstrumenter = Mock(Instrumenter)
+        def configuration = Mock(KafkaTelemetryConfiguration)
+        def kafkaTelemetry = new KafkaTelemetry(
+                Mock(OpenTelemetry),
+                Mock(Instrumenter),
+                processInstrumenter,
+                new ArrayList<KafkaTelemetryProducerTracingFilter>(),
+                new ArrayList<KafkaTelemetryConsumerTracingFilter>(),
+                configuration,
+                true
+        )
+        def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
+        def partition = new TopicPartition("topic", 0)
+        def firstRecord = new ConsumerRecord<String, String>("topic", 0, 0, "key", "first")
+        def secondRecord = new ConsumerRecord<String, String>("topic", 0, 1, "key", "second")
+        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]])
+        ContextKey<String> contextKey = ContextKey.named("test-kafka-repeated-index-context")
+
+        configuration.getIncludedTopics() >> Collections.emptyList()
+        configuration.getExcludedTopics() >> Collections.emptyList()
+        consumer.poll(Duration.ZERO) >> records
+        consumer.groupMetadata() >> new ConsumerGroupMetadata("group")
+        consumer.metrics() >> Collections.emptyMap()
+        processInstrumenter.shouldStart(_, _) >> true
+
+        when:
+        def tracedRecords = micronautConsumer.poll(Duration.ZERO)
+        def partitionRecords = tracedRecords.records(partition)
+        def first = partitionRecords.get(0)
+        def again = partitionRecords.get(0)
+        def viaNewList = tracedRecords.records(partition).get(0)
+
+        then:
+        first.is(firstRecord)
+        again.is(firstRecord)
+        viaNewList.is(firstRecord)
+        Context.current().get(contextKey) == "first"
+        PropagatedContext.find().flatMap { it.find(OpenTelemetryPropagationContext) }
+                .map { it.context().get(contextKey) }.orElse(null) == "first"
+        1 * processInstrumenter.start(_, _) >> Context.current().with(contextKey, "first")
+        0 * processInstrumenter.end(_, _, _, _)
+
+        when:
+        def second = partitionRecords.get(1)
+
+        then:
+        second.is(secondRecord)
+        Context.current().get(contextKey) == "second"
+        1 * processInstrumenter.end(_, _, null, null)
+        1 * processInstrumenter.start(_, _) >> Context.current().with(contextKey, "second")
+
+        when:
+        micronautConsumer.commitSync()
+
+        then:
+        Context.current().get(contextKey) == null
+        PropagatedContext.find().flatMap { it.find(OpenTelemetryPropagationContext) }
+                .map { it.context().get(contextKey) }.orElse(null) == null
+        1 * processInstrumenter.end(_, _, null, null)
+        1 * consumer.commitSync()
+    }
+
+    void "record context is activated without PropagatedContext scope in scoped-value mode"() {
+        given:
+        PropagatedContextConfiguration.set(PropagatedContextConfiguration.Mode.SCOPED_VALUE)
+        def processInstrumenter = Mock(Instrumenter)
+        def configuration = Mock(KafkaTelemetryConfiguration)
+        def kafkaTelemetry = new KafkaTelemetry(
+                Mock(OpenTelemetry),
+                Mock(Instrumenter),
+                processInstrumenter,
+                new ArrayList<KafkaTelemetryProducerTracingFilter>(),
+                new ArrayList<KafkaTelemetryConsumerTracingFilter>(),
+                configuration,
+                true
+        )
+        def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
+        def partition = new TopicPartition("topic", 0)
+        def record = new ConsumerRecord<String, String>("topic", 0, 0, "key", "value")
+        def records = new ConsumerRecords<String, String>([(partition): [record]])
+        ContextKey<String> contextKey = ContextKey.named("test-kafka-scoped-value-context")
+
+        configuration.getIncludedTopics() >> Collections.emptyList()
+        configuration.getExcludedTopics() >> Collections.emptyList()
+        consumer.poll(Duration.ZERO) >> records
+        consumer.groupMetadata() >> new ConsumerGroupMetadata("group")
+        consumer.metrics() >> Collections.emptyMap()
+        processInstrumenter.shouldStart(_, _) >> true
+        processInstrumenter.start(_, _) >> Context.current().with(contextKey, "active")
+
+        when:
+        def iterator = micronautConsumer.poll(Duration.ZERO).iterator()
+        def first = iterator.next()
+
+        then:
+        first.is(record)
+        Context.current().get(contextKey) == "active"
+
+        when:
+        boolean hasNext = iterator.hasNext()
+
+        then:
+        !hasNext
+        Context.current().get(contextKey) == null
+        1 * processInstrumenter.end(_, _, null, null)
+
+        cleanup:
+        PropagatedContextConfiguration.reset()
     }
 
     void "next record dispatch closes context left active by failed listener"() {

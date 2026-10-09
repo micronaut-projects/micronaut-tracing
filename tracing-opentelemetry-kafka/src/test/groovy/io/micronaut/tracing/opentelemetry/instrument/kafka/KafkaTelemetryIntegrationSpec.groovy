@@ -4,6 +4,7 @@ import io.micronaut.configuration.kafka.annotation.KafkaClient
 import io.micronaut.configuration.kafka.annotation.KafkaListener
 import io.micronaut.configuration.kafka.annotation.OffsetReset
 import io.micronaut.configuration.kafka.annotation.Topic
+import io.micronaut.scheduling.annotation.Async
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import io.micronaut.test.support.TestPropertyProvider
 import io.micronaut.tracing.annotation.NewSpan
@@ -11,12 +12,14 @@ import io.micronaut.tracing.util.KafkaSetup
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
+import jakarta.inject.Singleton
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicReference
 
 @MicronautTest
@@ -26,6 +29,8 @@ class KafkaTelemetryIntegrationSpec extends Specification implements TestPropert
     @Inject TestKafkaListener kafkaListener
     @Inject TestTracingService testTracingService
     @Inject InMemorySpanExporter exporter
+    @Inject AsyncTestKafkaListener asyncKafkaListener
+    @Inject AsyncTraceRecorder asyncTraceRecorder
 
     @Override
     Map<String, String> getProperties() {
@@ -51,12 +56,63 @@ class KafkaTelemetryIntegrationSpec extends Specification implements TestPropert
         }
     }
 
+    void "test @Async method called from kafka listener continues the listener trace"() {
+        given:
+        PollingConditions conditions = new PollingConditions(timeout: 30)
+        String message = "Async message ${System.nanoTime()}"
+
+        when:
+        testKafkaClient.publishAsyncText(message)
+
+        then:
+        conditions.eventually {
+            asyncKafkaListener.listenerTraceIds.containsKey(message)
+            asyncTraceRecorder.asyncTraceIds.containsKey(message)
+        }
+        String listenerTraceId = asyncKafkaListener.listenerTraceIds.get(message)
+        listenerTraceId
+        listenerTraceId != '00000000000000000000000000000000'
+        asyncTraceRecorder.asyncThreads.get(message) != asyncKafkaListener.listenerThreads.get(message)
+        asyncTraceRecorder.asyncTraceIds.get(message) == listenerTraceId
+    }
 
     @KafkaClient
     static interface TestKafkaClient {
 
         @Topic("my-stream")
         void publishText(String s);
+
+        @Topic("my-async-stream")
+        void publishAsyncText(String s);
+    }
+
+    @KafkaListener(groupId = "async-listener", offsetReset = OffsetReset.EARLIEST)
+    static class AsyncTestKafkaListener {
+
+        final Map<String, String> listenerTraceIds = new ConcurrentHashMap<>()
+        final Map<String, String> listenerThreads = new ConcurrentHashMap<>()
+
+        @Inject AsyncTraceRecorder asyncTraceRecorder
+
+        @Topic("my-async-stream")
+        void receive(ConsumerRecord<?, String> record) {
+            listenerTraceIds.put(record.value(), Span.current().spanContext.traceId)
+            listenerThreads.put(record.value(), Thread.currentThread().name)
+            asyncTraceRecorder.record(record.value())
+        }
+    }
+
+    @Singleton
+    static class AsyncTraceRecorder {
+
+        final Map<String, String> asyncTraceIds = new ConcurrentHashMap<>()
+        final Map<String, String> asyncThreads = new ConcurrentHashMap<>()
+
+        @Async
+        void record(String message) {
+            asyncThreads.put(message, Thread.currentThread().name)
+            asyncTraceIds.put(message, Span.current().spanContext.traceId)
+        }
     }
 
     @KafkaListener(offsetReset = OffsetReset.EARLIEST)

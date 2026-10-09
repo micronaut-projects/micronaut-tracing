@@ -18,48 +18,63 @@ package io.micronaut.tracing.opentelemetry.instrument.http.server;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.async.propagation.ReactorPropagation;
-import io.micronaut.core.propagation.PropagatedContext;
+import io.micronaut.core.order.Ordered;
+import io.micronaut.core.propagation.MutablePropagatedContext;
 import io.micronaut.http.HttpRequest;
-import io.micronaut.http.MutableHttpResponse;
-import io.micronaut.http.annotation.Filter;
-import io.micronaut.http.filter.HttpServerFilter;
-import io.micronaut.http.filter.ServerFilterChain;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.RequestFilter;
+import io.micronaut.http.annotation.ResponseFilter;
+import io.micronaut.http.annotation.ServerFilter;
+import io.micronaut.http.filter.FilterContinuation;
 import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
+import io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter;
 import io.micronaut.tracing.opentelemetry.instrument.util.OpenTelemetryExclusionsConfiguration;
+import io.micronaut.web.router.RouteAttributes;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import jakarta.inject.Named;
+
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Predicate;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 
 import static io.micronaut.http.filter.ServerFilterPhase.TRACING;
-import static io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTelemetryFilter.SERVER_PATH;
 
 /**
  * An HTTP server instrumentation filter that uses Open Telemetry.
+ * <p>
+ * One filter in the {@link io.micronaut.http.filter.ServerFilterPhase#TRACING TRACING} phase, with two hooks:
+ * <ul>
+ *     <li>{@link #startSpan}, an around request filter, starts the server span and makes it the propagated
+ *     context of the downstream filters (request and response) and of the route. It ends the span when the
+ *     request is cancelled or the downstream fails.</li>
+ *     <li>{@link #endSpan}, a response filter, ends the span with the response. A filter continuation
+ *     yields the response once the route produced it, before any response filter runs, so the span is ended
+ *     by the response filter of this filter, which runs after the response filters ordered after it (such
+ *     as user filters at {@code TRACING.after()}, see #816).</li>
+ * </ul>
+ * The span is ended exactly once, whichever hook ends it.
  *
  * @author Nemanja Mikic
  * @since 4.2.0
  */
 @Internal
-@Filter(SERVER_PATH)
+@ServerFilter(AbstractOpenTelemetryFilter.SERVER_PATH)
 @Requires(beans = Tracer.class)
-public final class OpenTelemetryServerFilter implements HttpServerFilter {
+public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter implements Ordered {
 
-    static final String CONTEXT = OpenTelemetryServerFilter.class.getName() + "-context";
-    static final String CONTINUE = OpenTelemetryServerFilter.class.getName() + "-continue";
+    /**
+     * The request attribute holding the server span until it is ended. If the filter chain runs again for
+     * the same request in the meantime (e.g. an error raised by the server while the route still runs), no
+     * second span is started. Once the span is ended, a new pass starts a new span.
+     */
+    static final String SPAN = OpenTelemetryServerFilter.class.getName() + "-span";
 
-    private static final String APPLIED = OpenTelemetryServerFilter.class.getName() + "-applied";
-
-    @Nullable
-    private final Predicate<String> pathExclusionTest;
     private final Instrumenter<HttpRequest<?>, Object> instrumenter;
 
     /**
@@ -68,7 +83,7 @@ public final class OpenTelemetryServerFilter implements HttpServerFilter {
      */
     public OpenTelemetryServerFilter(@Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig,
                                      @Named("micronautHttpServerTelemetryInstrumenter") Instrumenter<HttpRequest<?>, Object> instrumenter) {
-        this.pathExclusionTest = exclusionsConfig == null ? null : exclusionsConfig.exclusionTest();
+        super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
         this.instrumenter = instrumenter;
     }
 
@@ -77,59 +92,52 @@ public final class OpenTelemetryServerFilter implements HttpServerFilter {
         return TRACING.order();
     }
 
-    @Override
-    public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
-        boolean applied = request.getAttribute(APPLIED, Boolean.class).orElse(false);
-        boolean continued = request.getAttribute(CONTINUE, Boolean.class).orElse(false);
-
-        if ((applied && !continued) || shouldExclude(request.getPath())) {
-            return chain.proceed(request);
+    /**
+     * Starts the server span.
+     *
+     * @param request           The request
+     * @param propagatedContext The propagated context of the downstream
+     * @param continuation      The continuation
+     * @return The response publisher
+     */
+    @RequestFilter
+    public Publisher<HttpResponse<?>> startSpan(HttpRequest<?> request,
+                                                MutablePropagatedContext propagatedContext,
+                                                FilterContinuation<Publisher<HttpResponse<?>>> continuation) {
+        if (shouldExclude(request.getPath()) || request.getAttribute(SPAN).isPresent()) {
+            return continuation.proceed();
         }
 
-        request.setAttribute(APPLIED, true);
-
-        Context parentContext = parentContext();
+        Context parentContext = parentContext(propagatedContext);
         if (!instrumenter.shouldStart(parentContext, request)) {
-            return chain.proceed(request);
+            return continuation.proceed();
         }
 
         Context context = instrumenter.start(parentContext, request);
-        request.setAttribute(CONTEXT, context);
-        // a new span has been started (e.g. the filter re-runs after an error), it has not been finished yet
-        request.removeAttribute(OpenTelemetryServerResponseFilter.FINISHED, Boolean.class);
-        PropagatedContext propagatedContext = PropagatedContext.getOrEmpty()
-            .plus(new OpenTelemetryPropagationContext(context));
-        return propagatedContext.propagate(() -> {
-            PropagatedContext currentContext = PropagatedContext.get();
-            AtomicBoolean signalled = new AtomicBoolean();
-            return Mono.from(chain.proceed(request))
-                .doOnNext(response -> signalled.set(true))
-                .doOnError(throwable -> {
-                    signalled.set(true);
-                    onError(request, context, throwable);
-                })
-                .doOnCancel(() -> {
-                    if (!signalled.get()) {
-                        onCancel(request, context);
-                    }
-                })
-                .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, currentContext));
-        });
+        ServerSpan span = new ServerSpan(instrumenter, request, context);
+        request.setAttribute(SPAN, span);
+        propagatedContext.add(new OpenTelemetryPropagationContext(context));
+        // A reactive continuation rather than a CompletionStage one: the downstream of a stage continuation
+        // runs eagerly, outside of the subscription of the upstream filters, so the Reactor context written
+        // by an upstream reactive filter (contextWrite) would no longer reach the route, e.g. the
+        // ReactorContext of a suspended Kotlin route.
+        return Mono.from(continuation.proceed())
+            .doOnNext(span::responded)
+            .doOnError(span::failed)
+            .doOnCancel(span::cancelled);
     }
 
     /**
-     * Ends the span when the request is cancelled (e.g. the client disconnected) before a response was
-     * produced, because the response filters that normally finish the span will not run. As for the
-     * HTTP client filter, the span is ended without a response and the status is left unset: the server
-     * did not fail and OpenTelemetry semantic conventions only mark server spans as errors for 5xx
-     * responses or errors.
+     * Ends the server span with the response, after the response filters ordered after this filter.
+     *
+     * @param request  The request
+     * @param response The response
      */
-    private void onCancel(HttpRequest<?> request, Context context) {
-        if (request.getAttribute(OpenTelemetryServerResponseFilter.FINISHED, Boolean.class).orElse(false)) {
-            return;
+    @ResponseFilter
+    public void endSpan(HttpRequest<?> request, HttpResponse<?> response) {
+        if (request.getAttribute(SPAN).orElse(null) instanceof ServerSpan span) {
+            span.end(response);
         }
-        request.setAttribute(OpenTelemetryServerResponseFilter.FINISHED, true);
-        instrumenter.end(context, request, null, null);
     }
 
     /**
@@ -140,25 +148,108 @@ public final class OpenTelemetryServerFilter implements HttpServerFilter {
      * span, current on the event-loop thread. Using it would suppress or wrongly parent the next server span
      * (see issue #475). A remote parent is still extracted from the request headers by the instrumenter.
      *
+     * @param propagatedContext The propagated context of the request
      * @return the parent context
      */
-    private static Context parentContext() {
-        return PropagatedContext.getOrEmpty()
-            .find(OpenTelemetryPropagationContext.class)
-            .map(OpenTelemetryPropagationContext::context)
-            .orElseGet(Context::root);
+    private static Context parentContext(MutablePropagatedContext propagatedContext) {
+        OpenTelemetryPropagationContext element = propagatedContext.getContext().findOrNull(OpenTelemetryPropagationContext.class);
+        return element == null ? Context.root() : element.context();
     }
 
-    private void onError(HttpRequest<?> request, Context context, Throwable e) {
-        Span.fromContext(context)
-            .setStatus(StatusCode.ERROR)
-            .recordException(e);
-        instrumenter.end(context, request, null, e);
-        request.setAttribute(OpenTelemetryServerResponseFilter.FINISHED, true);
-        request.setAttribute(CONTINUE, true);
-    }
+    /**
+     * A server span, ended exactly once: with the response by the response filter, an exception of the
+     * route and a status of 400 or above marking it as an error; with the failure if the downstream fails;
+     * or without a response if the request is cancelled before the response, leaving the status unset (the
+     * server did not fail, as for the HTTP client filter).
+     */
+    static final class ServerSpan {
 
-    private boolean shouldExclude(@Nullable String path) {
-        return pathExclusionTest != null && path != null && pathExclusionTest.test(path);
+        private static final VarHandle ENDED;
+
+        static {
+            try {
+                ENDED = MethodHandles.lookup().findVarHandle(ServerSpan.class, "ended", boolean.class);
+            } catch (ReflectiveOperationException e) {
+                throw new ExceptionInInitializerError(e);
+            }
+        }
+
+        private final Instrumenter<HttpRequest<?>, Object> instrumenter;
+        private final HttpRequest<?> request;
+        private final Context context;
+        @SuppressWarnings("unused") // accessed through ENDED
+        private volatile boolean ended;
+        private volatile boolean responded;
+
+        ServerSpan(Instrumenter<HttpRequest<?>, Object> instrumenter, HttpRequest<?> request, Context context) {
+            this.instrumenter = instrumenter;
+            this.request = request;
+            this.context = context;
+        }
+
+        /**
+         * The downstream produced the response: the span is left to the response filter, also if the
+         * subscriber cancels afterwards.
+         *
+         * @param response The response
+         */
+        void responded(HttpResponse<?> response) {
+            responded = true;
+        }
+
+        /**
+         * Ends the span when the downstream fails.
+         *
+         * @param error The failure
+         */
+        void failed(Throwable error) {
+            responded = true;
+            if (tryEnd()) {
+                instrumenter.end(context, request, null, markError(error));
+            }
+        }
+
+        /**
+         * Ends the span when the request is cancelled (e.g. the client disconnected) before a response was
+         * produced, because the response filter that normally ends it will not run.
+         */
+        void cancelled() {
+            if (!responded && tryEnd()) {
+                instrumenter.end(context, request, null, null);
+            }
+        }
+
+        void end(HttpResponse<?> response) {
+            if (!tryEnd()) {
+                return;
+            }
+            Throwable exception = RouteAttributes.getException(response).orElse(null);
+            if (exception != null) {
+                instrumenter.end(context, request, response, markError(exception));
+            } else if (response.code() >= 400) {
+                markError(null);
+                instrumenter.end(context, request, response, null);
+            } else {
+                instrumenter.end(context, request, response, null);
+            }
+        }
+
+        @Nullable
+        private Throwable markError(@Nullable Throwable error) {
+            Span span = Span.fromContext(context).setStatus(StatusCode.ERROR);
+            if (error != null) {
+                span.recordException(error);
+            }
+            return error;
+        }
+
+        private boolean tryEnd() {
+            if (ENDED.compareAndSet(this, false, true)) {
+                // ended: if the filter runs again for this request, it starts a new span
+                request.removeAttribute(SPAN, ServerSpan.class);
+                return true;
+            }
+            return false;
+        }
     }
 }

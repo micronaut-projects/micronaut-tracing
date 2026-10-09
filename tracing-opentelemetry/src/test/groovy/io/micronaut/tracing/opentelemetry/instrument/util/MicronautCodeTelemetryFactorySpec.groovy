@@ -56,18 +56,21 @@ class MicronautCodeTelemetryFactorySpec extends Specification {
         context.getBean(Instrumenter, Qualifiers.byName("micronautCodeTelemetryInstrumenter"))
     }
 
-    void "records default code telemetry metrics"() {
-        given:
+    void "does not record HTTP client metrics for @NewSpan calls"() {
+        given: "an SDK meter provider with a metric reader, so metrics would be recorded if registered"
         context = startContext()
+        def metricReader = context.getBean(InMemoryMetricReader)
+        def instrumenter = context.getBean(Instrumenter, Qualifiers.byName("micronautCodeTelemetryInstrumenter"))
 
         when:
-        context.getBean(TestService).invoke()
+        3.times { context.getBean(TestService).invoke() }
 
         then:
-        context.getBean(InMemoryMetricReader)
-            .collectAllMetrics()
-            *.name
-            .contains("http.client.request.duration")
+        context.getBean(InMemorySpanExporter).finishedSpanItems.size() == 3
+        metricReader.collectAllMetrics().every { !it.name.startsWith("http.") }
+
+        and: "no metrics listener is registered on the code instrumenter"
+        (Instrumenter.getDeclaredField("operationListeners").tap { accessible = true }.get(instrumenter) as Object[]).length == 0
     }
 
     void "uses replacement internal span name extractor"() {

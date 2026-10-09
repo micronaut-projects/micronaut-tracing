@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
+import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
@@ -22,6 +23,8 @@ import io.micronaut.core.annotation.Order;
 import io.micronaut.core.order.Ordered;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.tracing.opentelemetry.instrument.http.HttpMetricsSupport;
+import io.micronaut.tracing.opentelemetry.instrument.util.DefaultOperationMetrics;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.ContextCustomizer;
@@ -108,7 +111,7 @@ public final class MicronautHttpServerTelemetryFactory {
         builder.addAttributesExtractors(attributesExtractors);
         contextCustomizers.forEach(builder::addContextCustomizer);
         operationListeners.forEach(builder::addOperationListener);
-        operationMetrics.forEach(builder::addOperationMetrics);
+        DefaultOperationMetrics.addTo(builder, operationMetrics);
         spanLinksExtractors.forEach(builder::addSpanLinksExtractor);
 
         return builder.buildServerInstrumenter(HttpRequestGetter.INSTANCE);
@@ -131,10 +134,12 @@ public final class MicronautHttpServerTelemetryFactory {
             Instrumenter.builder(openTelemetry, INSTRUMENTATION_NAME,
                 HttpSpanNameExtractor.create(MicronautHttpServerAttributesGetter.INSTANCE));
 
+        if (DefaultOperationMetrics.recordsMetrics(openTelemetry, INSTRUMENTATION_NAME)) {
+            builder.addOperationMetrics(HttpServerMetrics.get());
+        }
         return builder
             .addAttributesExtractors((List) extractors)
             .setSpanStatusExtractor(HttpSpanStatusExtractor.create(MicronautHttpServerAttributesGetter.INSTANCE))
-            .addOperationMetrics(HttpServerMetrics.get())
             .addContextCustomizer(HttpServerRoute.create(MicronautHttpServerAttributesGetter.INSTANCE))
             .buildServerInstrumenter(HttpRequestGetter.INSTANCE);
     }
@@ -178,15 +183,31 @@ public final class MicronautHttpServerTelemetryFactory {
     }
 
     /**
-     * Returns an {@link OperationMetrics} instance which can be used to enable recording of {@link
-     * HttpServerMetrics}.
+     * Returns the default {@link OperationMetrics} recording the {@link HttpServerMetrics}. It is only applied to
+     * the instrumenter when {@code tracing.opentelemetry.http.server.metrics.enabled} is {@code true} or, when that
+     * is not set, when the OpenTelemetry meter provider exports metrics.
+     * @param openTelemetry the {@link OpenTelemetry}
+     * @param metricsConfig the {@link OpenTelemetryHttpServerMetricsConfig}
+     * @param beanContext the {@link BeanContext}
      * @return the {@link OperationMetrics} instance
      */
     @Order(Ordered.HIGHEST_PRECEDENCE)
     @Server
     @Singleton
-    OperationMetrics httpServerMetrics() {
-        return HttpServerMetrics.get();
+    @Requires(beans = OpenTelemetry.class)
+    OperationMetrics httpServerMetrics(OpenTelemetry openTelemetry,
+                                       @Nullable OpenTelemetryHttpServerMetricsConfig metricsConfig,
+                                       BeanContext beanContext) {
+        return HttpMetricsSupport.defaultMetrics(
+            HttpServerMetrics.get(),
+            metricsConfig != null ? metricsConfig.getEnabled() : null,
+            openTelemetry,
+            INSTRUMENTATION_NAME,
+            beanContext,
+            "server",
+            "io.micronaut.configuration.metrics.binder.web.ServerMetricsFilter",
+            "http.server.request.duration"
+        );
     }
 
     /**

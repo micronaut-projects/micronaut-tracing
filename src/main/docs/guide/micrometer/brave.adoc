@@ -15,3 +15,6 @@ tracing:
 ----
 
 The bridge creates Micrometer `Tracer`, `CurrentTraceContext`, `BaggageManager`, and `Propagator` beans from the existing Brave `Tracing` bean.
+
+When baggage fields are configured, the bridge also registers a Brave `Propagation.Factory` bean that adds them to B3 propagation: remote fields as remote baggage and correlation fields as local baggage.
+If you define your own `Propagation.Factory` bean, it replaces this one and you must register the baggage fields yourself (for example with `BaggagePropagation.newFactoryBuilder(...)`).

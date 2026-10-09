@@ -8,3 +8,5 @@ For example, add the base OpenTelemetry integration:
 dependency:micronaut-tracing-opentelemetry[scope="implementation", groupId="io.micronaut.tracing"]
 
 The bridge creates Micrometer `Tracer`, `CurrentTraceContext`, `BaggageManager`, and `Propagator` beans from the existing OpenTelemetry beans.
+
+The Micrometer `Tracer` bean requires the OpenTelemetry `OtelCurrentTraceContext`. If you replace the `CurrentTraceContext` bean with a different implementation, the bridge does not create a `Tracer` bean.

@@ -6,7 +6,7 @@ plugins {
 dependencies {
     api projects.micronautTracingOpentelemetry
     api projects.micronautTracingZipkinHttpClient
-    implementation(libs.opentelemetry.exporter.zipkin) {
+    implementation(libs.managed.opentelemetry.exporter.zipkin) {
         exclude group: 'io.zipkin.reporter2', module: 'zipkin-sender-okhttp3'
     }
     testImplementation mnReactor.micronaut.reactor

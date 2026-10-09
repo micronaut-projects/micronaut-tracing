@@ -48,6 +48,42 @@ otel:
         - X-From-Server-Response
 ----
 
+== HTTP metrics
+
+The HTTP server and client instrumenters can record the OpenTelemetry `http.server.request.duration` and `http.client.request.duration` histograms. Recording them costs an allocation of listener state, a `Context` copy and an attribute merge on every request, even when the metrics are dropped, so they are only recorded when OpenTelemetry exports metrics: when `otel.metrics.exporter` is set to an exporter other than `none` (Micronaut's default is `none`), or when a `MetricReader` is registered on the SDK meter provider, for example with an `OpenTelemetryBuilderCustomizer`. The check is made against the `MeterProvider` of the `OpenTelemetry` bean when the instrumenters are built, so it also covers an `OpenTelemetry` instance provided by the application or the OpenTelemetry Java agent.
+
+To override the detection, set the following properties:
+
+.Enabling or disabling the HTTP metrics
+[configuration]
+----
+tracing:
+  opentelemetry:
+    http:
+      server:
+        metrics:
+          enabled: true
+      client:
+        metrics:
+          enabled: false
+----
+
+|===
+| Property | Default | Description
+
+| `tracing.opentelemetry.http.server.metrics.enabled`
+| `true` only when metrics are exported
+| Whether the HTTP server instrumenter records `http.server.request.duration`.
+
+| `tracing.opentelemetry.http.client.metrics.enabled`
+| `true` only when metrics are exported
+| Whether the HTTP client instrumenter records `http.client.request.duration`.
+|===
+
+These properties only control the default metrics. `OperationMetrics` beans that you contribute with the ann:tracing.opentelemetry.instrument.http.server.MicronautHttpServerTelemetryFactory.Server[] or ann:tracing.opentelemetry.instrument.http.client.MicronautHttpClientTelemetryFactory.Client[] qualifier (see below) are always applied.
+
+TIP: If the application also uses https://micronaut-projects.github.io/micronaut-micrometer/latest/guide/[Micronaut Micrometer] with its web metrics binder (`micronaut.metrics.binders.web.enabled`, enabled by default), every request is timed twice: once by OpenTelemetry and once by Micrometer (`http.server.requests` / `http.client.requests`). A warning is logged at startup in that case. Keep only one of them by setting `tracing.opentelemetry.http.server.metrics.enabled` / `tracing.opentelemetry.http.client.metrics.enabled` to `false`, or `micronaut.metrics.binders.web.enabled` to `false`.
+
 == Customizing HTTP instrumentation
 
 HTTP client and server OpenTelemetry `Instrumenter` builders can be customized by defining beans with the appropriate qualifier:

@@ -9,12 +9,12 @@ If you override the Micronaut Tracing version, import the matching `io.micronaut
 dependency:opentelemetry-exporter-otlp[scope="implementation", groupId="io.opentelemetry"]
 - Logging exporter: `logging`
 dependency:opentelemetry-exporter-logging[scope="implementation", groupId="io.opentelemetry"]
-- Jaeger exporter: `jaeger`
-dependency:opentelemetry-exporter-jaeger[scope="implementation", groupId="io.opentelemetry"]
 - Google Cloud Trace: `google_cloud_trace`
 dependency:exporter-auto[scope="implementation", groupId="com.google.cloud.opentelemetry"]
 - Zipkin exporter: `zipkin`
 dependency:opentelemetry-exporter-zipkin[scope="implementation", groupId="io.opentelemetry"]
+
+OpenTelemetry no longer publishes a Jaeger exporter. Jaeger accepts OTLP, so use the `otlp` exporter to send traces to Jaeger.
 
 For Logback integration details, see the Logback section in this guide.
 

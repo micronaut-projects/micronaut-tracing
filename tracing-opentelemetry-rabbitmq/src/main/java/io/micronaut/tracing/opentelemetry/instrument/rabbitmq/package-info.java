@@ -16,7 +16,7 @@
 /**
  * Contains configuration that provides integration with RabbitMQ OpenTelemetry.
  *
- * @since 8.0.0
+ * @since 8.4.0
  */
 @Configuration
 @Requires(property = RabbitMQTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)

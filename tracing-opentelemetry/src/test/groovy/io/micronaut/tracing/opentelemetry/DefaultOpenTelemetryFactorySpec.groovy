@@ -155,119 +155,92 @@ class DefaultOpenTelemetryFactorySpec extends Specification {
         context.close()
     }
 
-    void "nested map properties are converted to OpenTelemetry map property format"() {
-        given:
-        ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration()
-        applicationConfiguration.name = 'default-app'
-
+    void "signal specific header maps accept nested configuration"() {
         when:
-        Map<String, String> properties = DefaultOpenTelemetryFactory.resolveOpenTelemetryProperties(
-                applicationConfiguration,
-                [
-                        'exporter.otlp.headers.Authorization'       : 'Bearer token',
-                        'exporter.otlp.headers.Content-Type'        : 'application/x-protobuf',
-                        'exporter.otlp.traces.headers.Authorization': 'Bearer traces-token',
-                        'exporter.otlp.metrics.headers.Authorization': 'Bearer metrics-token',
-                        'exporter.otlp.logs.headers.Authorization'  : 'Bearer logs-token',
-                        'resource.attributes.service.name'          : 'explicit-service',
-                        'resource.attributes.environment'           : 'test',
-                        'traces.exporter'                           : 'otlp'
-                ]
-        )
+        ConfigProperties config = configProperties([
+                'otel.exporter.otlp.traces.headers.Authorization' : 'Bearer traces-token',
+                'otel.exporter.otlp.metrics.headers.Authorization': 'Bearer metrics-token',
+                'otel.exporter.otlp.logs.headers.Authorization'   : 'Bearer logs-token'
+        ])
 
         then:
-        properties['otel.exporter.otlp.headers'] == 'Authorization=Bearer token,Content-Type=application/x-protobuf'
-        properties['otel.exporter.otlp.traces.headers'] == 'Authorization=Bearer traces-token'
-        properties['otel.exporter.otlp.metrics.headers'] == 'Authorization=Bearer metrics-token'
-        properties['otel.exporter.otlp.logs.headers'] == 'Authorization=Bearer logs-token'
-        properties['otel.resource.attributes'] == 'service.name=explicit-service,environment=test'
-        properties['otel.traces.exporter'] == 'otlp'
-        !properties.containsKey('otel.exporter.otlp.headers.Authorization')
-        !properties.containsKey('otel.resource.attributes.service.name')
-        !properties.containsKey('otel.service.name')
+        config.getMap('otel.exporter.otlp.traces.headers') == ['Authorization': 'Bearer traces-token']
+        config.getMap('otel.exporter.otlp.metrics.headers') == ['Authorization': 'Bearer metrics-token']
+        config.getMap('otel.exporter.otlp.logs.headers') == ['Authorization': 'Bearer logs-token']
+        config.getString('otel.traces.exporter') == 'none'
+    }
+
+    void "any map property accepts nested configuration and the OpenTelemetry string format"() {
+        expect: 'a map property no Micronaut code knows about'
+        configProperties(['otel.instrumentation.common.peer-service-mapping.1.2.3.4': 'cats'])
+                .getMap('otel.instrumentation.common.peer-service-mapping') == ['1.2.3.4': 'cats']
+        configProperties(['otel.instrumentation.common.peer-service-mapping': '1.2.3.4=cats,dogs.example=dogs'])
+                .getMap('otel.instrumentation.common.peer-service-mapping') == ['1.2.3.4': 'cats', 'dogs.example': 'dogs']
+    }
+
+    void "list properties accept a comma-separated string or a list"() {
+        expect:
+        configProperties(['otel.propagators': 'tracecontext,baggage']).getList('otel.propagators') == ['tracecontext', 'baggage']
+        configProperties(['otel.propagators': ['baggage', 'tracecontext']]).getList('otel.propagators') == ['baggage', 'tracecontext']
+    }
+
+    void "exporters default to none"() {
+        expect:
+        configProperties([:]).getString('otel.traces.exporter') == 'none'
+        configProperties([:]).getString('otel.metrics.exporter') == 'none'
+        configProperties([:]).getString('otel.logs.exporter') == 'none'
     }
 
     void "application name is used as default service name when service name is not configured"() {
-        given:
-        ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration()
-        applicationConfiguration.name = 'default-app'
-
-        when:
-        Map<String, String> properties = DefaultOpenTelemetryFactory.resolveOpenTelemetryProperties(
-                applicationConfiguration,
-                [:]
-        )
-
-        then:
-        properties['otel.service.name'] == 'default-app'
+        expect:
+        configProperties(['micronaut.application.name': 'default-app']).getString('otel.service.name') == 'default-app'
     }
 
     void "service name is not configured when application name is absent"() {
-        given:
-        ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration()
-
-        when:
-        Map<String, String> properties = DefaultOpenTelemetryFactory.resolveOpenTelemetryProperties(
-                applicationConfiguration,
-                [:]
-        )
-
-        then:
-        !properties.containsKey('otel.service.name')
+        expect:
+        configProperties([:]).getString('otel.service.name') == null
     }
 
     void "application name is used as default service name when resource service name is blank"() {
-        given:
-        ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration()
-        applicationConfiguration.name = 'default-app'
-
         when:
-        Map<String, String> properties = DefaultOpenTelemetryFactory.resolveOpenTelemetryProperties(
-                applicationConfiguration,
-                [
-                        'resource.attributes.service.name': '  ',
-                        'resource.attributes.environment' : 'test'
-                ]
-        )
+        ConfigProperties config = configProperties([
+                'micronaut.application.name'      : 'default-app',
+                'otel.resource.attributes.service.name': '  ',
+                'otel.resource.attributes.environment' : 'test'
+        ])
 
         then:
-        properties['otel.resource.attributes'] == 'service.name=  ,environment=test'
-        properties['otel.service.name'] == 'default-app'
+        config.getString('otel.service.name') == 'default-app'
+    }
+
+    void "application name does not override a resource service name"() {
+        expect:
+        configProperties([
+                'micronaut.application.name'           : 'default-app',
+                'otel.resource.attributes.service.name': 'explicit-service'
+        ]).getString('otel.service.name') == null
     }
 
     void "application name replaces blank service name property"() {
-        given:
-        ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration()
-        applicationConfiguration.name = 'default-app'
-
-        when:
-        Map<String, String> properties = DefaultOpenTelemetryFactory.resolveOpenTelemetryProperties(
-                applicationConfiguration,
-                [
-                        'service.name': ' '
-                ]
-        )
-
-        then:
-        properties['otel.service.name'] == 'default-app'
+        expect:
+        configProperties([
+                'micronaut.application.name': 'default-app',
+                'otel.service.name'         : ' '
+        ]).getString('otel.service.name') == 'default-app'
     }
 
-    void "existing map properties are normalized before nested map properties are appended"() {
-        given:
-        ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration()
-        applicationConfiguration.name = 'default-app'
+    void "existing map properties are normalized before nested map properties are added"() {
+        expect:
+        configProperties([
+                'otel.exporter.otlp.headers'              : ' Existing=present, ',
+                'otel.exporter.otlp.headers.Authorization': 'Bearer token'
+        ]).getMap('otel.exporter.otlp.headers') == ['Existing': 'present', 'Authorization': 'Bearer token']
+    }
 
-        when:
-        Map<String, String> properties = DefaultOpenTelemetryFactory.resolveOpenTelemetryProperties(
-                applicationConfiguration,
-                [
-                        'exporter.otlp.headers'              : ' Existing=present, ',
-                        'exporter.otlp.headers.Authorization': 'Bearer token'
-                ]
-        )
-
-        then:
-        properties['otel.exporter.otlp.headers'] == 'Existing=present,Authorization=Bearer token'
+    private ConfigProperties configProperties(Map<String, Object> properties) {
+        context = ApplicationContext.run(['spec.name': 'DefaultOpenTelemetryFactorySpec'] + properties)
+        context.getBean(OpenTelemetry)
+        return CONFIG_PROPERTIES.get()
     }
 
     @Factory

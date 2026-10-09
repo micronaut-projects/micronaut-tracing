@@ -75,61 +75,62 @@ public final class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
         Span span = builder.start();
         populateTags(context, span);
 
-        try (PropagatedContext.Scope ignore = OpenTracingPropagationContext.withSpan(
+        return OpenTracingPropagationContext.withSpan(
                 PropagatedContext.getOrEmpty(),
                 tracer,
                 span)
-            .propagate()) {
+            .propagate(() -> interceptWithSpan(context, span));
+    }
 
-            populateTags(context, span);
+    private Object interceptWithSpan(MethodInvocationContext<Object, Object> context, Span span) {
+        populateTags(context, span);
 
-            InterceptedMethod interceptedMethod = InterceptedMethod.of(context, conversionService);
-            try {
-                switch (interceptedMethod.resultType()) {
-                    case PUBLISHER -> {
-                        return interceptedMethod.handleResult(
-                            Mono.from(interceptedMethod.interceptResultAsPublisher())
-                                .doOnError(throwable -> logError(span, throwable))
-                                .doOnTerminate(span::finish)
-                        );
-                    }
-                    case COMPLETION_STAGE -> {
-                        try {
-                            CompletionStage<?> completionStage = interceptedMethod.interceptResultAsCompletionStage();
-                            if (completionStage != null) {
-                                completionStage = completionStage.whenComplete((o, throwable) -> {
-                                    if (throwable != null) {
-                                        logError(span, throwable);
-                                    }
-                                    span.finish();
-                                });
-                            }
-                            return interceptedMethod.handleResult(completionStage);
-                        } catch (RuntimeException e) {
-                            logError(span, e);
-                            span.finish();
-                            throw e;
+        InterceptedMethod interceptedMethod = InterceptedMethod.of(context, conversionService);
+        try {
+            switch (interceptedMethod.resultType()) {
+                case PUBLISHER -> {
+                    return interceptedMethod.handleResult(
+                        Mono.from(interceptedMethod.interceptResultAsPublisher())
+                            .doOnError(throwable -> logError(span, throwable))
+                            .doOnTerminate(span::finish)
+                    );
+                }
+                case COMPLETION_STAGE -> {
+                    try {
+                        CompletionStage<?> completionStage = interceptedMethod.interceptResultAsCompletionStage();
+                        if (completionStage != null) {
+                            completionStage = completionStage.whenComplete((o, throwable) -> {
+                                if (throwable != null) {
+                                    logError(span, throwable);
+                                }
+                                span.finish();
+                            });
                         }
-                    }
-                    case SYNCHRONOUS -> {
-                        try {
-                            return context.proceed();
-                        } catch (RuntimeException e) {
-                            logError(span, e);
-                            throw e;
-                        } finally {
-                            span.finish();
-                        }
-                    }
-                    default -> {
-                        return interceptedMethod.unsupported();
+                        return interceptedMethod.handleResult(completionStage);
+                    } catch (RuntimeException e) {
+                        logError(span, e);
+                        span.finish();
+                        throw e;
                     }
                 }
-            } catch (Exception e) {
-                logError(span, e);
-                span.finish();
-                return interceptedMethod.handleException(e);
+                case SYNCHRONOUS -> {
+                    try {
+                        return context.proceed();
+                    } catch (RuntimeException e) {
+                        logError(span, e);
+                        throw e;
+                    } finally {
+                        span.finish();
+                    }
+                }
+                default -> {
+                    return interceptedMethod.unsupported();
+                }
             }
+        } catch (Exception e) {
+            logError(span, e);
+            span.finish();
+            return interceptedMethod.handleException(e);
         }
     }
 

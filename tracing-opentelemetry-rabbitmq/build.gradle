@@ -19,9 +19,6 @@ dependencies {
 
 micronautBuild {
     binaryCompatibility {
-        def dash = version.indexOf('-')
-        def v = dash > 0 ? version.substring(0, dash) : version
-        def (major, minor, patch) = v.split('[.]').collect { it.toInteger() }
-        enabled = major > 8 || (major == 8 && minor > 0) || (major == 8 && minor == 0 && patch > 0)
+        enabledAfter '8.4.0'
     }
 }

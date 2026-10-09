@@ -46,8 +46,8 @@ class NewSpanTraceInterceptorSpec extends Specification {
         then:
         result == 'hello'
         operationName == 'KotlinResultService.hello'
-        2 * span.setTag(AbstractTraceInterceptor.CLASS_TAG, 'KotlinResultService') >> span
-        2 * span.setTag(AbstractTraceInterceptor.METHOD_TAG, 'hello') >> span
+        1 * span.setTag(AbstractTraceInterceptor.CLASS_TAG, 'KotlinResultService') >> span
+        1 * span.setTag(AbstractTraceInterceptor.METHOD_TAG, 'hello') >> span
         1 * span.finish()
         1 * scope.close()
     }

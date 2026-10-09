@@ -6,6 +6,11 @@ dependency:micronaut-tracing-opentelemetry-rabbitmq[scope="implementation", grou
 
 The module creates producer spans for `@RabbitClient` publications, injects the active trace context into AMQP headers, and creates consumer spans for `@RabbitListener` deliveries after extracting that propagated context.
 
+The consumer span covers the dispatch of a delivery by the RabbitMQ consumer. When a listener runs on the consumer thread (the default), the span therefore also covers the listener method.
+When a listener is configured with an executor (for example `@RabbitConnection(executor = "...")`), the delivery is handed off to that executor and the consumer span ends once the work has been submitted. The span context is exposed through Micronaut's `PropagatedContext` during dispatch, so an executor that propagates the Micronaut context (for example one that wraps submitted tasks with `PropagatedContext.wrapCurrent(..)`) runs the listener in the delivery's trace context, and any spans created by the listener become children of the consumer span.
+
+RPC reply consumers that Micronaut RabbitMQ registers on the `amq.rabbitmq.reply-to` pseudo-queue are not traced separately; the reply is covered by the producer span of the request.
+
 Instrumentation is enabled by default and can be disabled with:
 
 [configuration]

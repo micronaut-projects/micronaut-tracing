@@ -4,22 +4,35 @@ import com.rabbitmq.client.AMQP
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.LongString
 import io.micronaut.context.ApplicationContext
+import io.micronaut.context.annotation.Bean
+import io.micronaut.context.annotation.Factory
 import io.micronaut.context.annotation.Requires
 import io.micronaut.context.annotation.Property
+import io.micronaut.core.propagation.PropagatedContext
 import io.micronaut.rabbitmq.annotation.Binding
 import io.micronaut.rabbitmq.annotation.Queue
 import io.micronaut.rabbitmq.annotation.RabbitClient
+import io.micronaut.rabbitmq.annotation.RabbitConnection
 import io.micronaut.rabbitmq.annotation.RabbitListener
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import io.micronaut.test.support.TestPropertyProvider
 import io.micronaut.tracing.util.RabbitMQ
+import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
+import jakarta.inject.Named
+import jakarta.inject.Singleton
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.AbstractExecutorService
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.ThreadFactory
+import java.util.concurrent.TimeUnit
 
 @MicronautTest
 @Property(name = "spec.name", value = "RabbitMQTelemetryIntegrationSpec")
@@ -27,12 +40,14 @@ class RabbitMQTelemetryIntegrationSpec extends Specification implements TestProp
 
     @Inject ProductClient productClient
     @Inject ProductListener productListener
+    @Inject ExecutorListener executorListener
     @Inject InMemorySpanExporter exporter
 
     @Override
     Map<String, String> getProperties() {
         def properties = RabbitMQ.getProperties()
         declareQueue(properties, "product")
+        declareQueue(properties, "product-executor")
         return properties + [
                 'otel.register.global': 'false',
                 'micronaut.application.name': 'rabbitmq-test'
@@ -73,6 +88,31 @@ class RabbitMQTelemetryIntegrationSpec extends Specification implements TestProp
             assert consumer.attributes.get(RabbitMQTelemetry.MESSAGING_OPERATION_TYPE) == "process"
             assert consumer.attributes.get(RabbitMQTelemetry.ROUTING_KEY) == "product"
             assert consumer.attributes.get(RabbitMQTelemetry.DELIVERY_TAG) > 0
+        }
+    }
+
+    void "listener running on an executor sees the delivery trace context"() {
+        given:
+        def conditions = new PollingConditions(timeout: 30)
+        String message = "executor-${UUID.randomUUID()}"
+        exporter.reset()
+        executorListener.traceIds.clear()
+
+        when:
+        productClient.sendToExecutor(message.getBytes(StandardCharsets.UTF_8))
+
+        then:
+        conditions.eventually {
+            def spans = exporter.finishedSpanItems.toList()
+            def producer = spans.find { it.kind == SpanKind.PRODUCER }
+            def consumer = spans.find { it.kind == SpanKind.CONSUMER }
+            assert producer != null
+            assert consumer != null
+            assert executorListener.traceIds[message] != null
+            assert executorListener.threads[message] != null
+            assert executorListener.threads[message].startsWith("rabbit-tracing-executor")
+            assert executorListener.traceIds[message] == producer.spanContext.traceId
+            assert executorListener.spanIds[message] == consumer.spanContext.spanId
         }
     }
 
@@ -144,6 +184,73 @@ class RabbitMQTelemetryIntegrationSpec extends Specification implements TestProp
     static interface ProductClient {
         @Binding("product")
         void send(byte[] data)
+
+        @Binding("product-executor")
+        void sendToExecutor(byte[] data)
+    }
+
+    @Requires(property = "spec.name", value = "RabbitMQTelemetryIntegrationSpec")
+    @RabbitListener
+    static class ExecutorListener {
+        final Map<String, String> traceIds = new ConcurrentHashMap<>()
+        final Map<String, String> spanIds = new ConcurrentHashMap<>()
+        final Map<String, String> threads = new ConcurrentHashMap<>()
+
+        @Queue("product-executor")
+        @RabbitConnection(executor = "rabbit-tracing")
+        void receive(byte[] data) {
+            String message = new String(data, StandardCharsets.UTF_8)
+            def spanContext = Span.current().spanContext
+            spanIds.put(message, spanContext.spanId)
+            threads.put(message, Thread.currentThread().name)
+            traceIds.put(message, spanContext.traceId)
+        }
+    }
+
+    /**
+     * Executor that propagates the Micronaut {@link PropagatedContext} to submitted tasks.
+     */
+    @Requires(property = "spec.name", value = "RabbitMQTelemetryIntegrationSpec")
+    @Factory
+    static class PropagatingExecutorFactory {
+
+        @Singleton
+        @Named("rabbit-tracing")
+        @Bean(preDestroy = "shutdown")
+        ExecutorService rabbitTracingExecutor() {
+            def delegate = Executors.newFixedThreadPool(2, { Runnable r -> new Thread(r, "rabbit-tracing-executor") } as ThreadFactory)
+            return new AbstractExecutorService() {
+                @Override
+                void execute(Runnable command) {
+                    delegate.execute(PropagatedContext.wrapCurrent(command))
+                }
+
+                @Override
+                void shutdown() {
+                    delegate.shutdown()
+                }
+
+                @Override
+                List<Runnable> shutdownNow() {
+                    delegate.shutdownNow()
+                }
+
+                @Override
+                boolean isShutdown() {
+                    delegate.isShutdown()
+                }
+
+                @Override
+                boolean isTerminated() {
+                    delegate.isTerminated()
+                }
+
+                @Override
+                boolean awaitTermination(long timeout, TimeUnit unit) {
+                    delegate.awaitTermination(timeout, unit)
+                }
+            }
+        }
     }
 
     @Requires(property = "spec.name", value = "RabbitMQTelemetryIntegrationSpec")

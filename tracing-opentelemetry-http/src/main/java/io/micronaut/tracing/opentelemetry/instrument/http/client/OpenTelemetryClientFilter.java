@@ -40,6 +40,7 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.micronaut.http.HttpAttributes.INVOCATION_CONTEXT;
 import static io.micronaut.tracing.opentelemetry.instrument.http.client.OpenTelemetryClientFilter.CLIENT_PATH;
@@ -95,15 +96,28 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
                 .plus(new OpenTelemetryPropagationContext(context))
                 .propagate()) {
 
+                // A subscriber can cancel after it received the response, so end the span only once:
+                // ending it again would record the request twice in the operation listeners (metrics).
+                AtomicBoolean ended = new AtomicBoolean();
                 return Mono.from(chain.proceed(request))
-                    .doOnNext(mutableHttpResponse -> instrumenter.end(context, request, mutableHttpResponse, null))
-                    .doOnCancel(() -> instrumenter.end(context, request, null, null))
+                    .doOnNext(mutableHttpResponse -> {
+                        if (ended.compareAndSet(false, true)) {
+                            instrumenter.end(context, request, mutableHttpResponse, null);
+                        }
+                    })
+                    .doOnCancel(() -> {
+                        if (ended.compareAndSet(false, true)) {
+                            instrumenter.end(context, request, null, null);
+                        }
+                    })
                     .doOnError(throwable -> {
-                        Span span = Span.fromContext(context);
-                        span.recordException(throwable);
-                        span.setStatus(StatusCode.ERROR);
-                        HttpResponse<?> response = findResponseInThrowable(throwable).orElse(null);
-                        instrumenter.end(context, request, response, throwable);
+                        if (ended.compareAndSet(false, true)) {
+                            Span span = Span.fromContext(context);
+                            span.recordException(throwable);
+                            span.setStatus(StatusCode.ERROR);
+                            HttpResponse<?> response = findResponseInThrowable(throwable).orElse(null);
+                            instrumenter.end(context, request, response, throwable);
+                        }
                     });
 
             }

@@ -6,6 +6,7 @@ import io.micronaut.http.MutableHttpRequest
 import io.micronaut.http.filter.ClientFilterChain
 import io.opentelemetry.context.Context
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import spock.lang.Specification
 
@@ -30,6 +31,27 @@ class OpenTelemetryClientFilterSpec extends Specification {
         1 * instrumenter.start(_, request) >> spanContext
         1 * chain.proceed(request) >> Mono.never()
         1 * instrumenter.end(spanContext, request, null, null)
+    }
+
+    void 'ends the client span once when the subscriber cancels after the response'() {
+        given:
+        MutableHttpRequest<Object> request = HttpRequest.GET('/test')
+        HttpResponse<Object> response = HttpResponse.ok()
+        ClientFilterChain chain = Mock()
+        Instrumenter<MutableHttpRequest<?>, Object> instrumenter = Mock()
+        Context spanContext = Context.root()
+        def filter = new OpenTelemetryClientFilter(null, instrumenter)
+
+        when:
+        HttpResponse<?> result = Flux.from(filter.doFilter(request, chain)).take(1).blockLast(Duration.ofSeconds(3))
+
+        then:
+        1 * instrumenter.shouldStart(_, request) >> true
+        1 * instrumenter.start(_, request) >> spanContext
+        1 * chain.proceed(request) >> Flux.concat(Mono.just(response), Mono.never())
+        1 * instrumenter.end(spanContext, request, response, null)
+        0 * instrumenter.end(_, _, _, _)
+        result == response
     }
 
     void 'falls back to the original request when the instrumenter returns no context'() {

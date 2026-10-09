@@ -64,5 +64,13 @@ micronautBom {
         // The 1.7.x Micrometer Tracing BOM does not import micrometer-bom (or list io.micrometer:docs),
         // so only the BOM itself is suppressed. Re-check its POM when bumping the catalog version.
         dependencies.add("io.micrometer:micrometer-tracing-bom:${libs.versions.managed.micrometer.tracing.get()}")
+        // Removed from the catalog in 8.4.0 (#952): the artifacts are discontinued upstream and incompatible
+        // with the managed OpenTelemetry versions. Kafka instrumentation now uses
+        // opentelemetry-kafka-clients-common-0.11, managed by the instrumentation BOM.
+        acceptedVersionRegressions.addAll([
+                "opentelemetry-instrumentation-kafka-common",
+                "opentelemetry-api-events",
+                "opentelemetry-instrumentation-api-semconv"
+        ])
     }
 }

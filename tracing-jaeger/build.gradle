@@ -27,6 +27,8 @@ dependencies {
     implementation(libs.okio)
     testImplementation mnLogging.logback.classic
     testImplementation mnReactor.micronaut.reactor
+    testImplementation "io.reactivex.rxjava3:rxjava"
+    testImplementation mnRxjava3.micronaut.rxjava3.http.client
     testImplementation mn.micronaut.http.server.netty
     testRuntimeOnly mnSerde.micronaut.serde.jackson
     testRuntimeOnly mnLogging.logback.classic

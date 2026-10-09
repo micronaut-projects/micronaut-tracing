@@ -21,6 +21,9 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.tracing.annotation.ContinueSpan;
+import io.micronaut.tracing.util.TracedMethod;
+import io.micronaut.tracing.util.TracedMethodCache;
+import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.incubator.semconv.util.ClassAndMethod;
@@ -41,6 +44,8 @@ import jakarta.inject.Singleton;
 @InterceptorBean(ContinueSpan.class)
 public final class ContinueSpanOpenTelemetryTraceInterceptor extends AbstractOpenTelemetryTraceInterceptor {
 
+    private final TracedMethodCache<TracedMethod> tracedMethods = new TracedMethodCache<>(TracedMethod::of);
+
     /**
      * Initialize the interceptor with tracer and conversion service.
      *
@@ -54,12 +59,12 @@ public final class ContinueSpanOpenTelemetryTraceInterceptor extends AbstractOpe
     @Override
     public Object intercept(MethodInvocationContext<Object, Object> context) {
         Context currentContext = Context.current();
-
-        if (currentContext.toString().equals("{}")) {
-            return context.proceed();
+        if (currentContext != Context.root()) {
+            TracedMethod tracedMethod = tracedMethods.get(context);
+            if (tracedMethod.getTagIndexes().length > 0) {
+                tagArguments(Span.fromContext(currentContext), tracedMethod, context.getParameterValues());
+            }
         }
-        tagArguments(context);
-
         return context.proceed();
     }
 }

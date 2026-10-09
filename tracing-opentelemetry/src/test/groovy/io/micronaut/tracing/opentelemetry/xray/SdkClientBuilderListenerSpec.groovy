@@ -2,6 +2,7 @@ package io.micronaut.tracing.opentelemetry.xray
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.BeanContext
+import io.micronaut.context.BeanProvider
 import io.micronaut.context.annotation.Factory
 import io.micronaut.context.annotation.Primary
 import io.micronaut.context.annotation.Requires
@@ -28,6 +29,11 @@ import spock.lang.Specification
 
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Proxy
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.function.Function
 
 @MicronautTest(startApplication = false)
 class SdkClientBuilderListenerSpec extends Specification {
@@ -56,6 +62,38 @@ class SdkClientBuilderListenerSpec extends Specification {
 
         cleanup:
         context.close()
+    }
+
+    void "aws sdk telemetry provider resolves OpenTelemetry lazily and only once"() {
+        given:
+        AtomicInteger resolutions = new AtomicInteger()
+        BeanProvider<OpenTelemetry> openTelemetryProvider = { ->
+            resolutions.incrementAndGet()
+            OpenTelemetry.noop()
+        } as BeanProvider<OpenTelemetry>
+
+        when:
+        AwsSdkTelemetryProvider provider = new AwsSdkTelemetryProvider(
+                openTelemetryProvider, new AwsSdkTelemetryConfiguration(), new MessagingTelemetryConfiguration())
+
+        then:
+        resolutions.get() == 0
+
+        when:
+        ExecutorService executor = Executors.newFixedThreadPool(4)
+        // compare identity hash codes rather than the instances, so Groovy never introspects AwsSdkTelemetry
+        // (which references optional AWS SDK service classes absent from the test classpath)
+        List<Integer> telemetryIds = (1..8).collect {
+            executor.submit({ provider.withTelemetry({ t -> System.identityHashCode(t) } as Function) } as Callable<Integer>)
+        }*.get()
+        provider.newExecutionInterceptor()
+
+        then:
+        resolutions.get() == 1
+        telemetryIds.unique().size() == 1
+
+        cleanup:
+        executor?.shutdownNow()
     }
 
     void "aws sdk telemetry injects configured propagator into sqs message attributes"() {

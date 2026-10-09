@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.opentelemetry.xray;
 
+import io.micronaut.context.BeanProvider;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
@@ -35,19 +36,16 @@ import software.amazon.awssdk.core.client.builder.SdkClientBuilder;
 public class AwsSdkTelemetryFactory {
 
     /**
-     * @param openTelemetry OpenTelemetry
+     * @param openTelemetry OpenTelemetry provider, resolved lazily on first use to avoid circular dependencies
+     *                      when OpenTelemetry beans themselves need AWS SDK clients
      * @param awsSdkTelemetryConfiguration AWS SDK instrumentation configuration
      * @param messagingTelemetryConfiguration messaging instrumentation configuration
      * @return the AWS SDK telemetry instrumentation
      */
     @Singleton
-    AwsSdkTelemetryProvider awsSdkTelemetryProvider(OpenTelemetry openTelemetry,
+    AwsSdkTelemetryProvider awsSdkTelemetryProvider(BeanProvider<OpenTelemetry> openTelemetry,
                                                     AwsSdkTelemetryConfiguration awsSdkTelemetryConfiguration,
                                                     MessagingTelemetryConfiguration messagingTelemetryConfiguration) {
-        return new AwsSdkTelemetryProvider(AwsSdkTelemetry.builder(openTelemetry)
-            .setCaptureExperimentalSpanAttributes(awsSdkTelemetryConfiguration.isExperimentalSpanAttributes())
-            .setUseConfiguredPropagatorForMessaging(awsSdkTelemetryConfiguration.isExperimentalUsePropagatorForMessaging())
-            .setMessagingReceiveTelemetryEnabled(messagingTelemetryConfiguration.isEnabled())
-            .build());
+        return new AwsSdkTelemetryProvider(openTelemetry, awsSdkTelemetryConfiguration, messagingTelemetryConfiguration);
     }
 }

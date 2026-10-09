@@ -728,7 +728,11 @@ class HttpTracingSpec extends Specification {
     }
 
     void 'test netty client request and response logs use current reactive request trace id'() {
-        given:
+        given: 'a pooled client connection, so the request is written while the filter context is propagated'
+        // Establishing a new connection completes asynchronously inside the HTTP client, which does not
+        // re-propagate the PropagatedContext, and the tracing filter must not leave its scope open on the
+        // event loop to compensate (see OpenTracingFilterScopeLeakSpec).
+        new URL(embeddedServer.URL, '/traced/reactiveClient/warmup').text
         TracedController.reactiveClientTraceIds.clear()
         ClientLogAppender.events.clear()
         def logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger('io.micronaut.http.client.netty.DefaultHttpClient')

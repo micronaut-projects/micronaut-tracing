@@ -43,6 +43,7 @@ include 'tracing-brave'
 include 'tracing-brave-http'
 
 include 'tests:kotlin-tests'
+include 'tests:kotlin-ksp-tests'
 include 'test-suite-java'
 include 'test-suite-kotlin'
 include 'test-suite-groovy'

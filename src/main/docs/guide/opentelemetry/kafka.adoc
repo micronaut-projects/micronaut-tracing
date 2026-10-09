@@ -35,3 +35,11 @@ otel:
 - `excluded-topics` - list of topics to exclude from tracing
 
 NOTE: You can't use `included-topics` and `excluded-topics` properties together as they are mutually exclusive - choose one or the other.
+
+== Consumer Record Processing Context
+
+When `wrapper` is enabled, a `process` span is started for each consumer record as it is iterated (or accessed by index) from the polled `ConsumerRecords`. While a record is being processed, its span context is made current both as the OpenTelemetry `Context` and in the Micronaut `PropagatedContext`, so `@Async` methods and Micronaut-instrumented executors invoked from a listener continue the record's trace.
+
+Each record's `process` span ends when the next record is iterated, or when the consumer is used again (for example for `poll` or `commitSync`). For record-at-a-time listeners this means the listener method runs within the context of the record it receives.
+
+IMPORTANT: For batch listeners (`@KafkaListener(batch = true)`) the records are iterated before the listener method is invoked, so the context that is current while the batch method runs is the one of the *last* record in the batch. If you need per-record trace context in a batch listener, extract it from each record's headers yourself.

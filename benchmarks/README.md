@@ -91,3 +91,38 @@ about 800 B more than the synchronous one.
 
 The exclusion check allocates a stream pipeline on every call, and each `http.route` lookup allocates
 328 bytes of `Optional`s and the route string.
+
+## After P2-3 (metrics gating)
+
+P2-3 removes the `HttpClientMetrics` listener from the `@NewSpan` / `@ContinueSpan` (code) instrumenter and
+only registers the HTTP server and client metrics listeners when OpenTelemetry exports metrics (see
+`tracing.opentelemetry.http.{server,client}.metrics.enabled`). With the benchmark defaults
+(`otel.metrics.exporter=none`) no metrics listener runs any more.
+
+Both columns were measured on the same stack (OpenTelemetry 1.66), with the default short settings and
+`-prof gc`; "before" is `stack/14-perf-benchmarks` (`10980f79`), "after" is `stack/15-metrics-gating`.
+
+### `@NewSpan` (`NewSpanBenchmark`, B/op, error < ±15 B/op)
+
+| method | `OTEL` before | `OTEL` after | Δ | `OTEL_NOOP_EXPORTER` before | after | Δ | `OTEL_RATIO_10` before | after | Δ |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `sync` | 1,680 | 1,568 | -112 | 1,726 | 1,627 | -99 | 1,143 | 999 | -144 |
+| `completionStage` | 1,720 | 1,608 | -112 | 1,790 | 1,680 | -110 | 1,223 | 1,071 | -152 |
+| `mono` | 2,488 | 2,328 | -160 | 2,552 | 2,391 | -161 | 1,927 | 1,775 | -152 |
+| `flux` | 2,392 | 2,232 | -160 | 2,455 | 2,295 | -160 | 1,855 | 1,679 | -176 |
+
+`NONE` stays at 0 B/op. An unsampled synchronous call (most of D) now allocates about 1 KB.
+
+### HTTP server request (`HttpServerBenchmark.request`, B/op, mean of 3 runs)
+
+| mode | before | after | Δ |
+|---|---:|---:|---:|
+| `NONE` (A) | 18,192 | 17,182 | (-1,010, noise) |
+| `OTEL` (B) | 27,687 | 27,555 | -132 |
+| `OTEL_NOOP_EXPORTER` (C) | 27,944 | 27,495 | -449 |
+| `OTEL_RATIO_10` (D) | 27,848 | 26,626 | -1,222 |
+
+The machine was busy and the per-run error of this benchmark was ±1-4 KB/op (even `NONE`, which this change
+does not touch, moved by 1 KB), so the HTTP saving is below the resolution of these runs. The removed server
+listener state, `Context` copy and attribute merge account for a few hundred bytes per request; the
+benchmark client is not instrumented, so the client listener saving is not measured here.

@@ -130,6 +130,9 @@ final class OpenTelemetryServerResponseFilter implements Ordered {
             span.recordException(e);
         }
         instrumenter.end(context, request, response, e);
+        // as for errors signalled through the filter chain, allow the server filter to start a new span
+        // if the request is processed by the filter chain again
+        request.setAttribute(OpenTelemetryServerFilter.CONTINUE, true);
     }
 
     @Override

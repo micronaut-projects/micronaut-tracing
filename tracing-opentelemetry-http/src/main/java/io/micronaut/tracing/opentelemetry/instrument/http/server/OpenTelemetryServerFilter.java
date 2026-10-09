@@ -36,6 +36,7 @@ import jakarta.inject.Named;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 import static io.micronaut.http.filter.ServerFilterPhase.TRACING;
@@ -53,9 +54,9 @@ import static io.micronaut.tracing.opentelemetry.instrument.http.AbstractOpenTel
 public final class OpenTelemetryServerFilter implements HttpServerFilter {
 
     static final String CONTEXT = OpenTelemetryServerFilter.class.getName() + "-context";
+    static final String CONTINUE = OpenTelemetryServerFilter.class.getName() + "-continue";
 
     private static final String APPLIED = OpenTelemetryServerFilter.class.getName() + "-applied";
-    private static final String CONTINUE = OpenTelemetryServerFilter.class.getName() + "-continue";
 
     @Nullable
     private final Predicate<String> pathExclusionTest;
@@ -94,14 +95,41 @@ public final class OpenTelemetryServerFilter implements HttpServerFilter {
 
         Context context = instrumenter.start(parentContext, request);
         request.setAttribute(CONTEXT, context);
+        // a new span has been started (e.g. the filter re-runs after an error), it has not been finished yet
+        request.removeAttribute(OpenTelemetryServerResponseFilter.FINISHED, Boolean.class);
         PropagatedContext propagatedContext = PropagatedContext.getOrEmpty()
             .plus(new OpenTelemetryPropagationContext(context));
         return propagatedContext.propagate(() -> {
             PropagatedContext currentContext = PropagatedContext.get();
+            AtomicBoolean signalled = new AtomicBoolean();
             return Mono.from(chain.proceed(request))
-                .doOnError(throwable -> onError(request, context, throwable))
+                .doOnNext(response -> signalled.set(true))
+                .doOnError(throwable -> {
+                    signalled.set(true);
+                    onError(request, context, throwable);
+                })
+                .doOnCancel(() -> {
+                    if (!signalled.get()) {
+                        onCancel(request, context);
+                    }
+                })
                 .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, currentContext));
         });
+    }
+
+    /**
+     * Ends the span when the request is cancelled (e.g. the client disconnected) before a response was
+     * produced, because the response filters that normally finish the span will not run. As for the
+     * HTTP client filter, the span is ended without a response and the status is left unset: the server
+     * did not fail and OpenTelemetry semantic conventions only mark server spans as errors for 5xx
+     * responses or errors.
+     */
+    private void onCancel(HttpRequest<?> request, Context context) {
+        if (request.getAttribute(OpenTelemetryServerResponseFilter.FINISHED, Boolean.class).orElse(false)) {
+            return;
+        }
+        request.setAttribute(OpenTelemetryServerResponseFilter.FINISHED, true);
+        instrumenter.end(context, request, null, null);
     }
 
     /**

@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
+import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
@@ -22,6 +23,8 @@ import io.micronaut.core.annotation.Order;
 import io.micronaut.core.order.Ordered;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
+import io.micronaut.tracing.opentelemetry.instrument.http.HttpMetricsSupport;
+import io.micronaut.tracing.opentelemetry.instrument.util.DefaultOperationMetrics;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.api.incubator.semconv.http.HttpClientServicePeerAttributesExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
@@ -108,7 +111,7 @@ public class MicronautHttpClientTelemetryFactory {
         builder.addAttributesExtractors(attributesExtractors);
         contextCustomizers.forEach(builder::addContextCustomizer);
         operationListeners.forEach(builder::addOperationListener);
-        operationMetrics.forEach(builder::addOperationMetrics);
+        DefaultOperationMetrics.addTo(builder, operationMetrics);
         spanLinksExtractors.forEach(builder::addSpanLinksExtractor);
 
         return builder.buildClientInstrumenter(HttpRequestSetter.INSTANCE);
@@ -164,14 +167,30 @@ public class MicronautHttpClientTelemetryFactory {
     }
 
     /**
-     * Returns an {@link OperationMetrics} instance which can be used to enable recording of {@link
-     * HttpClientMetrics}.
+     * Returns the default {@link OperationMetrics} recording the {@link HttpClientMetrics}. It is only applied to
+     * the instrumenter when {@code tracing.opentelemetry.http.client.metrics.enabled} is {@code true} or, when that
+     * is not set, when the OpenTelemetry meter provider exports metrics.
+     * @param openTelemetry the {@link OpenTelemetry}
+     * @param metricsConfig the {@link OpenTelemetryHttpClientMetricsConfig}
+     * @param beanContext the {@link BeanContext}
      * @return the {@link OperationMetrics} instance
      */
     @Client
     @Order(Ordered.HIGHEST_PRECEDENCE)
     @Singleton
-    OperationMetrics httpClientMetrics() {
-        return HttpClientMetrics.get();
+    @Requires(beans = OpenTelemetry.class)
+    OperationMetrics httpClientMetrics(OpenTelemetry openTelemetry,
+                                       @Nullable OpenTelemetryHttpClientMetricsConfig metricsConfig,
+                                       BeanContext beanContext) {
+        return HttpMetricsSupport.defaultMetrics(
+            HttpClientMetrics.get(),
+            metricsConfig != null ? metricsConfig.getEnabled() : null,
+            openTelemetry,
+            INSTRUMENTATION_NAME,
+            beanContext,
+            "client",
+            "io.micronaut.configuration.metrics.binder.web.ClientMetricsFilter",
+            "http.client.request.duration"
+        );
     }
 }

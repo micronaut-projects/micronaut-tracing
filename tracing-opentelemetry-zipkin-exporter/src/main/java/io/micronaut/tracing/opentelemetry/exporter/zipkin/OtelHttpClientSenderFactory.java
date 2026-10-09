@@ -25,7 +25,11 @@ import zipkin2.reporter.Sender;
 
 /**
  * Builds a {@code SpanProcessor} that exports traces to Zipkin.
+ *
+ * @deprecated OpenTelemetry no longer publishes {@code opentelemetry-exporter-zipkin}. Use the OTLP exporter
+ * instead; Zipkin can receive OTLP data. Scheduled for removal in a future major release.
  */
+@Deprecated(since = "8.4.0", forRemoval = true)
 @Factory
 @Requires(missingProperty = "otel.traces.exporter")
 @Requires(bean = Sender.class)

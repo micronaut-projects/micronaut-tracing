@@ -27,6 +27,8 @@ otel:
     exporter: zipkin
 ----
 
+WARNING: OpenTelemetry no longer publishes `opentelemetry-exporter-zipkin`; the last release is 1.64.0, which Micronaut Tracing still manages. The `micronaut-tracing-opentelemetry-zipkin-exporter` module below is deprecated and will be removed in a future major release. Prefer the OTLP exporter (`otel.traces.exporter: otlp`): Zipkin can receive OTLP data, for example through an OpenTelemetry Collector.
+
 Micronaut provides Zipkin exporter that will use Micronaut's HTTP client instead of OKHttp client. That will reduce dependency graph and will make your native executable smaller. To use it add next dependency:
 
 dependency:micronaut-tracing-opentelemetry-zipkin-exporter[scope="implementation", groupId="io.micronaut.tracing"]

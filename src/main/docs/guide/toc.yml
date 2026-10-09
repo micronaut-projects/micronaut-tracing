@@ -4,6 +4,10 @@ releaseHistory: Release History
 breaks: Breaking Changes
 jaeger: Tracing with Jaeger
 zipkin: Tracing with Zipkin
+micrometer:
+  title: Tracing with Micrometer Tracing
+  openTelemetryBridge: OpenTelemetry Bridge
+  brave: Brave Bridge
 opentelemetry:
   title: Tracing with OpenTelemetry
   annotations: OpenTelemetry Annotations

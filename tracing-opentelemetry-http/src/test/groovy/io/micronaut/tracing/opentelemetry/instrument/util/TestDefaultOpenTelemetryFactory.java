@@ -16,6 +16,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.util;
 
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.tracing.opentelemetry.OpenTelemetryBuilderCustomizer;
 import io.opentelemetry.sdk.testing.exporter.InMemoryMetricReader;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
@@ -42,6 +43,7 @@ public class TestDefaultOpenTelemetryFactory {
     }
 
     @Singleton
+    @Requires(property = "test.metric-reader.enabled", notEquals = "false")
     OpenTelemetryBuilderCustomizer meterProviderCustomizer(InMemoryMetricReader metricReader) {
         return builder -> builder.addMeterProviderCustomizer((meterProviderBuilder, ignored) ->
             meterProviderBuilder.registerMetricReader(metricReader));

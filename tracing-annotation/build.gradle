@@ -4,4 +4,7 @@ plugins {
 
 dependencies {
     api mn.micronaut.core.processor
+
+    testImplementation mn.micronaut.inject.java.test
+    testImplementation mn.micronaut.inject.groovy.test
 }

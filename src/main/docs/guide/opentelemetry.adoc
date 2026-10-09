@@ -1,7 +1,7 @@
 The Micronaut Open Telemetry module uses https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md[Open Telemetry Autoconfigure SDK] to configure Open Telemetry for tracing. For some functionalities you have to add additional dependencies. The Default values that are defined inside the Micronaut which values might be different from the default ones inside https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md[Open Telemetry Autoconfigure SDK] module are:
 
 - otel.traces.exporter = none
-- otel.metrics.exporter = none
+- otel.metrics.exporter = none (unless a `MetricReader` is registered, the HTTP request duration metrics are then not recorded, see <<http,HTTP Server and Client>>)
 - otel.logs.exporter = none
 - otel.service.name = value of the application.name
 

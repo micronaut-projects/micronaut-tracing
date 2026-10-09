@@ -19,16 +19,19 @@ import io.micronaut.aop.InterceptedMethod;
 import io.micronaut.aop.InterceptorBean;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.opentracing.OpenTracingPropagationContext;
-import io.micronaut.tracing.util.MethodNameFormatter;
+import io.micronaut.tracing.util.TracedMethod;
+import io.micronaut.tracing.util.TracedMethodCache;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import jakarta.inject.Singleton;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletionStage;
@@ -46,6 +49,8 @@ import java.util.concurrent.CompletionStage;
 @InterceptorBean(value = NewSpan.class)
 public final class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
 
+    private final TracedMethodCache<NewSpanMethod> methods = new TracedMethodCache<>(this::resolve);
+
     /**
      * Initialize the interceptor with tracer and conversion service.
      *
@@ -58,80 +63,115 @@ public final class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
 
     @Override
     public Object intercept(MethodInvocationContext<Object, Object> context) {
-
-        Span currentSpan = tracer.activeSpan();
-        AnnotationValue<NewSpan> newSpan = context.getAnnotation(NewSpan.class);
-        boolean isNew = newSpan != null;
-        if (!isNew) {
+        NewSpanMethod method = methods.get(context);
+        if (method.operationName == null) {
             return context.proceed();
         }
-        String operationName = newSpan.stringValue().orElse(context.getDeclaringType().getSimpleName() + "." + MethodNameFormatter.format(context.getMethodName()));
 
-        Tracer.SpanBuilder builder = tracer.buildSpan(operationName);
+        Span currentSpan = tracer.activeSpan();
+        Tracer.SpanBuilder builder = tracer.buildSpan(method.operationName);
         if (currentSpan != null) {
             builder.asChildOf(currentSpan);
         }
 
         Span span = builder.start();
-        populateTags(context, span);
+        populateTags(span, method.className, method.tracedMethod, context.getParameterValues());
 
         return OpenTracingPropagationContext.withSpan(
                 PropagatedContext.getOrEmpty(),
                 tracer,
                 span)
-            .propagate(() -> interceptWithSpan(context, span));
+            .propagate(() -> interceptWithSpan(context, method, span));
     }
 
-    private Object interceptWithSpan(MethodInvocationContext<Object, Object> context, Span span) {
-        populateTags(context, span);
+    private Object interceptWithSpan(MethodInvocationContext<Object, Object> context, NewSpanMethod method, Span span) {
+        if (method.synchronous) {
+            try {
+                return context.proceed();
+            } catch (Throwable e) {
+                logError(span, e);
+                throw e;
+            } finally {
+                span.finish();
+            }
+        }
 
         InterceptedMethod interceptedMethod = InterceptedMethod.of(context, conversionService);
         try {
             switch (interceptedMethod.resultType()) {
                 case PUBLISHER -> {
+                    Publisher<?> publisher = interceptedMethod.interceptResultAsPublisher();
+                    // finish the span exactly once, on the terminal signal: completion, error or cancellation
+                    if (method.single) {
+                        return interceptedMethod.handleResult(
+                            Mono.from(publisher)
+                                .doOnError(throwable -> logError(span, throwable))
+                                .doFinally(signal -> span.finish())
+                        );
+                    }
                     return interceptedMethod.handleResult(
-                        Mono.from(interceptedMethod.interceptResultAsPublisher())
+                        Flux.from(publisher)
                             .doOnError(throwable -> logError(span, throwable))
-                            .doOnTerminate(span::finish)
+                            .doFinally(signal -> span.finish())
                     );
                 }
                 case COMPLETION_STAGE -> {
-                    try {
-                        CompletionStage<?> completionStage = interceptedMethod.interceptResultAsCompletionStage();
-                        if (completionStage != null) {
-                            completionStage = completionStage.whenComplete((o, throwable) -> {
-                                if (throwable != null) {
-                                    logError(span, throwable);
-                                }
-                                span.finish();
-                            });
-                        }
-                        return interceptedMethod.handleResult(completionStage);
-                    } catch (RuntimeException e) {
-                        logError(span, e);
-                        span.finish();
-                        throw e;
+                    CompletionStage<?> completionStage = interceptedMethod.interceptResultAsCompletionStage();
+                    if (completionStage != null) {
+                        completionStage = completionStage.whenComplete((o, throwable) -> {
+                            if (throwable != null) {
+                                logError(span, throwable);
+                            }
+                            span.finish();
+                        });
                     }
+                    return interceptedMethod.handleResult(completionStage);
                 }
                 case SYNCHRONOUS -> {
-                    try {
-                        return context.proceed();
-                    } catch (RuntimeException e) {
-                        logError(span, e);
-                        throw e;
-                    } finally {
-                        span.finish();
-                    }
+                    Object result = context.proceed();
+                    span.finish();
+                    return result;
                 }
                 default -> {
                     return interceptedMethod.unsupported();
                 }
             }
         } catch (Exception e) {
+            // thrown before the result could finish the span
             logError(span, e);
             span.finish();
             return interceptedMethod.handleException(e);
         }
     }
 
+    private NewSpanMethod resolve(MethodInvocationContext<?, ?> context) {
+        TracedMethod tracedMethod = TracedMethod.of(context);
+        String className = context.getDeclaringType().getSimpleName();
+        String operationName = null;
+        if (tracedMethod.isNewSpan()) {
+            operationName = tracedMethod.getNewSpanValue() != null
+                ? tracedMethod.getNewSpanValue()
+                : className + '.' + tracedMethod.getMethodName();
+        }
+        boolean synchronous = !context.isSuspend()
+            && InterceptedMethod.of(context, conversionService).resultType() == InterceptedMethod.ResultType.SYNCHRONOUS;
+        boolean single = Publishers.isSingle(context.getReturnType().getType());
+        return new NewSpanMethod(tracedMethod, className, operationName, synchronous, single);
+    }
+
+    /**
+     * The per-method data of the interceptor.
+     *
+     * @param tracedMethod  the span data of the method
+     * @param className     the simple name of the declaring class
+     * @param operationName the span name, {@code null} if the method is not a new span
+     * @param synchronous   whether the method returns neither a reactive type nor a future
+     * @param single        whether the reactive return type emits a single item
+     */
+    private record NewSpanMethod(TracedMethod tracedMethod,
+                                 String className,
+                                 String operationName,
+                                 boolean synchronous,
+                                 boolean single) {
+    }
 }

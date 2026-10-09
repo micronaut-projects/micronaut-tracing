@@ -19,24 +19,29 @@ import io.micronaut.aop.InterceptedMethod;
 import io.micronaut.aop.InterceptorBean;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
-import io.micronaut.core.util.StringUtils;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
-import io.micronaut.tracing.util.MethodNameFormatter;
+import io.micronaut.tracing.util.TracedMethod;
+import io.micronaut.tracing.util.TracedMethodCache;
+import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.incubator.semconv.util.ClassAndMethod;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 /**
  * Implements tracing logic for {@code ContinueSpan} and {@code NewSpan}
@@ -52,6 +57,7 @@ import java.util.concurrent.CompletionStage;
 public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTelemetryTraceInterceptor {
 
     private final ConversionService conversionService;
+    private final TracedMethodCache<NewSpanMethod> methods = new TracedMethodCache<>(this::resolve);
 
     /**
      * Initialize the interceptor with tracer and conversion service.
@@ -68,63 +74,58 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
     @Nullable
     @Override
     public Object intercept(MethodInvocationContext<Object, Object> context) {
-        AnnotationValue<NewSpan> newSpan = context.getAnnotation(NewSpan.class);
-        boolean isNew = newSpan != null;
-        if (!isNew) {
+        NewSpanMethod method = methods.get(context);
+        ClassAndMethod classAndMethod = method.classAndMethod;
+        if (classAndMethod == null) {
             return context.proceed();
         }
-        // must be new
-        // don't create a nested span if you're not supposed to.
-        String operationName = newSpan.stringValue().orElse("");
-        ClassAndMethod classAndMethod;
-
-        ClassAndMethod basicClassAndMethod = ClassAndMethod.create(context.getDeclaringType(), MethodNameFormatter.format(context.getMethodName()));
-        if (StringUtils.isNotEmpty(operationName)) {
-            classAndMethod = ClassAndMethod.create(basicClassAndMethod.declaringClass(), basicClassAndMethod.methodName() + '#' + operationName);
-        } else {
-            classAndMethod = basicClassAndMethod;
-        }
-
-        InterceptedMethod interceptedMethod = InterceptedMethod.of(context, conversionService);
-
         Context currentContext = Context.current();
+        // don't create a nested span if you're not supposed to.
         if (!instrumenter.shouldStart(currentContext, classAndMethod)) {
             return context.proceed();
         }
+        if (method.synchronous) {
+            return interceptSynchronous(context, method, currentContext);
+        }
 
+        InterceptedMethod interceptedMethod = InterceptedMethod.of(context, conversionService);
         final Context newContext = instrumenter.start(currentContext, classAndMethod);
-
+        SpanEnd spanEnd = new SpanEnd(instrumenter, newContext, classAndMethod);
         try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
             .plus(new OpenTelemetryPropagationContext(newContext))
             .propagate()) {
 
-            tagArguments(context);
+            tagArguments(Span.fromContext(newContext), method.tracedMethod, context.getParameterValues());
 
             switch (interceptedMethod.resultType()) {
                 case PUBLISHER -> {
+                    Publisher<?> publisher = interceptedMethod.interceptResultAsPublisher();
+                    // end the span exactly once, on the terminal signal: completion, error or cancellation
+                    if (method.single) {
+                        return interceptedMethod.handleResult(
+                            Mono.from(publisher)
+                                .doOnSuccess(spanEnd::success)
+                                .doOnError(spanEnd)
+                                .doOnCancel(spanEnd)
+                        );
+                    }
                     return interceptedMethod.handleResult(
-                        Flux.from(interceptedMethod.interceptResultAsPublisher())
-                            .doOnNext(value -> instrumenter.end(newContext, classAndMethod, value, null))
-                            .doOnComplete(() -> instrumenter.end(newContext, classAndMethod, null, null))
-                            .doOnError(throwable -> instrumenter.end(newContext, classAndMethod, null, throwable))
+                        Flux.from(publisher)
+                            .doOnComplete(spanEnd)
+                            .doOnError(spanEnd)
+                            .doOnCancel(spanEnd)
                     );
                 }
                 case COMPLETION_STAGE -> {
                     CompletionStage<?> completionStage = interceptedMethod.interceptResultAsCompletionStage();
                     if (completionStage != null) {
-                        completionStage = completionStage.whenComplete((o, throwable) -> {
-                            if (throwable != null) {
-                                instrumenter.end(newContext, classAndMethod, null, throwable);
-                            } else {
-                                instrumenter.end(newContext, classAndMethod, o, null);
-                            }
-                        });
+                        completionStage = completionStage.whenComplete(spanEnd::end);
                     }
                     return interceptedMethod.handleResult(completionStage);
                 }
                 case SYNCHRONOUS -> {
                     Object response = context.proceed();
-                    instrumenter.end(newContext, classAndMethod, response, null);
+                    spanEnd.success(response);
                     return response;
                 }
                 default -> {
@@ -132,8 +133,96 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
                 }
             }
         } catch (Exception e) {
-            instrumenter.end(newContext, classAndMethod, null, e);
+            spanEnd.accept(e);
             return interceptedMethod.handleException(e);
+        }
+    }
+
+    private Object interceptSynchronous(MethodInvocationContext<Object, Object> context,
+                                        NewSpanMethod method,
+                                        Context currentContext) {
+        ClassAndMethod classAndMethod = method.classAndMethod;
+        Context newContext = instrumenter.start(currentContext, classAndMethod);
+        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
+            .plus(new OpenTelemetryPropagationContext(newContext))
+            .propagate()) {
+
+            tagArguments(Span.fromContext(newContext), method.tracedMethod, context.getParameterValues());
+            Object response = context.proceed();
+            instrumenter.end(newContext, classAndMethod, response, null);
+            return response;
+        } catch (Throwable e) {
+            instrumenter.end(newContext, classAndMethod, null, e);
+            throw e;
+        }
+    }
+
+    private NewSpanMethod resolve(MethodInvocationContext<?, ?> context) {
+        TracedMethod tracedMethod = TracedMethod.of(context);
+        if (!tracedMethod.isNewSpan()) {
+            return new NewSpanMethod(tracedMethod, null, false, false);
+        }
+        String operationName = tracedMethod.getNewSpanValue();
+        String methodName = operationName == null
+            ? tracedMethod.getMethodName()
+            : tracedMethod.getMethodName() + '#' + operationName;
+        ClassAndMethod classAndMethod = ClassAndMethod.create(context.getDeclaringType(), methodName);
+        boolean synchronous = !context.isSuspend()
+            && InterceptedMethod.of(context, conversionService).resultType() == InterceptedMethod.ResultType.SYNCHRONOUS;
+        boolean single = Publishers.isSingle(context.getReturnType().getType());
+        return new NewSpanMethod(tracedMethod, classAndMethod, synchronous, single);
+    }
+
+    /**
+     * The per-method data of the interceptor.
+     *
+     * @param tracedMethod   the span data of the method
+     * @param classAndMethod the request of the instrumenter, {@code null} if the method is not a new span
+     * @param synchronous    whether the method returns neither a reactive type nor a future
+     * @param single         whether the reactive return type emits a single item
+     */
+    private record NewSpanMethod(TracedMethod tracedMethod,
+                                 @Nullable ClassAndMethod classAndMethod,
+                                 boolean synchronous,
+                                 boolean single) {
+    }
+
+    /**
+     * Ends the span once, whichever of the completion, error or cancellation signals comes first.
+     */
+    private static final class SpanEnd extends AtomicBoolean implements Runnable, Consumer<Throwable> {
+
+        private final transient Instrumenter<ClassAndMethod, Object> instrumenter;
+        private final transient Context context;
+        private final transient ClassAndMethod classAndMethod;
+
+        SpanEnd(Instrumenter<ClassAndMethod, Object> instrumenter, Context context, ClassAndMethod classAndMethod) {
+            this.instrumenter = instrumenter;
+            this.context = context;
+            this.classAndMethod = classAndMethod;
+        }
+
+        void end(@Nullable Object response, @Nullable Throwable error) {
+            if (compareAndSet(false, true)) {
+                instrumenter.end(context, classAndMethod, response, error);
+            }
+        }
+
+        void success(@Nullable Object response) {
+            end(response, null);
+        }
+
+        /**
+         * Completion without a value, or cancellation.
+         */
+        @Override
+        public void run() {
+            end(null, null);
+        }
+
+        @Override
+        public void accept(Throwable throwable) {
+            end(null, throwable);
         }
     }
 }

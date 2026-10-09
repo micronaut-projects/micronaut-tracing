@@ -21,6 +21,8 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.tracing.annotation.ContinueSpan;
+import io.micronaut.tracing.util.TracedMethod;
+import io.micronaut.tracing.util.TracedMethodCache;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import jakarta.inject.Singleton;
@@ -38,6 +40,8 @@ import jakarta.inject.Singleton;
 @InterceptorBean(ContinueSpan.class)
 public final class ContinueSpanInterceptor extends AbstractTraceInterceptor {
 
+    private final TracedMethodCache<TracedMethod> tracedMethods = new TracedMethodCache<>(TracedMethod::of);
+
     /**
      * Initialize the interceptor with tracer and conversion service.
      *
@@ -54,7 +58,7 @@ public final class ContinueSpanInterceptor extends AbstractTraceInterceptor {
         if (currentSpan == null) {
             return context.proceed();
         }
-        tagArguments(currentSpan, context);
+        tagArguments(currentSpan, tracedMethods.get(context), context.getParameterValues());
         return context.proceed();
     }
 }

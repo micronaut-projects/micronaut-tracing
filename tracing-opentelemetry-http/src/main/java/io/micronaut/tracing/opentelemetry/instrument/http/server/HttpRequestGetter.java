@@ -35,6 +35,7 @@ enum HttpRequestGetter implements TextMapGetter<HttpRequest<Object>> {
         if (request == null) {
             return null;
         }
-        return request.getHeaders().getFirst(key).orElse(null);
+        // the first value, without the Optional of getFirst(..)
+        return request.getHeaders().get(key);
     }
 }

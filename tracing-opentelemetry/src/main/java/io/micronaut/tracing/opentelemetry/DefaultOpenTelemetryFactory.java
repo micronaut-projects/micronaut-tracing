@@ -18,14 +18,13 @@ package io.micronaut.tracing.opentelemetry;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.env.Environment;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.naming.conventions.StringConvention;
-import io.micronaut.core.util.StringUtils;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.TracerProvider;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder;
+import io.opentelemetry.sdk.autoconfigure.internal.AutoConfigureUtil;
 import io.opentelemetry.sdk.trace.IdGenerator;
 import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.samplers.Sampler;
@@ -33,7 +32,6 @@ import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
 import java.util.Collection;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -45,8 +43,6 @@ import java.util.Map;
 @Factory
 public class DefaultOpenTelemetryFactory {
 
-    private static final String SERVICE_NAME_KEY = "otel.service.name";
-    private static final String RESOURCE_ATTRIBUTES_KEY = "otel.resource.attributes";
     private static final String DEFAULT_TRACES_EXPORTER = "otel.traces.exporter";
     private static final String DEFAULT_METRICS_EXPORTER = "otel.metrics.exporter";
     private static final String DEFAULT_LOGS_EXPORTER = "otel.logs.exporter";
@@ -79,16 +75,21 @@ public class DefaultOpenTelemetryFactory {
             return existingGlobalOpenTelemetry;
         }
 
-        Map<String, String> otel = resolveOtelProperties(environment);
+        // Defaults only: OpenTelemetry reads every property through EnvironmentConfigProperties, which
+        // consults the Micronaut environment first and falls back to these.
+        Map<String, String> defaults = Map.of(
+            DEFAULT_TRACES_EXPORTER, NONE,
+            DEFAULT_METRICS_EXPORTER, NONE,
+            DEFAULT_LOGS_EXPORTER, NONE
+        );
+        String applicationName = applicationConfiguration.getName().orElse(null);
 
-        applicationConfiguration.getName().ifPresent(name -> otel.putIfAbsent(SERVICE_NAME_KEY, name));
-        otel.putIfAbsent(DEFAULT_TRACES_EXPORTER, NONE);
-        otel.putIfAbsent(DEFAULT_METRICS_EXPORTER, NONE);
-        otel.putIfAbsent(DEFAULT_LOGS_EXPORTER, NONE);
+        AutoConfiguredOpenTelemetrySdkBuilder sdk = AutoConfigureUtil.setConfigPropertiesCustomizer(
+            AutoConfiguredOpenTelemetrySdk.builder(),
+            config -> new EnvironmentConfigProperties(environment, config, applicationName)
+        );
 
-        AutoConfiguredOpenTelemetrySdkBuilder sdk = AutoConfiguredOpenTelemetrySdk.builder();
-
-        if (Boolean.parseBoolean(otel.getOrDefault(REGISTER_GLOBAL, StringUtils.FALSE)) && !GlobalOpenTelemetry.isSet()) {
+        if (environment.getProperty(REGISTER_GLOBAL, Boolean.class, false) && !GlobalOpenTelemetry.isSet()) {
             sdk.setResultAsGlobal();
         }
 
@@ -98,7 +99,7 @@ public class DefaultOpenTelemetryFactory {
                 }
                 return resource;
             })
-            .addPropertiesSupplier(() -> otel)
+            .addPropertiesSupplier(() -> defaults)
             .addTracerProviderCustomizer((tracerProviderBuilder, ignored) -> {
                     if (idGenerator != null) {
                         tracerProviderBuilder.setIdGenerator(idGenerator);
@@ -129,24 +130,6 @@ public class DefaultOpenTelemetryFactory {
 
         OpenTelemetry globalOpenTelemetry = GlobalOpenTelemetry.get();
         return globalOpenTelemetry.getTracerProvider() == TracerProvider.noop() ? null : globalOpenTelemetry;
-    }
-
-    private Map<String, String> resolveOtelProperties(Environment environment) {
-        Map<String, String> otel = environment.getProperties("otel", StringConvention.RAW).entrySet().stream().collect(
-            java.util.stream.Collectors.toMap(
-                entry -> "otel." + normalizeOtelProperty(entry.getKey()),
-                entry -> String.valueOf(entry.getValue()),
-                (existing, replacement) -> existing
-            )
-        );
-        environment.getProperty(RESOURCE_ATTRIBUTES_KEY, String.class).ifPresent(attributes ->
-            otel.putIfAbsent(RESOURCE_ATTRIBUTES_KEY, attributes)
-        );
-        return otel;
-    }
-
-    private String normalizeOtelProperty(String property) {
-        return property.toLowerCase(Locale.ENGLISH).replace('_', '.');
     }
 
     /**

@@ -15,7 +15,9 @@
  */
 package io.micronaut.tracing.opentelemetry.xray;
 
+import io.micronaut.context.BeanProvider;
 import io.micronaut.core.annotation.Internal;
+import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.awssdk.v2_2.AwsSdkTelemetry;
 import software.amazon.awssdk.core.interceptor.ExecutionInterceptor;
 
@@ -24,22 +26,50 @@ import java.util.function.Function;
 /**
  * Provides AWS SDK telemetry operations without exposing the OpenTelemetry AWS SDK implementation as a bean.
  *
+ * <p>{@link OpenTelemetry} is resolved lazily, the first time telemetry is actually needed, so that creating
+ * this provider (and the listeners that depend on it) does not eagerly instantiate {@link OpenTelemetry}. This
+ * avoids a circular dependency when an OpenTelemetry exporter or resource bean itself requires an AWS SDK
+ * client. The resulting {@link AwsSdkTelemetry} is created once and shared.</p>
+ *
  * @author Nemanja Mikic
  * @since 8.0.0
  */
 @Internal
 final class AwsSdkTelemetryProvider {
-    private final AwsSdkTelemetry awsSdkTelemetry;
+    private final BeanProvider<OpenTelemetry> openTelemetryProvider;
+    private final AwsSdkTelemetryConfiguration awsSdkTelemetryConfiguration;
+    private final MessagingTelemetryConfiguration messagingTelemetryConfiguration;
+    private volatile AwsSdkTelemetry awsSdkTelemetry;
 
-    AwsSdkTelemetryProvider(AwsSdkTelemetry awsSdkTelemetry) {
-        this.awsSdkTelemetry = awsSdkTelemetry;
+    AwsSdkTelemetryProvider(BeanProvider<OpenTelemetry> openTelemetryProvider,
+                            AwsSdkTelemetryConfiguration awsSdkTelemetryConfiguration,
+                            MessagingTelemetryConfiguration messagingTelemetryConfiguration) {
+        this.openTelemetryProvider = openTelemetryProvider;
+        this.awsSdkTelemetryConfiguration = awsSdkTelemetryConfiguration;
+        this.messagingTelemetryConfiguration = messagingTelemetryConfiguration;
     }
 
     ExecutionInterceptor newExecutionInterceptor() {
-        return awsSdkTelemetry.createExecutionInterceptor();
+        return withTelemetry(AwsSdkTelemetry::createExecutionInterceptor);
     }
 
     <T> T withTelemetry(Function<AwsSdkTelemetry, T> function) {
-        return function.apply(awsSdkTelemetry);
+        // no method signature exposes AwsSdkTelemetry directly, keeping reflective introspection of this class
+        // free of optional AWS SDK service types referenced by AwsSdkTelemetry
+        AwsSdkTelemetry telemetry = awsSdkTelemetry;
+        if (telemetry == null) {
+            synchronized (this) {
+                telemetry = awsSdkTelemetry;
+                if (telemetry == null) {
+                    telemetry = AwsSdkTelemetry.builder(openTelemetryProvider.get())
+                        .setCaptureExperimentalSpanAttributes(awsSdkTelemetryConfiguration.isExperimentalSpanAttributes())
+                        .setUseConfiguredPropagatorForMessaging(awsSdkTelemetryConfiguration.isExperimentalUsePropagatorForMessaging())
+                        .setMessagingReceiveTelemetryEnabled(messagingTelemetryConfiguration.isEnabled())
+                        .build();
+                    awsSdkTelemetry = telemetry;
+                }
+            }
+        }
+        return function.apply(telemetry);
     }
 }

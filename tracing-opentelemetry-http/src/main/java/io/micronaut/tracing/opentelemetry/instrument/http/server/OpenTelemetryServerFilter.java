@@ -109,11 +109,21 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
         });
     }
 
+    /**
+     * Resolves the parent context of the server span. Only a context propagated by Micronaut is trusted.
+     * The thread-local {@link Context#current()} is deliberately ignored: a server request starts on an
+     * event-loop thread, and a scope opened with {@code Span.makeCurrent()} by a previous request and closed
+     * on another thread (e.g. after a Reactor boundary) leaves that request's context, including its server
+     * span, current on the event-loop thread. Using it would suppress or wrongly parent the next server span
+     * (see issue #475). A remote parent is still extracted from the request headers by the instrumenter.
+     *
+     * @return the parent context
+     */
     private static Context parentContext() {
         return PropagatedContext.getOrEmpty()
             .find(OpenTelemetryPropagationContext.class)
             .map(OpenTelemetryPropagationContext::context)
-            .orElseGet(Context::current);
+            .orElseGet(Context::root);
     }
 
     private void onError(HttpRequest<?> request, Context context,

@@ -17,7 +17,6 @@ package io.micronaut.tracing.opentelemetry.instrument.http;
 
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.http.filter.HttpFilter;
 
 import java.util.function.Predicate;
 
@@ -28,7 +27,7 @@ import java.util.function.Predicate;
  * @since 4.2.0
  */
 @Internal
-public abstract class AbstractOpenTelemetryFilter implements HttpFilter {
+public abstract class AbstractOpenTelemetryFilter {
 
     public static final String CLIENT_PATH = "${tracing.http.client.path:/**}";
     public static final String SERVER_PATH = "${tracing.http.server.path:/**}";

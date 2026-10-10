@@ -48,8 +48,8 @@ import java.io.Closeable;
 public class JaegerTracerFactory implements Closeable {
 
     private final JaegerConfiguration configuration;
-    private Reporter reporter;
-    private Sampler sampler;
+    private @Nullable Reporter reporter;
+    private @Nullable Sampler sampler;
     private ScopeManager scopeManager = new MDCScopeManager.Builder().build();
 
     /**

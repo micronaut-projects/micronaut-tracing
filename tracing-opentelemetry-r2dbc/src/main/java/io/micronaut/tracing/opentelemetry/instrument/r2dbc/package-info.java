@@ -20,8 +20,10 @@
  */
 @Configuration
 @Requires(classes = {OpenTelemetry.class, ConnectionFactory.class, R2dbcTelemetry.class})
+@NullMarked
 package io.micronaut.tracing.opentelemetry.instrument.r2dbc;
 
+import org.jspecify.annotations.NullMarked;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;
 import io.opentelemetry.api.OpenTelemetry;

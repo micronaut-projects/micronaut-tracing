@@ -1,0 +1,68 @@
+Tracing adds work to every traced request and method call. The following settings have the largest effect on that overhead.
+
+== Sampling
+
+By default every trace is recorded (`parentbased_always_on`). A sampler that drops a share of the traces reduces the cost of recording and exporting spans, which is usually the largest part of the overhead once an exporter is configured. The sampler is configured with the standard OpenTelemetry properties:
+
+.Sampling 10% of the traces
+[source,properties]
+----
+otel.traces.sampler=parentbased_traceidratio
+otel.traces.sampler.arg=0.1
+----
+
+With a `parentbased_*` sampler the decision of the caller, propagated in the incoming trace context, is kept, so a distributed trace is either recorded completely or not at all. A custom `io.opentelemetry.sdk.trace.samplers.Sampler` bean replaces the configured sampler.
+
+NOTE: Sampling does not make an unsampled request free: the span context is still created and propagated, and the request attributes are still extracted because samplers may use them. Exclude requests that never need a trace instead (see below).
+
+== Excluding paths
+
+Requests whose path matches one of the `otel.exclusions` regular expressions are not traced at all: the HTTP server and client filters skip them before any OpenTelemetry work. Use them for health checks, metrics scrapes and other high-frequency endpoints:
+
+[configuration]
+----
+otel:
+  exclusions:
+    - /health.*
+    - /prometheus
+----
+
+The patterns are compiled once into a single regular expression, so the number of patterns has little effect on the per-request cost.
+
+== HTTP metrics
+
+The HTTP instrumenters record the `http.server.request.duration` and `http.client.request.duration` histograms only when OpenTelemetry exports metrics (`otel.metrics.exporter` other than `none`, or a registered `MetricReader`). Recording them costs allocations on every request, so leave them off unless they are used:
+
+[configuration]
+----
+tracing:
+  opentelemetry:
+    http:
+      server:
+        metrics:
+          enabled: false
+      client:
+        metrics:
+          enabled: false
+----
+
+If the application also uses https://micronaut-projects.github.io/micronaut-micrometer/latest/guide/[Micronaut Micrometer] with its web metrics binder (`micronaut.metrics.binders.web.enabled`, enabled by default), every request is timed twice, and a warning is logged at startup. Disable either the OpenTelemetry HTTP metrics as above or `micronaut.metrics.binders.web.enabled`. See <<http, HTTP Server and Client>>.
+
+== Captured headers
+
+Each header listed in `otel.http.server.request-headers`, `otel.http.server.response-headers`, `otel.http.client.request-headers` or `otel.http.client.response-headers` is read and added as a span attribute on every traced request, which allocates a list of values and an attribute per header and makes every span larger to export. Capture only the headers that are needed, and never headers carrying secrets such as `Authorization` or `Cookie`.
+
+== Span names of annotated methods
+
+With the `micronaut-tracing-opentelemetry-annotation` annotation processor (see <<annotations, OpenTelemetry Annotations>>), the span name and the `@SpanTag` parameters of `@NewSpan`, `@ContinueSpan` and `@WithSpan` methods are computed at compile time and stored in the bean metadata, instead of being computed from the method at runtime. With KSP it also uses the source name of Kotlin functions whose JVM name is mangled. Classes compiled without the processor still work, using the runtime computation, so keep the processor on the annotation processor path of every module that declares traced methods.
+
+== Measuring the overhead
+
+The repository contains JMH benchmarks for the HTTP server, `@NewSpan` methods and the exclusion check in the https://github.com/micronaut-projects/micronaut-tracing/tree/8.4.x/benchmarks[`benchmarks`] project. Each one runs with tracing disabled, with the defaults, with a no-op exporter and with 10% sampling:
+
+[source,bash]
+----
+./gradlew :benchmarks:jmh -Pjmh.includes=HttpServerBenchmark -Pjmh.profilers=gc
+----
+
+Compare the `gc.alloc.rate.norm` (bytes allocated per operation): it is much more stable than the throughput on a shared machine. The `checkAllocationBaseline` task compares it with a committed baseline, and a CI workflow uses it to catch allocation regressions. See the `benchmarks/README.md` file for the options.

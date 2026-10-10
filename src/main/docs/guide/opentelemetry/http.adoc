@@ -48,6 +48,38 @@ otel:
         - X-From-Server-Response
 ----
 
+== Source code attributes
+
+The server span of a request routed to a controller method has the https://opentelemetry.io/docs/specs/semconv/registry/attributes/code/[`code.function.name`] attribute: the fully qualified name of the method, for example `com.example.BookController.list`, so that the span links to the code that handled the request. The spans of the requests that match no route (for example a `404`), of the error routes and of the static resources have no code attributes. The value is computed once per route, and the method name of a Kotlin function with an inline class or `kotlin.Result` in its signature is its source name rather than its mangled JVM name when the class is compiled with the `micronaut-tracing-opentelemetry-annotation` processor.
+
+`code.function.name` replaces the deprecated `code.namespace` and `code.function` attributes. To also add them, for a backend that does not support `code.function.name` yet, or to disable the code attributes, set the following properties:
+
+.Configuring the source code attributes
+[configuration]
+----
+tracing:
+  opentelemetry:
+    http:
+      server:
+        code-attributes:
+          enabled: true
+          legacy-attributes: true
+----
+
+|===
+| Property | Default | Description
+
+| `tracing.opentelemetry.http.server.code-attributes.enabled`
+| `true`
+| Whether the HTTP server spans have the `code.function.name` attribute.
+
+| `tracing.opentelemetry.http.server.code-attributes.legacy-attributes`
+| `false`
+| Whether the deprecated `code.namespace` (the class name) and `code.function` (the method name) attributes are also added.
+|===
+
+The attributes are added by the api:tracing.opentelemetry.instrument.http.server.HttpServerCodeAttributesExtractor[] bean, an `AttributesExtractor` contributed with the ann:tracing.opentelemetry.instrument.http.server.MicronautHttpServerTelemetryFactory.Server[] qualifier (see _Customizing HTTP instrumentation_ below). Replace it with an `AttributesExtractor` bean annotated with `@Replaces(HttpServerCodeAttributesExtractor.class)`.
+
 == HTTP metrics
 
 The HTTP server and client instrumenters can record the OpenTelemetry `http.server.request.duration` and `http.client.request.duration` histograms. Recording them costs an allocation of listener state, a `Context` copy and an attribute merge on every request, even when the metrics are dropped, so they are only recorded when OpenTelemetry exports metrics: when `otel.metrics.exporter` is set to an exporter other than `none` (Micronaut's default is `none`), or when a `MetricReader` is registered on the SDK meter provider, for example with an `OpenTelemetryBuilderCustomizer`. The check is made against the `MeterProvider` of the `OpenTelemetry` bean when the instrumenters are built, so it also covers an `OpenTelemetry` instance provided by the application or the OpenTelemetry Java agent.

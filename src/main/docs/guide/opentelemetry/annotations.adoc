@@ -7,6 +7,44 @@ dependency:micronaut-tracing-opentelemetry-annotation[scope="annotationProcessor
 
 The Open Tracing annotations that are defined inside the pkg:tracing.annotation[] package are also available for usage inside Open Telemetry.
 
+The OpenTelemetry annotations are mapped to them at compile time:
+
+|===
+| OpenTelemetry annotation | Micronaut annotation | Behaviour
+
+| `@WithSpan`
+| ann:tracing.annotation.NewSpan[]
+| Creates a span for the method invocation.
+
+| `@AddingSpanAttributes`
+| ann:tracing.annotation.ContinueSpan[]
+| Adds the `@SpanAttribute` parameters of the method to the current span, without creating a span. Without a current span, it does nothing.
+
+| `@SpanAttribute`
+| ann:tracing.annotation.SpanTag[]
+| Adds the parameter value as a span attribute, named after the annotation value or the parameter name.
+|===
+
+For example, the following method adds the `order.id` attribute to the span of the HTTP request or of the `@WithSpan` method that calls it:
+
+[source,java]
+----
+import io.opentelemetry.instrumentation.annotations.AddingSpanAttributes;
+import io.opentelemetry.instrumentation.annotations.SpanAttribute;
+import jakarta.inject.Singleton;
+
+@Singleton
+public class OrderService {
+
+    @AddingSpanAttributes
+    public void process(@SpanAttribute("order.id") String orderId, Order order) {
+        // ...
+    }
+}
+----
+
+NOTE: As with every Micronaut AOP advice, the method must be invoked on the bean, not from another method of the same instance, and it must not be `private` or `final` (in Kotlin, the class and the method must be `open`, or use the `all-open` plugin).
+
 OpenTelemetry annotation/code spans can be customized by defining beans qualified with ann:tracing.opentelemetry.instrument.util.MicronautCodeTelemetryFactory.Internal[]. Qualified beans of type `SpanNameExtractor`, `SpanStatusExtractor`, `ErrorCauseExtractor`, `AttributesExtractor`, `ContextCustomizer`, `OperationMetrics`, `OperationListener`, and `SpanLinksExtractor` are applied to the code span instrumenter. `SpanNameExtractor`, `SpanStatusExtractor`, and `ErrorCauseExtractor` are single collaborators and do not compose; if one already exists, replace it with ann:context.annotation.Replaces[]. `AttributesExtractor`, `ContextCustomizer`, `OperationMetrics`, `OperationListener`, and `SpanLinksExtractor` beans are additive contributors. Custom beans can add method, exception, and application data to telemetry, so redact secrets and personally identifiable information before exporting telemetry.
 
 NOTE: The code span instrumenter registers no metrics by default. Earlier versions registered the HTTP client metrics on it, so every annotated call was recorded into `http.client.request.duration`. To record metrics for annotated methods, add your own `OperationMetrics` bean qualified with ann:tracing.opentelemetry.instrument.util.MicronautCodeTelemetryFactory.Internal[].

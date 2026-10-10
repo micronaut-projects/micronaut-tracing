@@ -20,8 +20,8 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.core.util.CollectionUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @since 4.0

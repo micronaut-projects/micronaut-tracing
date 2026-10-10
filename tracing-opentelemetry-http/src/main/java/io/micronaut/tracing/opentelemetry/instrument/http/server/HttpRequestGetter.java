@@ -16,9 +16,9 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.opentelemetry.context.propagation.TextMapGetter;
+import org.jspecify.annotations.Nullable;
 
 @Internal
 enum HttpRequestGetter implements TextMapGetter<HttpRequest<Object>> {

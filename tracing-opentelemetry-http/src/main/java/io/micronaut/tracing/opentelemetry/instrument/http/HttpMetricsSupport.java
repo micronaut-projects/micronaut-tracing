@@ -17,12 +17,12 @@ package io.micronaut.tracing.opentelemetry.instrument.http;
 
 import io.micronaut.context.BeanContext;
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.core.reflect.ClassUtils;
 import io.micronaut.tracing.opentelemetry.instrument.util.DefaultOperationMetrics;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.api.instrumenter.OperationMetrics;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

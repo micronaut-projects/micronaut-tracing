@@ -19,4 +19,7 @@
  * @author Sergio del Amo
  * @since 3.0.0
  */
+@NullMarked
 package io.micronaut.tracing.opentracing.instrument;
+
+import org.jspecify.annotations.NullMarked;

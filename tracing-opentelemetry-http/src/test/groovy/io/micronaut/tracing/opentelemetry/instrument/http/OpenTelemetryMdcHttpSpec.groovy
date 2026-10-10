@@ -61,7 +61,7 @@ class OpenTelemetryMdcHttpSpec extends Specification {
         then:
         mdc.trace_id
         mdc.span_id
-        mdc.trace_flags == '01'
+        mdc.trace_flags == mdc.current_trace_flags && (Integer.parseInt(mdc.trace_flags, 16) & 1) == 1
         mdc.trace_id == mdc.current_trace_id
         mdc.span_id == mdc.current_span_id
 
@@ -148,7 +148,7 @@ class OpenTelemetryMdcHttpSpec extends Specification {
 
         static Map<String, String> withCurrent(Map<String, String> mdc) {
             def spanContext = Span.current().spanContext
-            mdc + [current_trace_id: spanContext.traceId, current_span_id: spanContext.spanId]
+            mdc + [current_trace_id: spanContext.traceId, current_span_id: spanContext.spanId, current_trace_flags: spanContext.traceFlags.asHex()]
         }
 
         @Get('/sync')

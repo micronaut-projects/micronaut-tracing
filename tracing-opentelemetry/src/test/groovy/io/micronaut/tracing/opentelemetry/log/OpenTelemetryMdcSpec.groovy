@@ -56,7 +56,7 @@ class OpenTelemetryMdcSpec extends Specification {
         then:
         mdc.trace_id == mdc.current_trace_id
         mdc.span_id == mdc.current_span_id
-        mdc.trace_flags == '01'
+        mdc.trace_flags == mdc.current_trace_flags && (Integer.parseInt(mdc.trace_flags, 16) & 1) == 1
         mdc.trace_id.length() == 32
         mdc.span_id.length() == 16
 
@@ -175,7 +175,7 @@ class OpenTelemetryMdcSpec extends Specification {
         then:
         mdc.traceId == mdc.current_trace_id
         mdc.spanId == mdc.current_span_id
-        mdc.traceFlags == '01'
+        mdc.traceFlags == mdc.current_trace_flags
         !mdc.containsKey('trace_id')
         !mdc.containsKey('span_id')
         !mdc.containsKey('trace_flags')
@@ -230,7 +230,7 @@ class OpenTelemetryMdcSpec extends Specification {
 
         static Map<String, String> withCurrent(Map<String, String> mdc) {
             def spanContext = Span.current().spanContext
-            mdc + [current_trace_id: spanContext.traceId, current_span_id: spanContext.spanId]
+            mdc + [current_trace_id: spanContext.traceId, current_span_id: spanContext.spanId, current_trace_flags: spanContext.traceFlags.asHex()]
         }
 
         @NewSpan

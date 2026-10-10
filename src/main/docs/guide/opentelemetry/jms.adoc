@@ -1,0 +1,24 @@
+JMS tracing for https://micronaut-projects.github.io/micronaut-jms/latest/guide/[Micronaut JMS] is supported by the `micronaut-tracing-opentelemetry-jms` module. It works with every JMS provider Micronaut JMS supports, such as ActiveMQ Artemis, ActiveMQ Classic and Amazon SQS.
+
+dependency:micronaut-tracing-opentelemetry-jms[scope="implementation", groupId="io.micronaut.tracing"]
+
+OpenTelemetry provides JMS instrumentation only as Java agent instrumentation, so the module builds the spans with the OpenTelemetry instrumentation API and the messaging semantic conventions:
+
+* Every message sent through a `JMSConnectionPool`, by a `@JMSProducer` client, a `JmsProducer` template or code of your own, creates a `PRODUCER` span named `<destination> publish`. The span is a child of the span that is current when the message is sent, and the trace context is written into the message properties.
+* Every message processed by a `@JMSListener` method (or by a listener registered with the `JMSListenerRegistry`) creates a `CONSUMER` span named `<destination> process`. The span continues the trace read from the message properties, so it is a child of the producer span, and it is current while the listener method runs, also when the listener runs on an executor. The context is also exposed through Micronaut's `PropagatedContext`, so work the listener hands off to a context-propagating executor or a reactive pipeline continues the trace. An exception thrown by the listener is recorded on the span.
+
+The spans carry the messaging attributes, such as `messaging.system` (`jms`), `messaging.destination.name`, `messaging.operation` and `messaging.message.id`.
+
+JMS property names must be valid Java identifiers, so a `-` in the name of a propagation field (for example `X-B3-TraceId` of the B3 propagator) is stored as `__dash__` in the message property name, as the OpenTelemetry Java agent does. The W3C `traceparent` and `tracestate` fields are stored unchanged.
+
+NOTE: Messages received with `JmsConsumer` templates (`receive`) and messages sent through the simplified JMS API (`JMSContext`) are not traced.
+
+Instrumentation is enabled by default and can be disabled with:
+
+[configuration]
+----
+otel:
+  instrumentation:
+    jms:
+      enabled: false
+----

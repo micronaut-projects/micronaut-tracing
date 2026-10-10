@@ -24,6 +24,7 @@ opentelemetry:
   contextPropagation: Context Propagation
   grpc: gRPC Server and Client
   jdbc: JDBC
+  jms: JMS
   r2dbc: R2DBC
   kafka: Kafka
   rabbitmq: RabbitMQ / AMQP

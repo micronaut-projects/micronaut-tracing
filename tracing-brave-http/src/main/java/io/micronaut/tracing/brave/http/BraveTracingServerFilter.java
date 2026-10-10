@@ -143,7 +143,7 @@ public final class BraveTracingServerFilter implements HttpServerFilter {
             }
 
             @Override
-            public String header(String name) {
+            public @Nullable String header(String name) {
                 return request.getHeaders().get(name);
             }
 
@@ -168,7 +168,7 @@ public final class BraveTracingServerFilter implements HttpServerFilter {
             }
 
             @Override
-            public String route() {
+            public @Nullable String route() {
                 return request.getAttribute(URI_TEMPLATE, String.class).orElse(null);
             }
 
@@ -198,7 +198,7 @@ public final class BraveTracingServerFilter implements HttpServerFilter {
             }
 
             @Override
-            public String route() {
+            public @Nullable String route() {
                 return request.getAttribute(URI_TEMPLATE, String.class).orElse(null);
             }
 

@@ -14,8 +14,10 @@ dependencies {
 
     testImplementation projects.micronautTracingOpentelemetryTest
     testImplementation projects.micronautTracingOpentelemetryAnnotation
+    testImplementation projects.micronautTracingOpentelemetryHttp
     testImplementation mn.micronaut.http.client
     testImplementation mn.micronaut.http.server.netty
+    testImplementation mnSerde.micronaut.serde.jackson
     testImplementation(platform(mnTest.boms.testcontainers))
     testImplementation "org.testcontainers:testcontainers"
 }

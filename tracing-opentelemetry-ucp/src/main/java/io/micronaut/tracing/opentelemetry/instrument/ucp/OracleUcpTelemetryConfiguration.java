@@ -20,6 +20,7 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.oracleucp.v11_2.OracleUcpTelemetry;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration class for Oracle UCP telemetry.
@@ -35,7 +36,7 @@ class OracleUcpTelemetryConfiguration {
 
     final OracleUcpTelemetry oracleUcpTelemetry;
 
-    private Boolean enabled;
+    private @Nullable Boolean enabled;
 
     OracleUcpTelemetryConfiguration(OpenTelemetry openTelemetry) {
         oracleUcpTelemetry = OracleUcpTelemetry.create(openTelemetry);
@@ -44,14 +45,14 @@ class OracleUcpTelemetryConfiguration {
     /**
      * @return is Oracle UCP telemetry enabled.
      */
-    public Boolean getEnabled() {
+    public @Nullable Boolean getEnabled() {
         return enabled;
     }
 
     /**
      * @param enabled enables Oracle UCP telemetry.
      */
-    public void setEnabled(Boolean enabled) {
+    public void setEnabled(@Nullable Boolean enabled) {
         this.enabled = enabled;
     }
 

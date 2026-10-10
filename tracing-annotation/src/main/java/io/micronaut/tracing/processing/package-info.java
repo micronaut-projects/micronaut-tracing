@@ -18,4 +18,7 @@
  *
  * @since 8.4.0
  */
+@NullMarked
 package io.micronaut.tracing.processing;
+
+import org.jspecify.annotations.NullMarked;

@@ -80,7 +80,7 @@ class HttpMetricsGatingSpec extends Specification {
     void "HTTP metrics can be enabled explicitly"() {
         given:
         start([
-            "tracing.opentelemetry.test.metrics.enabled"                       : false,
+            "tracing.opentelemetry.test.metrics.enabled"      : false,
             "tracing.opentelemetry.http.server.metrics.enabled": true
         ])
 
@@ -113,7 +113,7 @@ class HttpMetricsGatingSpec extends Specification {
     void "explicitly contributed OperationMetrics beans are applied when the default metrics are disabled"() {
         given:
         start([
-            "tracing.opentelemetry.test.metrics.enabled"                       : false,
+            "tracing.opentelemetry.test.metrics.enabled"      : false,
             "tracing.opentelemetry.http.server.metrics.enabled": false,
             "custom.server.metrics"                            : true
         ])

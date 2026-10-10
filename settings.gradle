@@ -30,6 +30,7 @@ include 'tracing-opentelemetry-grpc'
 include 'tracing-opentelemetry-http'
 include 'tracing-opentelemetry-inspector'
 include 'tracing-opentelemetry-jdbc'
+include 'tracing-opentelemetry-jms'
 include 'tracing-opentelemetry-kafka'
 include 'tracing-opentelemetry-r2dbc'
 include 'tracing-opentelemetry-rabbitmq'
@@ -67,6 +68,7 @@ micronautBuild {
     importMicronautCatalog("micronaut-rxjava3")
     importMicronautCatalog("micronaut-serde")
     importMicronautCatalog("micronaut-kafka")
+    importMicronautCatalog("micronaut-jms")
     importMicronautCatalog("micronaut-data")
     importMicronautCatalog("micronaut-r2dbc")
     importMicronautCatalog("micronaut-redis")

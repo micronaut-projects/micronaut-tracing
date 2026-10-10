@@ -73,18 +73,18 @@ import static io.micronaut.http.filter.ServerFilterPhase.TRACING;
 public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter implements Ordered {
 
     /**
-     * The request attribute holding the server span until it is ended. If the filter chain runs again for
-     * the same request in the meantime (e.g. an error raised by the server while the route still runs), no
-     * second span is started. Once the span is ended, a new pass starts a new span.
-     */
-    static final String SPAN = OpenTelemetryServerFilter.class.getName() + "-span";
-
-    /**
      * The request attribute holding the OpenTelemetry {@link Context} of the server span of a WebSocket upgrade
      * request, kept after the span ended: the spans of the WebSocket handlers of the session are its children or
      * are linked to it.
      */
     public static final String WEBSOCKET_UPGRADE_CONTEXT = OpenTelemetryServerFilter.class.getName() + "-websocket-upgrade";
+
+    /**
+     * The request attribute holding the server span until it is ended. If the filter chain runs again for
+     * the same request in the meantime (e.g. an error raised by the server while the route still runs), no
+     * second span is started. Once the span is ended, a new pass starts a new span.
+     */
+    static final String SPAN = OpenTelemetryServerFilter.class.getName() + "-span";
 
     private static final String WEBSOCKET = "websocket";
 

@@ -44,4 +44,20 @@ class TracedMethodSpec extends Specification {
         expect:
         MethodNameFormatter.format('lookup-gjfpqcc') == 'lookup-gjfpqcc'
     }
+
+    void 'the source method name is the compile time one when present'() {
+        given:
+        ExecutableMethod precomputed = Stub() {
+            getAnnotation(SpanMetadata) >> AnnotationValue.builder(SpanMetadata).member(SpanMetadata.MEMBER_METHOD, 'lookup').build()
+            getMethodName() >> 'lookup-gjfpqcc'
+        }
+        ExecutableMethod runtime = Stub() {
+            getAnnotation(SpanMetadata) >> null
+            getMethodName() >> 'hello-d1pmJ48'
+        }
+
+        expect:
+        TracedMethod.methodName(precomputed) == 'lookup'
+        TracedMethod.methodName(runtime) == 'hello'
+    }
 }

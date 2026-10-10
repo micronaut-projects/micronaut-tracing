@@ -32,6 +32,7 @@ okio = '3.18.2'
 thrift = '0.25.0'
 httpclient5 = '5.6.4'
 httpcore5 = '5.4.4'
+activemq-broker = '6.2.7'
 
 micronaut-aws = "5.1.1"
 micronaut-data = "5.2.0"
@@ -43,6 +44,7 @@ micronaut-sql = "7.2.0"
 micronaut-kafka = "6.2.0"
 micronaut-rabbitmq = "5.1.0"
 micronaut-redis = "7.2.0"
+micronaut-jms = "5.1.0"
 micronaut-gradle-plugin = "5.0.2"
 micronaut-r2dbc = "7.2.0"
 
@@ -73,6 +75,7 @@ micronaut-kafka = { module = 'io.micronaut.kafka:micronaut-kafka-bom', version.r
 micronaut-r2dbc = { module = 'io.micronaut.r2dbc:micronaut-r2dbc-bom', version.ref = 'micronaut-r2dbc'}
 micronaut-rabbitmq = { module = 'io.micronaut.rabbitmq:micronaut-rabbitmq', version.ref = 'micronaut-rabbitmq'}
 micronaut-redis = { module = 'io.micronaut.redis:micronaut-redis-bom', version.ref = 'micronaut-redis'}
+micronaut-jms = { module = 'io.micronaut.jms:micronaut-jms-bom', version.ref = 'micronaut-jms'}
 
 brave-instrumentation-http = { module = 'io.zipkin.brave:brave-instrumentation-http' }
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
@@ -124,6 +127,8 @@ opentelemetry-instrumentation-lettuce = { module = 'io.opentelemetry.instrumenta
 opentelemetry-instrumentation-ucp = { module = 'io.opentelemetry.instrumentation:opentelemetry-oracle-ucp-11.2' }
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 testcontainers-kafka = { module = "org.testcontainers:testcontainers-kafka"}
+# Tests only: embedded ActiveMQ Classic broker (vm:// transport), aligned with the ActiveMQ client managed by micronaut-jms
+activemq-broker = { module = "org.apache.activemq:activemq-broker", version.ref = "activemq-broker" }
 awssdk-core = { module = 'software.amazon.awssdk:sdk-core' }
 awssdk-sqs = { module = 'software.amazon.awssdk:sqs' }
 

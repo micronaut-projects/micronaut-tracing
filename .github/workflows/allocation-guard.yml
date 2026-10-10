@@ -1,0 +1,93 @@
+# Runs the JMH benchmarks with the GC profiler and fails when a benchmark allocates more bytes per operation
+# than benchmarks/allocation-baseline.json allows (see benchmarks/README.md, "Allocation guard").
+# Allocation (gc.alloc.rate.norm) is stable between runs, throughput on shared runners is not, so only
+# allocation is checked.
+# Not part of the project template.
+name: Allocation guard
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      update-baseline:
+        description: 'Write a new allocation-baseline.json from this run and upload it as an artifact instead of checking'
+        type: boolean
+        required: false
+        default: false
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+jobs:
+  allocation:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    env:
+      ORG_GRADLE_PROJECT_cachePush: false
+      # Fixed, modest configuration: enough for a stable gc.alloc.rate.norm, not for throughput numbers.
+      # No -Pjmh.params: a parameter filter would drop the benchmarks that do not declare it.
+      JMH_ARGS: >-
+        -Pjmh.fork=1
+        -Pjmh.warmupIterations=2
+        -Pjmh.warmup=2s
+        -Pjmh.iterations=3
+        -Pjmh.timeOnIteration=2s
+        -Pjmh.profilers=gc
+    steps:
+      - name: "📥 Checkout repository"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      # Only for changes stacked on 8.4.x, which introduces the benchmarks: the base of a pull request can be
+      # another pull request's branch, so the base name alone does not tell.
+      - name: "🔎 Check the change is based on 8.4.x"
+        id: stacked
+        run: |
+          if git merge-base --is-ancestor origin/8.4.x HEAD; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "Not based on 8.4.x: skipping the allocation guard."
+          fi
+
+      - name: "🔧 Setup GraalVM CE"
+        if: steps.stacked.outputs.run == 'true'
+        uses: graalvm/setup-graalvm@27b360dbb857524eaf0b4c4cef364d38e5b4f173 # v1
+        with:
+          distribution: 'graalvm'
+          java-version: '25'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "🔧 Setup Gradle"
+        if: steps.stacked.outputs.run == 'true'
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
+        with:
+          develocity-access-key: ${{ secrets.DEVELOCITY_PULL_REQUEST_ACCESS_KEY || secrets.GRADLE_ENTERPRISE_ACCESS_KEY || '' }}
+
+      - name: "⏱ Run the benchmarks with the GC profiler"
+        if: steps.stacked.outputs.run == 'true'
+        run: ./gradlew :benchmarks:jmh $JMH_ARGS --no-daemon
+
+      - name: "📤 Upload the JMH result"
+        if: always() && steps.stacked.outputs.run == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: jmh-results
+          path: benchmarks/build/results/jmh/results.json
+          if-no-files-found: warn
+
+      - name: "🔍 Compare the allocations with the baseline"
+        if: steps.stacked.outputs.run == 'true' && !inputs.update-baseline
+        run: ./gradlew :benchmarks:checkAllocationBaseline --no-daemon
+
+      # Never committed from CI: download the artifact and commit it in a pull request.
+      - name: "📝 Write a new allocation baseline"
+        if: steps.stacked.outputs.run == 'true' && inputs.update-baseline
+        run: ./gradlew :benchmarks:updateAllocationBaseline --no-daemon
+
+      - name: "📤 Upload the new allocation baseline"
+        if: steps.stacked.outputs.run == 'true' && inputs.update-baseline
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: allocation-baseline
+          path: benchmarks/allocation-baseline.json

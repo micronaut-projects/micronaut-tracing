@@ -38,3 +38,15 @@ The `io.micronaut.tracing.zipkin.http.client.HttpClientSender` class is now depr
 == Micronaut Tracing 8.4.0 behavior changes
 
 With `micronaut-tracing-opentelemetry-http`, the requests to the Micronaut management endpoints (`/health`, `/info`, `/prometheus`...) are no longer traced by the HTTP server filter. Set `tracing.opentelemetry.http.server.exclude-management-endpoints` to `false` to trace them again, or list the ids of the endpoints to trace in `tracing.opentelemetry.http.server.traced-management-endpoints`. See <<performance, Performance Tuning>>.
+
+== Micronaut Tracing 8.4.0 deprecations
+
+The OpenTracing based modules are deprecated and will be removed in the next major version, since OpenTracing and the Jaeger client are archived:
+
+* `micronaut-tracing-opentracing`
+* `micronaut-tracing-jaeger`
+* the OpenTracing `io.opentracing.Tracer` bean of `micronaut-tracing-brave`
+
+A warning is logged once when an OpenTracing tracer is created. See <<migrationFromOpenTracing, Migrating from OpenTracing>> to move to OpenTelemetry or to Micrometer Tracing with Brave.
+
+The OpenTracing HTTP filters can now set the `error` tag to the boolean `true` defined by the OpenTracing semantic conventions, and record the error message as a span log event, with `tracing.opentracing.boolean-error-tag: true`. By default the `error` tag still holds the error message.

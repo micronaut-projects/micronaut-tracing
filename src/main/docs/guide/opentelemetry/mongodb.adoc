@@ -1,0 +1,32 @@
+MongoDB tracing for https://micronaut-projects.github.io/micronaut-mongodb/latest/guide/[Micronaut MongoDB] is supported by the `micronaut-tracing-opentelemetry-mongodb` module, which uses the OpenTelemetry MongoDB library instrumentation (`opentelemetry-mongo-3.1`).
+
+dependency:micronaut-tracing-opentelemetry-mongodb[scope="implementation", groupId="io.micronaut.tracing"]
+
+The module registers a `MongoClientSettingsBuilderCustomizer` that adds the OpenTelemetry `CommandListener` to the `MongoClientSettings` of every client Micronaut MongoDB creates: the default client (`mongodb.uri`) and the clients of named servers (`mongodb.servers.*`), for both the synchronous (`micronaut-mongo-sync`) and the reactive streams (`micronaut-mongo-reactive`) drivers.
+
+Every MongoDB command creates a `CLIENT` span named after the command, the database and the collection (for example `insert mydb.books` or `find mydb.books`) with the database client attributes, such as `db.system` (`mongodb`), `db.operation`, `db.mongodb.collection`, `db.name` and `db.statement`. The span is a child of the span that is current when the operation is issued, for example the HTTP server span of a request or a span created with `@NewSpan`.
+
+The reactive streams driver notifies the command listener on its own threads, so the module also sets a `ReactiveContextProvider` that captures the OpenTelemetry context of the subscriber (propagated through the Reactor context by Micronaut) and starts the command span in it. This requires Reactor on the classpath, and is skipped when the application configures a `ContextProvider` of its own in the client settings.
+
+NOTE: The instrumentation emits the database semantic conventions selected by the OpenTelemetry instrumentation. To emit the stable attribute names (`db.system.name`, `db.operation.name`, `db.collection.name`, `db.namespace`, `db.query.text`), set the `otel.semconv-stability.opt-in` system property (or the `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable) to `database` (or `database/dup` to emit both).
+
+The recorded command is sanitized by default: the values of the command document are replaced with `?` (`{"insert": "books", "documents": [{"_id": "?", "title": "?"}], ...}`). The following configuration records the full command and limits its recorded length to 4096 characters (default 32768):
+
+[configuration]
+----
+otel:
+  instrumentation:
+    mongo:
+      query-sanitization-enabled: false
+      max-normalized-query-length: 4096
+----
+
+Instrumentation is enabled by default and can be disabled with:
+
+[configuration]
+----
+otel:
+  instrumentation:
+    mongo:
+      enabled: false
+----

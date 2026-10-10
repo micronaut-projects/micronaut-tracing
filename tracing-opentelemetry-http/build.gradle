@@ -26,4 +26,5 @@ dependencies {
     testImplementation mnRxjava3.micronaut.rxjava3.http.client
 
     testImplementation projects.micronautTracingOpentelemetryTest
+    testImplementation mn.micronaut.management
 }

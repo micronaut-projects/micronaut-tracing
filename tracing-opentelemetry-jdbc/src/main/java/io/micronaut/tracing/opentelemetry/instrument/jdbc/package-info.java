@@ -22,8 +22,10 @@
 @Requires(property = JdbcTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @Requires(classes = OpenTelemetry.class)
 @Requires(classes = DataSourceResolver.class)
+@NullMarked
 package io.micronaut.tracing.opentelemetry.instrument.jdbc;
 
+import org.jspecify.annotations.NullMarked;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;

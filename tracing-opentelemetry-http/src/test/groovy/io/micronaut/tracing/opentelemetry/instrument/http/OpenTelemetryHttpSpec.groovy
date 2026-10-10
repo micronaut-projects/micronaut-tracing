@@ -43,6 +43,7 @@ import io.opentelemetry.semconv.HttpAttributes
 import io.opentelemetry.semconv.ServerAttributes
 import io.reactivex.rxjava3.core.Single
 import jakarta.inject.Inject
+import jakarta.inject.Singleton
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -558,8 +559,124 @@ class OpenTelemetryHttpSpec extends Specification {
         exporter.reset()
     }
 
+    void 'client call nested in a reactive @NewSpan is a child of the internal span, path=#path'() {
+        when:
+        HttpResponse<String> response = httpClient.toBlocking().exchange("/future/$path?input=%20foo%20", String)
+
+        then:
+        response.body() == '(foo foo)'
+
+        and: 'the client span is a child of the @NewSpan span and the downstream server span a child of the client span'
+        conditions.eventually {
+            hasSpans(1, 2, 1)
+            def mainServerSpan = exporter.finishedSpanItems.find { it.kind == SpanKind.SERVER && it.name == "GET /future/$path".toString() }
+            def downstreamServerSpan = exporter.finishedSpanItems.find { it.kind == SpanKind.SERVER && it.name == 'GET /words/double' }
+            def internalSpan = exporter.finishedSpanItems.find { it.kind == SpanKind.INTERNAL }
+            def clientSpan = exporter.finishedSpanItems.find { it.kind == SpanKind.CLIENT }
+            mainServerSpan
+            internalSpan.name == spanName
+            internalSpan.traceId == mainServerSpan.traceId
+            internalSpan.parentSpanId == mainServerSpan.spanId
+            clientSpan.traceId == mainServerSpan.traceId
+            clientSpan.parentSpanId == internalSpan.spanId
+            downstreamServerSpan.traceId == mainServerSpan.traceId
+            downstreamServerSpan.parentSpanId == clientSpan.spanId
+            hasHttpSemanticAttributes(HttpStatus.OK)
+        }
+
+        cleanup:
+        exporter.reset()
+
+        where:
+        path                 | spanName
+        'toFuture'           | 'InternalWorker.transform'
+        'mono'               | 'InternalWorker.transform'
+        'clientFirstFuture'  | 'InternalWorker.transformClientFirst'
+        'clientFirstMono'    | 'InternalWorker.transformClientFirst'
+    }
+
+    void 'client call chained by the caller after a reactive @NewSpan is a child of the server span'() {
+        when:
+        HttpResponse<String> response = httpClient.toBlocking().exchange('/future/chained?input=%20foo%20', String)
+
+        then:
+        response.body() == '(foo foo) (foo foo)'
+
+        and: 'the client span of the @NewSpan method is its child and the chained client span a child of the server span'
+        conditions.eventually {
+            hasSpans(1, 3, 2)
+            def mainServerSpan = exporter.finishedSpanItems.find { it.kind == SpanKind.SERVER && it.name == 'GET /future/chained' }
+            def internalSpan = exporter.finishedSpanItems.find { it.kind == SpanKind.INTERNAL }
+            def clientSpans = exporter.finishedSpanItems.findAll { it.kind == SpanKind.CLIENT }
+            mainServerSpan
+            internalSpan.parentSpanId == mainServerSpan.spanId
+            clientSpans*.parentSpanId.sort() == [internalSpan.spanId, mainServerSpan.spanId].sort()
+            clientSpans.every { it.traceId == mainServerSpan.traceId }
+        }
+
+        cleanup:
+        exporter.reset()
+    }
+
     @Introspected
     static class SomeBody {
+    }
+
+    @Singleton
+    static class InternalWorker {
+
+        @Inject
+        WordsClient downstreamClient
+
+        @NewSpan
+        Mono<String> transform(@SpanTag String input) {
+            Mono.just(input.trim())
+                    .flatMap { s -> downstreamClient.doubleWords(s) }
+                    .map { "($it)".toString() }
+        }
+
+        @NewSpan
+        Mono<String> transformClientFirst(@SpanTag String input) {
+            downstreamClient.doubleWords(input.trim())
+                    .map { "($it)".toString() }
+        }
+    }
+
+    @Controller('/future')
+    static class FutureController {
+
+        @Inject
+        InternalWorker internalWorker
+
+        @Get('/toFuture')
+        CompletableFuture<String> toFuture(@QueryValue String input) {
+            internalWorker.transform(input).toFuture()
+        }
+
+        @Get('/mono')
+        Mono<String> mono(@QueryValue String input) {
+            internalWorker.transform(input)
+        }
+
+        @Get('/clientFirstFuture')
+        CompletableFuture<String> clientFirstFuture(@QueryValue String input) {
+            internalWorker.transformClientFirst(input).toFuture()
+        }
+
+        @Get('/clientFirstMono')
+        Mono<String> clientFirstMono(@QueryValue String input) {
+            internalWorker.transformClientFirst(input)
+        }
+
+        @Get('/chained')
+        CompletableFuture<String> chained(@QueryValue String input) {
+            internalWorker.transform(input)
+                    .flatMap { result -> downstreamClient.doubleWords(result) }
+                    .toFuture()
+        }
+
+        @Inject
+        WordsClient downstreamClient
     }
 
     @Client("/words")

@@ -32,6 +32,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * <p>Not meant to be used in application code. Methods compiled without the visitor do not carry it and
  * the interceptors compute the same values at runtime.</p>
  *
+ * <p>Kotlin HTTP route methods with a mangled JVM name also carry it, with only the {@link #method()}
+ * member, for the {@code code.function.name} attribute of the HTTP server spans.</p>
+ *
  * @since 8.4.0
  */
 @Internal

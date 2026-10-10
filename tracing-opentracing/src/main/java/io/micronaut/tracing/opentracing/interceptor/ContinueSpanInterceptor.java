@@ -26,6 +26,7 @@ import io.micronaut.tracing.util.TracedMethodCache;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implements tracing logic for {@code ContinueSpan} and {@code NewSpan}
@@ -56,7 +57,7 @@ public final class ContinueSpanInterceptor extends AbstractTraceInterceptor {
     }
 
     @Override
-    public Object intercept(MethodInvocationContext<Object, Object> context) {
+    public @Nullable Object intercept(MethodInvocationContext<Object, Object> context) {
         Span currentSpan = tracer.activeSpan();
         if (currentSpan == null) {
             return context.proceed();

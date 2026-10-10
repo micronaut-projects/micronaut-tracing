@@ -72,7 +72,7 @@ public final class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
     }
 
     @Override
-    public Object intercept(MethodInvocationContext<Object, Object> context) {
+    public @Nullable Object intercept(MethodInvocationContext<Object, Object> context) {
         NewSpanMethod method = methods.get(context);
         if (method.operationName == null) {
             return context.proceed();

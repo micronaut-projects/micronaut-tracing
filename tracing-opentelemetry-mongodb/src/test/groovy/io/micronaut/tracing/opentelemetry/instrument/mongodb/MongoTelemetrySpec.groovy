@@ -49,9 +49,6 @@ class MongoTelemetrySpec extends Specification implements TestPropertyProvider {
     @Inject
     MongoService mongoService
 
-    @Inject
-    com.mongodb.reactivestreams.client.MongoClient reactiveClient
-
     @Override
     Map<String, String> getProperties() {
         [
@@ -100,11 +97,13 @@ class MongoTelemetrySpec extends Specification implements TestPropertyProvider {
 
     void "commands of the reactive streams client are traced"() {
         when:
-        Mono.from(reactiveClient.getDatabase("test").getCollection("reactive")
-                .insertOne(new Document("name", "reactive"))).block()
+        mongoService.storeReactive().block()
         SpanData insert = awaitSpan(spans, "insert test.reactive")
+        SpanData parent = spans.finishedSpans().find { it.name.endsWith("mongo-store-reactive") }
 
         then:
+        parent != null
+        insert.parentSpanId == parent.spanId
         isMongo(insert)
         operation(insert) == "insert"
         collection(insert) == "reactive"
@@ -231,9 +230,17 @@ class MongoTelemetrySpec extends Specification implements TestPropertyProvider {
     static class MongoService {
 
         private final MongoClient mongoClient
+        private final com.mongodb.reactivestreams.client.MongoClient reactiveClient
 
-        MongoService(MongoClient mongoClient) {
+        MongoService(MongoClient mongoClient, com.mongodb.reactivestreams.client.MongoClient reactiveClient) {
             this.mongoClient = mongoClient
+            this.reactiveClient = reactiveClient
+        }
+
+        @NewSpan("mongo-store-reactive")
+        Mono<Void> storeReactive() {
+            Mono.from(reactiveClient.getDatabase("test").getCollection("reactive")
+                    .insertOne(new Document("name", "reactive"))).then()
         }
 
         @NewSpan("mongo-store")

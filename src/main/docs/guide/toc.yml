@@ -26,6 +26,7 @@ opentelemetry:
   ucp: Oracle UCP
   awsSdkInstrumentation: AWS SDK Instrumentation
   awsResourceDetectors: AWS Resource Detectors
+  performance: Performance Tuning
   opentelemetryGuides: OpenTelemetry Guides
 tracingGuides: Micronaut Tracing Guides
 repository: Repository

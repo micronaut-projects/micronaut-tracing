@@ -1,0 +1,25 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api platform(libs.boms.opentelemetry)
+    api platform(libs.boms.opentelemetry.alpha)
+    api platform(libs.boms.opentelemetry.instrumentation)
+    api platform(libs.boms.opentelemetry.instrumentation.alpha)
+    api projects.micronautTracingOpentelemetry
+    api libs.opentelemetry.api
+    api libs.opentelemetry.instrumentation.api.incubator
+    api mnJms.micronaut.jms.core
+
+    testImplementation projects.micronautTracingOpentelemetryTest
+    testImplementation projects.micronautTracingOpentelemetryAnnotation
+    testImplementation mnJms.micronaut.jms.activemq.classic
+    testImplementation libs.activemq.broker
+}
+
+micronautBuild {
+    binaryCompatibility {
+        enabledAfter '8.4.0'
+    }
+}

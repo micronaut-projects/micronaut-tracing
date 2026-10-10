@@ -22,6 +22,7 @@ import io.micronaut.core.util.StringUtils;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.jdbc.datasource.JdbcTelemetry;
 import io.opentelemetry.instrumentation.jdbc.datasource.JdbcTelemetryBuilder;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The configuration class for jdbc telemetry.
@@ -35,7 +36,7 @@ class JdbcTelemetryConfiguration {
     @ConfigurationBuilder(prefixes = "set")
     final JdbcTelemetryBuilder builder;
 
-    private Boolean enabled;
+    private @Nullable Boolean enabled;
 
     JdbcTelemetryConfiguration(OpenTelemetry openTelemetry) {
         builder = JdbcTelemetry.builder(openTelemetry);
@@ -44,14 +45,14 @@ class JdbcTelemetryConfiguration {
     /**
      * @return is jdbc telemetry enabled.
      */
-    public Boolean getEnabled() {
+    public @Nullable Boolean getEnabled() {
         return enabled;
     }
 
     /**
      * @param enabled enables the jdbc telemetry.
      */
-    public void setEnabled(Boolean enabled) {
+    public void setEnabled(@Nullable Boolean enabled) {
         this.enabled = enabled;
     }
 

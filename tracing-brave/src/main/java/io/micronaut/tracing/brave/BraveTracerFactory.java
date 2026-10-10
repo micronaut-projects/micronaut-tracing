@@ -89,7 +89,11 @@ public class BraveTracerFactory {
      *
      * @param tracing the {@code Tracing} bean
      * @return the Open Tracing {@code Tracer} bean
+     * @deprecated OpenTracing is archived. The Brave {@code Tracing} bean remains available, for example for
+     * Micrometer Tracing through {@code micronaut-tracing-micrometer-brave}. See the "Migrating from OpenTracing"
+     * section of the user guide.
      */
+    @Deprecated(since = "8.4.0", forRemoval = true)
     @Singleton
     @Requires(classes = {BraveTracer.class, Tracer.class})
     @Primary

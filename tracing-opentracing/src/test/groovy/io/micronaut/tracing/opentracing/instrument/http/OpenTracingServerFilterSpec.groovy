@@ -120,6 +120,63 @@ class OpenTracingServerFilterSpec extends Specification {
         request.getAttribute(TraceRequestAttributes.CURRENT_SPAN, Span).orElseThrow().is(createdSpan)
     }
 
+    void 'sets a boolean error tag and logs the error when the boolean error tag is enabled'() {
+        given:
+        Throwable failure = new IllegalStateException('broken')
+        Span createdSpan = Mock()
+        Tracer.SpanBuilder spanBuilder = Stub()
+        spanBuilder.withTag(_ as String, _ as String) >> spanBuilder
+        spanBuilder.ignoreActiveSpan() >> spanBuilder
+        spanBuilder.start() >> createdSpan
+        Tracer tracer = Stub() {
+            buildSpan(_) >> spanBuilder
+        }
+        OpenTracingServerFilter filter = newFilter(tracer)
+        filter.setBooleanErrorTag(true)
+
+        when:
+        Mono.from(filter.doFilter(HttpRequest.GET('/traced/error'), errorChain(failure))).block()
+
+        then:
+        thrown(IllegalStateException)
+        1 * createdSpan.setTag('error', true)
+        0 * createdSpan.setTag('error', _ as String)
+        1 * createdSpan.log([
+            'event'       : 'error',
+            'error.kind'  : IllegalStateException.name,
+            'error.object': failure,
+            'message'     : 'broken'
+        ])
+    }
+
+    void 'sets a boolean error tag and logs the reason of an error response when the boolean error tag is enabled'() {
+        given:
+        Span createdSpan = Mock()
+        Tracer.SpanBuilder spanBuilder = Stub()
+        spanBuilder.withTag(_ as String, _ as String) >> spanBuilder
+        spanBuilder.ignoreActiveSpan() >> spanBuilder
+        spanBuilder.start() >> createdSpan
+        Tracer tracer = Stub() {
+            buildSpan(_) >> spanBuilder
+        }
+        OpenTracingServerFilter filter = newFilter(tracer)
+        filter.setBooleanErrorTag(true)
+        ServerFilterChain chain = new ServerFilterChain() {
+            @Override
+            Publisher<MutableHttpResponse<?>> proceed(HttpRequest<?> request) {
+                return Mono.just(HttpResponse.notFound())
+            }
+        }
+
+        when:
+        Mono.from(filter.doFilter(HttpRequest.GET('/traced/missing'), chain)).block()
+
+        then:
+        1 * createdSpan.setTag('http.status_code', 404)
+        1 * createdSpan.setTag('error', true)
+        1 * createdSpan.log(['event': 'error', 'message': 'Not Found'])
+    }
+
     private static OpenTracingServerFilter newFilter(Tracer tracer) {
         new OpenTracingServerFilter(tracer, ConversionService.SHARED, null)
     }

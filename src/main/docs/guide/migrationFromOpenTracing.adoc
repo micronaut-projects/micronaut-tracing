@@ -1,0 +1,139 @@
+https://opentracing.io/[OpenTracing] and the https://github.com/jaegertracing/jaeger-client-java[Jaeger client] have been archived upstream, and OpenTelemetry is their successor. Since Micronaut Tracing `8.4.0` the OpenTracing based integrations are deprecated and will be removed in the next major version:
+
+* `micronaut-tracing-opentracing`
+* `micronaut-tracing-jaeger`
+* the OpenTracing `io.opentracing.Tracer` bean created by `micronaut-tracing-brave` (through `brave-opentracing`)
+
+A warning pointing to this section is logged once when an OpenTracing tracer, other than the default no-op one, is created.
+
+The pure Brave parts of `micronaut-tracing-brave` (the `brave.Tracing` bean and the `tracing.zipkin.*` configuration), `micronaut-tracing-brave-http` and `micronaut-tracing-zipkin-http-client` are *not* deprecated: they are used by the <<brave, Micrometer Tracing Brave bridge>>. In the next major version they are expected to no longer depend on OpenTracing.
+
+This section describes how to move to `micronaut-tracing-opentelemetry`, the recommended replacement, or to Micrometer Tracing backed by Brave.
+
+== Dependencies
+
+|===
+| Before | After (OpenTelemetry)
+
+| `micronaut-tracing-jaeger`
+| `micronaut-tracing-opentelemetry-http` and `io.opentelemetry:opentelemetry-exporter-otlp`. Jaeger accepts OTLP natively.
+
+| `micronaut-tracing-brave-http` (Zipkin)
+| `micronaut-tracing-opentelemetry-http` and `io.opentelemetry:opentelemetry-exporter-otlp`, sending to Zipkin through an OpenTelemetry Collector.
+
+| `micronaut-tracing-opentracing` (annotations only)
+| `micronaut-tracing-opentelemetry`
+
+| Code using the OpenTracing API
+| The OpenTelemetry API (`io.opentelemetry.api.trace.Tracer`), included in `micronaut-tracing-opentelemetry`.
+|===
+
+For example, for Jaeger replace the `micronaut-tracing-jaeger` dependency with:
+
+dependency:micronaut-tracing-opentelemetry-http[scope="implementation", groupId="io.micronaut.tracing"]
+
+dependency:opentelemetry-exporter-otlp[scope="implementation", groupId="io.opentelemetry"]
+
+Add the `micronaut-tracing-opentelemetry-annotation` annotation processor as well if you use the OpenTelemetry annotations (see <<annotations, OpenTelemetry Annotations>>).
+
+If you prefer to keep Brave and the Zipkin reporter, add `micronaut-tracing-micrometer-brave` and use the Micrometer Tracing API instead of the OpenTracing API. The `tracing.zipkin.*` configuration stays the same. See <<brave, Brave Bridge>>.
+
+== Configuration
+
+OpenTelemetry is configured with the standard `otel.*` properties, see <<opentelemetry, Tracing with OpenTelemetry>>.
+
+|===
+| Before | After
+
+| `tracing.jaeger.enabled: true`
+| `otel.traces.exporter: otlp` (OpenTelemetry tracing is enabled when the module is on the classpath, the exporter defaults to `none`)
+
+| `tracing.jaeger.sender.*` (agent host and port, collector endpoint)
+| `otel.exporter.otlp.endpoint`, for example `http://localhost:4317` (gRPC) or, with `otel.exporter.otlp.protocol: http/protobuf`, `http://localhost:4318` for the Jaeger collector
+
+| `tracing.zipkin.enabled: true`, `tracing.zipkin.http.url(s)`
+| `otel.traces.exporter: otlp` and `otel.exporter.otlp.endpoint` pointing to an OpenTelemetry Collector that exports to Zipkin
+
+| `tracing.jaeger.sampler.probability`, `tracing.zipkin.sampler.probability`
+| `otel.traces.sampler: parentbased_traceidratio` and `otel.traces.sampler.arg`
+
+| Jaeger rate limiting sampler
+| `tracing.opentelemetry.sampler.rate-limit.traces-per-second`, see <<performance, Performance Tuning>>
+
+| `tracing.jaeger.reporter.*`, `tracing.zipkin.*` reporter settings
+| `otel.bsp.*` (batch span processor: `otel.bsp.schedule.delay`, `otel.bsp.max.queue.size`...)
+
+| `tracing.exclusions`
+| `otel.exclusions`
+
+| `tracing.http.client.path`, `tracing.http.server.path`
+| Unchanged
+
+| Service name (`micronaut.application.name`)
+| Unchanged: `otel.service.name` defaults to `micronaut.application.name`
+|===
+
+For example, the following Jaeger configuration:
+
+[configuration]
+----
+tracing:
+  jaeger:
+    enabled: true
+    sampler:
+      probability: 0.5
+    codecs: W3C,B3,JAEGER
+----
+
+becomes:
+
+[configuration]
+----
+otel:
+  traces:
+    exporter: otlp
+    sampler: parentbased_traceidratio
+    sampler.arg: 0.5
+  exporter:
+    otlp:
+      endpoint: http://localhost:4317
+  propagators: tracecontext, baggage, b3multi, jaeger
+----
+
+== Annotations
+
+The ann:tracing.annotation.NewSpan[], ann:tracing.annotation.ContinueSpan[] and ann:tracing.annotation.SpanTag[] annotations keep working unchanged with OpenTelemetry. Alternatively, use the OpenTelemetry `@WithSpan`, `@AddingSpanAttributes` and `@SpanAttribute` annotations, see <<annotations, OpenTelemetry Annotations>>.
+
+To create spans programmatically, inject the OpenTelemetry `io.opentelemetry.api.trace.Tracer` bean instead of `io.opentracing.Tracer`. Spans made current with Micronaut's context propagation are propagated across threads, reactive streams and the HTTP client automatically.
+
+== Propagation
+
+OpenTelemetry uses the W3C Trace Context (`tracecontext`) and `baggage` propagators by default. To interoperate with services that still use the B3 headers (Brave and Zipkin) or the Jaeger `uber-trace-id` header, add the propagators dependency:
+
+dependency:opentelemetry-extension-trace-propagators[scope="implementation", groupId="io.opentelemetry"]
+
+and list the propagators to use. Use `b3multi` for the multiple `X-B3-*` headers sent by Brave and the Jaeger client (`b3` is the single `b3` header):
+
+[configuration]
+----
+otel:
+  propagators: tracecontext, baggage, b3multi, jaeger
+----
+
+The `tracing.jaeger.codecs` values map to `tracecontext` (`W3C`), `b3multi` (`B3`) and `jaeger` (`JAEGER`). See <<propagators, OpenTelemetry Propagators>>.
+
+== Log correlation (MDC)
+
+With OpenTelemetry the trace context is added to the SLF4J MDC automatically, under the `trace_id`, `span_id` and `trace_flags` keys, see <<mdc, Log Correlation (MDC)>>. Replace the `traceId` / `spanId` keys used in your log patterns with the OpenTelemetry ones. With Brave, the Brave MDC integration of `micronaut-tracing-brave` keeps working.
+
+== Differences
+
+The following behaviours are not one-to-one:
+
+* *Span attributes*: the OpenTelemetry HTTP instrumentation follows the OpenTelemetry semantic conventions (`http.request.method`, `url.path`, `http.route`, `http.response.status_code`...) instead of the `http.method`, `http.path`, `http.status_code`, `http.client` and `http.server` tags. Update the dashboards and queries that use the old tags.
+* *Errors*: a failed span has the `ERROR` status and an `exception` event with the exception type, message and stack trace, instead of an `error` tag holding the message (or the boolean `true` with `tracing.opentracing.boolean-error-tag`).
+* *Span names*: HTTP server spans are named after the method and the route template, for example `GET /books/{id}`. HTTP client spans are named after the method, followed by the URI template when it is known, as defined by the semantic conventions, rather than after the method and the request path.
+* *Jaeger specific features*: the Jaeger remote sampler requires the `io.opentelemetry:opentelemetry-sdk-extension-jaeger-remote-sampler` dependency and `otel.traces.sampler: parentbased_jaeger_remote`. The Jaeger client metrics, the UDP agent sender and a custom `io.opentracing.ScopeManager` have no equivalent.
+* *Injection points*: the beans that customized the Jaeger or Brave configuration (for example a `io.jaegertracing.Configuration.SamplerConfiguration` bean) are replaced by api:tracing.opentelemetry.OpenTelemetryBuilderCustomizer[] beans, or a `io.opentelemetry.sdk.trace.samplers.Sampler` bean for the sampler. See <<customization, OpenTelemetry SDK Customization>>.
+* *`GlobalTracer`*: the OpenTracing `GlobalTracer` is no longer registered. Inject the `OpenTelemetry` or `Tracer` bean instead of using a global.
+* *Request attributes*: the span is no longer stored in the `TraceRequestAttributes` request attributes. Use `Span.current()` in the request handling code instead.

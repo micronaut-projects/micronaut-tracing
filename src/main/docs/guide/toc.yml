@@ -2,6 +2,7 @@ introduction:
   title: Introduction
 releaseHistory: Release History
 breaks: Breaking Changes
+migrationFromOpenTracing: Migrating from OpenTracing
 jaeger: Tracing with Jaeger
 zipkin: Tracing with Zipkin
 micrometer:

@@ -33,3 +33,8 @@ dependencies {
     testRuntimeOnly mnSerde.micronaut.serde.jackson
     testRuntimeOnly mnLogging.logback.classic
 }
+
+// The whole module is deprecated for removal: don't report the removal warnings about its own types.
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.add('-Xlint:-removal')
+}

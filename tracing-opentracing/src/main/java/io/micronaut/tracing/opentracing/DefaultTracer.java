@@ -27,7 +27,10 @@ import jakarta.inject.Singleton;
  *
  * @author graemerocher
  * @since 1.0
+ * @deprecated OpenTracing is archived. Use Micronaut Tracing OpenTelemetry instead. See the
+ * "Migrating from OpenTracing" section of the user guide.
  */
+@Deprecated(since = "8.4.0", forRemoval = true)
 @Factory
 public class DefaultTracer {
 

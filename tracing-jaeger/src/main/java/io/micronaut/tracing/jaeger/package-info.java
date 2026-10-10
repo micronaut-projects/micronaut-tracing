@@ -18,6 +18,8 @@
  *
  * @author graemerocher
  * @since 1.0
+ * @deprecated The Jaeger client is archived. Use Micronaut Tracing OpenTelemetry with the OTLP exporter
+ * (Jaeger accepts OTLP natively) instead. See the "Migrating from OpenTracing" section of the user guide.
  */
 @Configuration
 @Requires(classes = io.jaegertracing.Configuration.class)

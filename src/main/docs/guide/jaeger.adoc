@@ -1,5 +1,7 @@
 https://www.jaegertracing.io/[Jaeger] is a distributed tracing system developed at Uber that is more or less the reference implementation for https://opentracing.io/[Open Tracing].
 
+WARNING: `micronaut-tracing-jaeger` and `micronaut-tracing-opentracing` are deprecated since Micronaut Tracing `8.4.0` and will be removed in the next major version: OpenTracing and the Jaeger client are archived. Jaeger accepts OTLP natively, so use <<opentelemetry, OpenTelemetry>> with the OTLP exporter instead. See <<migrationFromOpenTracing, Migrating from OpenTracing>>.
+
 == Running Jaeger
 
 The easiest way to get started with Jaeger is with Docker:
@@ -87,6 +89,17 @@ tracing:
   exclusions:
     - /health
     - /env/.*
+----
+
+== Error tag
+
+By default the HTTP filters set the `error` tag of a failed request span to the error message. Jaeger only marks a span as failed when the tag is the boolean `true` defined by the OpenTracing semantic conventions. Set `tracing.opentracing.boolean-error-tag` to `true` to use the boolean tag; the error message (and, for an exception, its kind and the exception itself) is then recorded as a span log event:
+
+[configuration]
+----
+tracing:
+  opentracing:
+    boolean-error-tag: true
 ----
 
 == Jaeger Guides

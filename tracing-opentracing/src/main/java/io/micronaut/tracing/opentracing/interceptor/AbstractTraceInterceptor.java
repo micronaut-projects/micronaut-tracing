@@ -36,7 +36,10 @@ import static io.opentracing.log.Fields.MESSAGE;
  *
  * @author graemerocher
  * @since 1.0
+ * @deprecated OpenTracing is archived. Use Micronaut Tracing OpenTelemetry instead. See the
+ * "Migrating from OpenTracing" section of the user guide.
  */
+@Deprecated(since = "8.4.0", forRemoval = true)
 @Internal
 @Requires(beans = Tracer.class)
 public abstract sealed class AbstractTraceInterceptor implements MethodInterceptor<Object, Object>

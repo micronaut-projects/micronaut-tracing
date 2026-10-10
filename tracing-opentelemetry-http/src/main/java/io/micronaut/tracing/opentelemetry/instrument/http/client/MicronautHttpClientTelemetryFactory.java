@@ -18,7 +18,7 @@ package io.micronaut.tracing.opentelemetry.instrument.http.client;
 import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import io.micronaut.core.annotation.Order;
 import io.micronaut.core.order.Ordered;
 import io.micronaut.http.HttpResponse;

@@ -19,7 +19,7 @@ import io.micronaut.aop.InterceptorBean;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.util.TracedMethod;
 import io.micronaut.tracing.util.TracedMethodCache;

@@ -18,13 +18,17 @@
  * traces, read through {@link io.micronaut.tracing.opentelemetry.inspector.TraceInspector}.
  *
  * <p>Active when {@code tracing.opentelemetry.inspector.enabled} is {@code true}. When the property is not
- * set, it is active only in the {@code dev} environment. See {@link TraceInspectorEnabledCondition}.</p>
+ * set, it is active only in the {@code dev} environment. See {@link TraceInspectorEnabledCondition}. It is never
+ * active when OpenTelemetry is disabled with {@code micronaut.otel.enabled=false}.</p>
  *
  * @since 8.4.0
  */
 @Configuration
+@Requires(property = OpenTelemetryConfigurationProperties.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @Requires(condition = TraceInspectorEnabledCondition.class)
 package io.micronaut.tracing.opentelemetry.inspector;
 
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.util.StringUtils;
+import io.micronaut.tracing.opentelemetry.conf.OpenTelemetryConfigurationProperties;

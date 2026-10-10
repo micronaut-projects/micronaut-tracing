@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 original authors
+ * Copyright 2017-2026 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 /**
- * Classes related to {@link io.opentelemetry.sdk.trace.IdGenerator}.
- * @author Sergio del Amo
- * @since 4.2.0
+ * OpenTelemetry utilities.
  */
 @NullMarked
-package io.micronaut.tracing.opentelemetry.idgenerator.xray;
+package io.micronaut.tracing.opentelemetry.utils;
 
 import org.jspecify.annotations.NullMarked;

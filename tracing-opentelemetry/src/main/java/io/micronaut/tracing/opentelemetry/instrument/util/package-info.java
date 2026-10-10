@@ -19,4 +19,7 @@
  * @author Nemanja Mikic
  * @since 4.2.0
  */
+@NullMarked
 package io.micronaut.tracing.opentelemetry.instrument.util;
+
+import org.jspecify.annotations.NullMarked;

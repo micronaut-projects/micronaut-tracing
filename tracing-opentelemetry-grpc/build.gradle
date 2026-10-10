@@ -27,6 +27,8 @@ dependencies {
     testImplementation projects.micronautTracingOpentelemetryTest
     testImplementation libs.opentracing.grpc
     testImplementation libs.grpc.protobuf
+    // Keep the protobuf runtime at least as new as the protoc used to generate the test protos.
+    testImplementation libs.protobuf.java
     testImplementation libs.grpc.stub
     testImplementation mnSerde.micronaut.serde.jackson
 

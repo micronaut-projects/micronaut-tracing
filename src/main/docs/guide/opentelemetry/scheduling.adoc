@@ -1,0 +1,53 @@
+Each run of a `@Scheduled` method by the scheduler is traced: the run is the root span of a new trace, whatever the context of the scheduler thread, so that the work of a job (HTTP client calls, database queries, messages...) is grouped under one trace per run.
+
+The tracing of the scheduled methods requires the `micronaut-tracing-opentelemetry-annotation` annotation processor, which binds the tracing interceptor to the `@Scheduled` methods at compile time:
+
+dependency:micronaut-tracing-opentelemetry-annotation[scope="annotationProcessor", version="{version}", groupId="io.micronaut.tracing"]
+
+[source,java]
+----
+@Singleton
+public class ReportJob {
+
+    @Scheduled(fixedDelay = "5m")
+    void generate() { // <1>
+        ...
+    }
+}
+----
+<1> Each run of `generate()` is a span named `ReportJob.generate`.
+
+The span of a run has:
+
+|===
+| Property | Value
+
+| Name
+| The simple class name and the method name, for example `ReportJob.generate`
+
+| Kind
+| `INTERNAL`
+
+| `code.function.name`
+| The fully qualified name of the method, for example `com.example.ReportJob.generate`
+
+| `micronaut.scheduled.cron`, `micronaut.scheduled.fixed_delay`, `micronaut.scheduled.fixed_rate`
+| The schedule that triggered the run (OpenTelemetry has no semantic conventions for scheduled jobs)
+
+| Status
+| `ERROR` with the exception recorded when the method throws
+|===
+
+A call of a scheduled method by the application itself is not traced as a run: the span is only started when the scheduler invokes the method, which Micronaut Core exposes with `ScheduledExecution`. A `@NewSpan` or `@WithSpan` on the scheduled method creates a child span of the run.
+
+The interceptor can only be applied to a method that a subclass can override: the scheduled methods that are private, final or declared by a final class (such as a Kotlin class that is not `open`) run untraced. Classes compiled without the annotation processor are not traced either.
+
+To disable the tracing of the scheduled methods:
+
+[configuration]
+----
+tracing:
+  opentelemetry:
+    scheduled:
+      enabled: false
+----

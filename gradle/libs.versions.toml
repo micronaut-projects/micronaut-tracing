@@ -42,6 +42,7 @@ micronaut-rxjava3 = "4.1.0"
 micronaut-serde = "3.2.4"
 micronaut-sql = "7.2.0"
 micronaut-kafka = "6.2.0"
+micronaut-mongodb = "6.2.0"
 micronaut-rabbitmq = "5.1.0"
 micronaut-redis = "7.2.0"
 micronaut-jms = "5.1.0"
@@ -72,6 +73,7 @@ micronaut-rxjava3 = { module = 'io.micronaut.rxjava3:micronaut-rxjava3-bom', ver
 micronaut-serde = { module = 'io.micronaut.serde:micronaut-serde-bom', version.ref = 'micronaut-serde'}
 micronaut-sql = { module = 'io.micronaut.sql:micronaut-sql-bom', version.ref = 'micronaut-sql' }
 micronaut-kafka = { module = 'io.micronaut.kafka:micronaut-kafka-bom', version.ref = 'micronaut-kafka'}
+micronaut-mongodb = { module = 'io.micronaut.mongodb:micronaut-mongo-bom', version.ref = 'micronaut-mongodb'}
 micronaut-r2dbc = { module = 'io.micronaut.r2dbc:micronaut-r2dbc-bom', version.ref = 'micronaut-r2dbc'}
 micronaut-rabbitmq = { module = 'io.micronaut.rabbitmq:micronaut-rabbitmq', version.ref = 'micronaut-rabbitmq'}
 micronaut-redis = { module = 'io.micronaut.redis:micronaut-redis-bom', version.ref = 'micronaut-redis'}
@@ -124,6 +126,7 @@ opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrum
 opentelemetry-instrumentation-jdbc = { module = 'io.opentelemetry.instrumentation:opentelemetry-jdbc' }
 opentelemetry-instrumentation-r2dbc = { module = 'io.opentelemetry.instrumentation:opentelemetry-r2dbc-1.0' }
 opentelemetry-instrumentation-lettuce = { module = 'io.opentelemetry.instrumentation:opentelemetry-lettuce-5.1' }
+opentelemetry-instrumentation-mongo = { module = 'io.opentelemetry.instrumentation:opentelemetry-mongo-3.1' }
 opentelemetry-instrumentation-ucp = { module = 'io.opentelemetry.instrumentation:opentelemetry-oracle-ucp-11.2' }
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 testcontainers-kafka = { module = "org.testcontainers:testcontainers-kafka"}

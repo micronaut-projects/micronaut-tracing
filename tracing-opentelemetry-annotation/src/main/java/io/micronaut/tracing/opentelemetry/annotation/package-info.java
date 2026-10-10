@@ -20,4 +20,7 @@
  * @author Graeme Rocher
  * @since 8.4.0
  */
+@NullMarked
 package io.micronaut.tracing.opentelemetry.annotation;
+
+import org.jspecify.annotations.NullMarked;

@@ -23,8 +23,10 @@ import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.scheduling.TaskExecutors
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.tracing.annotation.ContinueSpan
+import io.micronaut.tracing.annotation.NewSpan
 import io.opentracing.Tracer
 import jakarta.inject.Inject
+import jakarta.inject.Singleton
 import org.slf4j.LoggerFactory
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
@@ -36,6 +38,7 @@ import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 import java.time.Duration
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit
 
@@ -534,6 +537,38 @@ class HttpTracingSpec extends Specification {
         }
     }
 
+    void 'client call nested in a reactive @NewSpan is a child of the internal span, path=#path'() {
+        when:
+        HttpResponse<String> response = client.toBlocking().exchange("/future/$path/John", String)
+
+        then:
+        response.body() == '(John)'
+
+        and: 'the client span is a child of the @NewSpan span and the downstream server span a child of the client span'
+        conditions.eventually {
+            // the client and server spans of the test request, the @NewSpan span and the nested client and server spans
+            reporter.spans.size() == 5
+
+            List<JaegerSpan> spans = reporter.spans
+            spans.collect { it.context().traceId }.unique().size() == 1
+
+            JaegerSpan serverSpan = spans.find { it.operationName == "GET /future/$path/{input}".toString() && it.tags['http.server'] }
+            JaegerSpan internalSpan = spans.find { it.operationName == 'transform' }
+            JaegerSpan clientSpan = spans.find { it.operationName == 'GET /traced/hello/{name}' && it.tags['http.client'] }
+            JaegerSpan downstreamServerSpan = spans.find { it.operationName == 'GET /traced/hello/{name}' && it.tags['http.server'] }
+            serverSpan != null
+            internalSpan != null
+            clientSpan != null
+            downstreamServerSpan != null
+            internalSpan.context().parentId == serverSpan.context().spanId
+            clientSpan.context().parentId == internalSpan.context().spanId
+            downstreamServerSpan.context().parentId == clientSpan.context().spanId
+        }
+
+        where:
+        path << ['toFuture', 'mono', 'clientFirstFuture', 'clientFirstMono']
+    }
+
     void 'test nested HTTP tracing - blocking controller method'() {
         when:
         HttpResponse<String> response = client.toBlocking().exchange('/traced/blocking/nested/John', String)
@@ -945,6 +980,53 @@ class HttpTracingSpec extends Specification {
         @Error(QuotaException)
         HttpResponse<?> handleQuotaError(QuotaException e) {
             HttpResponse.status(TOO_MANY_REQUESTS, e.message)
+        }
+    }
+
+    @Singleton
+    static class InternalWorker {
+
+        @Inject
+        TracedClient tracedClient
+
+        @NewSpan('transform')
+        Mono<String> transform(String input) {
+            Mono.just(input.trim())
+                    .flatMap { s -> Mono.from(tracedClient.continuedRx(s)) }
+                    .map { "($it)".toString() }
+        }
+
+        @NewSpan('transform')
+        Mono<String> transformClientFirst(String input) {
+            Mono.from(tracedClient.continuedRx(input.trim()))
+                    .map { "($it)".toString() }
+        }
+    }
+
+    @Controller('/future')
+    static class FutureController {
+
+        @Inject
+        InternalWorker internalWorker
+
+        @Get('/toFuture/{input}')
+        CompletableFuture<String> toFuture(String input) {
+            internalWorker.transform(input).toFuture()
+        }
+
+        @Get('/mono/{input}')
+        Mono<String> mono(String input) {
+            internalWorker.transform(input)
+        }
+
+        @Get('/clientFirstFuture/{input}')
+        CompletableFuture<String> clientFirstFuture(String input) {
+            internalWorker.transformClientFirst(input).toFuture()
+        }
+
+        @Get('/clientFirstMono/{input}')
+        Mono<String> clientFirstMono(String input) {
+            internalWorker.transformClientFirst(input)
         }
     }
 

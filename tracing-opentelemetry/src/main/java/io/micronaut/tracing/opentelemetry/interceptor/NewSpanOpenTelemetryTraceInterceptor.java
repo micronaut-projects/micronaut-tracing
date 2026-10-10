@@ -98,49 +98,60 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
         SpanEnd spanEnd = new SpanEnd(instrumenter, newContext, classAndMethod);
         PropagatedContext spanPropagatedContext = PropagatedContext.getOrEmpty()
             .plus(new OpenTelemetryPropagationContext(newContext));
-        try (PropagatedContext.Scope ignore = spanPropagatedContext.propagate()) {
+        try {
+            // a callback rather than a scope: the scoped-value propagation mode doesn't support scopes
+            return spanPropagatedContext.propagate(() -> proceedInSpan(context, method, interceptedMethod,
+                newContext, spanEnd, spanPropagatedContext));
+        } catch (Exception e) {
+            spanEnd.accept(e);
+            return interceptedMethod.handleException(e);
+        }
+    }
 
-            tagArguments(Span.fromContext(newContext), method.tracedMethod, context.getParameterValues());
+    @Nullable
+    private static Object proceedInSpan(MethodInvocationContext<Object, Object> context,
+                                        NewSpanMethod method,
+                                        InterceptedMethod interceptedMethod,
+                                        Context newContext,
+                                        SpanEnd spanEnd,
+                                        PropagatedContext spanPropagatedContext) {
+        tagArguments(Span.fromContext(newContext), method.tracedMethod, context.getParameterValues());
 
-            switch (interceptedMethod.resultType()) {
-                case PUBLISHER -> {
-                    Publisher<?> publisher = new SpanPublisher(interceptedMethod.interceptResultAsPublisher(),
-                        spanPropagatedContext);
-                    // end the span exactly once, on the terminal signal: completion, error or cancellation
-                    if (method.single) {
-                        return interceptedMethod.handleResult(
-                            Mono.from(publisher)
-                                .doOnSuccess(spanEnd::success)
-                                .doOnError(spanEnd)
-                                .doOnCancel(spanEnd)
-                        );
-                    }
+        switch (interceptedMethod.resultType()) {
+            case PUBLISHER -> {
+                Publisher<?> publisher = new SpanPublisher(interceptedMethod.interceptResultAsPublisher(),
+                    spanPropagatedContext);
+                // end the span exactly once, on the terminal signal: completion, error or cancellation
+                if (method.single) {
                     return interceptedMethod.handleResult(
-                        Flux.from(publisher)
-                            .doOnComplete(spanEnd)
+                        Mono.from(publisher)
+                            .doOnSuccess(spanEnd::success)
                             .doOnError(spanEnd)
                             .doOnCancel(spanEnd)
                     );
                 }
-                case COMPLETION_STAGE -> {
-                    CompletionStage<?> completionStage = interceptedMethod.interceptResultAsCompletionStage();
-                    if (completionStage != null) {
-                        completionStage = completionStage.whenComplete(spanEnd::end);
-                    }
-                    return interceptedMethod.handleResult(completionStage);
-                }
-                case SYNCHRONOUS -> {
-                    Object response = context.proceed();
-                    spanEnd.success(response);
-                    return response;
-                }
-                default -> {
-                    return interceptedMethod.unsupported();
-                }
+                return interceptedMethod.handleResult(
+                    Flux.from(publisher)
+                        .doOnComplete(spanEnd)
+                        .doOnError(spanEnd)
+                        .doOnCancel(spanEnd)
+                );
             }
-        } catch (Exception e) {
-            spanEnd.accept(e);
-            return interceptedMethod.handleException(e);
+            case COMPLETION_STAGE -> {
+                CompletionStage<?> completionStage = interceptedMethod.interceptResultAsCompletionStage();
+                if (completionStage != null) {
+                    completionStage = completionStage.whenComplete(spanEnd::end);
+                }
+                return interceptedMethod.handleResult(completionStage);
+            }
+            case SYNCHRONOUS -> {
+                Object response = context.proceed();
+                spanEnd.success(response);
+                return response;
+            }
+            default -> {
+                return interceptedMethod.unsupported();
+            }
         }
     }
 
@@ -149,12 +160,14 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
                                         Context currentContext) {
         ClassAndMethod classAndMethod = method.classAndMethod;
         Context newContext = instrumenter.start(currentContext, classAndMethod);
-        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
-            .plus(new OpenTelemetryPropagationContext(newContext))
-            .propagate()) {
-
-            tagArguments(Span.fromContext(newContext), method.tracedMethod, context.getParameterValues());
-            Object response = context.proceed();
+        try {
+            // a callback rather than a scope: the scoped-value propagation mode doesn't support scopes
+            Object response = PropagatedContext.getOrEmpty()
+                .plus(new OpenTelemetryPropagationContext(newContext))
+                .propagate(() -> {
+                    tagArguments(Span.fromContext(newContext), method.tracedMethod, context.getParameterValues());
+                    return context.proceed();
+                });
             instrumenter.end(newContext, classAndMethod, response, null);
             return response;
         } catch (Throwable e) {

@@ -110,12 +110,10 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
         // continuation complete in the context of the downstream), so the code consuming the response
         // does not run with the client span as its current context.
         PropagatedContext callerContext = PropagatedContext.getOrEmpty();
-        CompletionStage<HttpResponse<?>> downstream;
-        try (PropagatedContext.Scope ignore = callerContext
+        // a callback rather than a scope: the scoped-value propagation mode doesn't support scopes
+        CompletionStage<HttpResponse<?>> downstream = callerContext
             .plus(new OpenTelemetryPropagationContext(context))
-            .propagate()) {
-            downstream = continuation.proceed();
-        }
+            .propagate(continuation::proceed);
         return new ClientSpan(instrumenter, request, context, callerContext.plus(new OpenTelemetryPropagationContext(parentContext)))
             .endOnCompletion(downstream);
     }

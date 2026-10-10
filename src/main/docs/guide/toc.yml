@@ -20,6 +20,7 @@ opentelemetry:
   http: HTTP Server and Client
   websocket: WebSocket
   mdc: Log Correlation (MDC)
+  contextPropagation: Context Propagation
   grpc: gRPC Server and Client
   jdbc: JDBC
   r2dbc: R2DBC

@@ -29,4 +29,5 @@ dependencies {
     testImplementation projects.micronautTracingOpentelemetryTest
     testImplementation mn.micronaut.management
     testImplementation mn.micronaut.websocket
+    testImplementation mn.micronaut.context.propagation
 }

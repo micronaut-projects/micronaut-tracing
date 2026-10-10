@@ -1,0 +1,49 @@
+The `micronaut-tracing-opentelemetry-test` module captures the spans and metrics of your application in memory so tests can assert on them. Add it to the test classpath only:
+
+dependency:micronaut-tracing-opentelemetry-test[scope="testImplementation", groupId="io.micronaut.tracing"]
+
+With the module on the classpath, the OpenTelemetry SDK built by Micronaut also:
+
+* exports every span to an `InMemorySpanExporter` bean through a `SimpleSpanProcessor`, so a span is visible as soon as it ends.
+* registers an `InMemoryMetricReader` bean with the meter provider.
+* provides a api:tracing.opentelemetry.test.TestSpans[] bean to find and wait for spans and to assert on traces.
+
+The beans are added with api:tracing.opentelemetry.OpenTelemetryBuilderCustomizer[] beans, so the rest of the SDK configuration (resource, sampler, propagators, your own customizers and exporters) stays the same as in production. You do not need to replace the `OpenTelemetry` bean.
+
+NOTE: The beans do not require the `test` environment, because many tests start an `ApplicationContext` without it. Keep the module out of the runtime classpath of your application.
+
+The following example injects api:tracing.opentelemetry.test.TestSpans[] into a test:
+
+snippet::io.micronaut.tracing.docs.TestSpansExampleTest[project-base="test-suite", tags="imports,clazz"]
+
+<1> With `@MicronautTest`, the captured spans are reset before each test method.
+<2> Inject api:tracing.opentelemetry.test.TestSpans[]. You can also inject the `InMemorySpanExporter` or the `InMemoryMetricReader` directly.
+<3> `spanNamed` returns the only finished span with the given name, and fails the test otherwise. `spansNamed`, `spansOfKind`, `childrenOf` and `parentOf` look up other spans.
+<4> `awaitSpans` waits, ten seconds by default, until at least the given number of spans have finished. Use it when spans end on another thread, for example in a reactive or messaging test.
+<5> `traces()` groups the spans by trace, and `assertTraces()` returns the `TracesAssert` of the https://github.com/open-telemetry/opentelemetry-java/tree/main/sdk/testing[OpenTelemetry SDK testing] AssertJ assertions. `OpenTelemetryAssertions.assertThat(SpanData)` asserts on a single span.
+
+TIP: In Groovy, coerce closures passed to the AssertJ assertions to `java.util.function.Consumer` (`{ ... } as Consumer<TraceAssert>`), otherwise Groovy picks the `Iterable` overload of methods such as `hasTracesSatisfyingExactly`.
+
+== Resetting between tests
+
+With `@MicronautTest` (JUnit 5 or Spock) the application context is shared by the test methods of a class, and the module discards the captured spans before each test method through a Micronaut Test `TestExecutionListener`. Set `tracing.opentelemetry.test.reset-before-each` to `false` to keep the spans across test methods.
+
+Without `@MicronautTest`, either start a new `ApplicationContext` per test, or call `TestSpans.reset()` in a `setup()` or `@BeforeEach` method.
+
+== Configuration
+
+|===
+| Property | Default | Description
+
+| `tracing.opentelemetry.test.enabled`
+| `true`
+| Set to `false` to disable the in-memory exporter, metric reader and api:tracing.opentelemetry.test.TestSpans[], for example in a test that configures its own exporter.
+
+| `tracing.opentelemetry.test.metrics.enabled`
+| `true`
+| Set to `false` to not register the `InMemoryMetricReader` with the meter provider, for example to test a metrics exporter.
+
+| `tracing.opentelemetry.test.reset-before-each`
+| `true`
+| Set to `false` to keep the captured spans across the test methods of a `@MicronautTest` test.
+|===

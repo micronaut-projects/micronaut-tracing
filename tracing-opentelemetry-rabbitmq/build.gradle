@@ -11,8 +11,7 @@ dependencies {
     implementation mnReactor.micronaut.reactor
 
     testImplementation mnSerde.micronaut.serde.jackson
-    testImplementation libs.opentelemetry.sdk
-    testImplementation libs.opentelemetry.sdk.testing
+    testImplementation projects.micronautTracingOpentelemetryTest
     testImplementation(platform(mnTest.boms.testcontainers))
     testImplementation "org.testcontainers:testcontainers"
 }

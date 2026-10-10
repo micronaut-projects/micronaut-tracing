@@ -12,8 +12,7 @@ dependencies {
     testImplementation projects.micronautTracingOpentelemetryHttp
     testImplementation mn.micronaut.http.server.netty
     testImplementation mnSerde.micronaut.serde.jackson
-    testImplementation libs.opentelemetry.sdk
-    testImplementation libs.opentelemetry.sdk.testing
+    testImplementation projects.micronautTracingOpentelemetryTest
     testImplementation libs.managed.opentelemetry.contrib.aws.resources
     testImplementation mnTest.micronaut.test.spock
 

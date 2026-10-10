@@ -1,0 +1,25 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api platform(libs.boms.opentelemetry)
+    api projects.micronautTracingOpentelemetry
+    api libs.opentelemetry.sdk
+    api libs.opentelemetry.sdk.testing
+    // opentelemetry-sdk-testing only declares AssertJ as compileOnly, TestSpans.assertTraces() exposes it
+    api mnTest.assertj.core
+
+    // Optional: resets the captured spans before each @MicronautTest test method
+    compileOnly mnTest.micronaut.test.core
+
+    testImplementation mnTest.micronaut.test.spock
+    testImplementation mnTest.micronaut.test.junit5
+    testRuntimeOnly mnTest.junit.jupiter.engine
+}
+
+micronautBuild {
+    binaryCompatibility {
+        enabledAfter '8.4.0'
+    }
+}

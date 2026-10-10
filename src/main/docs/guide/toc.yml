@@ -27,6 +27,7 @@ opentelemetry:
   awsSdkInstrumentation: AWS SDK Instrumentation
   awsResourceDetectors: AWS Resource Detectors
   performance: Performance Tuning
+  testing: Testing
   opentelemetryGuides: OpenTelemetry Guides
 tracingGuides: Micronaut Tracing Guides
 repository: Repository

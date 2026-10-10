@@ -15,7 +15,7 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
-import io.micronaut.core.annotation.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

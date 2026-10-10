@@ -15,7 +15,7 @@
  */
 package io.micronaut.tracing.opentelemetry.inspector;
 
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;

@@ -3,7 +3,7 @@ package io.micronaut.tracing.opentelemetry.instrument.ucp.fixture
 import io.micronaut.context.annotation.Factory
 import io.micronaut.context.event.BeanCreatedEvent
 import io.micronaut.context.event.BeanCreatedEventListener
-import io.micronaut.core.annotation.NonNull
+import org.jspecify.annotations.NonNull
 import io.micronaut.core.order.Ordered
 import jakarta.inject.Singleton
 import oracle.ucp.UniversalConnectionPool

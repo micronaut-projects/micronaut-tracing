@@ -19,7 +19,7 @@ import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import io.micronaut.jdbc.DataSourceResolver;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;

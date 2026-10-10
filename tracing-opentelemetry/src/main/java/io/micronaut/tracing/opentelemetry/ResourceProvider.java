@@ -15,7 +15,7 @@
  */
 package io.micronaut.tracing.opentelemetry;
 
-import io.micronaut.core.annotation.NonNull;
+import org.jspecify.annotations.NonNull;
 import io.opentelemetry.sdk.resources.Resource;
 
 /**

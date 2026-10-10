@@ -16,7 +16,7 @@
 package io.micronaut.tracing.opentelemetry.sampler;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration of the sampling applied on top of the sampler configured with {@code otel.traces.sampler}:

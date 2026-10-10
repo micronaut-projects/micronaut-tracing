@@ -148,6 +148,10 @@ public final class MdcTraceCorrelation {
 
     /**
      * Restores the MDC values that were replaced when the context was made current.
+     *
+     * @param scope    The OpenTelemetry scope
+     * @param keys     The MDC keys
+     * @param previous The previous MDC values, by key index
      */
     private record MdcScope(Scope scope, String[] keys, String[] previous) implements Scope {
 

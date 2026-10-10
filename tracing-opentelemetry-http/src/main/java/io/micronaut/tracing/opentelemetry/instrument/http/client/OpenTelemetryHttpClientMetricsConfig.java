@@ -16,7 +16,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration of the OpenTelemetry HTTP client metrics ({@code http.client.request.duration}).

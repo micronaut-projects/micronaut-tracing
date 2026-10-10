@@ -17,7 +17,7 @@ package io.micronaut.tracing.opentelemetry;
 
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.env.Environment;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;

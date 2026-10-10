@@ -3,7 +3,7 @@ package io.micronaut.tracing.docs;
 import io.micronaut.context.annotation.Requires;
 
 // tag::imports[]
-import io.micronaut.core.annotation.NonNull;
+import org.jspecify.annotations.NonNull;
 import io.micronaut.tracing.opentelemetry.ResourceProvider;
 import io.opentelemetry.contrib.aws.resource.Ec2Resource;
 import io.opentelemetry.sdk.resources.Resource;

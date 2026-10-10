@@ -25,7 +25,7 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
 import jakarta.inject.Singleton;

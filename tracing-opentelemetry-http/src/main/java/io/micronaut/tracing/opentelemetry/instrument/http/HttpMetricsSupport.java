@@ -17,8 +17,8 @@ package io.micronaut.tracing.opentelemetry.instrument.http;
 
 import io.micronaut.context.BeanContext;
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import io.micronaut.core.reflect.ClassUtils;
 import io.micronaut.tracing.opentelemetry.instrument.util.DefaultOperationMetrics;
 import io.opentelemetry.api.OpenTelemetry;

@@ -26,8 +26,10 @@
 @Configuration
 @Requires(property = OpenTelemetryConfigurationProperties.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @Requires(condition = TraceInspectorEnabledCondition.class)
+@NullMarked
 package io.micronaut.tracing.opentelemetry.inspector;
 
+import org.jspecify.annotations.NullMarked;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;

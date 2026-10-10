@@ -1,0 +1,27 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api platform(libs.boms.opentelemetry)
+    api platform(libs.boms.opentelemetry.alpha)
+    api platform(libs.boms.opentelemetry.instrumentation)
+    api platform(libs.boms.opentelemetry.instrumentation.alpha)
+    api projects.micronautTracingOpentelemetry
+    api libs.opentelemetry.api
+    api libs.opentelemetry.instrumentation.lettuce
+    api mnRedis.micronaut.redis.lettuce.core
+
+    testImplementation projects.micronautTracingOpentelemetryTest
+    testImplementation projects.micronautTracingOpentelemetryAnnotation
+    testImplementation mn.micronaut.http.client
+    testImplementation mn.micronaut.http.server.netty
+    testImplementation(platform(mnTest.boms.testcontainers))
+    testImplementation "org.testcontainers:testcontainers"
+}
+
+micronautBuild {
+    binaryCompatibility {
+        enabledAfter '8.4.0'
+    }
+}

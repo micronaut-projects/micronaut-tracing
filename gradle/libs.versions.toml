@@ -42,6 +42,7 @@ micronaut-serde = "3.2.4"
 micronaut-sql = "7.2.0"
 micronaut-kafka = "6.2.0"
 micronaut-rabbitmq = "5.1.0"
+micronaut-redis = "7.2.0"
 micronaut-gradle-plugin = "5.0.2"
 micronaut-r2dbc = "7.2.0"
 
@@ -71,6 +72,7 @@ micronaut-sql = { module = 'io.micronaut.sql:micronaut-sql-bom', version.ref = '
 micronaut-kafka = { module = 'io.micronaut.kafka:micronaut-kafka-bom', version.ref = 'micronaut-kafka'}
 micronaut-r2dbc = { module = 'io.micronaut.r2dbc:micronaut-r2dbc-bom', version.ref = 'micronaut-r2dbc'}
 micronaut-rabbitmq = { module = 'io.micronaut.rabbitmq:micronaut-rabbitmq', version.ref = 'micronaut-rabbitmq'}
+micronaut-redis = { module = 'io.micronaut.redis:micronaut-redis-bom', version.ref = 'micronaut-redis'}
 
 brave-instrumentation-http = { module = 'io.zipkin.brave:brave-instrumentation-http' }
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
@@ -118,6 +120,7 @@ opentelemetry-instrumentation-semconv = { module = 'io.opentelemetry.semconv:ope
 opentelemetry-instrumentation-annotations = { module = 'io.opentelemetry.instrumentation: opentelemetry-instrumentation-annotations' }
 opentelemetry-instrumentation-jdbc = { module = 'io.opentelemetry.instrumentation:opentelemetry-jdbc' }
 opentelemetry-instrumentation-r2dbc = { module = 'io.opentelemetry.instrumentation:opentelemetry-r2dbc-1.0' }
+opentelemetry-instrumentation-lettuce = { module = 'io.opentelemetry.instrumentation:opentelemetry-lettuce-5.1' }
 opentelemetry-instrumentation-ucp = { module = 'io.opentelemetry.instrumentation:opentelemetry-oracle-ucp-11.2' }
 opentelemetry-aws-sdk = { module = 'io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2' }
 testcontainers-kafka = { module = "org.testcontainers:testcontainers-kafka"}

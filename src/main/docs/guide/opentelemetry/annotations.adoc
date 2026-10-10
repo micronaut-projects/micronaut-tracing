@@ -5,6 +5,8 @@ NOTE: Since Micronaut Tracing `4.5.0`, OpenTelemetry's `@WithSpan` and `@SpanAtt
 To enable Open telemetry annotations you have to add next annotation processor in your dependency block:
 dependency:micronaut-tracing-opentelemetry-annotation[scope="annotationProcessor", version="{version}", groupId="io.micronaut.tracing"]
 
+The processor also binds the tracing interceptors of the <<scheduling, scheduled methods>> and of the <<websocket, WebSocket handlers>>.
+
 The Open Tracing annotations that are defined inside the pkg:tracing.annotation[] package are also available for usage inside Open Telemetry.
 
 The OpenTelemetry annotations are mapped to them at compile time:

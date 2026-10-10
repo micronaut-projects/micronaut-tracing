@@ -19,9 +19,9 @@ import io.micronaut.context.BeanProvider;
 import io.micronaut.context.event.BeanCreatedEvent;
 import io.micronaut.context.event.BeanCreatedEventListener;
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.NonNull;
 import io.micronaut.core.order.Ordered;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.NonNull;
 
 import javax.sql.DataSource;
 

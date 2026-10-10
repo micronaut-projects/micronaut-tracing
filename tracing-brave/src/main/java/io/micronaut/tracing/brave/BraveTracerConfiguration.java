@@ -24,11 +24,11 @@ import brave.sampler.Sampler;
 import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.core.util.Toggleable;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.micronaut.tracing.zipkin.http.client.HttpClientSenderConfiguration;
 import jakarta.inject.Inject;
+import org.jspecify.annotations.Nullable;
 
 import static io.micronaut.context.env.Environment.DEFAULT_NAME;
 import static io.micronaut.core.util.StringUtils.TRUE;

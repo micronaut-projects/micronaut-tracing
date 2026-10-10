@@ -31,7 +31,7 @@ public class TracingExclusionsConfiguration {
 
     public static final String PREFIX = "tracing";
 
-    private List<String> exclusions;
+    private @Nullable List<String> exclusions;
 
     /**
      * @return the URI patterns to exclude from the tracing

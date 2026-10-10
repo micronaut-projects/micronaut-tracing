@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 original authors
+ * Copyright 2017-2026 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 /**
- * Tracing instrumentation related classes.
- *
- * @author Sergio del Amo
- * @since 3.0.0
+ * HTTP tracing configuration shared by the tracing implementations.
  */
 @NullMarked
-package io.micronaut.tracing.opentracing.instrument;
+package io.micronaut.tracing.opentracing.instrument.http;
 
 import org.jspecify.annotations.NullMarked;

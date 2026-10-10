@@ -95,11 +95,11 @@ public record TraceQuery(
      */
     public static final class Builder {
 
-        private String name;
-        private Integer httpStatus;
+        private @Nullable String name;
+        private @Nullable Integer httpStatus;
         private boolean errorsOnly;
-        private Duration minDuration;
-        private Instant since;
+        private @Nullable Duration minDuration;
+        private @Nullable Instant since;
         private int limit;
 
         private Builder() {

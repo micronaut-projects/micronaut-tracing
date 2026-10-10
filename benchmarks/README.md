@@ -46,6 +46,51 @@ allocated per operation): it is far more stable than throughput on a busy machin
 `HttpServerBenchmark` it counts every thread of the JVM, so it includes the JDK client and the Netty event
 loop; the client part is a constant offset across the modes.
 
+## Allocation guard
+
+`checkAllocationBaseline` compares the `gc.alloc.rate.norm` of a JMH result with the committed
+[`allocation-baseline.json`](allocation-baseline.json) and fails when an entry allocates more than the
+baseline allows. Throughput is not checked: it is too noisy on shared machines and runners.
+
+```bash
+./gradlew :benchmarks:jmh -Pjmh.profilers=gc
+./gradlew :benchmarks:checkAllocationBaseline
+```
+
+It prints a table (benchmark and parameters, baseline B/op, current B/op, delta, status). An entry fails when
+it exceeds the baseline by more than the threshold **and** by more than an absolute tolerance (so that a
+0 B/op baseline does not fail on rounding):
+
+| Property | Default | |
+|---|---|---|
+| `-Pallocation.threshold` | `10` | Threshold in percent. `thresholds` in the baseline file overrides it per benchmark (longest key prefix wins); `HttpServerBenchmark.request`, which counts the client and Netty threads too, uses 15. |
+| `-Pallocation.toleranceBytes` | `16` | Absolute tolerance in bytes per operation. |
+| `-Pjmh.results` | `build/results/jmh/results.json` | JMH JSON result to read (relative to `benchmarks/`). |
+
+Benchmarks missing from the baseline, and baseline entries missing from the result, only log a warning, so a
+run of a subset (`-Pjmh.includes`) can be checked too. Keys are `Class.method [param=value]`.
+
+`updateAllocationBaseline` rewrites `allocation-baseline.json` from a JMH result (keeping `thresholds`, and
+writing a `note` only when `-Pallocation.note=...` is passed).
+
+### CI
+
+The [`Allocation guard`](../.github/workflows/allocation-guard.yml) workflow runs on non-draft pull requests
+stacked on `8.4.x`. It runs every benchmark with a fixed configuration (1 fork, 2 x 2s warmup, 3 x 2s
+measurement, `-prof gc`), uploads `results.json` as the `jmh-results` artifact and runs
+`checkAllocationBaseline`.
+
+The baseline must come from the same environment as the check. To refresh it, after a change that is
+expected to move the allocations or when the runner image changes:
+
+1. Run the workflow manually (*Actions > Allocation guard > Run workflow*) on the branch, with
+   `update-baseline` checked. It runs `updateAllocationBaseline` instead of the check and uploads the new
+   file as the `allocation-baseline` artifact. CI never commits it.
+2. Download the artifact, replace `benchmarks/allocation-baseline.json` and commit it with the change.
+
+The committed baseline is **provisional** (see its `note`): it was copied from the Apple M2 Max numbers
+below. Regenerate it on the GitHub runners as above before making the guard a required check.
+
 ## Baseline
 
 Measured on the `8.4.x` stack (Micronaut Core 5.3.0-SNAPSHOT, OpenTelemetry 1.64.0 / instrumentation

@@ -66,7 +66,7 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
 
     private final Consumer<K, V> consumer;
     private final KafkaTelemetry kafkaTelemetry;
-    private ActiveRecordContext activeRecordContext;
+    private @Nullable ActiveRecordContext activeRecordContext;
 
     public MicronautOtelKafkaConsumer(Consumer<K, V> consumer, KafkaTelemetry kafkaTelemetry) {
         this.consumer = consumer;

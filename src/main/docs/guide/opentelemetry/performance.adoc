@@ -11,23 +11,85 @@ otel.traces.sampler=parentbased_traceidratio
 otel.traces.sampler.arg=0.1
 ----
 
-With a `parentbased_*` sampler the decision of the caller, propagated in the incoming trace context, is kept, so a distributed trace is either recorded completely or not at all. A custom `io.opentelemetry.sdk.trace.samplers.Sampler` bean replaces the configured sampler.
+With a `parentbased_*` sampler the decision of the caller, propagated in the incoming trace context, is kept, so a distributed trace is either recorded completely or not at all.
+
+=== Rate limiting
+
+A ratio keeps the share of the traces constant, so the tracing cost still grows with the traffic. A rate limit caps the number of new traces instead:
+
+.Sampling at most 10 new traces per second
+[configuration]
+----
+tracing:
+  opentelemetry:
+    sampler:
+      rate-limit:
+        traces-per-second: 10
+        burst: 20
+----
+
+The limit is a token bucket: it holds up to `burst` traces (by default one second worth of traces, `traces-per-second` rounded up) and is refilled continuously at `traces-per-second`, so after an idle period up to `burst` traces are sampled at once, then `traces-per-second` on average. Fractions are allowed, for example `0.5` for one trace every two seconds. The bucket is shared by the whole application instance (each instance has its own limit), it is thread-safe and the check does not allocate.
+
+The limit only applies to root spans, the ones that start a new trace: a span with a parent, local or remote, is sampled by the configured sampler as before, so the decision of the caller is kept and a distributed trace is never cut in the middle. The limit is applied after the `otel.traces.sampler` decision: a root span is sampled if the configured sampler samples it *and* a token is available. For example `otel.traces.sampler=parentbased_traceidratio` with `otel.traces.sampler.arg=0.5` and a limit of 10 samples half of the new traces, up to 10 per second.
+
+=== Sampling rules
+
+Sampling rules decide the sampling of new traces started by HTTP server requests by their path (the `url.path` attribute) or route template (the `http.route` attribute, for example `/books/{id}`). The first matching rule decides, with its `ratio` (default `0`, the traces are dropped; `1` samples them all); requests that match no rule use `otel.traces.sampler`:
+
+.Sampling rules
+[configuration]
+----
+tracing:
+  opentelemetry:
+    sampler:
+      rules:
+        - path: /internal/.*
+        - route: '/books/\{id\}'
+          ratio: 0.1
+----
+
+`path` and `route` are regular expressions matched against the whole value (braces are escaped in a regular expression); a rule with both requires both to match. As for the rate limit, the rules only apply to root server spans: a request carrying a sampled trace context is still traced. The traces sampled by a rule are also counted by the rate limit. To skip requests entirely, whatever the incoming trace context, use the exclusions below, which are also cheaper.
+
+=== Precedence
+
+. A `io.opentelemetry.sdk.trace.samplers.Sampler` bean of the application replaces the sampler entirely: `otel.traces.sampler`, the rate limit and the rules are then ignored (a warning is logged if they are configured).
+. Otherwise, for a span with a parent, the sampler configured by `otel.traces.sampler` (default `parentbased_always_on`) decides.
+. For a root server span, the first matching rule decides, otherwise the `otel.traces.sampler` sampler.
+. A sampled root span is then dropped if the rate limit is exceeded.
 
 NOTE: Sampling does not make an unsampled request free: the span context is still created and propagated, and the request attributes are still extracted because samplers may use them. Exclude requests that never need a trace instead (see below).
 
 == Excluding paths
 
-Requests whose path matches one of the `otel.exclusions` regular expressions are not traced at all: the HTTP server and client filters skip them before any OpenTelemetry work. Use them for health checks, metrics scrapes and other high-frequency endpoints:
+Requests whose path matches one of the `otel.exclusions` regular expressions are not traced at all: the HTTP server and client filters skip them before any OpenTelemetry work. Use them for high-frequency endpoints that never need a trace:
 
 [configuration]
 ----
 otel:
   exclusions:
-    - /health.*
-    - /prometheus
+    - /internal/ping
+    - /static/.*
 ----
 
 The patterns are compiled once into a single regular expression, so the number of patterns has little effect on the per-request cost.
+
+=== Management endpoints
+
+The requests to the https://docs.micronaut.io/latest/guide/#management[management endpoints] (`/health`, `/info`, `/prometheus`, `/metrics`...), usually health checks and metrics scrapes, are excluded from the HTTP server tracing by default, as Quarkus does for its non-application endpoints (`quarkus.otel.traces.suppress-non-application-uris`). The excluded paths are those of the enabled endpoints, under their base path (`endpoints.all.path`, `endpoints.all.context.path` and `endpoints.<id>.path` are taken into account), with their sub-paths such as `/health/liveness`. They are added to the `otel.exclusions` patterns, so they cost nothing more. Requests made by the HTTP client to the management endpoints of other services are still traced.
+
+To trace some of the endpoints again, list their ids, or disable the exclusion:
+
+[configuration]
+----
+tracing:
+  opentelemetry:
+    http:
+      server:
+        traced-management-endpoints:
+          - health
+        # or trace all of them:
+        # exclude-management-endpoints: false
+----
 
 == HTTP metrics
 

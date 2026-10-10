@@ -20,6 +20,7 @@ import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.order.Ordered;
 import io.micronaut.core.propagation.MutablePropagatedContext;
+import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.RequestFilter;
@@ -77,6 +78,15 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
      * second span is started. Once the span is ended, a new pass starts a new span.
      */
     static final String SPAN = OpenTelemetryServerFilter.class.getName() + "-span";
+
+    /**
+     * The request attribute holding the OpenTelemetry {@link Context} of the server span of a WebSocket upgrade
+     * request, kept after the span ended: the spans of the WebSocket handlers of the session are its children or
+     * are linked to it.
+     */
+    public static final String WEBSOCKET_UPGRADE_CONTEXT = OpenTelemetryServerFilter.class.getName() + "-websocket-upgrade";
+
+    private static final String WEBSOCKET = "websocket";
 
     private final Instrumenter<HttpRequest<?>, Object> instrumenter;
 
@@ -148,6 +158,9 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
         Context context = instrumenter.start(parentContext, request);
         ServerSpan span = new ServerSpan(instrumenter, request, context);
         request.setAttribute(SPAN, span);
+        if (WEBSOCKET.equalsIgnoreCase(request.getHeaders().get(HttpHeaders.UPGRADE))) {
+            request.setAttribute(WEBSOCKET_UPGRADE_CONTEXT, context);
+        }
         propagatedContext.add(new OpenTelemetryPropagationContext(context));
         // A reactive continuation rather than a CompletionStage one: the downstream of a stage continuation
         // runs eagerly, outside of the subscription of the upstream filters, so the Reactor context written

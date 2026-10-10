@@ -1,0 +1,92 @@
+The `micronaut-tracing-opentelemetry-inspector` module keeps the most recent completed traces of your application in memory so that developer tooling can show them, for example a tracing panel in Micronaut Control Panel. You can see what happened during a request without running a tracing backend.
+
+dependency:micronaut-tracing-opentelemetry-inspector[groupId="io.micronaut.tracing"]
+
+The module is meant for development. It is enabled by default only in the `dev` environment (start the application with `-Dmicronaut.environments=dev` or `MICRONAUT_ENVIRONMENTS=dev`), and disabled otherwise.
+
+== How it works
+
+The module adds a `SpanProcessor` to the OpenTelemetry SDK built by Micronaut, through an api:tracing.opentelemetry.OpenTelemetryBuilderCustomizer[] bean. The rest of the SDK configuration (resource, sampler, propagators and exporters) is unchanged, so the inspector works alongside your exporters.
+
+The processor groups ended spans by trace id. A trace is _completed_ when its local root span ends: a span without a parent, or with a remote parent, such as the server span of an HTTP request. Spans that end before their local root span wait in a bounded set of pending traces. Spans of a retained trace that end after it completed, for example asynchronous work, are added to it.
+
+TIP: Spans are only recorded if they are sampled. The default OpenTelemetry sampler, `parentbased_always_on`, records every request, and the module does not change the sampler. If your configuration uses ratio based sampling, set `otel.traces.sampler: always_on` in `application-dev.yml` to see every request in development.
+
+NOTE: The inspector only sees spans of the `OpenTelemetry` bean built by Micronaut. It is not used when the OpenTelemetry Java agent registers a global `OpenTelemetry` instance.
+
+== Reading traces
+
+Inject the api:tracing.opentelemetry.inspector.TraceInspector[] bean:
+
+* `traces(TraceQuery)` returns the api:tracing.opentelemetry.inspector.TraceSummary[] of the matching traces, newest first: trace id, root span name, service name, HTTP method, route, URL path and response status code (when the root span has them), start time, duration, span count and an error flag. api:tracing.opentelemetry.inspector.TraceQuery[] filters by name (a case-insensitive substring of the root span name, HTTP route or URL path), HTTP status code, errors only, minimum duration and start time, and limits the number of results.
+* `trace(traceId)` returns an api:tracing.opentelemetry.inspector.InspectedTrace[] with all retained spans of the trace, ordered by start time. Each api:tracing.opentelemetry.inspector.InspectedSpan[] has its parent span id, kind, timing, status, attributes, events (including `exception` events with the stack trace) and links.
+* `clear()` discards all traces.
+
+[source,java]
+----
+List<TraceSummary> slowErrors = traceInspector.traces(TraceQuery.builder()
+    .errorsOnly(true)
+    .minDuration(Duration.ofMillis(500))
+    .limit(10)
+    .build());
+----
+
+== Management endpoint
+
+With https://docs.micronaut.io/latest/guide/#management[micronaut-management] on the classpath, the `traces` endpoint exposes the inspector over HTTP. The endpoint only exists when the inspector is enabled.
+
+|===
+| Request | Description
+
+| `GET /traces`
+| Lists the trace summaries, newest first. Optional query parameters: `name`, `status`, `error` (`true` for errors only), `minDuration` (for example `250ms`), `since` (an ISO-8601 instant) and `limit`.
+
+| `GET /traces/{traceId}`
+| Returns the trace with all its spans, or `404` if it is not retained.
+
+| `DELETE /traces`
+| Discards all traces.
+|===
+
+The endpoint is sensitive by default, because spans may contain request details. Secure it with Micronaut Security, or, for local development only, mark it as not sensitive:
+
+[configuration]
+----
+endpoints:
+  traces:
+    sensitive: false
+----
+
+The responses are serialized with Micronaut Serialization, so add a JSON implementation such as `micronaut-serde-jackson`.
+
+== Configuration
+
+|===
+| Property | Default | Description
+
+| `tracing.opentelemetry.inspector.enabled`
+| `true` in the `dev` environment, `false` otherwise
+| Enables the inspector. Set to `true` to enable it in another environment, or to `false` to disable it in `dev`. The inspector is always disabled when `micronaut.otel.enabled` is `false`.
+
+| `tracing.opentelemetry.inspector.max-traces`
+| `200`
+| The maximum number of completed traces retained. The oldest trace is evicted when a new trace completes.
+
+| `tracing.opentelemetry.inspector.max-pending-traces`
+| `100`
+| The maximum number of traces waiting for their local root span to end. The oldest pending trace is discarded when the limit is exceeded, for example when a local root span never ends.
+
+| `tracing.opentelemetry.inspector.max-spans-per-trace`
+| `2000`
+| The maximum number of spans retained per trace. Further spans are counted in `droppedSpanCount`. The first local root span of a trace is always retained.
+
+| `tracing.opentelemetry.inspector.max-attribute-length`
+| `1024`
+| The maximum length of string attribute values, including the attributes of events and links and the status description. Longer values are truncated, so long stack traces are cut off.
+|===
+
+== Memory and performance
+
+Memory use is bounded: at most `max-traces` completed and `max-pending-traces` pending traces, each with at most `max-spans-per-trace` spans, with string attribute values of at most `max-attribute-length` characters. The number of attributes, events and links per span is bounded by the OpenTelemetry SDK span limits (128 each by default). Each ended span is copied when it ends, under a single lock.
+
+This overhead is acceptable during development but not in production, which is why the inspector is disabled outside the `dev` environment by default. Do not enable it in production, and do not expose the `traces` endpoint publicly.

@@ -83,6 +83,24 @@ public final class TracedMethod {
         return runtime(method, newSpan != null, newSpanValue);
     }
 
+    /**
+     * Resolves the source name of a method: the {@link SpanMetadata#method()} computed at compile time
+     * when present, otherwise the method name without the Kotlin mangling suffix.
+     *
+     * @param method the method
+     * @return the source name of the method
+     */
+    public static String methodName(ExecutableMethod<?, ?> method) {
+        AnnotationValue<SpanMetadata> metadata = method.getAnnotation(SpanMetadata.class);
+        if (metadata != null) {
+            String methodName = metadata.stringValue(SpanMetadata.MEMBER_METHOD).orElse(null);
+            if (methodName != null) {
+                return methodName;
+            }
+        }
+        return MethodNameFormatter.format(method.getMethodName());
+    }
+
     private static TracedMethod runtime(ExecutableMethod<?, ?> method, boolean newSpan, @Nullable String newSpanValue) {
         Argument<?>[] arguments = method.getArguments();
         List<Integer> indexes = null;

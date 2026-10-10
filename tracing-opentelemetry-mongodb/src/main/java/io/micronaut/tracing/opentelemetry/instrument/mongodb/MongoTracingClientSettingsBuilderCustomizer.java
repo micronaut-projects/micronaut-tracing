@@ -21,6 +21,7 @@ import com.mongodb.event.CommandListener;
 import io.micronaut.configuration.mongo.core.AbstractMongoConfiguration;
 import io.micronaut.configuration.mongo.core.MongoClientSettingsBuilderCustomizer;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.reflect.ClassUtils;
 import io.opentelemetry.instrumentation.mongo.v3_1.MongoTelemetry;
 import jakarta.inject.Singleton;
 
@@ -38,6 +39,13 @@ import java.util.List;
 @Singleton
 final class MongoTracingClientSettingsBuilderCustomizer implements MongoClientSettingsBuilderCustomizer {
 
+    private static final ClassLoader CLASS_LOADER = MongoTracingClientSettingsBuilderCustomizer.class.getClassLoader();
+    private static final boolean REACTIVE_DRIVER_PRESENT =
+        ClassUtils.isPresent("com.mongodb.reactivestreams.client.ReactiveContextProvider", CLASS_LOADER)
+            && ClassUtils.isPresent("reactor.core.CoreSubscriber", CLASS_LOADER);
+    private static final boolean SYNCHRONOUS_DRIVER_PRESENT =
+        ClassUtils.isPresent("com.mongodb.client.SynchronousContextProvider", CLASS_LOADER);
+
     private final MongoTelemetry telemetry;
 
     MongoTracingClientSettingsBuilderCustomizer(MongoTelemetryConfiguration configuration) {
@@ -49,6 +57,11 @@ final class MongoTracingClientSettingsBuilderCustomizer implements MongoClientSe
         // the configured seeds let the stable database conventions derive server.address and server.port
         List<ServerAddress> seeds = new ArrayList<>();
         clientSettings.applyToClusterSettings(cluster -> seeds.addAll(cluster.build().getHosts()));
-        clientSettings.addCommandListener(telemetry.createCommandListener(seeds));
+        clientSettings.addCommandListener(new ContextPropagatingCommandListener(telemetry.createCommandListener(seeds)));
+        // the reactive streams driver notifies the listener on its own threads: capture the caller's
+        // context in the request context of the operations, unless the application set a provider
+        if (REACTIVE_DRIVER_PRESENT && clientSettings.build().getContextProvider() == null) {
+            clientSettings.contextProvider(TracingReactiveContextProvider.create(SYNCHRONOUS_DRIVER_PRESENT));
+        }
     }
 }

@@ -1,0 +1,21 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    api platform(libs.boms.opentelemetry)
+    api projects.micronautTracingOpentelemetry
+    api libs.opentelemetry.sdk
+    api libs.opentelemetry.sdk.testing
+
+    // Optional: resets the captured spans before each @MicronautTest test method
+    compileOnly mnTest.micronaut.test.core
+
+    testImplementation mnTest.micronaut.test.spock
+}
+
+micronautBuild {
+    binaryCompatibility {
+        enabledAfter '8.4.0'
+    }
+}

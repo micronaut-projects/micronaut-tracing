@@ -13,6 +13,7 @@ opentelemetry:
   title: Tracing with OpenTelemetry
   annotations: OpenTelemetry Annotations
   exporters: OpenTelemetry Exporters
+  otlpBackends: OTLP Backends
   logback: Log Export (Logback and Log4j 2)
   customization: OpenTelemetry SDK Customization
   propagators: OpenTelemetry Propagators
@@ -29,6 +30,7 @@ opentelemetry:
   scheduling: Scheduled Jobs
   ucp: Oracle UCP
   awsSdkInstrumentation: AWS SDK Instrumentation
+  resourceDetectors: Resource Detectors
   awsResourceDetectors: AWS Resource Detectors
   performance: Performance Tuning
   testing: Testing

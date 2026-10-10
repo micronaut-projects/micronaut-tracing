@@ -23,8 +23,8 @@ import io.micronaut.test.context.TestExecutionListener;
 import jakarta.inject.Singleton;
 
 /**
- * Discards the captured spans before each test method of a {@code @MicronautTest} test (JUnit 5, Spock or
- * Kotest), so spans from one test method do not leak into the next one sharing the application context.
+ * Discards the captured spans before each test method of a {@code @MicronautTest} test (JUnit 5 or Spock),
+ * so spans from one test method do not leak into the next one sharing the application context.
  * Disable it with {@value OpenTelemetryTestFactory#RESET_BEFORE_EACH}{@code =false}.
  *
  * @since 8.4.0

@@ -1,0 +1,27 @@
+plugins {
+    id 'io.micronaut.build.internal.tracing-module'
+}
+
+dependencies {
+    annotationProcessor mnSerde.micronaut.serde.processor
+
+    api platform(libs.boms.opentelemetry)
+    api projects.micronautTracingOpentelemetry
+    api mnSerde.micronaut.serde.api
+    implementation libs.opentelemetry.sdk
+
+    // Optional: the "traces" management endpoint
+    compileOnly mn.micronaut.management
+
+    testImplementation mn.micronaut.management
+    testImplementation mn.micronaut.http.client
+    testImplementation mnSerde.micronaut.serde.jackson
+    testImplementation projects.micronautTracingOpentelemetryHttp
+    testImplementation mnTest.micronaut.test.spock
+}
+
+micronautBuild {
+    binaryCompatibility {
+        enabledAfter '8.4.0'
+    }
+}

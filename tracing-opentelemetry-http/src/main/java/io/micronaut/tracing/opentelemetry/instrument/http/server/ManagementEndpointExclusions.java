@@ -18,13 +18,13 @@ package io.micronaut.tracing.opentelemetry.instrument.http.server;
 import io.micronaut.context.BeanContext;
 import io.micronaut.context.env.Environment;
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.core.naming.NameUtils;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.inject.BeanDefinition;
 import io.micronaut.inject.qualifiers.Qualifiers;
 import io.micronaut.web.router.RouteBuilder;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

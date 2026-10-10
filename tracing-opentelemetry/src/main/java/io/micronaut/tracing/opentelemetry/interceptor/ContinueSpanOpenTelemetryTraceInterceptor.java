@@ -19,7 +19,6 @@ import io.micronaut.aop.InterceptorBean;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.util.TracedMethod;
 import io.micronaut.tracing.util.TracedMethodCache;
@@ -30,6 +29,7 @@ import io.opentelemetry.instrumentation.api.incubator.semconv.util.ClassAndMetho
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implements tracing logic for {@code ContinueSpan} and {@code NewSpan}

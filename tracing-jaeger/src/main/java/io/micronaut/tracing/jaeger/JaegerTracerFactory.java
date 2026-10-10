@@ -23,13 +23,13 @@ import io.jaegertracing.spi.Sampler;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Requires;
-import org.jspecify.annotations.Nullable;
 import io.opentracing.ScopeManager;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Closeable;
 

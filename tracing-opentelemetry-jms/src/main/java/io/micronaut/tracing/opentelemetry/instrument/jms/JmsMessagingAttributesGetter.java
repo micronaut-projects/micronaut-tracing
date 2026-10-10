@@ -16,9 +16,9 @@
 package io.micronaut.tracing.opentelemetry.instrument.jms;
 
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.Nullable;
 import io.opentelemetry.instrumentation.api.incubator.semconv.messaging.MessagingAttributesGetter;
 import jakarta.jms.JMSException;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Exposes the messaging attributes of a JMS message.

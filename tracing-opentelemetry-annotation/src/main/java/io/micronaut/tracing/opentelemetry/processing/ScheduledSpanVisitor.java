@@ -16,11 +16,11 @@
 package io.micronaut.tracing.opentelemetry.processing;
 
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.NonNull;
 import io.micronaut.inject.ast.MethodElement;
 import io.micronaut.inject.visitor.TypeElementVisitor;
 import io.micronaut.inject.visitor.VisitorContext;
 import io.micronaut.tracing.opentelemetry.annotation.ScheduledSpan;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Set;
 

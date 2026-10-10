@@ -16,7 +16,6 @@
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.propagation.PropagatedContextConfiguration;
 import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
@@ -38,6 +37,7 @@ import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.metrics.KafkaMetric;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.AbstractList;

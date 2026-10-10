@@ -15,10 +15,10 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
-import org.jspecify.annotations.NonNull;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Interface to filter consumer messages for tracing.

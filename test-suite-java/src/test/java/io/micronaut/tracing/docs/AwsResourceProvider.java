@@ -3,11 +3,11 @@ package io.micronaut.tracing.docs;
 import io.micronaut.context.annotation.Requires;
 
 // tag::imports[]
-import org.jspecify.annotations.NonNull;
 import io.micronaut.tracing.opentelemetry.ResourceProvider;
 import io.opentelemetry.contrib.aws.resource.Ec2Resource;
 import io.opentelemetry.sdk.resources.Resource;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.NonNull;
 // end::imports[]
 
 @Requires(property = "spec.name", value = "AwsResourceProviderTest")

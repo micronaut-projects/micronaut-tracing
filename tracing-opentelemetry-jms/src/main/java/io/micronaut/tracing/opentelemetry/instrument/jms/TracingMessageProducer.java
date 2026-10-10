@@ -16,12 +16,12 @@
 package io.micronaut.tracing.opentelemetry.instrument.jms;
 
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.Nullable;
 import jakarta.jms.CompletionListener;
 import jakarta.jms.Destination;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.MessageProducer;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A {@link MessageProducer} that sends each message in a {@code PRODUCER} span and writes the trace

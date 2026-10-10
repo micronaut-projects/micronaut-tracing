@@ -17,8 +17,8 @@ package io.micronaut.tracing.opentelemetry.instrument.mongodb;
 
 import com.mongodb.RequestContext;
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.Nullable;
 import io.opentelemetry.context.Context;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

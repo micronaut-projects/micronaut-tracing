@@ -15,12 +15,12 @@
  */
 package io.micronaut.tracing.opentelemetry.test;
 
-import org.jspecify.annotations.NonNull;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.sdk.testing.assertj.TracesAssert;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.NonNull;
 
 import java.time.Duration;
 import java.util.ArrayList;

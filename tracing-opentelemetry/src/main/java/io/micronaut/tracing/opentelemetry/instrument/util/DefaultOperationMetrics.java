@@ -16,14 +16,14 @@
 package io.micronaut.tracing.opentelemetry.instrument.util;
 
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.metrics.MeterProvider;
 import io.opentelemetry.instrumentation.api.instrumenter.InstrumenterBuilder;
 import io.opentelemetry.instrumentation.api.instrumenter.OperationListener;
 import io.opentelemetry.instrumentation.api.instrumenter.OperationMetrics;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;

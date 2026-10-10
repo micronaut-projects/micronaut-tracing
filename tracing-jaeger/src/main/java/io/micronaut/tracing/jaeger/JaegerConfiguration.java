@@ -24,11 +24,11 @@ import io.jaegertracing.spi.MetricsFactory;
 import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.env.CachedEnvironment;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.core.util.Toggleable;
 import io.micronaut.runtime.ApplicationConfiguration;
 import jakarta.inject.Inject;
+import org.jspecify.annotations.Nullable;
 
 import static io.jaegertracing.Configuration.JAEGER_SERVICE_NAME;
 import static io.micronaut.context.env.Environment.DEFAULT_NAME;

@@ -22,7 +22,6 @@ import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.inject.ExecutableMethod;
@@ -45,6 +44,7 @@ import io.opentelemetry.instrumentation.api.instrumenter.SpanNameExtractor;
 import io.opentelemetry.instrumentation.api.incubator.semconv.util.ClassAndMethod;
 import io.opentelemetry.semconv.CodeAttributes;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 

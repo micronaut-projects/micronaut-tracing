@@ -16,8 +16,6 @@
 package io.micronaut.tracing.processing;
 
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.inject.ast.MethodElement;
 import io.micronaut.inject.ast.ParameterElement;
@@ -28,6 +26,8 @@ import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import io.micronaut.tracing.util.MethodNameFormatter;
 import io.micronaut.tracing.util.SpanMetadata;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.Set;

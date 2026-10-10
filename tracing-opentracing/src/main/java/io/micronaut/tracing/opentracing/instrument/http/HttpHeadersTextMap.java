@@ -20,6 +20,7 @@ import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.MutableHttpHeaders;
 import io.opentracing.propagation.TextMap;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -69,7 +70,7 @@ class HttpHeadersTextMap implements TextMap {
                     }
 
                     @Override
-                    public String getValue() {
+                    public @Nullable String getValue() {
                         List<String> value = entry.getValue();
                         if (CollectionUtils.isNotEmpty(value)) {
                             return value.get(0);
@@ -78,7 +79,7 @@ class HttpHeadersTextMap implements TextMap {
                     }
 
                     @Override
-                    public String setValue(String value) {
+                    public @Nullable String setValue(String value) {
                         String v = getValue();
                         entry.setValue(Collections.singletonList(value));
                         return v;

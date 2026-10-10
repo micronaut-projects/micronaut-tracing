@@ -50,3 +50,117 @@ jmh {
 tasks.named('check') {
     dependsOn tasks.named('jmhClasses')
 }
+
+// Allocation regression guard, see README.md ("Allocation guard").
+// gc.alloc.rate.norm (bytes per operation, from -prof gc) is stable between runs, unlike throughput, so the
+// guard compares only that metric with the committed allocation-baseline.json.
+//   ./gradlew :benchmarks:checkAllocationBaseline [-Pjmh.results=file] [-Pallocation.threshold=10] [-Pallocation.toleranceBytes=16]
+//   ./gradlew :benchmarks:updateAllocationBaseline [-Pjmh.results=file]
+def allocationBaselineFile = layout.projectDirectory.file('allocation-baseline.json')
+def jmhResultsFile = providers.gradleProperty('jmh.results')
+    .map { layout.projectDirectory.file(it) }
+    .orElse(layout.buildDirectory.file('results/jmh/results.json'))
+
+// Reads a JMH JSON result into [key: bytes/op]. The key is "SimpleClass.method [param=value,...]".
+def readAllocations = { File results ->
+    if (!results.file) {
+        throw new GradleException("No JMH result at ${results}: run :benchmarks:jmh with -Pjmh.profilers=gc first")
+    }
+    def allocations = new TreeMap<String, Double>()
+    new groovy.json.JsonSlurper().parse(results).each { Map run ->
+        def metrics = run.secondaryMetrics ?: [:]
+        // JMH before 1.36 prefixes the profiler metrics with a middle dot
+        def norm = metrics['gc.alloc.rate.norm'] ?: metrics['·gc.alloc.rate.norm']
+        if (norm == null) {
+            return
+        }
+        def name = (run.benchmark as String).tokenize('.').takeRight(2).join('.')
+        def params = (run.params ?: [:]).sort().collect { k, v -> "${k}=${v}" }.join(',')
+        allocations[params ? "${name} [${params}]".toString() : name] = norm.score as double
+    }
+    if (allocations.isEmpty()) {
+        throw new GradleException("${results} has no gc.alloc.rate.norm metric: run :benchmarks:jmh with -Pjmh.profilers=gc")
+    }
+    allocations
+}
+
+tasks.register('checkAllocationBaseline') {
+    group = 'verification'
+    description = 'Fails when a JMH result allocates more bytes per operation than allocation-baseline.json allows.'
+    def defaultThreshold = providers.gradleProperty('allocation.threshold').map { it as double }.orElse(10d)
+    def tolerance = providers.gradleProperty('allocation.toleranceBytes').map { it as double }.orElse(16d)
+    inputs.file(allocationBaselineFile)
+    inputs.property('threshold', defaultThreshold)
+    inputs.property('tolerance', tolerance)
+    def results = jmhResultsFile
+    outputs.upToDateWhen { false }
+    doLast {
+        def baselineJson = new groovy.json.JsonSlurper().parse(allocationBaselineFile.asFile)
+        Map<String, Number> baseline = baselineJson.benchmarks ?: [:]
+        // optional per-benchmark thresholds in percent, matched on the key prefix (longest wins)
+        Map<String, Number> thresholds = baselineJson.thresholds ?: [:]
+        def current = readAllocations(results.get().asFile)
+        if (baselineJson.note) {
+            logger.lifecycle("Baseline note: ${baselineJson.note}")
+        }
+        def rows = []
+        def failures = []
+        def warnings = []
+        current.each { key, bytes ->
+            def base = baseline[key]
+            if (base == null) {
+                warnings << "No baseline for ${key} (${String.format('%.1f', bytes)} B/op): run updateAllocationBaseline to add it"
+                rows << [key, '-', String.format('%.1f', bytes), '-', 'NEW']
+                return
+            }
+            def prefix = thresholds.keySet().findAll { key.startsWith(it) }.max { it.length() }
+            double threshold = prefix != null ? thresholds[prefix] as double : defaultThreshold.get()
+            double b = base as double
+            double delta = bytes - b
+            String pct = b > 0 ? String.format('%+.1f%%', 100d * delta / b) : (delta == 0 ? '+0.0%' : 'n/a')
+            boolean failed = delta > tolerance.get() && bytes > b * (1d + threshold / 100d)
+            if (failed) {
+                failures << key
+            }
+            rows << [key, String.format('%.1f', b), String.format('%.1f', bytes), pct,
+                     failed ? "FAIL (> +${threshold}%)" : 'ok']
+        }
+        baseline.keySet().findAll { !current.containsKey(it) }.each {
+            warnings << "Baseline entry ${it} is not in the JMH result"
+        }
+        def header = ['benchmark [params]', 'baseline B/op', 'current B/op', 'delta', 'status']
+        def widths = header.indices.collect { i -> ([header] + rows)*.getAt(i)*.toString()*.length().max() }
+        def line = { List cells -> cells.withIndex().collect { c, i -> i == 0 ? c.toString().padRight(widths[i]) : c.toString().padLeft(widths[i]) }.join('  ') }
+        logger.lifecycle(line(header))
+        logger.lifecycle(widths.collect { '-' * it }.join('  '))
+        rows.each { logger.lifecycle(line(it)) }
+        warnings.each { logger.warn("WARNING: ${it}") }
+        if (failures) {
+            throw new GradleException("${failures.size()} benchmark(s) allocate more than the baseline allows: ${failures.join(', ')}")
+        }
+    }
+}
+
+tasks.register('updateAllocationBaseline') {
+    group = 'benchmark'
+    description = 'Writes allocation-baseline.json from a JMH result run with -prof gc.'
+    def results = jmhResultsFile
+    def note = providers.gradleProperty('allocation.note')
+    outputs.upToDateWhen { false }
+    doLast {
+        def file = allocationBaselineFile.asFile
+        def previous = file.file ? new groovy.json.JsonSlurper().parse(file) : [:]
+        def current = readAllocations(results.get().asFile)
+        def json = new LinkedHashMap<String, Object>()
+        def newNote = note.orNull
+        if (newNote) {
+            json.note = newNote
+        }
+        if (previous.thresholds) {
+            json.thresholds = previous.thresholds
+        }
+        json.benchmarks = current.collectEntries { k, v -> [k, Math.round(v * 10) / 10d] }
+        file.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(json)) + '\n'
+        logger.lifecycle("Wrote ${current.size()} entries to ${file}")
+    }
+}

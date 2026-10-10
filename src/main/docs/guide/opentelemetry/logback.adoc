@@ -1,9 +1,6 @@
-To export logs from Logback through OpenTelemetry, add the Logback appender dependency:
-dependency:opentelemetry-logback-appender-1.0[scope="implementation", groupId="io.opentelemetry.instrumentation"]
+OpenTelemetry provides appenders for Logback and Log4j 2 that export the log records through the OpenTelemetry Logs SDK, with the trace context of the current span attached. When one of these appender libraries and `micronaut-tracing-opentelemetry` are both on the classpath, Micronaut automatically installs the application `OpenTelemetry` bean into the appenders on startup. No custom bootstrap code is required.
 
-When the appender dependency and `micronaut-tracing-opentelemetry` are both on the classpath, Micronaut automatically installs the application `OpenTelemetry` bean into the Logback appender. No custom bootstrap code is required.
-
-Example configuration:
+Configure a logs exporter, for example:
 
 [configuration]
 ----
@@ -11,6 +8,14 @@ otel:
   logs:
     exporter: otlp
 ----
+
+== Logback
+
+Add the Logback appender dependency:
+
+dependency:opentelemetry-logback-appender-1.0[scope="implementation", groupId="io.opentelemetry.instrumentation"]
+
+And reference the appender in your Logback configuration:
 
 [source,xml]
 ----
@@ -23,6 +28,28 @@ otel:
 </configuration>
 ----
 
-If you want to keep using your existing appenders and only enrich Logback output with the active trace and span identifiers, add the MDC integration dependency instead:
+== Log4j 2
 
-dependency:opentelemetry-logback-mdc-1.0[scope="runtimeOnly", groupId="io.opentelemetry.instrumentation"]
+Add the Log4j appender dependency:
+
+dependency:opentelemetry-log4j-appender-2.17[scope="implementation", groupId="io.opentelemetry.instrumentation"]
+
+And reference the appender in your Log4j 2 configuration:
+
+[source,xml]
+----
+<Configuration packages="io.opentelemetry.instrumentation.log4j.appender.v2_17">
+    <Appenders>
+        <OpenTelemetry name="OTEL"/>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="OTEL"/>
+        </Root>
+    </Loggers>
+</Configuration>
+----
+
+The appenders are installed only when OpenTelemetry is enabled (`micronaut.otel.enabled` is not `false`).
+
+TIP: To keep your existing appenders and only add the trace and span ids to the log output, no appender is needed: Micronaut puts them in the MDC automatically. See <<mdc, Log Correlation (MDC)>>.

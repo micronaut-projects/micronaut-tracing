@@ -1,19 +1,86 @@
-== Logback MDC
+Micronaut adds the trace context of the current OpenTelemetry span to the SLF4J https://www.slf4j.org/manual.html#mdc[MDC] automatically, so that log lines can be correlated with the trace and span that were active when they were written. No dependency or appender configuration is required: the integration is enabled whenever `micronaut-tracing-opentelemetry` is used with an SLF4J provider that supports the MDC, such as Logback or Log4j 2 (through `log4j-slf4j2-impl`).
 
-OpenTelemetry provides Logback MDC instrumentation that can add the active span context to log events.
-This is useful when your log aggregation system reads application logs separately from traces and you want to correlate a log line with the trace and span that were active when the log event was created.
+The following MDC keys are set while a valid span is current, and removed when it is not:
 
-Add the OpenTelemetry Logback MDC dependency to your application:
+|===
+| Key | Value
 
-dependency:opentelemetry-logback-mdc-1.0[scope="runtimeOnly", groupId="io.opentelemetry.instrumentation"]
+| `trace_id`
+| The trace id, as 32 lowercase hexadecimal characters
 
-Then wrap your Logback appender with the OpenTelemetry MDC appender and include the MDC keys in your log pattern:
+| `span_id`
+| The span id, as 16 lowercase hexadecimal characters
 
-.Configuring Logback MDC trace correlation
+| `trace_flags`
+| The trace flags, as 2 hexadecimal characters (for example `01` for a sampled trace)
+|===
+
+These are the keys used by the OpenTelemetry logger MDC instrumentation, so existing log patterns keep working. Include them in your log pattern:
+
+.Logback pattern with the trace context
+[source,xml]
+----
+<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} trace_id=%X{trace_id:-} span_id=%X{span_id:-} - %msg%n</pattern>
+----
+
+The MDC is updated whenever Micronaut makes an OpenTelemetry context current through its context propagation: in the HTTP server and client filters, in `@NewSpan` and `@WithSpan` methods, in the Kafka and RabbitMQ instrumentation, when a route or a method runs on another executor (for example with `@ExecuteOn`), and in any code wrapped with `PropagatedContext` (`PropagatedContext.get().wrap(...)`). The previous MDC values are restored when the propagation ends, so a thread is never left with the trace context of a request that it no longer handles. Values set by the application under other keys are not touched.
+
+NOTE: A scope opened directly with the OpenTelemetry API (for example `span.makeCurrent()`) does not update the MDC: the log lines written in it carry the ids of the enclosing span propagated by Micronaut. Create the span with `@NewSpan` (or `@WithSpan`) to make it visible in the logs too. Code running on another thread without Micronaut's context propagation, such as a Reactor operator after a thread switch, has no trace context in the MDC; read it from the Reactor context with `OpenTelemetryReactorPropagation.currentContext(contextView)` instead.
+
+== Configuration
+
+The log correlation is configured with the following properties:
+
+[configuration]
+----
+tracing:
+  opentelemetry:
+    logging:
+      mdc:
+        enabled: true
+        trace-id-key: trace_id
+        span-id-key: span_id
+        trace-flags-key: trace_flags
+        baggage-keys:
+          - tenant
+----
+
+|===
+| Property | Default | Description
+
+| `tracing.opentelemetry.logging.mdc.enabled`
+| `true` (see below)
+| Whether the trace context is copied into the MDC
+
+| `tracing.opentelemetry.logging.mdc.trace-id-key`
+| `trace_id`
+| The MDC key of the trace id
+
+| `tracing.opentelemetry.logging.mdc.span-id-key`
+| `span_id`
+| The MDC key of the span id
+
+| `tracing.opentelemetry.logging.mdc.trace-flags-key`
+| `trace_flags`
+| The MDC key of the trace flags
+
+| `tracing.opentelemetry.logging.mdc.baggage-keys`
+| none
+| The names of the https://opentelemetry.io/docs/concepts/signals/baggage/[baggage] entries copied into the MDC, under the same key. An entry absent from the baggage of the current context is removed from the MDC.
+|===
+
+To turn the log correlation off, set `tracing.opentelemetry.logging.mdc.enabled` to `false`. It is also off when OpenTelemetry is disabled (`micronaut.otel.enabled: false`) and when the SLF4J provider does not support the MDC (for example `slf4j-nop`).
+
+== OpenTelemetry Logback MDC appender
+
+Before this integration, the trace context was added to Logback output by wrapping the appenders with the OpenTelemetry Logback MDC appender (`io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0`):
+
+.Configuring the OpenTelemetry Logback MDC appender
 [source,xml]
 include::src/main/docs/guide/opentelemetry/logback-mdc.xml[]
 
-The default MDC keys are `trace_id`, `span_id`, and `trace_flags`.
-These values are only added when a valid span is current, so logs written outside traced execution may not contain trace correlation fields.
+This is no longer necessary, and you can remove the dependency and the wrapping appender. When the `opentelemetry-logback-mdc-1.0` library is on the classpath and `tracing.opentelemetry.logging.mdc.enabled` is not set, Micronaut leaves the MDC to that appender so that the trace context is not added twice (for example under the default keys and under custom keys configured on the appender). Setting `tracing.opentelemetry.logging.mdc.enabled` to `true` enables the Micronaut integration in any case. Both use the same default keys, so with the default configuration of both the appender only overwrites the values set by Micronaut with the same values.
 
-See the https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md[OpenTelemetry logger MDC documentation] and the https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation/logback/logback-mdc-1.0/library[OpenTelemetry Logback MDC library documentation] for additional options, including custom MDC key names and baggage support.
+The OpenTelemetry appender reads the current span when the log event is appended, so it also covers scopes opened directly with the OpenTelemetry API, but it adds the trace context to the events written through Logback only. See the https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation/logback/logback-mdc-1.0/library[OpenTelemetry Logback MDC library documentation] for its options.
+
+TIP: To export the log records themselves through OpenTelemetry, with the trace context attached, see <<logback, Log Export>>.

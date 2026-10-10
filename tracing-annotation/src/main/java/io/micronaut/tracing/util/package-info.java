@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 original authors
+ * Copyright 2017-2026 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 /**
- * Tracing annotations.
- *
- * @author graemerocher
- * @since 1.0
+ * Internal utilities shared by the tracing interceptors.
  */
 @NullMarked
-package io.micronaut.tracing.annotation;
+package io.micronaut.tracing.util;
 
 import org.jspecify.annotations.NullMarked;

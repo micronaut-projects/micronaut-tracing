@@ -17,6 +17,7 @@ package io.micronaut.tracing.opentelemetry.instrument.rabbitmq;
 
 import com.rabbitmq.client.LongString;
 import io.opentelemetry.context.propagation.TextMapGetter;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -27,12 +28,12 @@ final class RabbitMQHeadersGetter implements TextMapGetter<Map<String, Object>> 
     static final int MAX_PROPAGATION_HEADER_VALUE_BYTES = 8192;
 
     @Override
-    public Iterable<String> keys(Map<String, Object> carrier) {
+    public Iterable<String> keys(@Nullable Map<String, Object> carrier) {
         return carrier == null ? Set.of() : carrier.keySet();
     }
 
     @Override
-    public String get(Map<String, Object> carrier, String key) {
+    public @Nullable String get(@Nullable Map<String, Object> carrier, String key) {
         if (carrier == null) {
             return null;
         }

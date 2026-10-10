@@ -18,12 +18,12 @@ package io.micronaut.tracing.opentelemetry.instrument.kafka;
 import java.util.Map;
 import java.util.Objects;
 
-import io.micronaut.core.annotation.Nullable;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerInterceptor;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Default tracing producer kafka interceptor. Altrernative way to connect tracing

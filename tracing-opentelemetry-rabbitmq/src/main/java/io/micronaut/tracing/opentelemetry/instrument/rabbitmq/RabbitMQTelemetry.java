@@ -35,6 +35,7 @@ import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.context.propagation.TextMapPropagator;
+import org.jspecify.annotations.Nullable;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
@@ -155,7 +156,7 @@ public final class RabbitMQTelemetry {
         return tracePublisherOperation("publish", publishState, publisherFactory);
     }
 
-    void handleDelivery(Consumer consumer, String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+    void handleDelivery(Consumer consumer, String consumerTag, @Nullable Envelope envelope, AMQP.@Nullable BasicProperties properties, byte[] body) throws IOException {
         Context parentContext = propagator.extract(Context.root(), properties == null ? null : properties.getHeaders(), new RabbitMQHeadersGetter());
         Span span = tracer.spanBuilder("rabbitmq process")
             .setParent(parentContext)
@@ -230,7 +231,7 @@ public final class RabbitMQTelemetry {
         );
     }
 
-    private static void setSpanAttributes(Span span, String operation, String exchange, String routingKey) {
+    private static void setSpanAttributes(Span span, String operation, @Nullable String exchange, @Nullable String routingKey) {
         span.setAttribute(MESSAGING_SYSTEM, "rabbitmq");
         span.setAttribute(MESSAGING_OPERATION, operation);
         span.setAttribute(MESSAGING_OPERATION_NAME, operation);
@@ -257,7 +258,7 @@ public final class RabbitMQTelemetry {
         return "publish".equals(operation) ? "send" : operation;
     }
 
-    private static String destination(String exchange, String routingKey) {
+    private static String destination(@Nullable String exchange, @Nullable String routingKey) {
         if (exchange != null && !exchange.isEmpty() && routingKey != null && !routingKey.isEmpty()) {
             return exchange + ":" + routingKey;
         }
@@ -285,7 +286,7 @@ public final class RabbitMQTelemetry {
         }
 
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        public @Nullable Object invoke(Object proxy, Method method, @Nullable Object @Nullable [] args) throws Throwable {
             if (method.getDeclaringClass() == TracingChannel.class) {
                 return channel;
             }
@@ -305,7 +306,7 @@ public final class RabbitMQTelemetry {
             }
         }
 
-        private Object[] instrumentArgs(Method method, Object[] args) {
+        private @Nullable Object @Nullable [] instrumentArgs(Method method, @Nullable Object @Nullable [] args) {
             if (args == null || !"basicConsume".equals(method.getName())) {
                 return args;
             }

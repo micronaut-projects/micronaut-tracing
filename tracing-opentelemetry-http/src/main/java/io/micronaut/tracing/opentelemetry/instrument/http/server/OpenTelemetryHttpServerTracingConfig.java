@@ -16,6 +16,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -72,7 +73,7 @@ public class OpenTelemetryHttpServerTracingConfig {
      *
      * @param tracedManagementEndpoints the ids of the traced management endpoints
      */
-    public void setTracedManagementEndpoints(List<String> tracedManagementEndpoints) {
+    public void setTracedManagementEndpoints(@Nullable List<String> tracedManagementEndpoints) {
         this.tracedManagementEndpoints = tracedManagementEndpoints == null ? Collections.emptyList() : tracedManagementEndpoints;
     }
 }

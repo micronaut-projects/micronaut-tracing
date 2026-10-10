@@ -21,8 +21,10 @@
 @Configuration
 @Requires(property = RabbitMQTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @Requires(classes = ReactivePublisher.class)
+@NullMarked
 package io.micronaut.tracing.opentelemetry.instrument.rabbitmq;
 
+import org.jspecify.annotations.NullMarked;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;

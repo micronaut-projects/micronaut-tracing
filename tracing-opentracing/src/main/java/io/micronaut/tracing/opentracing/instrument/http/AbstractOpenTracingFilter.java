@@ -17,7 +17,6 @@ package io.micronaut.tracing.opentracing.instrument.http;
 
 import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.async.propagation.ReactorPropagation;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
@@ -32,6 +31,7 @@ import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
 import io.opentracing.log.Fields;
 import jakarta.inject.Inject;
+import org.jspecify.annotations.Nullable;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;

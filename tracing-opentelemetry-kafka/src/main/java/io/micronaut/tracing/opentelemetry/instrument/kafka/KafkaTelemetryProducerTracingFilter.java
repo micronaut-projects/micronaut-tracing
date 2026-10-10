@@ -15,10 +15,10 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
-import io.micronaut.core.annotation.NonNull;
 
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Interface to filter producer messages for tracing.

@@ -16,7 +16,6 @@
 package io.micronaut.tracing.opentelemetry.instrument.jms;
 
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
 import io.opentelemetry.api.OpenTelemetry;
@@ -35,6 +34,7 @@ import jakarta.jms.Message;
 import jakarta.jms.MessageListener;
 import jakarta.jms.MessageProducer;
 import jakarta.jms.Session;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Creates the OpenTelemetry spans of the messages sent and received through Micronaut JMS.

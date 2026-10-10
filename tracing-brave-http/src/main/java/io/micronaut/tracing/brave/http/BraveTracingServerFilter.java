@@ -23,7 +23,6 @@ import brave.propagation.CurrentTraceContext;
 import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.async.propagation.ReactorPropagation;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpRequest;
@@ -37,6 +36,7 @@ import io.micronaut.tracing.brave.BravePropagationContext;
 import io.micronaut.tracing.opentracing.instrument.http.OpenTracingServerFilter;
 import io.micronaut.tracing.opentracing.instrument.http.TracingExclusionsConfiguration;
 import jakarta.inject.Inject;
+import org.jspecify.annotations.Nullable;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 
@@ -143,7 +143,7 @@ public final class BraveTracingServerFilter implements HttpServerFilter {
             }
 
             @Override
-            public String header(String name) {
+            public @Nullable String header(String name) {
                 return request.getHeaders().get(name);
             }
 
@@ -168,7 +168,7 @@ public final class BraveTracingServerFilter implements HttpServerFilter {
             }
 
             @Override
-            public String route() {
+            public @Nullable String route() {
                 return request.getAttribute(URI_TEMPLATE, String.class).orElse(null);
             }
 
@@ -198,7 +198,7 @@ public final class BraveTracingServerFilter implements HttpServerFilter {
             }
 
             @Override
-            public String route() {
+            public @Nullable String route() {
                 return request.getAttribute(URI_TEMPLATE, String.class).orElse(null);
             }
 

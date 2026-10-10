@@ -17,7 +17,6 @@ package io.micronaut.tracing.opentelemetry;
 
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.env.Environment;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
@@ -30,6 +29,7 @@ import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.samplers.Sampler;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;

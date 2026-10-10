@@ -50,6 +50,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.metrics.MetricsReporter;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,7 +173,7 @@ public final class KafkaTelemetry {
      * @param <K> key class
      * @param <V> value class
      */
-    public <K, V> void buildAndInjectSpan(ProducerRecord<K, V> record, String clientId) {
+    public <K, V> void buildAndInjectSpan(ProducerRecord<K, V> record, @Nullable String clientId) {
         Context parentContext = Context.current();
         KafkaProducerRequest request = KafkaProducerRequest.create(record, clientId, null);
 
@@ -204,8 +205,8 @@ public final class KafkaTelemetry {
      *
      * @return send function's result
      */
-    public <K, V> Future<RecordMetadata> buildAndInjectSpan(ProducerRecord<K, V> record, Producer<K, V> producer, Callback callback,
-                                                            BiFunction<ProducerRecord<K, V>, Callback, Future<RecordMetadata>> sendFn) {
+    public <K, V> Future<RecordMetadata> buildAndInjectSpan(ProducerRecord<K, V> record, Producer<K, V> producer, @Nullable Callback callback,
+                                                            @Nullable BiFunction<ProducerRecord<K, V>, @Nullable Callback, Future<RecordMetadata>> sendFn) {
         Context parentContext = Context.current();
         KafkaProducerRequest request = KafkaProducerRequest.create(record, producer, KafkaUtil.extractBootstrapServers(producer));
         if (!producerInstrumenter.shouldStart(parentContext, request)) {
@@ -232,7 +233,7 @@ public final class KafkaTelemetry {
         return sendFn.apply(record, callback);
     }
 
-    public <K, V> void buildAndFinishSpan(ConsumerRecords<K, V> records, String consumerGroup, String clientId) {
+    public <K, V> void buildAndFinishSpan(ConsumerRecords<K, V> records, @Nullable String consumerGroup, @Nullable String clientId) {
         Context currentContext = Context.current();
         for (ConsumerRecord<K, V> record : records) {
             processConsumerRecord(currentContext, record, consumerGroup, clientId);
@@ -243,18 +244,18 @@ public final class KafkaTelemetry {
         buildAndFinishSpan(records, KafkaUtil.getConsumerGroup(consumer), KafkaUtil.getClientId(consumer));
     }
 
-    public <K, V> void buildAndFinishSpan(List<ConsumerRecord<K, V>> records, String consumerGroup, String clientId) {
+    public <K, V> void buildAndFinishSpan(List<ConsumerRecord<K, V>> records, @Nullable String consumerGroup, @Nullable String clientId) {
         Context currentContext = Context.current();
         for (ConsumerRecord<K, V> record : records) {
             processConsumerRecord(currentContext, record, consumerGroup, clientId);
         }
     }
 
-    <K, V> ConsumerRecordContext startConsumerRecordSpan(ConsumerRecord<K, V> consumerRecord, Consumer<K, V> consumer) {
+    <K, V> @Nullable ConsumerRecordContext startConsumerRecordSpan(ConsumerRecord<K, V> consumerRecord, Consumer<K, V> consumer) {
         return startConsumerRecordSpan(consumerRecord, KafkaUtil.getConsumerGroup(consumer), KafkaUtil.getClientId(consumer));
     }
 
-    <K, V> ConsumerRecordContext startConsumerRecordSpan(ConsumerRecord<K, V> consumerRecord, String consumerGroup, String clientId) {
+    <K, V> @Nullable ConsumerRecordContext startConsumerRecordSpan(ConsumerRecord<K, V> consumerRecord, @Nullable String consumerGroup, @Nullable String clientId) {
         Context parentContext = Context.current();
         KafkaProcessRequest request = KafkaProcessRequest.create(consumerRecord, consumerGroup, clientId, null);
         if (!consumerProcessInstrumenter.shouldStart(parentContext, request)) {
@@ -267,7 +268,7 @@ public final class KafkaTelemetry {
         consumerProcessInstrumenter.end(consumerRecordContext.context(), consumerRecordContext.request(), null, null);
     }
 
-    private <K, V> void processConsumerRecord(Context parentContext, ConsumerRecord<K, V> record, String consumerGroup, String clientId) {
+    private <K, V> void processConsumerRecord(Context parentContext, ConsumerRecord<K, V> record, @Nullable String consumerGroup, @Nullable String clientId) {
         KafkaProcessRequest request = KafkaProcessRequest.create(record, consumerGroup, clientId, null);
         if (!consumerProcessInstrumenter.shouldStart(parentContext, request)) {
             return;
@@ -365,12 +366,12 @@ public final class KafkaTelemetry {
 
     private final class ProducerCallback implements Callback {
 
-        private final Callback callback;
+        private final @Nullable Callback callback;
         private final Context parentContext;
         private final Context context;
         private final KafkaProducerRequest request;
 
-        private ProducerCallback(Callback callback, Context parentContext, Context context, KafkaProducerRequest request) {
+        private ProducerCallback(@Nullable Callback callback, Context parentContext, Context context, KafkaProducerRequest request) {
             this.callback = callback;
             this.parentContext = parentContext;
             this.context = context;
@@ -378,7 +379,7 @@ public final class KafkaTelemetry {
         }
 
         @Override
-        public void onCompletion(RecordMetadata metadata, Exception exception) {
+        public void onCompletion(@Nullable RecordMetadata metadata, @Nullable Exception exception) {
             producerInstrumenter.end(context, request, metadata, exception);
 
             if (callback != null) {

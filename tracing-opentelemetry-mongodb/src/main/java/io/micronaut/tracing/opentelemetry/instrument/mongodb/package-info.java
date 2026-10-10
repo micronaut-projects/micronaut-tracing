@@ -22,8 +22,10 @@
 @Configuration
 @Requires(property = MongoTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @Requires(classes = {MongoClientSettingsBuilderCustomizer.class, MongoTelemetry.class})
+@NullMarked
 package io.micronaut.tracing.opentelemetry.instrument.mongodb;
 
+import org.jspecify.annotations.NullMarked;
 import io.micronaut.configuration.mongo.core.MongoClientSettingsBuilderCustomizer;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;

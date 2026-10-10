@@ -16,7 +16,6 @@
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.propagation.PropagatedContextConfiguration;
 import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
@@ -38,6 +37,7 @@ import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.metrics.KafkaMetric;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.AbstractList;
@@ -66,7 +66,7 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
 
     private final Consumer<K, V> consumer;
     private final KafkaTelemetry kafkaTelemetry;
-    private ActiveRecordContext activeRecordContext;
+    private @Nullable ActiveRecordContext activeRecordContext;
 
     public MicronautOtelKafkaConsumer(Consumer<K, V> consumer, KafkaTelemetry kafkaTelemetry) {
         this.consumer = consumer;
@@ -383,7 +383,7 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
      * @return The propagated context scope, or {@code null} if propagation is not supported
      */
     @SuppressWarnings("deprecation")
-    private static @Nullable PropagatedContext.Scope propagate(Context context) {
+    private static PropagatedContext.@Nullable Scope propagate(Context context) {
         if (PropagatedContextConfiguration.get() != PropagatedContextConfiguration.Mode.THREAD_LOCAL) {
             return null;
         }
@@ -563,6 +563,6 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
     private record ActiveRecordContext(ConsumerRecord<?, ?> consumerRecord,
                                        KafkaTelemetry.ConsumerRecordContext consumerRecordContext,
                                        Scope scope,
-                                       @Nullable PropagatedContext.Scope propagatedContextScope) {
+                                       PropagatedContext.@Nullable Scope propagatedContextScope) {
     }
 }

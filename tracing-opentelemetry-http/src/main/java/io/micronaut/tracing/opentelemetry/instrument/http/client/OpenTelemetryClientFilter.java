@@ -17,7 +17,6 @@ package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpResponseProvider;
@@ -36,6 +35,7 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import jakarta.inject.Named;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -135,7 +135,7 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
      * client cancelled) ends it without a response and leaves the status unset, then cancels the downstream.
      */
     private static final class ClientSpan extends CompletableFuture<HttpResponse<?>>
-        implements BiConsumer<HttpResponse<?>, Throwable> {
+        implements BiConsumer<@Nullable HttpResponse<?>, @Nullable Throwable> {
 
         private static final VarHandle ENDED;
 

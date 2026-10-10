@@ -16,11 +16,11 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpVersion;
 import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.instrumentation.api.semconv.http.HttpClientAttributesGetter;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;

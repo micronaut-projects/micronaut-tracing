@@ -16,7 +16,6 @@
 package io.micronaut.tracing.opentelemetry.instrument.jms;
 
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
 import jakarta.jms.Destination;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -24,6 +23,7 @@ import jakarta.jms.Queue;
 import jakarta.jms.TemporaryQueue;
 import jakarta.jms.TemporaryTopic;
 import jakarta.jms.Topic;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A JMS message sent to or received from a destination, as seen by the instrumentation.

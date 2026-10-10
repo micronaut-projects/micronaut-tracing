@@ -20,7 +20,9 @@
  * @since 4.2.0
  */
 @Requires(classes = MutableHttpRequest.class)
+@NullMarked
 package io.micronaut.tracing.opentelemetry.instrument.http.client;
 
+import org.jspecify.annotations.NullMarked;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.MutableHttpRequest;

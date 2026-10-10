@@ -1,12 +1,14 @@
 package io.micronaut.tracing.opentelemetry.instrument.propagation
 
-import groovy.json.JsonSlurper
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Bean
 import io.micronaut.context.annotation.Factory
 import io.micronaut.context.annotation.Requires
 import io.micronaut.core.async.annotation.SingleResult
 import io.micronaut.core.propagation.PropagatedContext
+import io.micronaut.core.type.Argument
+import io.micronaut.http.client.HttpClient
+import io.micronaut.http.HttpRequest
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
@@ -67,6 +69,10 @@ class ContextPropagationMatrixSpec extends Specification {
     @Shared
     TestSpans testSpans
 
+    @Shared
+    @AutoCleanup
+    HttpClient httpClient
+
     Map<String, Object> configuration() {
         [
             'spec.name'                                : SPEC_NAME,
@@ -84,6 +90,7 @@ class ContextPropagationMatrixSpec extends Specification {
         context = ApplicationContext.run(configuration())
         embeddedServer = context.getBean(EmbeddedServer).start()
         testSpans = context.getBean(TestSpans)
+        httpClient = HttpClient.create(embeddedServer.URL)
     }
 
     void setup() {
@@ -174,7 +181,7 @@ class ContextPropagationMatrixSpec extends Specification {
         Map body = get('/matrix/supply-async/io')
 
         then:
-        Chain chain = awaitChain('GET /matrix/supply-async/io', 'newSpan', false)
+        Chain chain = awaitChain('GET /matrix/supply-async/{executor}', 'newSpan', false)
         body.task_span == chain.server.spanId
         body.newspan_span == chain.newSpan.spanId
 
@@ -220,7 +227,7 @@ class ContextPropagationMatrixSpec extends Specification {
         body.downstream_trace == server.traceId
 
         and: 'the scheduler thread is left without the context'
-        !leftOver(scheduler(scheduler)).leak_valid
+        !leftOver(namedScheduler(scheduler)).leak_valid
 
         where:
         [operator, scheduler] << [['publishOn', 'subscribeOn'], ['boundedElastic', 'parallel']].combinations()
@@ -242,7 +249,7 @@ class ContextPropagationMatrixSpec extends Specification {
         body.downstream_trace == server.traceId
 
         and: 'the scheduler thread is left without the context'
-        !leftOver(scheduler(scheduler)).leak_valid
+        !leftOver(namedScheduler(scheduler)).leak_valid
 
         where:
         [operator, scheduler] << [['publishOn', 'subscribeOn'], ['boundedElastic', 'parallel']].combinations()
@@ -300,7 +307,7 @@ class ContextPropagationMatrixSpec extends Specification {
         ofKind[0]
     }
 
-    Scheduler scheduler(String name) {
+    Scheduler namedScheduler(String name) {
         context.getBean(Scheduler, Qualifiers.byName("matrix-$name"))
     }
 
@@ -313,7 +320,8 @@ class ContextPropagationMatrixSpec extends Specification {
     }
 
     Map get(String path) {
-        new JsonSlurper().parseText(new URL(embeddedServer.URL, path).text) as Map
+        // a client created outside of the application context, so that it is not traced
+        httpClient.toBlocking().retrieve(HttpRequest.GET(path), Argument.mapOf(String, Object))
     }
 
     /**

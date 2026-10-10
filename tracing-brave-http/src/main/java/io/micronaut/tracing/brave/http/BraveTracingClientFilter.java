@@ -53,6 +53,7 @@ import static io.micronaut.tracing.opentracing.instrument.http.TraceRequestAttri
  * @since 1.0
  */
 @Internal
+@SuppressWarnings("removal") // replaces the deprecated OpenTracing filter and reuses its constants
 @Filter(CLIENT_PATH)
 @Requires(beans = HttpClientHandler.class)
 @Replaces(OpenTracingClientFilter.class)

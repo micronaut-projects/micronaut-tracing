@@ -23,9 +23,11 @@ This can be achieved by adding a list of regular expression patterns to your con
 ----
 otel:
   exclusions:
-    - /health
-    - /env/.*
+    - /internal/ping
+    - /static/.*
 ----
+
+The requests to the Micronaut management endpoints (`/health`, `/info`, `/prometheus`...) are excluded from the HTTP server tracing by default. Set `tracing.opentelemetry.http.server.exclude-management-endpoints` to `false` to trace them, or list the ids of the endpoints to trace in `tracing.opentelemetry.http.server.traced-management-endpoints`. To sample requests rather than exclude them, see the sampling rules and rate limit in <<performance, Performance Tuning>>.
 
 == Add HTTP Headers into request spans
 

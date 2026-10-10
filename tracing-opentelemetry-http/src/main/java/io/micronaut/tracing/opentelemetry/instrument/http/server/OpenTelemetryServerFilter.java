@@ -35,6 +35,7 @@ import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import org.reactivestreams.Publisher;
@@ -42,6 +43,8 @@ import reactor.core.publisher.Mono;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
+import java.util.List;
+import java.util.function.Predicate;
 
 import static io.micronaut.http.filter.ServerFilterPhase.TRACING;
 
@@ -80,11 +83,40 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
     /**
      * @param exclusionsConfig The {@link OpenTelemetryExclusionsConfiguration}
      * @param instrumenter     The {@link OpenTelemetryHttpServerConfig}
+     * @deprecated The management endpoints are not excluded, use the injected constructor
      */
+    @Deprecated(since = "8.4.0")
     public OpenTelemetryServerFilter(@Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig,
                                      @Named("micronautHttpServerTelemetryInstrumenter") Instrumenter<HttpRequest<?>, Object> instrumenter) {
-        super(exclusionsConfig == null ? null : exclusionsConfig.exclusionTest());
+        this(exclusionsConfig, List.of(), instrumenter);
+    }
+
+    /**
+     * @param exclusionsConfig    The {@link OpenTelemetryExclusionsConfiguration}
+     * @param managementEndpoints The paths of the management endpoints, excluded with the configured patterns
+     * @param instrumenter        The {@link OpenTelemetryHttpServerConfig}
+     */
+    @Inject
+    OpenTelemetryServerFilter(@Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig,
+                              ManagementEndpointExclusions managementEndpoints,
+                              @Named("micronautHttpServerTelemetryInstrumenter") Instrumenter<HttpRequest<?>, Object> instrumenter) {
+        this(exclusionsConfig, managementEndpoints.patterns(), instrumenter);
+    }
+
+    private OpenTelemetryServerFilter(@Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig,
+                                      List<String> managementEndpoints,
+                                      Instrumenter<HttpRequest<?>, Object> instrumenter) {
+        super(exclusionTest(exclusionsConfig, managementEndpoints));
         this.instrumenter = instrumenter;
+    }
+
+    @Nullable
+    private static Predicate<String> exclusionTest(@Nullable OpenTelemetryExclusionsConfiguration exclusionsConfig,
+                                                   List<String> managementEndpoints) {
+        if (exclusionsConfig == null) {
+            exclusionsConfig = new OpenTelemetryExclusionsConfiguration();
+        }
+        return exclusionsConfig.exclusionTest(managementEndpoints);
     }
 
     @Override

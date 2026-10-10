@@ -34,3 +34,7 @@ The Open Telemetry updates required updating the following Zipkin dependencies t
 The only change due to the above dependency updates that might affect end user code is that the `errorParser` property has been removed from `io.micronaut.tracing.brave.BraveTracerConfiguration` as the `brave.ErrorParser` type no longer exists.
 
 The `io.micronaut.tracing.zipkin.http.client.HttpClientSender` class is now deprecated as it implements a deprecated Zipkin API. This class will be replaced with an implementation based on the Zipkin 3 APIs in a future release.
+
+== Micronaut Tracing 8.4.0 behavior changes
+
+With `micronaut-tracing-opentelemetry-http`, the requests to the Micronaut management endpoints (`/health`, `/info`, `/prometheus`...) are no longer traced by the HTTP server filter. Set `tracing.opentelemetry.http.server.exclude-management-endpoints` to `false` to trace them again, or list the ids of the endpoints to trace in `tracing.opentelemetry.http.server.traced-management-endpoints`. See <<performance, Performance Tuning>>.

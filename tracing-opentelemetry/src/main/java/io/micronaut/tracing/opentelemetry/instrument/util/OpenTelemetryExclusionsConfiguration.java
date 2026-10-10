@@ -15,6 +15,8 @@
  */
 package io.micronaut.tracing.opentelemetry.instrument.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -74,6 +76,34 @@ public class OpenTelemetryExclusionsConfiguration {
      */
     @Nullable
     public Predicate<String> exclusionTest() {
+        return compile(exclusions);
+    }
+
+    /**
+     * Returns the exclusion test of the configured patterns and of additional patterns, compiled together
+     * as for {@link #exclusionTest()}.
+     *
+     * @param additionalExclusions The additional patterns, for example the paths of the management endpoints
+     * @return null (implying everything should be included), or a Predicate
+     *         which, when given a URL path, returns whether that path should
+     *         be excluded from tracing.
+     * @since 8.4.0
+     */
+    @Nullable
+    public Predicate<String> exclusionTest(@Nullable Collection<String> additionalExclusions) {
+        if (CollectionUtils.isEmpty(additionalExclusions)) {
+            return compile(exclusions);
+        }
+        var all = new ArrayList<String>();
+        if (exclusions != null) {
+            all.addAll(exclusions);
+        }
+        all.addAll(additionalExclusions);
+        return compile(all);
+    }
+
+    @Nullable
+    private static Predicate<String> compile(@Nullable List<String> exclusions) {
         if (CollectionUtils.isEmpty(exclusions)) {
             return null;
         }

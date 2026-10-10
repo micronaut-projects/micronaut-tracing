@@ -16,9 +16,9 @@
 package io.micronaut.tracing.opentelemetry.instrument.jms;
 
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.Nullable;
 import jakarta.jms.Message;
 import jakarta.jms.MessageListener;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A {@link MessageListener} that processes each message in a {@code CONSUMER} span.

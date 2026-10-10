@@ -23,7 +23,6 @@ import brave.propagation.CurrentTraceContext;
 import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
@@ -36,6 +35,7 @@ import io.micronaut.http.filter.HttpClientFilter;
 import io.micronaut.tracing.brave.BravePropagationContext;
 import io.micronaut.tracing.opentracing.instrument.http.OpenTracingClientFilter;
 import io.micronaut.tracing.opentracing.instrument.http.TracingExclusionsConfiguration;
+import org.jspecify.annotations.Nullable;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 

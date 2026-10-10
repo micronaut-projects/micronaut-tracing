@@ -16,7 +16,6 @@
 package io.micronaut.tracing.opentelemetry;
 
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.core.convert.ArgumentConversionContext;
 import io.micronaut.core.convert.ConversionContext;
 import io.micronaut.core.convert.format.MapFormat;
@@ -27,6 +26,7 @@ import io.micronaut.inject.annotation.MutableAnnotationMetadata;
 import io.micronaut.core.value.PropertyResolver;
 import io.opentelemetry.sdk.autoconfigure.spi.ConfigProperties;
 import io.opentelemetry.sdk.autoconfigure.spi.internal.DefaultConfigProperties;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.Collections;

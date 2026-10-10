@@ -23,8 +23,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.core.util.CollectionUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  *

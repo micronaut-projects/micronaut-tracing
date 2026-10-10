@@ -18,7 +18,6 @@ package io.micronaut.tracing.opentelemetry.instrument.http.client;
 import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
-import org.jspecify.annotations.Nullable;
 import io.micronaut.core.annotation.Order;
 import io.micronaut.core.order.Ordered;
 import io.micronaut.http.HttpResponse;
@@ -45,6 +44,7 @@ import io.opentelemetry.instrumentation.api.semconv.http.HttpSpanStatusExtractor
 import jakarta.inject.Named;
 import jakarta.inject.Qualifier;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

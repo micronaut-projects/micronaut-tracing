@@ -16,12 +16,12 @@
 package io.micronaut.tracing.opentracing;
 
 import io.micronaut.core.annotation.Internal;
-import org.jspecify.annotations.NonNull;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.propagation.ThreadPropagatedContextElement;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 

@@ -132,10 +132,11 @@ public final class ScheduledSpanInterceptor implements MethodInterceptor<Object,
             return context.proceed();
         }
         Context spanContext = instrumenter.start(parentContext, run).with(EXECUTION, execution);
-        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
-            .plus(new OpenTelemetryPropagationContext(spanContext))
-            .propagate()) {
-            Object result = context.proceed();
+        PropagatedContext propagatedContext = PropagatedContext.getOrEmpty()
+            .plus(new OpenTelemetryPropagationContext(spanContext));
+        try {
+            // the callback form works in both the thread-local and the scoped-value propagation modes
+            Object result = propagatedContext.propagate(() -> context.proceed());
             instrumenter.end(spanContext, run, result, null);
             return result;
         } catch (Throwable e) {

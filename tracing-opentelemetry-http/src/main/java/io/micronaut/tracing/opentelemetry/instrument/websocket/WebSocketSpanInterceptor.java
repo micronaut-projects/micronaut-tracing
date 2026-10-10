@@ -163,15 +163,18 @@ public final class WebSocketSpanInterceptor implements MethodInterceptor<Object,
             Span.fromContext(spanContext).recordException(error);
         }
         SpanEnd spanEnd = new SpanEnd(instrumenter, spanContext, invocation);
-        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
-            .plus(new OpenTelemetryPropagationContext(spanContext))
-            .propagate()) {
-            if (method.synchronous()) {
-                Object result = context.proceed();
-                spanEnd.end(result, null);
-                return result;
-            }
-            return interceptAsync(context, method, spanEnd);
+        PropagatedContext propagatedContext = PropagatedContext.getOrEmpty()
+            .plus(new OpenTelemetryPropagationContext(spanContext));
+        try {
+            // the callback form works in both the thread-local and the scoped-value propagation modes
+            return propagatedContext.propagate(() -> {
+                if (method.synchronous()) {
+                    Object result = context.proceed();
+                    spanEnd.end(result, null);
+                    return result;
+                }
+                return interceptAsync(context, method, spanEnd);
+            });
         } catch (Throwable e) {
             spanEnd.accept(e);
             throw e;

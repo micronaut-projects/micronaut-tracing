@@ -21,8 +21,10 @@
 */
 @Requires(classes = {OpenTelemetry.class, GrpcTelemetry.class})
 @Requires(beans = OpenTelemetry.class)
+@NullMarked
 package io.micronaut.tracing.opentelemetry.instrument.grpc;
 
+import org.jspecify.annotations.NullMarked;
 import io.micronaut.context.annotation.Requires;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.grpc.v1_6.GrpcTelemetry;

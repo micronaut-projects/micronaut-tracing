@@ -19,4 +19,7 @@
  * @author Sergio del Amo
  * @since 4.2.0
  */
+@NullMarked
 package io.micronaut.tracing.opentelemetry.xray;
+
+import org.jspecify.annotations.NullMarked;

@@ -34,8 +34,11 @@ import java.util.Set;
 
 /**
  * Computes the span data of the {@link NewSpan} and {@link ContinueSpan} methods (and of the methods
- * mapped to them, like OpenTelemetry {@code @WithSpan}) at compile time and stores it in
- * {@link SpanMetadata}: the method name used in the span name and the {@link SpanTag} parameters.
+ * mapped to them, like OpenTelemetry {@code @WithSpan} and {@code @AddingSpanAttributes}) at compile
+ * time and stores it in {@link SpanMetadata}: the method name used in the span name and the
+ * {@link SpanTag} parameters.
+ * It also stores the source name of the Kotlin HTTP route methods with a mangled JVM name, used for
+ * the {@code code.function.name} attribute of the HTTP server spans.
  *
  * <p>The Kotlin (KSP) method elements are named after the JVM method, which is mangled for functions
  * with an inline class or {@code kotlin.Result} in their signature ({@code name-hash}). The visitor uses
@@ -47,6 +50,9 @@ import java.util.Set;
 public final class SpanMetadataVisitor implements TypeElementVisitor<Object, Object> {
 
     private static final String WITH_SPAN = "io.opentelemetry.instrumentation.annotations.WithSpan";
+    private static final String ADDING_SPAN_ATTRIBUTES = "io.opentelemetry.instrumentation.annotations.AddingSpanAttributes";
+    private static final String CONTROLLER = "io.micronaut.http.annotation.Controller";
+    private static final String HTTP_METHOD_MAPPING = "io.micronaut.http.annotation.HttpMethodMapping";
     private static final String KSP_DECLARATION = "com.google.devtools.ksp.symbol.KSDeclaration";
     private static final String KSP_NAME = "com.google.devtools.ksp.symbol.KSName";
 
@@ -57,13 +63,17 @@ public final class SpanMetadataVisitor implements TypeElementVisitor<Object, Obj
 
     @Override
     public Set<String> getSupportedAnnotationNames() {
-        return Set.of(NewSpan.class.getName(), ContinueSpan.class.getName(), WITH_SPAN);
+        return Set.of(NewSpan.class.getName(), ContinueSpan.class.getName(), WITH_SPAN, ADDING_SPAN_ATTRIBUTES,
+            CONTROLLER, HTTP_METHOD_MAPPING);
     }
 
     @Override
     public void visitMethod(MethodElement element, VisitorContext context) {
-        if (element.isStatic() || element.isPrivate()
-            || !(element.hasAnnotation(NewSpan.class) || element.hasAnnotation(ContinueSpan.class))) {
+        if (element.isStatic() || element.isPrivate()) {
+            return;
+        }
+        if (!(element.hasAnnotation(NewSpan.class) || element.hasAnnotation(ContinueSpan.class))) {
+            visitRouteMethod(element, context);
             return;
         }
         String methodName = methodName(element, context);
@@ -92,6 +102,24 @@ public final class SpanMetadataVisitor implements TypeElementVisitor<Object, Obj
                 builder.member(SpanMetadata.MEMBER_TAG_NAMES, tagNames);
             }
         });
+    }
+
+    /**
+     * Stores the source name of a Kotlin HTTP route method whose JVM name contains a {@code -}, used for
+     * the {@code code.function.name} attribute of the HTTP server spans. The name of any other route
+     * method is its JVM name, which needs no metadata.
+     *
+     * @param element the method element
+     * @param context the visitor context
+     */
+    private static void visitRouteMethod(MethodElement element, VisitorContext context) {
+        if (context.getLanguage() != VisitorContext.Language.KOTLIN
+            || element.getName().indexOf('-') < 0
+            || !element.hasStereotype(HTTP_METHOD_MAPPING)) {
+            return;
+        }
+        String methodName = methodName(element, context);
+        element.annotate(SpanMetadata.class, builder -> builder.member(SpanMetadata.MEMBER_METHOD, methodName));
     }
 
     private static String methodName(MethodElement element, VisitorContext context) {

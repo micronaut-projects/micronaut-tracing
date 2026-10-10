@@ -226,6 +226,11 @@ class ContextPropagationMatrixSpec extends Specification {
         downstreamServer().parentSpanId == client.spanId
         body.downstream_trace == server.traceId
 
+        and: "the server span is current after the hop, through micronaut-reactor's scheduler instrumentation"
+        body.before_span == server.spanId
+        body.hop_span == server.spanId
+        body.hop_thread.contains('matrix-')
+
         and: 'the scheduler thread is left without the context'
         !leftOver(namedScheduler(scheduler)).leak_valid
 
@@ -247,6 +252,11 @@ class ContextPropagationMatrixSpec extends Specification {
         client.parentSpanId == newSpan.spanId
         downstreamServer().parentSpanId == client.spanId
         body.downstream_trace == server.traceId
+
+        and: "the span of the method is current after the hop, through micronaut-reactor's scheduler instrumentation"
+        body.before_span == newSpan.spanId
+        body.hop_span == newSpan.spanId
+        body.hop_thread.contains('matrix-')
 
         and: 'the scheduler thread is left without the context'
         !leftOver(namedScheduler(scheduler)).leak_valid

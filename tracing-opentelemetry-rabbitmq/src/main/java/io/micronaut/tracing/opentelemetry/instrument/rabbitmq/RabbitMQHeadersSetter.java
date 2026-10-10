@@ -16,13 +16,14 @@
 package io.micronaut.tracing.opentelemetry.instrument.rabbitmq;
 
 import io.opentelemetry.context.propagation.TextMapSetter;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
 final class RabbitMQHeadersSetter implements TextMapSetter<Map<String, Object>> {
 
     @Override
-    public void set(Map<String, Object> carrier, String key, String value) {
+    public void set(@Nullable Map<String, Object> carrier, String key, String value) {
         if (carrier != null) {
             carrier.put(key, value);
         }

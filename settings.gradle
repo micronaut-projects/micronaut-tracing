@@ -50,6 +50,7 @@ include 'test-suite-java'
 include 'test-suite-kotlin'
 include 'test-suite-groovy'
 include 'test-suite-python'
+include 'test-suite-opentelemetry-native'
 
 // JMH benchmarks: not published, not part of the BOM
 include 'benchmarks'

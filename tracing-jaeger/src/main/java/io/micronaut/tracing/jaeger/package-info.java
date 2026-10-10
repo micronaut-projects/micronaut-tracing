@@ -24,8 +24,10 @@
 @Configuration
 @Requires(classes = io.jaegertracing.Configuration.class)
 @Requires(property = PREFIX + ".enabled", value = TRUE)
+@NullMarked
 package io.micronaut.tracing.jaeger;
 
+import org.jspecify.annotations.NullMarked;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;
 

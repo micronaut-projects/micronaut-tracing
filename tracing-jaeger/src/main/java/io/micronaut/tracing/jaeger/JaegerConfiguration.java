@@ -205,7 +205,7 @@ public class JaegerConfiguration implements Toggleable {
      *
      * @param codecs the codecs
      */
-    public void setCodecs(String codecs) {
+    public void setCodecs(@Nullable String codecs) {
         if (codecs != null) {
             setCodecConfiguration(CodecConfiguration.fromString(codecs));
         }

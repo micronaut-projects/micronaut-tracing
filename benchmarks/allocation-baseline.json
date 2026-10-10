@@ -1,0 +1,31 @@
+{
+    "note": "PROVISIONAL: copied from the numbers recorded in benchmarks/README.md (Apple M2 Max, before P2-4/P2-5; HTTP and @NewSpan from 'After P2-3', micro-benchmarks from 'Baseline'). Regenerate on GitHub runners with the 'Allocation guard' workflow_dispatch (update-baseline: true) and commit the uploaded file before making the guard a required check.",
+    "thresholds": {
+        "HttpServerBenchmark.request": 15
+    },
+    "benchmarks": {
+        "ExclusionBenchmark.excludedPath": 168.0,
+        "ExclusionBenchmark.tracedPath": 168.0,
+        "HttpServerAttributesBenchmark.httpRoute": 328.0,
+        "HttpServerBenchmark.request [mode=NONE]": 17182.0,
+        "HttpServerBenchmark.request [mode=OTEL]": 27555.0,
+        "HttpServerBenchmark.request [mode=OTEL_NOOP_EXPORTER]": 27495.0,
+        "HttpServerBenchmark.request [mode=OTEL_RATIO_10]": 26626.0,
+        "NewSpanBenchmark.completionStage [mode=NONE]": 0.0,
+        "NewSpanBenchmark.completionStage [mode=OTEL]": 1608.0,
+        "NewSpanBenchmark.completionStage [mode=OTEL_NOOP_EXPORTER]": 1680.0,
+        "NewSpanBenchmark.completionStage [mode=OTEL_RATIO_10]": 1071.0,
+        "NewSpanBenchmark.flux [mode=NONE]": 0.0,
+        "NewSpanBenchmark.flux [mode=OTEL]": 2232.0,
+        "NewSpanBenchmark.flux [mode=OTEL_NOOP_EXPORTER]": 2295.0,
+        "NewSpanBenchmark.flux [mode=OTEL_RATIO_10]": 1679.0,
+        "NewSpanBenchmark.mono [mode=NONE]": 0.0,
+        "NewSpanBenchmark.mono [mode=OTEL]": 2328.0,
+        "NewSpanBenchmark.mono [mode=OTEL_NOOP_EXPORTER]": 2391.0,
+        "NewSpanBenchmark.mono [mode=OTEL_RATIO_10]": 1775.0,
+        "NewSpanBenchmark.sync [mode=NONE]": 0.0,
+        "NewSpanBenchmark.sync [mode=OTEL]": 1568.0,
+        "NewSpanBenchmark.sync [mode=OTEL_NOOP_EXPORTER]": 1627.0,
+        "NewSpanBenchmark.sync [mode=OTEL_RATIO_10]": 999.0
+    }
+}

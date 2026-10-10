@@ -135,7 +135,7 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
      * client cancelled) ends it without a response and leaves the status unset, then cancels the downstream.
      */
     private static final class ClientSpan extends CompletableFuture<HttpResponse<?>>
-        implements BiConsumer<HttpResponse<?>, Throwable> {
+        implements BiConsumer<@Nullable HttpResponse<?>, @Nullable Throwable> {
 
         private static final VarHandle ENDED;
 

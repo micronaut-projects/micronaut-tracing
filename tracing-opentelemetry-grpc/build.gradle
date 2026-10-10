@@ -24,8 +24,7 @@ dependencies {
 
     testImplementation mn.micronaut.discovery.core
     testImplementation libs.javax.annotation
-    testImplementation libs.opentelemetry.sdk
-    testImplementation libs.opentelemetry.sdk.testing
+    testImplementation projects.micronautTracingOpentelemetryTest
     testImplementation libs.opentracing.grpc
     testImplementation libs.grpc.protobuf
     testImplementation libs.grpc.stub

@@ -25,6 +25,5 @@ dependencies {
     testImplementation "io.reactivex.rxjava3:rxjava"
     testImplementation mnRxjava3.micronaut.rxjava3.http.client
 
-    testImplementation libs.opentelemetry.sdk
-    testImplementation libs.opentelemetry.sdk.testing
+    testImplementation projects.micronautTracingOpentelemetryTest
 }

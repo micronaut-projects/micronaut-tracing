@@ -32,7 +32,7 @@ public class OpenTelemetryHttpServerMetricsConfig {
      */
     public static final String PREFIX = "tracing.opentelemetry.http.server.metrics";
 
-    private Boolean enabled;
+    private @Nullable Boolean enabled;
 
     /**
      * Whether the HTTP server metrics are recorded. When not set, they are recorded only when the

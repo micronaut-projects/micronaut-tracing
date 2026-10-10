@@ -19,4 +19,7 @@
  * @author Graeme Rocher
  * @since 8.4.0
  */
+@NullMarked
 package io.micronaut.tracing.opentelemetry.instrument.websocket;
+
+import org.jspecify.annotations.NullMarked;

@@ -87,16 +87,17 @@ class ManagementEndpointExclusionsSpec extends Specification {
                 // e.g. a health check reporting DOWN
             }
         }
-        def exporter = context.getBean(InMemorySpanExporter)
-        Set<String> traced = null
         new PollingConditions(timeout: 10).eventually {
-            traced = exporter.finishedSpanItems
-                .findAll { it.kind == SpanKind.SERVER }
-                .collect { it.attributes.asMap().find { k, v -> k.key == 'url.path' }?.value as String }
-                .toSet()
-            assert traced.contains('/done')
+            assert serverSpanPaths().contains('/done')
         }
-        traced - '/done'
+        serverSpanPaths() - '/done'
+    }
+
+    private Set<String> serverSpanPaths() {
+        context.getBean(InMemorySpanExporter).finishedSpanItems
+            .findAll { it.kind == SpanKind.SERVER }
+            .collect { it.attributes.asMap().find { k, v -> k.key == 'url.path' }?.value as String }
+            .toSet()
     }
 
     @Controller

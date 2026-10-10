@@ -18,7 +18,7 @@ package io.micronaut.tracing.opentelemetry.instrument.kafka;
 import java.util.Map;
 import java.util.Objects;
 
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerInterceptor;

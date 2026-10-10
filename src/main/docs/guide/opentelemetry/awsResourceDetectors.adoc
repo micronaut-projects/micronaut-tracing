@@ -7,3 +7,5 @@ dependency:opentelemetry-aws-resources[groupId=io.opentelemetry.contrib]
 and provide a bean of type api:tracing.opentelemetry.ResourceProvider[]
 
 snippet::io.micronaut.tracing.docs.AwsResourceProvider[project-base="test-suite", tags="imports,clazz"]
+
+The library also registers its detectors (`Ec2ResourceProvider`, `EcsResourceProvider`, `EksResourceProvider`, `BeanstalkResourceProvider` and `LambdaResourceProvider`) as OpenTelemetry resource providers, so with the dependency alone they are used automatically. The bean above is only needed to combine the resources yourself. To choose the detectors, see <<resourceDetectors, Resource Detectors>>.

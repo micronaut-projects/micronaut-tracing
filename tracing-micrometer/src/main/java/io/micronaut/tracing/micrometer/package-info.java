@@ -21,8 +21,10 @@
  */
 @Configuration
 @Requires(classes = Tracer.class)
+@NullMarked
 package io.micronaut.tracing.micrometer;
 
+import org.jspecify.annotations.NullMarked;
 import io.micrometer.tracing.Tracer;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;

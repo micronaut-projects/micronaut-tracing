@@ -1,0 +1,30 @@
+Redis tracing for https://micronaut-projects.github.io/micronaut-redis/latest/guide/[Micronaut Redis] (Lettuce) is supported by the `micronaut-tracing-opentelemetry-redis` module, which uses the OpenTelemetry Lettuce library instrumentation (`opentelemetry-lettuce-5.1`).
+
+dependency:micronaut-tracing-opentelemetry-redis[scope="implementation", groupId="io.micronaut.tracing"]
+
+The module registers a `ClientResourcesMutator` that sets the OpenTelemetry Lettuce `Tracing` on the `ClientResources` of every client Micronaut Redis creates: the default `redis` client, the cluster client and the clients of named servers (`redis.servers.*`), including clients that use a `ClientResources` bean of your own.
+
+Every Redis command creates a `CLIENT` span named after the command (for example `SET` or `GET`) with the database client attributes, such as `db.system` (`redis`), `db.operation` and `db.statement`. The span is a child of the span that is current when the command is issued, for example the HTTP server span of a request or a span created with `@NewSpan`. The commands Lettuce sends when it opens a connection (such as `HELLO`) are traced too.
+
+NOTE: The instrumentation emits the database semantic conventions selected by the OpenTelemetry instrumentation. To emit the stable attribute names (`db.system.name`, `db.operation.name`, `db.query.text`), set the `otel.semconv-stability.opt-in` system property (or the `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable) to `database` (or `database/dup` to emit both).
+
+The recorded command text is sanitized by default: arguments that may contain sensitive data are replaced with `?` (`SET key ?`). The following configuration records the full command text and adds the `redis.encode.start` and `redis.encode.end` span events:
+
+[configuration]
+----
+otel:
+  instrumentation:
+    lettuce:
+      query-sanitization-enabled: false
+      encoding-span-events-enabled: true
+----
+
+Instrumentation is enabled by default and can be disabled with:
+
+[configuration]
+----
+otel:
+  instrumentation:
+    lettuce:
+      enabled: false
+----

@@ -17,15 +17,16 @@ package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.http.HttpAttributes;
+import io.micronaut.http.BasicHttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpVersion;
 import io.micronaut.http.uri.UriMatchTemplate;
+import io.micronaut.web.router.RouteAttributes;
 import io.micronaut.web.router.UriRouteInfo;
 import io.opentelemetry.instrumentation.api.semconv.http.HttpServerAttributesGetter;
 
@@ -39,6 +40,11 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     INSTANCE;
 
     private static final Map<HttpVersion, String> PROTOCOL_VERSION = Map.of(HTTP_1_0, "1.0", HTTP_1_1, "1.1", HTTP_2_0, "2.0");
+    /**
+     * Bounds the route cache, should routes be created dynamically.
+     */
+    private static final int MAX_CACHED_ROUTES = 1024;
+    private static final Map<UriMatchTemplate, String> ROUTES = new ConcurrentHashMap<>();
 
     @Override
     public String getHttpRequestMethod(HttpRequest<Object> request) {
@@ -78,17 +84,23 @@ enum MicronautHttpServerAttributesGetter implements HttpServerAttributesGetter<H
     }
 
     @Override
+    @Nullable
     public String getHttpRoute(HttpRequest<Object> request) {
-        Optional<String> routeInfo = request.getAttribute(HttpAttributes.ROUTE_INFO)
-            .filter(UriRouteInfo.class::isInstance)
-            .map(ri -> (UriRouteInfo<?, ?>) ri)
-            .map(UriRouteInfo::getUriMatchTemplate)
-            .map(UriMatchTemplate::toPathString);
-        return routeInfo.orElseGet(() ->
-            request.getAttribute(HttpAttributes.URI_TEMPLATE)
-                .map(Object::toString)
-                .orElse(null)
-        );
+        if (RouteAttributes.getRouteInfo(request).orElse(null) instanceof UriRouteInfo<?, ?> routeInfo) {
+            // the templates of the routes are fixed: compute the path of each one once. The cache is keyed by
+            // the template (its hash code is the one of the template string) rather than the route, which
+            // would retain the beans of the application context
+            UriMatchTemplate template = routeInfo.getUriMatchTemplate();
+            String route = ROUTES.get(template);
+            if (route == null) {
+                route = template.toPathString();
+                if (ROUTES.size() < MAX_CACHED_ROUTES) {
+                    ROUTES.putIfAbsent(template, route);
+                }
+            }
+            return route;
+        }
+        return BasicHttpAttributes.getUriTemplate(request).orElse(null);
     }
 
     @Override

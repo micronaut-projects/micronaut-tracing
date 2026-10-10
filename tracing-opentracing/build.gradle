@@ -16,3 +16,8 @@ dependencies {
     testImplementation project(":micronaut-tracing-jaeger")
     testRuntimeOnly mnSerde.micronaut.serde.jackson
 }
+
+// The whole module is deprecated for removal: don't report the removal warnings about its own types.
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.add('-Xlint:-removal')
+}

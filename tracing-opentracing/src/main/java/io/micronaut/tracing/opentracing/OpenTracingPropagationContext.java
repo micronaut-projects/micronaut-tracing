@@ -31,7 +31,10 @@ import java.util.List;
  * @param tracer The tracer
  * @param span   The span
  * @author Denis Stepanov
+ * @deprecated OpenTracing is archived. Use Micronaut Tracing OpenTelemetry instead. See the
+ * "Migrating from OpenTracing" section of the user guide.
  */
+@Deprecated(since = "8.4.0", forRemoval = true)
 @Internal
 public record OpenTracingPropagationContext(Tracer tracer,
                                             Span span) implements ThreadPropagatedContextElement<Scope> {

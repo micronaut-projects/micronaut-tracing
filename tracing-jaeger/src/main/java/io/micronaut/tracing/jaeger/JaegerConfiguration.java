@@ -39,7 +39,10 @@ import static io.micronaut.tracing.jaeger.JaegerConfiguration.PREFIX;
  *
  * @author graemerocher
  * @since 1.0
+ * @deprecated The Jaeger client is archived. Use Micronaut Tracing OpenTelemetry with the OTLP exporter
+ * (Jaeger accepts OTLP natively) instead. See the "Migrating from OpenTracing" section of the user guide.
  */
+@Deprecated(since = "8.4.0", forRemoval = true)
 @ConfigurationProperties(PREFIX)
 public class JaegerConfiguration implements Toggleable {
 

@@ -1,5 +1,7 @@
 https://zipkin.io/[Zipkin] is a distributed tracing system. It helps gather timing data to troubleshoot latency problems in microservice architectures. It manages both the collection and retrieval of this data.
 
+WARNING: The Brave integration described in this section creates spans through OpenTracing (`brave-opentracing`), which is archived. The OpenTracing `Tracer` bean and `micronaut-tracing-opentracing` are deprecated since Micronaut Tracing `8.4.0` and will be removed in the next major version. Use <<opentelemetry, OpenTelemetry>> (sending to Zipkin through an OpenTelemetry Collector), or keep Brave with the <<brave, Micrometer Tracing Brave bridge>>. See <<migrationFromOpenTracing, Migrating from OpenTracing>>.
+
 == Running Zipkin
 
 The quickest way to get up and started with Zipkin is with Docker:

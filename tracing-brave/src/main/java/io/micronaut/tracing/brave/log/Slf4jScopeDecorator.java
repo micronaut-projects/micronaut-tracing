@@ -19,6 +19,7 @@ import brave.internal.codec.HexCodec;
 import brave.propagation.CurrentTraceContext.Scope;
 import brave.propagation.CurrentTraceContext.ScopeDecorator;
 import brave.propagation.TraceContext;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -47,7 +48,7 @@ final class Slf4jScopeDecorator implements ScopeDecorator {
     private static final String LEGACY_SPAN_ID_NAME = "X-B3-SpanId";
 
     @Override
-    public Scope decorateScope(TraceContext currentSpan, Scope scope) {
+    public Scope decorateScope(@Nullable TraceContext currentSpan, Scope scope) {
         final String previousTraceId = MDC.get("traceId");
         final String previousParentId = MDC.get("parentId");
         final String previousSpanId = MDC.get("spanId");
@@ -108,7 +109,7 @@ final class Slf4jScopeDecorator implements ScopeDecorator {
         };
     }
 
-    private static void replace(String key, String value) {
+    private static void replace(String key, @Nullable String value) {
         if (value == null) {
             MDC.remove(key);
         } else {

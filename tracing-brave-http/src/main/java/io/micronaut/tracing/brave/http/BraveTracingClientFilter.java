@@ -140,7 +140,7 @@ public final class BraveTracingClientFilter implements HttpClientFilter {
             }
 
             @Override
-            public String header(String name) {
+            public @Nullable String header(String name) {
                 return request.getHeaders().get(name);
             }
 
@@ -153,7 +153,7 @@ public final class BraveTracingClientFilter implements HttpClientFilter {
 
     private HttpClientResponse mapResponse(HttpRequest<?> request,
                                            HttpResponse<?> response,
-                                           Throwable error) {
+                                           @Nullable Throwable error) {
         return new HttpClientResponse() {
 
             @Override
@@ -162,7 +162,7 @@ public final class BraveTracingClientFilter implements HttpClientFilter {
             }
 
             @Override
-            public Throwable error() {
+            public @Nullable Throwable error() {
                 return error;
             }
 
@@ -172,7 +172,7 @@ public final class BraveTracingClientFilter implements HttpClientFilter {
             }
 
             @Override
-            public String route() {
+            public @Nullable String route() {
                 return request.getAttribute(URI_TEMPLATE, String.class).orElse(null);
             }
 

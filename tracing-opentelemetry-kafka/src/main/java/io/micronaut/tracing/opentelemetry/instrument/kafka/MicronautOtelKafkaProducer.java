@@ -29,6 +29,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.errors.ProducerFencedException;
 import org.apache.kafka.common.metrics.KafkaMetric;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.List;
@@ -95,7 +96,7 @@ final class MicronautOtelKafkaProducer<K, V>  implements Producer<K, V> {
     }
 
     @Override
-    public Future<RecordMetadata> send(ProducerRecord<K, V> producerRecord, Callback callback) {
+    public Future<RecordMetadata> send(ProducerRecord<K, V> producerRecord, @Nullable Callback callback) {
         if (kafkaTelemetry.excludeTopic(producerRecord.topic()) || !kafkaTelemetry.filterProducerRecord(producerRecord, producer)) {
             return producer.send(producerRecord);
         }

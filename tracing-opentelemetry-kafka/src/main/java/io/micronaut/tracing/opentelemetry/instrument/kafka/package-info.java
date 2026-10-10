@@ -21,8 +21,10 @@
 @Configuration
 @Requires(property = KafkaTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @Requires(classes = Consumer.class)
+@NullMarked
 package io.micronaut.tracing.opentelemetry.instrument.kafka;
 
+import org.jspecify.annotations.NullMarked;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;

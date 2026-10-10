@@ -20,4 +20,7 @@
  * so this module is pinned to that version and scheduled for removal in a future major release.
  * Use the OTLP exporter instead; Zipkin can receive OTLP data.</p>
  */
+@NullMarked
 package io.micronaut.tracing.opentelemetry.exporter.zipkin;
+
+import org.jspecify.annotations.NullMarked;

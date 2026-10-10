@@ -22,7 +22,10 @@ import io.micronaut.core.annotation.NonNull;
  *
  * @author graemerocher
  * @since 1.0
+ * @deprecated OpenTracing is archived. Use Micronaut Tracing OpenTelemetry HTTP instead. See the
+ * "Migrating from OpenTracing" section of the user guide.
  */
+@Deprecated(since = "8.4.0", forRemoval = true)
 public enum TraceRequestAttributes implements CharSequence {
 
     /**

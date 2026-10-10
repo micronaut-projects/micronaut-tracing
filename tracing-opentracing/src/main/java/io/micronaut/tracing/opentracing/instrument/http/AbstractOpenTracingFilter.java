@@ -15,6 +15,7 @@
  */
 package io.micronaut.tracing.opentracing.instrument.http;
 
+import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.async.propagation.ReactorPropagation;
@@ -29,8 +30,11 @@ import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
+import io.opentracing.log.Fields;
+import jakarta.inject.Inject;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -60,7 +64,17 @@ public abstract sealed class AbstractOpenTracingFilter implements HttpFilter
     public static final String TAG_HTTP_CLIENT = "http.client";
     public static final String TAG_HTTP_SERVER = "http.server";
 
+    /**
+     * The property that switches the {@value #TAG_ERROR} tag to the boolean value defined by the OpenTracing
+     * semantic conventions. The error message is then recorded as a span log event instead.
+     * Defaults to {@code false}, which keeps the error message as the value of the tag.
+     *
+     * @since 8.4.0
+     */
+    public static final String PROPERTY_BOOLEAN_ERROR_TAG = "tracing.opentracing.boolean-error-tag";
+
     private static final int HTTP_SUCCESS_CODE_UPPER_LIMIT = 299;
+    private static final String LOG_EVENT_ERROR = "error";
 
     protected final Tracer tracer;
 
@@ -68,6 +82,8 @@ public abstract sealed class AbstractOpenTracingFilter implements HttpFilter
 
     @Nullable
     private final Predicate<String> pathExclusionTest;
+
+    private boolean booleanErrorTag;
 
     /**
      * Configure tracer in the filter for span creation and propagation across
@@ -86,6 +102,18 @@ public abstract sealed class AbstractOpenTracingFilter implements HttpFilter
     }
 
     /**
+     * Whether the {@value #TAG_ERROR} tag holds the boolean {@code true}, as defined by the OpenTracing
+     * semantic conventions, with the error details recorded as a span log event, instead of the error message.
+     *
+     * @param booleanErrorTag {@code true} to use a boolean error tag
+     * @since 8.4.0
+     */
+    @Inject
+    public void setBooleanErrorTag(@Value("${" + PROPERTY_BOOLEAN_ERROR_TAG + ":false}") boolean booleanErrorTag) {
+        this.booleanErrorTag = booleanErrorTag;
+    }
+
+    /**
      * Sets the response tags.
      *
      * @param request  the request
@@ -98,7 +126,13 @@ public abstract sealed class AbstractOpenTracingFilter implements HttpFilter
         int code = response.code();
         if (code > HTTP_SUCCESS_CODE_UPPER_LIMIT) {
             span.setTag(TAG_HTTP_STATUS_CODE, code);
-            span.setTag(TAG_ERROR, HttpStatus.getDefaultReason(code));
+            String reason = HttpStatus.getDefaultReason(code);
+            if (booleanErrorTag) {
+                span.setTag(TAG_ERROR, true);
+                span.log(Map.of(Fields.EVENT, LOG_EVENT_ERROR, Fields.MESSAGE, reason != null ? reason : String.valueOf(code)));
+            } else {
+                span.setTag(TAG_ERROR, reason);
+            }
         }
         request.getAttribute(ERROR, Throwable.class)
                 .ifPresent(error -> setErrorTags(span, error));
@@ -119,7 +153,17 @@ public abstract sealed class AbstractOpenTracingFilter implements HttpFilter
         if (message == null) {
             message = error.getClass().getSimpleName();
         }
-        span.setTag(TAG_ERROR, message);
+        if (booleanErrorTag) {
+            span.setTag(TAG_ERROR, true);
+            span.log(Map.of(
+                Fields.EVENT, LOG_EVENT_ERROR,
+                Fields.ERROR_KIND, error.getClass().getName(),
+                Fields.ERROR_OBJECT, error,
+                Fields.MESSAGE, message
+            ));
+        } else {
+            span.setTag(TAG_ERROR, message);
+        }
     }
 
     /**

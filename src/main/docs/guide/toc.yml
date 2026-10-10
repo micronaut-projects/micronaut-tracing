@@ -27,6 +27,7 @@ opentelemetry:
   jms: JMS
   r2dbc: R2DBC
   kafka: Kafka
+  mongodb: MongoDB
   rabbitmq: RabbitMQ / AMQP
   redis: Redis (Lettuce)
   scheduling: Scheduled Jobs

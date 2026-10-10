@@ -16,6 +16,7 @@ dependencies {
     api libs.opentelemetry.instrumentation.api
     api libs.opentelemetry.instrumentation.api.incubator
 
+    compileOnly mn.micronaut.websocket
     compileOnly mn.kotlinx.coroutines.core
     compileOnly mn.kotlinx.coroutines.reactor
 
@@ -27,4 +28,5 @@ dependencies {
 
     testImplementation projects.micronautTracingOpentelemetryTest
     testImplementation mn.micronaut.management
+    testImplementation mn.micronaut.websocket
 }

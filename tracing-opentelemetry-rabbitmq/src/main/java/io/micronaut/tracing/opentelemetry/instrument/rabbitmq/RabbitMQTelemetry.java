@@ -74,6 +74,7 @@ public final class RabbitMQTelemetry {
     static final String DIRECT_REPLY_TO = "amq.rabbitmq.reply-to";
 
     private static final String INSTRUMENTATION_NAME = "io.micronaut.tracing.rabbitmq";
+    private static final String PUBLISH = "publish";
 
     /**
      * Proxy interfaces per channel implementation class. Preserves every public interface of the
@@ -148,11 +149,11 @@ public final class RabbitMQTelemetry {
     }
 
     Publisher<Void> tracePublish(RabbitPublishState publishState, Function<RabbitPublishState, Publisher<Void>> publisherFactory) {
-        return tracePublisherOperation("publish", publishState, publisherFactory);
+        return tracePublisherOperation(PUBLISH, publishState, publisherFactory);
     }
 
     Publisher<RabbitConsumerState> tracePublishAndReply(RabbitPublishState publishState, Function<RabbitPublishState, Publisher<RabbitConsumerState>> publisherFactory) {
-        return tracePublisherOperation("publish", publishState, publisherFactory);
+        return tracePublisherOperation(PUBLISH, publishState, publisherFactory);
     }
 
     void handleDelivery(Consumer consumer, String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
@@ -254,7 +255,7 @@ public final class RabbitMQTelemetry {
     }
 
     private static String operationType(String operation) {
-        return "publish".equals(operation) ? "send" : operation;
+        return PUBLISH.equals(operation) ? "send" : operation;
     }
 
     private static String destination(String exchange, String routingKey) {

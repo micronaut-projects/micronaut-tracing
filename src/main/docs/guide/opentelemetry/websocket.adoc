@@ -1,0 +1,55 @@
+With `micronaut-tracing-opentelemetry-http`, the invocations of the `@OnOpen`, `@OnMessage`, `@OnClose` and `@OnError` methods of the `@ServerWebSocket` and `@ClientWebSocket` classes are traced. The HTTP upgrade request that opens a server session is traced like any other request, by the HTTP server filter (see <<http, HTTP Server and Client>>).
+
+The tracing of the WebSocket handlers requires the `micronaut-tracing-opentelemetry-annotation` annotation processor, which binds the tracing interceptor to the handler methods at compile time:
+
+dependency:micronaut-tracing-opentelemetry-annotation[scope="annotationProcessor", version="{version}", groupId="io.micronaut.tracing"]
+
+OpenTelemetry has no semantic conventions for WebSocket, so each invocation of a handler is an `INTERNAL` span named after the event and the URI template of the WebSocket, which keeps the span names of low cardinality:
+
+[source,java]
+----
+@ServerWebSocket("/chat/{topic}")
+public class ChatServer {
+
+    @OnOpen
+    void onOpen(String topic, WebSocketSession session) { } // <1>
+
+    @OnMessage
+    void onMessage(String topic, String message, WebSocketSession session) { } // <2>
+
+    @OnClose
+    void onClose(String topic, WebSocketSession session) { } // <3>
+}
+----
+<1> A span named `OPEN /chat/{topic}`, a child of the span of the HTTP upgrade request
+<2> A span named `MESSAGE /chat/{topic}` for each message, the root span of a new trace linked to the span of the HTTP upgrade request
+<3> A span named `CLOSE /chat/{topic}`, the root span of a new trace linked to the span of the HTTP upgrade request
+
+A session can live for hours and receive many messages, so only the span of `@OnOpen` belongs to the trace of the upgrade request: the spans of the other handlers start new traces, with a span link to the upgrade request. The spans of a `@ClientWebSocket` are root spans.
+
+The spans have:
+
+|===
+| Attribute | Value
+
+| `code.function.name`
+| The fully qualified name of the handler method, for example `com.example.ChatServer.onMessage`
+
+| `micronaut.websocket.event`
+| `open`, `message`, `pong` (an `@OnMessage` method receiving a `WebSocketPongMessage`), `close` or `error`
+
+| `micronaut.websocket.session.id`
+| The id of the session, when the handler method has a `WebSocketSession` parameter
+|===
+
+The exception passed to an `@OnError` method is recorded on its span. A handler that throws, or whose returned `Publisher` or `CompletionStage` fails, has the `ERROR` status. The handler methods that are private, final or declared by a final class (such as a Kotlin class that is not `open`) run untraced.
+
+To disable the tracing of the WebSocket handlers:
+
+[configuration]
+----
+tracing:
+  opentelemetry:
+    websocket:
+      enabled: false
+----

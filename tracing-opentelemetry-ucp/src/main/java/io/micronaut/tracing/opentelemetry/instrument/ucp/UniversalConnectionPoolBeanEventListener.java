@@ -20,10 +20,10 @@ import io.micronaut.context.event.BeanCreatedEventListener;
 import io.micronaut.context.event.BeanDestroyedEvent;
 import io.micronaut.context.event.BeanDestroyedEventListener;
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.order.Ordered;
 import jakarta.inject.Singleton;
 import oracle.ucp.UniversalConnectionPool;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Registers the UniversalConnectionPool bean so OpenTelemetry can collect metrics.

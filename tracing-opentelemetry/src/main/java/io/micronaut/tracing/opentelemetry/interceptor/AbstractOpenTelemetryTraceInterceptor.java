@@ -26,6 +26,7 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.instrumentation.api.incubator.semconv.util.ClassAndMethod;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import jakarta.inject.Named;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implements tracing logic for {@code ContinueSpan} and {@code NewSpan}
@@ -60,7 +61,7 @@ public abstract sealed class AbstractOpenTelemetryTraceInterceptor implements Me
      * @param tracedMethod    the span data of the method
      * @param parameterValues the parameter values
      */
-    static void tagArguments(Span span, TracedMethod tracedMethod, Object[] parameterValues) {
+    static void tagArguments(Span span, TracedMethod tracedMethod, @Nullable Object[] parameterValues) {
         int[] tagIndexes = tracedMethod.getTagIndexes();
         if (tagIndexes.length == 0) {
             return;

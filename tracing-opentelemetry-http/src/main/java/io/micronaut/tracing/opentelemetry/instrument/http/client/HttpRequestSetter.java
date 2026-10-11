@@ -18,6 +18,7 @@ package io.micronaut.tracing.opentelemetry.instrument.http.client;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.http.MutableHttpRequest;
 import io.opentelemetry.context.propagation.TextMapSetter;
+import org.jspecify.annotations.Nullable;
 
 @Internal
 enum HttpRequestSetter implements TextMapSetter<MutableHttpRequest<Object>> {
@@ -25,7 +26,7 @@ enum HttpRequestSetter implements TextMapSetter<MutableHttpRequest<Object>> {
     INSTANCE;
 
     @Override
-    public void set(MutableHttpRequest<Object> request, String key, String value) {
+    public void set(@Nullable MutableHttpRequest<Object> request, String key, String value) {
         if (request != null) {
             request.header(key, value);
         }

@@ -22,8 +22,10 @@
 @Configuration
 @Requires(property = JmsTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @Requires(classes = {JMSConnectionPool.class, JMSListenerRegistry.class})
+@NullMarked
 package io.micronaut.tracing.opentelemetry.instrument.jms;
 
+import org.jspecify.annotations.NullMarked;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;

@@ -17,7 +17,7 @@ package io.micronaut.tracing.opentelemetry.sampler;
 
 import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Parameter;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A sampling rule of the root server spans, configured as an element of the

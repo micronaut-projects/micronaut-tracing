@@ -24,6 +24,7 @@ import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.tracing.util.TracedMethod;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -105,7 +106,7 @@ public abstract sealed class AbstractTraceInterceptor implements MethodIntercept
      * @param tracedMethod    the span data of the method
      * @param parameterValues the parameter values
      */
-    protected final void tagArguments(Span span, TracedMethod tracedMethod, Object[] parameterValues) {
+    protected final void tagArguments(Span span, TracedMethod tracedMethod, @Nullable Object[] parameterValues) {
         int[] tagIndexes = tracedMethod.getTagIndexes();
         String[] tagNames = tracedMethod.getTagNames();
         for (int i = 0; i < tagIndexes.length; i++) {

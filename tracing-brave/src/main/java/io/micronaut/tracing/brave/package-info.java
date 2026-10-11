@@ -21,8 +21,10 @@
  */
 @Configuration
 @Requires(classes = {BraveTracer.class, Tracing.class})
+@NullMarked
 package io.micronaut.tracing.brave;
 
+import org.jspecify.annotations.NullMarked;
 import brave.Tracing;
 import brave.opentracing.BraveTracer;
 import io.micronaut.context.annotation.Configuration;

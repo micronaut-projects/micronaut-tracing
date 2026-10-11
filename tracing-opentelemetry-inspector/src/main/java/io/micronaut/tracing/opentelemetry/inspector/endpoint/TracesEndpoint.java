@@ -16,7 +16,6 @@
 package io.micronaut.tracing.opentelemetry.inspector.endpoint;
 
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.management.endpoint.annotation.Delete;
 import io.micronaut.management.endpoint.annotation.Endpoint;
 import io.micronaut.management.endpoint.annotation.Read;
@@ -25,6 +24,7 @@ import io.micronaut.tracing.opentelemetry.inspector.InspectedTrace;
 import io.micronaut.tracing.opentelemetry.inspector.TraceInspector;
 import io.micronaut.tracing.opentelemetry.inspector.TraceQuery;
 import io.micronaut.tracing.opentelemetry.inspector.TraceSummary;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;

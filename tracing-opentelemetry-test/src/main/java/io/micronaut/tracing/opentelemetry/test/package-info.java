@@ -23,8 +23,10 @@
  */
 @Configuration
 @Requires(property = OpenTelemetryTestFactory.ENABLED, notEquals = StringUtils.FALSE)
+@NullMarked
 package io.micronaut.tracing.opentelemetry.test;
 
+import org.jspecify.annotations.NullMarked;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;

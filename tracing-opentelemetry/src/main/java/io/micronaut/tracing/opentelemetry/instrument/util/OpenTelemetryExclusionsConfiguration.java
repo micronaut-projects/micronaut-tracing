@@ -23,8 +23,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.CollectionUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  *
@@ -44,7 +44,7 @@ public class OpenTelemetryExclusionsConfiguration {
      */
     private static final Pattern NOT_COMBINABLE = Pattern.compile("\\\\(?:[1-9]|k<|Q)|\\(\\?[a-zA-Z-]*x");
 
-    private List<String> exclusions;
+    private @Nullable List<String> exclusions;
 
     /**
      * @return the URI patterns to exclude from the tracing

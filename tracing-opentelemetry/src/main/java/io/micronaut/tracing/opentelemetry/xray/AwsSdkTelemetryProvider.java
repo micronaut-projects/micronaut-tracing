@@ -19,6 +19,7 @@ import io.micronaut.context.BeanProvider;
 import io.micronaut.core.annotation.Internal;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.awssdk.v2_2.AwsSdkTelemetry;
+import org.jspecify.annotations.Nullable;
 import software.amazon.awssdk.core.interceptor.ExecutionInterceptor;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -40,7 +41,7 @@ final class AwsSdkTelemetryProvider {
     private final BeanProvider<OpenTelemetry> openTelemetryProvider;
     private final AwsSdkTelemetryConfiguration awsSdkTelemetryConfiguration;
     private final MessagingTelemetryConfiguration messagingTelemetryConfiguration;
-    private final AtomicReference<AwsSdkTelemetry> awsSdkTelemetry = new AtomicReference<>();
+    private final AtomicReference<@Nullable AwsSdkTelemetry> awsSdkTelemetry = new AtomicReference<>();
 
     AwsSdkTelemetryProvider(BeanProvider<OpenTelemetry> openTelemetryProvider,
                             AwsSdkTelemetryConfiguration awsSdkTelemetryConfiguration,

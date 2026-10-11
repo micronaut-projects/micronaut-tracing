@@ -15,8 +15,8 @@
  */
 package io.micronaut.tracing.opentelemetry;
 
-import io.micronaut.core.annotation.NonNull;
 import io.opentelemetry.sdk.resources.Resource;
+import org.jspecify.annotations.NonNull;
 
 /**
  * API to provide a Resource to be attached to all Spans created by Tracers.

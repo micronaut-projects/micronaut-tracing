@@ -21,6 +21,7 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.awssdk.v2_2.AwsSdkTelemetry;
 import software.amazon.awssdk.core.interceptor.ExecutionInterceptor;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 /**
@@ -39,7 +40,7 @@ final class AwsSdkTelemetryProvider {
     private final BeanProvider<OpenTelemetry> openTelemetryProvider;
     private final AwsSdkTelemetryConfiguration awsSdkTelemetryConfiguration;
     private final MessagingTelemetryConfiguration messagingTelemetryConfiguration;
-    private volatile AwsSdkTelemetry awsSdkTelemetry;
+    private final AtomicReference<AwsSdkTelemetry> awsSdkTelemetry = new AtomicReference<>();
 
     AwsSdkTelemetryProvider(BeanProvider<OpenTelemetry> openTelemetryProvider,
                             AwsSdkTelemetryConfiguration awsSdkTelemetryConfiguration,
@@ -56,17 +57,17 @@ final class AwsSdkTelemetryProvider {
     <T> T withTelemetry(Function<AwsSdkTelemetry, T> function) {
         // no method signature exposes AwsSdkTelemetry directly, keeping reflective introspection of this class
         // free of optional AWS SDK service types referenced by AwsSdkTelemetry
-        AwsSdkTelemetry telemetry = awsSdkTelemetry;
+        AwsSdkTelemetry telemetry = awsSdkTelemetry.get();
         if (telemetry == null) {
             synchronized (this) {
-                telemetry = awsSdkTelemetry;
+                telemetry = awsSdkTelemetry.get();
                 if (telemetry == null) {
                     telemetry = AwsSdkTelemetry.builder(openTelemetryProvider.get())
                         .setCaptureExperimentalSpanAttributes(awsSdkTelemetryConfiguration.isExperimentalSpanAttributes())
                         .setUseConfiguredPropagatorForMessaging(awsSdkTelemetryConfiguration.isExperimentalUsePropagatorForMessaging())
                         .setMessagingReceiveTelemetryEnabled(messagingTelemetryConfiguration.isEnabled())
                         .build();
-                    awsSdkTelemetry = telemetry;
+                    awsSdkTelemetry.set(telemetry);
                 }
             }
         }

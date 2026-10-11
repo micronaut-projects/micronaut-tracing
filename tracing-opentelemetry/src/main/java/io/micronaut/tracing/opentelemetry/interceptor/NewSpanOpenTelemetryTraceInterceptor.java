@@ -275,32 +275,51 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
             return context;
         }
 
+        // Each signal checks first and only allocates the propagating lambda when the caller context
+        // has to be restored, so the usual case (already in the caller context) allocates nothing.
+
         @Override
         public void onSubscribe(Subscription subscription) {
-            signal(() -> actual.onSubscribe(subscription));
+            if (inCallerContext()) {
+                actual.onSubscribe(subscription);
+            } else {
+                callerContext.propagate(() -> actual.onSubscribe(subscription));
+            }
         }
 
         @Override
         public void onNext(Object item) {
-            signal(() -> actual.onNext(item));
+            if (inCallerContext()) {
+                actual.onNext(item);
+            } else {
+                callerContext.propagate(() -> actual.onNext(item));
+            }
         }
 
         @Override
         public void onError(Throwable throwable) {
-            signal(() -> actual.onError(throwable));
+            if (inCallerContext()) {
+                actual.onError(throwable);
+            } else {
+                callerContext.propagate(() -> actual.onError(throwable));
+            }
         }
 
         @Override
         public void onComplete() {
-            signal(actual::onComplete);
+            if (inCallerContext()) {
+                actual.onComplete();
+            } else {
+                callerContext.propagate(actual::onComplete);
+            }
         }
 
-        private void signal(Runnable signal) {
-            if (callerContext.isBound()) {
-                signal.run();
-            } else {
-                callerContext.propagate(signal);
-            }
+        /**
+         * @return whether the signal already runs in the caller context: it is bound, or both it and the
+         * current context are empty
+         */
+        private boolean inCallerContext() {
+            return callerContext.isBound() || callerContext.isEmpty() && !PropagatedContext.exists();
         }
     }
 }

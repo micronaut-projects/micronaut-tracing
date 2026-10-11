@@ -1,0 +1,28 @@
+[
+  {
+    "condition": {
+      "typeReachable": "io.opentelemetry.sdk.autoconfigure.internal.AutoConfigureUtil"
+    },
+    "name": "io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdkBuilder",
+    "methods": [
+      {
+        "name": "setConfigPropertiesCustomizer",
+        "parameterTypes": [
+          "java.util.function.Function"
+        ]
+      }
+    ]
+  },
+  {
+    "condition": {
+      "typeReachable": "io.opentelemetry.sdk.autoconfigure.internal.AutoConfigureUtil"
+    },
+    "name": "io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk",
+    "methods": [
+      {
+        "name": "getConfig",
+        "parameterTypes": []
+      }
+    ]
+  }
+]

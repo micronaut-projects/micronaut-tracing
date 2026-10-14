@@ -24,6 +24,7 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import org.slf4j.MDC;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,7 +35,8 @@ import java.util.Objects;
  * <p>The active correlation is held statically, like the propagation mode of Micronaut's
  * {@link io.micronaut.core.propagation.PropagatedContext}, because the propagated context elements are
  * created by the instrumentation without access to the bean context. It is installed by
- * {@link OpenTelemetryMdcInstaller} on startup and removed when the application context is closed.</p>
+ * {@link OpenTelemetryMdcInstaller} on startup and removed when the application context is closed; when several
+ * application contexts run, the correlation of the most recently started one that is still running is active.</p>
  *
  * @since 8.4.0
  */
@@ -45,6 +47,11 @@ public final class MdcTraceCorrelation {
     private static final int SPAN_ID = 1;
     private static final int TRACE_FLAGS = 2;
     private static final int FIRST_BAGGAGE = 3;
+
+    /**
+     * The correlations of the running application contexts, in installation order. Guarded by the class lock.
+     */
+    private static final List<MdcTraceCorrelation> INSTALLED = new ArrayList<>();
 
     @Nullable
     private static volatile MdcTraceCorrelation current;
@@ -83,23 +90,25 @@ public final class MdcTraceCorrelation {
     }
 
     /**
-     * Installs the correlation.
+     * Installs the correlation of an application context. It is the active one until it is uninstalled or the
+     * correlation of another application context is installed.
      *
      * @param correlation The correlation
      */
     static synchronized void install(MdcTraceCorrelation correlation) {
+        INSTALLED.add(correlation);
         current = correlation;
     }
 
     /**
-     * Uninstalls the correlation if it is still the installed one.
+     * Uninstalls the correlation of an application context. The most recently installed correlation of the
+     * application contexts still running becomes the active one.
      *
      * @param correlation The correlation
      */
     static synchronized void uninstall(MdcTraceCorrelation correlation) {
-        if (current == correlation) {
-            current = null;
-        }
+        INSTALLED.remove(correlation);
+        current = INSTALLED.isEmpty() ? null : INSTALLED.get(INSTALLED.size() - 1);
     }
 
     private Scope correlate(Context context, Scope scope) {

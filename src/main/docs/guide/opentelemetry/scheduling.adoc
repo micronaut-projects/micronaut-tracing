@@ -4,17 +4,7 @@ The tracing of the scheduled methods requires the `micronaut-tracing-opentelemet
 
 dependency:micronaut-tracing-opentelemetry-annotation[scope="annotationProcessor", version="{version}", groupId="io.micronaut.tracing"]
 
-[source,java]
-----
-@Singleton
-public class ReportJob {
-
-    @Scheduled(fixedDelay = "5m")
-    void generate() { // <1>
-        ...
-    }
-}
-----
+snippet::io.micronaut.tracing.docs.ReportJob[project-base="test-suite", tags="imports,clazz", title="Tracing a Scheduled Job"]
 <1> Each run of `generate()` is a span named `ReportJob.generate`.
 
 The span of a run has:

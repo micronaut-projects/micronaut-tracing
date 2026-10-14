@@ -68,7 +68,8 @@ it exceeds the baseline by more than the threshold **and** by more than an absol
 | `-Pjmh.results` | `build/results/jmh/results.json` | JMH JSON result to read (relative to `benchmarks/`). |
 
 Benchmarks missing from the baseline, and baseline entries missing from the result, only log a warning, so a
-run of a subset (`-Pjmh.includes`) can be checked too. Keys are `Class.method [param=value]`.
+run of a subset (`-Pjmh.includes`) can be checked too. Keys are `Class.method [param=value]`. JMH omits a benchmark
+that throws from the result, so pass `-Pjmh.failOnError=true` (as CI does) to fail the run instead.
 
 `updateAllocationBaseline` rewrites `allocation-baseline.json` from a JMH result (keeping `thresholds`, and
 writing a `note` only when `-Pallocation.note=...` is passed).

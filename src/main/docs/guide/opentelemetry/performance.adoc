@@ -5,10 +5,10 @@ Tracing adds work to every traced request and method call. The following setting
 By default every trace is recorded (`parentbased_always_on`). A sampler that drops a share of the traces reduces the cost of recording and exporting spans, which is usually the largest part of the overhead once an exporter is configured. The sampler is configured with the standard OpenTelemetry properties:
 
 .Sampling 10% of the traces
-[source,properties]
+[configuration]
 ----
-otel.traces.sampler=parentbased_traceidratio
-otel.traces.sampler.arg=0.1
+otel.traces.sampler: parentbased_traceidratio
+otel.traces.sampler.arg: 0.1
 ----
 
 With a `parentbased_*` sampler the decision of the caller, propagated in the incoming trace context, is kept, so a distributed trace is either recorded completely or not at all. A custom `io.opentelemetry.sdk.trace.samplers.Sampler` bean replaces the configured sampler.

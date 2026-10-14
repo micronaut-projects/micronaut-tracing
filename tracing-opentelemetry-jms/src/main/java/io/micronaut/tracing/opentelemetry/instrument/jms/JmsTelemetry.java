@@ -149,11 +149,16 @@ final class JmsTelemetry {
      *
      * @param message            The message
      * @param destination        The destination
-     * @param completionListener The completion listener
+     * @param completionListener The completion listener, passed as is to the provider when {@code null} so it
+     *                           rejects it as required by Jakarta Messaging
      * @param send               Sends the message, notifying the given completion listener
      * @throws JMSException if the message cannot be sent
      */
-    void sendAsync(Message message, @Nullable Destination destination, CompletionListener completionListener, AsyncSend send) throws JMSException {
+    void sendAsync(Message message, @Nullable Destination destination, @Nullable CompletionListener completionListener, AsyncSend send) throws JMSException {
+        if (completionListener == null) {
+            send.send(null);
+            return;
+        }
         JmsRequest request = JmsRequest.of(message, destination);
         Context parentContext = Context.current();
         if (!producerInstrumenter.shouldStart(parentContext, request)) {
@@ -228,6 +233,6 @@ final class JmsTelemetry {
      */
     @FunctionalInterface
     interface AsyncSend {
-        void send(CompletionListener completionListener) throws JMSException;
+        void send(@Nullable CompletionListener completionListener) throws JMSException;
     }
 }

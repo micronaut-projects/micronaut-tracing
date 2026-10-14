@@ -164,6 +164,48 @@ class TraceInspectorSpec extends Specification {
         inspector.trace(summary.traceId()).get().spans()*.name() == ["root", "child-0", "child-1", "child-2"]
     }
 
+    void "a dropped error span marks the trace as failed"() {
+        given:
+        start('tracing.opentelemetry.inspector.max-spans-per-trace': 1)
+
+        when:
+        Span root = tracer.spanBuilder("root").startSpan()
+        root.end()
+        tracer.spanBuilder("child").setParent(Context.root().with(root)).startSpan()
+            .setStatus(StatusCode.ERROR)
+            .end()
+        TraceSummary summary = inspector.traces()[0]
+
+        then:
+        summary.spanCount() == 1
+        summary.droppedSpanCount() == 1
+        summary.error()
+        inspector.traces(TraceQuery.builder().errorsOnly(true).build())*.traceId() == [root.spanContext.traceId]
+    }
+
+    void "array attribute values and names are bounded"() {
+        given:
+        start('tracing.opentelemetry.inspector.max-attribute-array-length': 3)
+        List<String> texts = (1..1000).collect { "text-$it".toString() }
+        List<Long> numbers = (1L..1000L).toList()
+        String longName = "n" * 5000
+
+        when:
+        Span root = tracer.spanBuilder(longName)
+            .setAttribute(AttributeKey.stringArrayKey("texts"), texts)
+            .setAttribute(AttributeKey.longArrayKey("numbers"), numbers)
+            .startSpan()
+        root.addEvent(longName, Attributes.of(AttributeKey.stringArrayKey("texts"), texts))
+        root.end()
+        InspectedSpan span = inspector.trace(root.spanContext.traceId).get().spans()[0]
+
+        then:
+        span.attributes() == [texts: ["text-1", "text-2", "text-3"], numbers: [1L, 2L, 3L]]
+        span.events()[0].attributes() == [texts: ["text-1", "text-2", "text-3"]]
+        span.name().length() == 1024
+        span.events()[0].name().length() == 1024
+    }
+
     void "string attribute values are truncated"() {
         given:
         start('tracing.opentelemetry.inspector.max-attribute-length': 5)

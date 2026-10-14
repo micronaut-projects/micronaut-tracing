@@ -39,9 +39,11 @@ import java.util.Optional;
  *
  * <p>Memory is bounded by {@link TraceInspectorConfiguration#getMaxTraces()} completed traces plus
  * {@link TraceInspectorConfiguration#getMaxPendingTraces()} pending traces, each with at most
- * {@link TraceInspectorConfiguration#getMaxSpansPerTrace()} spans (plus their first local root span), and string
- * attribute values of at most {@link TraceInspectorConfiguration#getMaxAttributeLength()} characters. The
- * number of attributes, events and links per span is bounded by the OpenTelemetry SDK span limits.</p>
+ * {@link TraceInspectorConfiguration#getMaxSpansPerTrace()} spans (plus their first local root span), string
+ * attribute values of at most {@link TraceInspectorConfiguration#getMaxAttributeLength()} characters, array
+ * attribute values of at most {@link TraceInspectorConfiguration#getMaxAttributeArrayLength()} elements, and span
+ * and event names of at most 1024 characters.
+ * The number of attributes, events and links per span is bounded by the OpenTelemetry SDK span limits.</p>
  *
  * @since 8.4.0
  */
@@ -54,9 +56,14 @@ public final class DefaultTraceInspector implements TraceInspector {
     private static final AttributeKey<String> HTTP_ROUTE = AttributeKey.stringKey("http.route");
     private static final AttributeKey<String> URL_PATH = AttributeKey.stringKey("url.path");
     private static final AttributeKey<Long> HTTP_RESPONSE_STATUS_CODE = AttributeKey.longKey("http.response.status_code");
+    /**
+     * The maximum length of span and event names.
+     */
+    private static final int MAX_NAME_LENGTH = 1_024;
 
     private final int maxSpansPerTrace;
     private final int maxAttributeLength;
+    private final int maxAttributeArrayLength;
     private final Object lock = new Object();
     /**
      * Traces whose local root span has not ended yet, oldest first. Guarded by {@link #lock}.
@@ -73,6 +80,7 @@ public final class DefaultTraceInspector implements TraceInspector {
     public DefaultTraceInspector(TraceInspectorConfiguration configuration) {
         this.maxSpansPerTrace = configuration.getMaxSpansPerTrace();
         this.maxAttributeLength = configuration.getMaxAttributeLength();
+        this.maxAttributeArrayLength = configuration.getMaxAttributeArrayLength();
         int maxTraces = configuration.getMaxTraces();
         int maxPendingTraces = configuration.getMaxPendingTraces();
         this.pending = new LinkedHashMap<>() {
@@ -175,7 +183,7 @@ public final class DefaultTraceInspector implements TraceInspector {
         List<EventData> eventData = spanData.getEvents();
         List<InspectedSpan.Event> events = new ArrayList<>(eventData.size());
         for (EventData event : eventData) {
-            events.add(new InspectedSpan.Event(event.getName(), event.getEpochNanos(), toMap(event.getAttributes())));
+            events.add(new InspectedSpan.Event(truncateName(event.getName()), event.getEpochNanos(), toMap(event.getAttributes())));
         }
         List<LinkData> linkData = spanData.getLinks();
         List<InspectedSpan.Link> links = new ArrayList<>(linkData.size());
@@ -188,7 +196,7 @@ public final class DefaultTraceInspector implements TraceInspector {
             spanData.getSpanId(),
             hasParent ? parent.getSpanId() : null,
             hasParent && parent.isRemote(),
-            spanData.getName(),
+            truncateName(spanData.getName()),
             spanData.getKind().name(),
             spanData.getStartEpochNanos(),
             spanData.getEndEpochNanos(),
@@ -214,9 +222,11 @@ public final class DefaultTraceInspector implements TraceInspector {
         if (value instanceof String string) {
             return truncate(string);
         }
-        if (value instanceof List<?> list && !list.isEmpty() && list.get(0) instanceof String) {
-            List<Object> truncated = new ArrayList<>(list.size());
-            for (Object element : list) {
+        if (value instanceof List<?> list && !list.isEmpty()) {
+            int size = Math.min(list.size(), maxAttributeArrayLength);
+            List<Object> truncated = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                Object element = list.get(i);
                 truncated.add(element instanceof String string ? truncate(string) : element);
             }
             return Collections.unmodifiableList(truncated);
@@ -226,6 +236,10 @@ public final class DefaultTraceInspector implements TraceInspector {
 
     private String truncate(String value) {
         return value.length() > maxAttributeLength ? value.substring(0, maxAttributeLength) : value;
+    }
+
+    private static String truncateName(String name) {
+        return name.length() > MAX_NAME_LENGTH ? name.substring(0, MAX_NAME_LENGTH) : name;
     }
 
     /**
@@ -250,13 +264,14 @@ public final class DefaultTraceInspector implements TraceInspector {
 
         void add(InspectedSpan span, @Nullable String serviceName, int maxSpans) {
             boolean localRoot = span.isLocalRoot();
+            // a dropped span still marks the trace as failed
+            error |= span.isError();
             // the first local root span is always kept so that the summary reflects the request
             if (spans.size() >= maxSpans && !(localRoot && root == null)) {
                 droppedSpanCount++;
                 return;
             }
             spans.add(span);
-            error |= span.isError();
             startEpochNanos = Math.min(startEpochNanos, span.startEpochNanos());
             endEpochNanos = Math.max(endEpochNanos, span.endEpochNanos());
             if (localRoot && (root == null || span.startEpochNanos() < root.startEpochNanos())) {

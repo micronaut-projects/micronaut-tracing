@@ -56,11 +56,17 @@ public class TraceInspectorConfiguration {
      */
     public static final int DEFAULT_MAX_ATTRIBUTE_LENGTH = 1_024;
 
+    /**
+     * The default maximum number of elements of array attribute values.
+     */
+    public static final int DEFAULT_MAX_ATTRIBUTE_ARRAY_LENGTH = 128;
+
     private boolean enabled;
     private int maxTraces = DEFAULT_MAX_TRACES;
     private int maxPendingTraces = DEFAULT_MAX_PENDING_TRACES;
     private int maxSpansPerTrace = DEFAULT_MAX_SPANS_PER_TRACE;
     private int maxAttributeLength = DEFAULT_MAX_ATTRIBUTE_LENGTH;
+    private int maxAttributeArrayLength = DEFAULT_MAX_ATTRIBUTE_ARRAY_LENGTH;
 
     /**
      * @return whether the trace inspector is enabled
@@ -139,12 +145,29 @@ public class TraceInspectorConfiguration {
     }
 
     /**
-     * The maximum length of string attribute values, including the attributes of span events and links.
-     * Longer values are truncated. Default {@value #DEFAULT_MAX_ATTRIBUTE_LENGTH}.
+     * The maximum length of string attribute values, including the attributes of span events and links, and of
+     * status descriptions. Longer values are truncated. Default {@value #DEFAULT_MAX_ATTRIBUTE_LENGTH}.
      *
      * @param maxAttributeLength the maximum length of string attribute values
      */
     public void setMaxAttributeLength(int maxAttributeLength) {
         this.maxAttributeLength = Math.max(1, maxAttributeLength);
+    }
+
+    /**
+     * @return the maximum number of elements of array attribute values
+     */
+    public int getMaxAttributeArrayLength() {
+        return maxAttributeArrayLength;
+    }
+
+    /**
+     * The maximum number of elements of array attribute values, including the attributes of span events and
+     * links. Further elements are dropped. Default {@value #DEFAULT_MAX_ATTRIBUTE_ARRAY_LENGTH}.
+     *
+     * @param maxAttributeArrayLength the maximum number of elements of array attribute values
+     */
+    public void setMaxAttributeArrayLength(int maxAttributeArrayLength) {
+        this.maxAttributeArrayLength = Math.max(1, maxAttributeArrayLength);
     }
 }

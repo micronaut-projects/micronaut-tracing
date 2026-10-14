@@ -25,7 +25,8 @@ import java.util.Map;
  * A completed span of a retained trace.
  *
  * <p>Attribute values are strings, booleans, longs, doubles or lists of them. String values longer than
- * {@code tracing.opentelemetry.inspector.max-attribute-length} are truncated.</p>
+ * {@code tracing.opentelemetry.inspector.max-attribute-length} are truncated, and lists longer than
+ * {@code tracing.opentelemetry.inspector.max-attribute-array-length} keep their first elements.</p>
  *
  * @param spanId               the span id, as 16 lowercase hex characters
  * @param parentSpanId         the parent span id, or {@code null} for a span without a parent

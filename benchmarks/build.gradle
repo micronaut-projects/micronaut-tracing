@@ -27,7 +27,8 @@ def csv = { String name -> providers.gradleProperty(name).map { it.split(',')*.t
 
 // Short runs by default: the numbers are indicative, see README.md.
 // Override with -Pjmh.includes=..., -Pjmh.fork=..., -Pjmh.iterations=..., -Pjmh.warmupIterations=...,
-// -Pjmh.warmup=2s, -Pjmh.timeOnIteration=2s, -Pjmh.profilers=gc, -Pjmh.params=name=v1|v2;other=v3
+// -Pjmh.warmup=2s, -Pjmh.timeOnIteration=2s, -Pjmh.profilers=gc, -Pjmh.params=name=v1|v2;other=v3,
+// -Pjmh.failOnError=true (fail the run when a benchmark throws instead of omitting it from the result)
 jmh {
     includes = csv('jmh.includes').getOrElse([])
     fork = providers.gradleProperty('jmh.fork').map { it as int }.getOrElse(1)
@@ -36,6 +37,7 @@ jmh {
     warmup = providers.gradleProperty('jmh.warmup').getOrElse('2s')
     timeOnIteration = providers.gradleProperty('jmh.timeOnIteration').getOrElse('2s')
     profilers = csv('jmh.profilers').getOrElse([])
+    failOnError = providers.gradleProperty('jmh.failOnError').map { Boolean.parseBoolean(it) }.getOrElse(false)
     jmhVersion = libs.versions.jmh.asProvider().get()
     resultFormat = 'JSON'
     providers.gradleProperty('jmh.params').orNull?.split(';')?.each { String param ->

@@ -17,7 +17,9 @@ import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.sdk.trace.data.SpanData
 import io.opentelemetry.semconv.CodeAttributes
 import io.opentelemetry.semconv.ExceptionAttributes
+import io.opentelemetry.api.trace.Span
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -140,6 +142,26 @@ class WebSocketSpanSpec extends Specification {
         client?.close()
     }
 
+    void 'the publisher of a reactive handler is subscribed with the span of the handler'() {
+        given:
+        start()
+        ReactiveServer server = context.getBean(ReactiveServer)
+
+        when:
+        EchoClient client = Flux.from(webSocketClient.connect(EchoClient, '/reactive/lobby')).blockFirst()
+        client.send('hello')
+
+        then:
+        client.replies.poll(10, TimeUnit.SECONDS) == 'hello'
+
+        when:
+        SpanData message = span('MESSAGE /reactive/{room}', ReactiveServer.name)
+        client.close()
+
+        then: 'the deferred body ran with the span of the handler current'
+        server.subscribedSpanId == message.spanId
+    }
+
     void 'the WebSocket handlers are not traced when disabled'() {
         given:
         start('tracing.opentelemetry.websocket.enabled': false)
@@ -188,6 +210,21 @@ class WebSocketSpanSpec extends Specification {
 
         @OnError
         void onError(String room, WebSocketSession session, Throwable error) {
+        }
+    }
+
+    @Requires(property = 'spec.name', value = SPEC_NAME)
+    @ServerWebSocket('/reactive/{room}')
+    static class ReactiveServer {
+
+        volatile String subscribedSpanId
+
+        @OnMessage
+        Mono<String> onMessage(String room, String message, WebSocketSession session) {
+            Mono.defer {
+                subscribedSpanId = Span.current().spanContext.spanId
+                Mono.from(session.send(message))
+            }
         }
     }
 

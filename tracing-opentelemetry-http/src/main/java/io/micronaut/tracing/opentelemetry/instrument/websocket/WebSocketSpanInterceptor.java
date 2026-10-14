@@ -23,6 +23,7 @@ import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.propagation.ReactorPropagation;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
@@ -183,7 +184,14 @@ public final class WebSocketSpanInterceptor implements MethodInterceptor<Object,
         try {
             switch (interceptedMethod.resultType()) {
                 case PUBLISHER -> {
-                    Publisher<?> publisher = interceptedMethod.interceptResultAsPublisher();
+                    // the propagated context with the span of the handler, current while it is invoked
+                    PropagatedContext propagatedContext = PropagatedContext.getOrEmpty();
+                    @SuppressWarnings("unchecked")
+                    Publisher<Object> source = (Publisher<Object>) interceptedMethod.interceptResultAsPublisher();
+                    // the publisher is subscribed after the handler returned: subscribe it with the span of the
+                    // handler current, and in its Reactor context, so the work it starts on subscription is traced
+                    Publisher<Object> publisher = Flux.from(subscriber -> propagatedContext.propagate(() -> source.subscribe(subscriber)))
+                        .contextWrite(reactorContext -> ReactorPropagation.addPropagatedContext(reactorContext, propagatedContext));
                     if (method.single()) {
                         return interceptedMethod.handleResult(Mono.from(publisher)
                             .doOnSuccess(spanEnd::success)

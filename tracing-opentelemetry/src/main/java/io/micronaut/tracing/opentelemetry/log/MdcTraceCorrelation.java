@@ -27,6 +27,7 @@ import org.slf4j.MDC;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Copies the trace context of an OpenTelemetry {@link Context} into the SLF4J {@link MDC} while that context
@@ -53,8 +54,10 @@ public final class MdcTraceCorrelation {
      */
     private static final List<MdcTraceCorrelation> INSTALLED = new ArrayList<>();
 
-    @Nullable
-    private static volatile MdcTraceCorrelation current;
+    /**
+     * The active correlation, {@code null} when none is installed.
+     */
+    private static final AtomicReference<MdcTraceCorrelation> CURRENT = new AtomicReference<>();
 
     private final String[] keys;
 
@@ -77,7 +80,7 @@ public final class MdcTraceCorrelation {
      */
     public static Scope makeCurrent(Context context) {
         Scope scope = context.makeCurrent();
-        MdcTraceCorrelation correlation = current;
+        MdcTraceCorrelation correlation = CURRENT.get();
         return correlation == null ? scope : correlation.correlate(context, scope);
     }
 
@@ -86,7 +89,7 @@ public final class MdcTraceCorrelation {
      */
     @Nullable
     static MdcTraceCorrelation current() {
-        return current;
+        return CURRENT.get();
     }
 
     /**
@@ -97,7 +100,7 @@ public final class MdcTraceCorrelation {
      */
     static synchronized void install(MdcTraceCorrelation correlation) {
         INSTALLED.add(correlation);
-        current = correlation;
+        CURRENT.set(correlation);
     }
 
     /**
@@ -108,7 +111,7 @@ public final class MdcTraceCorrelation {
      */
     static synchronized void uninstall(MdcTraceCorrelation correlation) {
         INSTALLED.remove(correlation);
-        current = INSTALLED.isEmpty() ? null : INSTALLED.get(INSTALLED.size() - 1);
+        CURRENT.set(INSTALLED.isEmpty() ? null : INSTALLED.get(INSTALLED.size() - 1));
     }
 
     private Scope correlate(Context context, Scope scope) {
@@ -157,12 +160,23 @@ public final class MdcTraceCorrelation {
 
     /**
      * Restores the MDC values that were replaced when the context was made current.
-     *
-     * @param scope    The OpenTelemetry scope
-     * @param keys     The MDC keys
-     * @param previous The previous MDC values, by key index
      */
-    private record MdcScope(Scope scope, String[] keys, String[] previous) implements Scope {
+    private static final class MdcScope implements Scope {
+
+        private final Scope scope;
+        private final String[] keys;
+        private final String[] previous;
+
+        /**
+         * @param scope    The OpenTelemetry scope
+         * @param keys     The MDC keys
+         * @param previous The previous MDC values, by key index
+         */
+        MdcScope(Scope scope, String[] keys, String[] previous) {
+            this.scope = scope;
+            this.keys = keys;
+            this.previous = previous;
+        }
 
         @Override
         public void close() {

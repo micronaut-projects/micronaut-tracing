@@ -22,14 +22,10 @@ Inject the api:tracing.opentelemetry.inspector.TraceInspector[] bean:
 * `trace(traceId)` returns an api:tracing.opentelemetry.inspector.InspectedTrace[] with all retained spans of the trace, ordered by start time. Each api:tracing.opentelemetry.inspector.InspectedSpan[] has its parent span id, kind, timing, status, attributes, events (including `exception` events with the stack trace) and links.
 * `clear()` discards all traces.
 
-[source,java]
-----
-List<TraceSummary> slowErrors = traceInspector.traces(TraceQuery.builder()
-    .errorsOnly(true)
-    .minDuration(Duration.ofMillis(500))
-    .limit(10)
-    .build());
-----
+snippet::io.micronaut.tracing.docs.SlowErrorTraces[project-base="test-suite", tags="imports,clazz", title="Finding Slow Traces with Errors"]
+
+<1> Inject the api:tracing.opentelemetry.inspector.TraceInspector[] bean
+<2> Query the ten most recent traces with an error that took at least 500 milliseconds
 
 == Management endpoint
 

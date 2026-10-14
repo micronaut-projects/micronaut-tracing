@@ -67,9 +67,11 @@ class SpanAnnotationsTest {
     @Test
     void continueSpanTagsTheCurrentSpan() {
         Span outer = openTelemetry.getTracer("native-test").spanBuilder("outer").startSpan();
-        try (Scope ignored = outer.makeCurrent()) {
+        Scope scope = outer.makeCurrent();
+        try {
             greetingService.continueGreet("Fred");
         } finally {
+            scope.close();
             outer.end();
         }
 

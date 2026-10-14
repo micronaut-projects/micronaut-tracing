@@ -27,21 +27,10 @@ The OpenTelemetry annotations are mapped to them at compile time:
 
 For example, the following method adds the `order.id` attribute to the span of the HTTP request or of the `@WithSpan` method that calls it:
 
-[source,java]
-----
-import io.opentelemetry.instrumentation.annotations.AddingSpanAttributes;
-import io.opentelemetry.instrumentation.annotations.SpanAttribute;
-import jakarta.inject.Singleton;
+snippet::io.micronaut.tracing.docs.OrderService[project-base="test-suite", tags="imports,clazz", title="Adding span attributes"]
 
-@Singleton
-public class OrderService {
-
-    @AddingSpanAttributes
-    public void process(@SpanAttribute("order.id") String orderId, Order order) {
-        // ...
-    }
-}
-----
+<1> `@AddingSpanAttributes` adds the attributes to the current span, without creating a span
+<2> `@SpanAttribute` names the attribute added with the value of the parameter
 
 NOTE: As with every Micronaut AOP advice, the method must be invoked on the bean, not from another method of the same instance, and it must not be `private` or `final` (in Kotlin, the class and the method must be `open`, or use the `all-open` plugin).
 

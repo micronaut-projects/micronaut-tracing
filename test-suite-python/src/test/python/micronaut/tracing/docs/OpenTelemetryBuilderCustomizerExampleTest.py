@@ -11,6 +11,7 @@ from org.junit.jupiter.api import Test
 HISTOGRAM_NAME = "http.server.request.duration"
 
 
+# The InMemoryMetricReader is registered by micronaut-tracing-opentelemetry-test
 @Property(name="spec.name", value="OpenTelemetryBuilderCustomizerExampleTest")
 @MicronautTest(startApplication=False)
 class OpenTelemetryBuilderCustomizerExampleTest:

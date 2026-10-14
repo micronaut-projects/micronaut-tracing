@@ -66,6 +66,34 @@ class OpenTelemetryMdcSpec extends Specification {
         MDC.get('trace_flags') == null
     }
 
+    void 'closing a second application context keeps the correlation of the first'() {
+        given:
+        start('tracing.opentelemetry.logging.mdc.trace-id-key': 'traceA')
+        MdcService service = context.getBean(MdcService)
+        ApplicationContext second = ApplicationContext.run([
+            'spec.name'                                 : SPEC_NAME,
+            'otel.traces.exporter'                      : 'none',
+            'otel.metrics.exporter'                     : 'none',
+            'otel.logs.exporter'                        : 'none',
+            'otel.register.global'                      : false,
+            'tracing.opentelemetry.logging.mdc.trace-id-key': 'traceB'
+        ])
+
+        when:
+        second.close()
+        Map<String, String> mdc = service.inSpan()
+
+        then:
+        mdc.traceA == mdc.current_trace_id
+        mdc.traceA.length() == 32
+
+        when:
+        context.close()
+
+        then: 'no correlation remains once every context is closed'
+        MdcTraceCorrelation.current() == null
+    }
+
     void 'nested spans restore the MDC of the outer span'() {
         given:
         start()

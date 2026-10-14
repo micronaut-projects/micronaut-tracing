@@ -44,6 +44,11 @@ micronaut-kafka = "6.2.0"
 micronaut-rabbitmq = "5.1.0"
 micronaut-gradle-plugin = "5.0.2"
 micronaut-r2dbc = "7.2.0"
+
+# Benchmarks only (not published)
+jmh = "1.37"
+jmh-gradle-plugin = "0.7.3"
+
 [libraries]
 # Core
 micronaut-core = { module = 'io.micronaut:micronaut-core-bom', version.ref = 'micronaut' }
@@ -125,7 +130,11 @@ boms-opentelemetry-instrumentation-alpha = { module = 'io.opentelemetry.instrume
 boms-brave = { module = 'io.zipkin.brave:brave-bom', version.ref = 'managed-brave-instrumentation' }
 boms-micrometer-tracing = { module = 'io.micrometer:micrometer-tracing-bom', version.ref = 'managed-micrometer-tracing' }
 boms-zipkin-reporter = { module = 'io.zipkin.reporter2:zipkin-reporter-bom', version.ref = 'managed-zipkin-reporter' }
+# Benchmarks only (not published)
+jmh-core = { module = "org.openjdk.jmh:jmh-core", version.ref = "jmh" }
+jmh-generator-annprocess = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "jmh" }
 #plugins
 micronaut-gradle-plugin = { module = "io.micronaut.gradle:micronaut-gradle-plugin", version.ref="micronaut-gradle-plugin" }
 [plugins]
 protobuf = { id = 'com.google.protobuf', version.ref = 'managed-protobuf' }
+jmh = { id = 'me.champeau.jmh', version.ref = 'jmh-gradle-plugin' }

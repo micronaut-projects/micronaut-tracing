@@ -28,43 +28,59 @@ import java.util.function.Function;
  * {@link ExecutableMethod} (one instance per method of a bean definition). Lookups do not allocate nor
  * lock: the map is copied on write, which only happens the first time a method is intercepted.
  *
+ * <p>The value of a method with evaluated expressions in its annotation metadata (e.g.
+ * {@code @NewSpan("#{ #name }")}) depends on the arguments of each invocation, so it is computed for every
+ * invocation instead.</p>
+ *
  * @param <V> the cached value type
  * @since 8.4.0
  */
 @Internal
 public final class TracedMethodCache<V> {
 
+    /**
+     * Marks a method whose value is computed for every invocation.
+     */
+    private static final Object PER_INVOCATION = new Object();
+
     private final Function<MethodInvocationContext<?, ?>, V> resolver;
-    private volatile Map<Object, V> cache = new IdentityHashMap<>();
+    private volatile Map<Object, Object> cache = new IdentityHashMap<>();
 
     /**
-     * @param resolver computes the value of a method from its first invocation context
+     * @param resolver computes the value of a method from an invocation context: the first one, or each one
+     *                 when the method has evaluated expressions
      */
     public TracedMethodCache(Function<MethodInvocationContext<?, ?>, V> resolver) {
         this.resolver = resolver;
     }
 
     /**
-     * Returns the value of the intercepted method, computing it on the first call.
+     * Returns the value of the intercepted method, computing it on the first call, or on every call when the
+     * method has evaluated expressions.
      *
      * @param context the invocation context
      * @return the value
      */
+    @SuppressWarnings("unchecked")
     public V get(MethodInvocationContext<?, ?> context) {
-        Object key = context.getExecutableMethod();
-        V value = cache.get(key);
+        ExecutableMethod<?, ?> key = context.getExecutableMethod();
+        Object value = cache.get(key);
         if (value == null) {
             value = resolve(key, context);
         }
-        return value;
+        if (value == PER_INVOCATION) {
+            // the annotation metadata of the context is bound to the arguments of this invocation
+            return resolver.apply(context);
+        }
+        return (V) value;
     }
 
-    private synchronized V resolve(Object key, MethodInvocationContext<?, ?> context) {
-        Map<Object, V> current = cache;
-        V value = current.get(key);
+    private synchronized Object resolve(ExecutableMethod<?, ?> key, MethodInvocationContext<?, ?> context) {
+        Map<Object, Object> current = cache;
+        Object value = current.get(key);
         if (value == null) {
-            value = resolver.apply(context);
-            Map<Object, V> copy = new IdentityHashMap<>(current);
+            value = key.getAnnotationMetadata().hasEvaluatedExpressions() ? PER_INVOCATION : resolver.apply(context);
+            Map<Object, Object> copy = new IdentityHashMap<>(current);
             copy.put(key, value);
             cache = copy;
         }

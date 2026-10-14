@@ -18,8 +18,6 @@ package io.micronaut.tracing.opentelemetry.instrument.util;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.annotation.Order;
-import io.micronaut.core.order.Ordered;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.api.incubator.semconv.code.CodeSpanNameExtractor;
 import io.opentelemetry.instrumentation.api.incubator.semconv.util.ClassAndMethod;
@@ -33,7 +31,6 @@ import io.opentelemetry.instrumentation.api.instrumenter.OperationMetrics;
 import io.opentelemetry.instrumentation.api.instrumenter.SpanLinksExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.SpanNameExtractor;
 import io.opentelemetry.instrumentation.api.instrumenter.SpanStatusExtractor;
-import io.opentelemetry.instrumentation.api.semconv.http.HttpClientMetrics;
 import jakarta.inject.Named;
 import jakarta.inject.Qualifier;
 import jakarta.inject.Singleton;
@@ -45,7 +42,8 @@ import java.util.List;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * An HTTP client instrumentation factory for Open Telemetry.
+ * The code ({@code @NewSpan} / {@code @ContinueSpan}) instrumentation factory for Open Telemetry.
+ * <p>No metrics are registered by default: add {@link Internal} qualified {@link OperationMetrics} beans to record some.</p>
  *
  * @author Nemanja Mikic
  * @since 4.2.0
@@ -121,7 +119,6 @@ public final class MicronautCodeTelemetryFactory {
                 openTelemetry,
                 INSTRUMENTATION_NAME,
                 CodeSpanNameExtractor.create(ClassAndMethod.codeAttributesGetter()))
-            .addOperationMetrics(HttpClientMetrics.get())
             .buildInstrumenter();
     }
 
@@ -133,17 +130,5 @@ public final class MicronautCodeTelemetryFactory {
     @Singleton
     SpanNameExtractor<ClassAndMethod> defaultSpanNameExtractor() {
         return CodeSpanNameExtractor.create(ClassAndMethod.codeAttributesGetter());
-    }
-
-    /**
-     * Returns an {@link OperationMetrics} instance which can be used to enable recording of {@link
-     * HttpClientMetrics}.
-     * @return the {@link OperationMetrics} instance
-     */
-    @Internal
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    @Singleton
-    OperationMetrics httpClientMetrics() {
-        return HttpClientMetrics.get();
     }
 }

@@ -57,7 +57,7 @@ public final class MdcTraceCorrelation {
     /**
      * The active correlation, {@code null} when none is installed.
      */
-    private static final AtomicReference<MdcTraceCorrelation> CURRENT = new AtomicReference<>();
+    private static final AtomicReference<@Nullable MdcTraceCorrelation> CURRENT = new AtomicReference<>();
 
     private final String[] keys;
 

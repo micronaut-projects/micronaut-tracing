@@ -79,20 +79,33 @@ final class ManagementEndpointExclusions {
             if (id != null && traced.contains(id)) {
                 continue;
             }
-            String path = id == null ? null : properties.get(ENDPOINTS_PREFIX + id + ".path", String.class)
-                .filter(StringUtils::isNotEmpty)
-                .map(p -> p.startsWith(SLASH) ? p.substring(1) : p)
-                .orElse(null);
-            if (path == null) {
-                path = id == null || !ENDPOINT_ID.matcher(id).matches() ? NameUtils.hyphenate(definition.getName()) : id;
-            }
-            String uri = resolveUri(beanContext, properties, path);
-            while (uri.length() > 1 && uri.endsWith(SLASH)) {
-                uri = uri.substring(0, uri.length() - 1);
-            }
+            String uri = trimTrailingSlashes(resolveUri(beanContext, properties, endpointPath(definition, id, properties)));
             patterns.add(escape(uri) + "(?:/.*)?");
         }
         return patterns;
+    }
+
+    /**
+     * @return the configured path of the endpoint, otherwise its id, or its hyphenated bean name when the id is
+     * not a valid path segment
+     */
+    private static String endpointPath(BeanDefinition<?> definition, @Nullable String id, Environment properties) {
+        String path = id == null ? null : properties.get(ENDPOINTS_PREFIX + id + ".path", String.class)
+            .filter(StringUtils::isNotEmpty)
+            .map(p -> p.startsWith(SLASH) ? p.substring(1) : p)
+            .orElse(null);
+        if (path != null) {
+            return path;
+        }
+        return id == null || !ENDPOINT_ID.matcher(id).matches() ? NameUtils.hyphenate(definition.getName()) : id;
+    }
+
+    private static String trimTrailingSlashes(String uri) {
+        int end = uri.length();
+        while (end > 1 && uri.charAt(end - 1) == '/') {
+            end--;
+        }
+        return uri.substring(0, end);
     }
 
     /**

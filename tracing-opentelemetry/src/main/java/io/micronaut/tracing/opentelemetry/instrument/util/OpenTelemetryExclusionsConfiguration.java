@@ -104,7 +104,7 @@ public class OpenTelemetryExclusionsConfiguration {
 
     @Nullable
     private static Predicate<String> compile(@Nullable List<String> exclusions) {
-        if (CollectionUtils.isEmpty(exclusions)) {
+        if (exclusions == null || exclusions.isEmpty()) {
             return null;
         }
         Pattern pattern = combine(exclusions);

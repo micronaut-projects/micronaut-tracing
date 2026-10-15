@@ -47,7 +47,7 @@ public class OpenTelemetryHttpServerCodeAttributesConfig {
      */
     public static final boolean DEFAULT_LEGACY_ATTRIBUTES = false;
 
-    private boolean enabled = DEFAULT_ENABLED;
+    private boolean codeAttributesEnabled = DEFAULT_ENABLED;
     private boolean legacyAttributes = DEFAULT_LEGACY_ATTRIBUTES;
 
     /**
@@ -55,7 +55,7 @@ public class OpenTelemetryHttpServerCodeAttributesConfig {
      * {@code code.function.name} attribute
      */
     public boolean isEnabled() {
-        return enabled;
+        return codeAttributesEnabled;
     }
 
     /**
@@ -65,7 +65,7 @@ public class OpenTelemetryHttpServerCodeAttributesConfig {
      * @param enabled {@code false} to not add the code attributes
      */
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        this.codeAttributesEnabled = enabled;
     }
 
     /**

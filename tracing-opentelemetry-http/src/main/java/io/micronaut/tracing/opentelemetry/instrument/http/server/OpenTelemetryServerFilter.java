@@ -164,11 +164,11 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
      */
     static final class ServerSpan {
 
-        private static final VarHandle ENDED;
+        private static final VarHandle ENDED_HANDLE;
 
         static {
             try {
-                ENDED = MethodHandles.lookup().findVarHandle(ServerSpan.class, "ended", boolean.class);
+                ENDED_HANDLE = MethodHandles.lookup().findVarHandle(ServerSpan.class, "ended", boolean.class);
             } catch (ReflectiveOperationException e) {
                 throw new ExceptionInInitializerError(e);
             }
@@ -177,7 +177,7 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
         private final Instrumenter<HttpRequest<?>, Object> instrumenter;
         private final HttpRequest<?> request;
         private final Context context;
-        @SuppressWarnings("unused") // accessed through ENDED
+        @SuppressWarnings("unused") // accessed through ENDED_HANDLE
         private volatile boolean ended;
         private volatile boolean responded;
 
@@ -244,7 +244,7 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
         }
 
         private boolean tryEnd() {
-            if (ENDED.compareAndSet(this, false, true)) {
+            if (ENDED_HANDLE.compareAndSet(this, false, true)) {
                 // ended: if the filter runs again for this request, it starts a new span
                 request.removeAttribute(SPAN, ServerSpan.class);
                 return true;

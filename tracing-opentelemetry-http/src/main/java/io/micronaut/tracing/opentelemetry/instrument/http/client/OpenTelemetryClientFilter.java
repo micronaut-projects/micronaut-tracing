@@ -139,11 +139,11 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
     private static final class ClientSpan extends CompletableFuture<HttpResponse<?>>
         implements BiConsumer<HttpResponse<?>, Throwable> {
 
-        private static final VarHandle ENDED;
+        private static final VarHandle ENDED_HANDLE;
 
         static {
             try {
-                ENDED = MethodHandles.lookup().findVarHandle(ClientSpan.class, "ended", boolean.class);
+                ENDED_HANDLE = MethodHandles.lookup().findVarHandle(ClientSpan.class, "ended", boolean.class);
             } catch (ReflectiveOperationException e) {
                 throw new ExceptionInInitializerError(e);
             }
@@ -155,7 +155,7 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
         private final PropagatedContext completionContext;
         @Nullable
         private CompletableFuture<HttpResponse<?>> downstream;
-        @SuppressWarnings("unused") // accessed through ENDED
+        @SuppressWarnings("unused") // accessed through ENDED_HANDLE
         private volatile boolean ended;
 
         ClientSpan(Instrumenter<MutableHttpRequest<?>, Object> instrumenter,
@@ -222,7 +222,7 @@ public final class OpenTelemetryClientFilter extends AbstractOpenTelemetryFilter
         }
 
         private boolean tryEnd() {
-            return ENDED.compareAndSet(this, false, true);
+            return ENDED_HANDLE.compareAndSet(this, false, true);
         }
     }
 }

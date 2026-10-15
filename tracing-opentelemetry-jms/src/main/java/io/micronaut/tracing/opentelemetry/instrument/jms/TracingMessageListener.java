@@ -41,7 +41,7 @@ final class TracingMessageListener implements MessageListener {
 
     @Override
     public void onMessage(Message message) {
-        telemetry.process(delegate, message, destinationName);
+        telemetry.processMessage(delegate, message, destinationName);
     }
 
     @Override

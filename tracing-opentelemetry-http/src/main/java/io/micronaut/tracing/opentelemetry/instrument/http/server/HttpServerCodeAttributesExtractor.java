@@ -21,7 +21,6 @@ import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.inject.ExecutableMethod;
-import io.micronaut.inject.MethodExecutionHandle;
 import io.micronaut.tracing.util.TracedMethod;
 import io.micronaut.web.router.MethodBasedRouteInfo;
 import io.micronaut.web.router.RouteAttributes;
@@ -34,6 +33,7 @@ import jakarta.inject.Singleton;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Adds the {@code code.function.name} attribute (the fully qualified name of the method, for example
@@ -76,7 +76,7 @@ public final class HttpServerCodeAttributesExtractor implements AttributesExtrac
      * The code function of each route, keyed by the identity of the route. Copied on write, which only
      * happens the first time a route is requested.
      */
-    private volatile Map<Object, CodeFunction> functions = new IdentityHashMap<>();
+    private final AtomicReference<Map<Object, CodeFunction>> functions = new AtomicReference<>(new IdentityHashMap<>());
 
     /**
      * @param config the configuration, {@code null} for the defaults
@@ -89,16 +89,14 @@ public final class HttpServerCodeAttributesExtractor implements AttributesExtrac
     public void onStart(AttributesBuilder attributes, Context parentContext, HttpRequest<Object> request) {
         if (RouteAttributes.getRouteInfo(request).orElse(null) instanceof MethodBasedRouteInfo<?, ?> route
             && !route.isErrorRoute()) {
-            CodeFunction function = functions.get(route);
+            CodeFunction function = functions.get().get(route);
             if (function == null) {
                 function = resolve(route);
             }
-            if (function != null) {
-                attributes.put(CodeAttributes.CODE_FUNCTION_NAME, function.name());
-                if (legacyAttributes) {
-                    attributes.put(CODE_NAMESPACE, function.namespace());
-                    attributes.put(CODE_FUNCTION, function.function());
-                }
+            attributes.put(CodeAttributes.CODE_FUNCTION_NAME, function.name());
+            if (legacyAttributes) {
+                attributes.put(CODE_NAMESPACE, function.namespace());
+                attributes.put(CODE_FUNCTION, function.function());
             }
         }
     }
@@ -112,18 +110,17 @@ public final class HttpServerCodeAttributesExtractor implements AttributesExtrac
         // the attributes are only added on start
     }
 
-    @Nullable
     private synchronized CodeFunction resolve(MethodBasedRouteInfo<?, ?> route) {
-        Map<Object, CodeFunction> current = functions;
+        Map<Object, CodeFunction> current = functions.get();
         CodeFunction function = current.get(route);
         if (function != null) {
             return function;
         }
         function = CodeFunction.of(route);
-        if (function != null && current.size() < MAX_CACHED_ROUTES) {
+        if (current.size() < MAX_CACHED_ROUTES) {
             Map<Object, CodeFunction> copy = new IdentityHashMap<>(current);
             copy.put(route, function);
-            functions = copy;
+            functions.set(copy);
         }
         return function;
     }
@@ -137,13 +134,8 @@ public final class HttpServerCodeAttributesExtractor implements AttributesExtrac
      */
     private record CodeFunction(String name, String namespace, String function) {
 
-        @Nullable
         static CodeFunction of(MethodBasedRouteInfo<?, ?> route) {
-            MethodExecutionHandle<?, ?> handle = route.getTargetMethod();
-            if (handle == null) {
-                return null;
-            }
-            ExecutableMethod<?, ?> method = handle.getExecutableMethod();
+            ExecutableMethod<?, ?> method = route.getTargetMethod().getExecutableMethod();
             String namespace = method.getDeclaringType().getName();
             String function = TracedMethod.methodName(method);
             return new CodeFunction(namespace + '.' + function, namespace, function);

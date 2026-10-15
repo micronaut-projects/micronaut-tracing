@@ -4,6 +4,9 @@ plugins {
 
 dependencies {
     api mn.micronaut.core.processor
+    // PropagatedContextPublisher, used by the tracing modules which provide both at runtime
+    compileOnly mn.micronaut.core.reactive
+    compileOnly mnReactor.micronaut.reactor
 
     testImplementation mn.micronaut.inject.java.test
     testImplementation mn.micronaut.inject.groovy.test

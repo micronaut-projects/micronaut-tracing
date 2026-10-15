@@ -67,7 +67,7 @@ enum JmsMessagingAttributesGetter implements MessagingAttributesGetter<JmsReques
     public String getConversationId(JmsRequest request) {
         try {
             return request.message().getJMSCorrelationID();
-        } catch (JMSException | RuntimeException e) {
+        } catch (JMSException | RuntimeException _) {
             return null;
         }
     }
@@ -89,7 +89,7 @@ enum JmsMessagingAttributesGetter implements MessagingAttributesGetter<JmsReques
     public String getMessageId(JmsRequest request, @Nullable Void unused) {
         try {
             return request.message().getJMSMessageID();
-        } catch (JMSException | RuntimeException e) {
+        } catch (JMSException | RuntimeException _) {
             return null;
         }
     }

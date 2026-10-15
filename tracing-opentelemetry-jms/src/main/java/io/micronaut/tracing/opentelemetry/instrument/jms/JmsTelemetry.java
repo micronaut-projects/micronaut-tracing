@@ -135,13 +135,17 @@ final class JmsTelemetry {
             return;
         }
         Context context = producerInstrumenter.start(parentContext, request);
-        try (Scope ignored = context.makeCurrent()) {
+        Throwable error = null;
+        Scope scope = context.makeCurrent();
+        try {
             send.send();
-        } catch (JMSException | RuntimeException | Error e) {
-            producerInstrumenter.end(context, request, null, e);
+        } catch (JMSException | RuntimeException e) {
+            error = e;
             throw e;
+        } finally {
+            scope.close();
+            producerInstrumenter.end(context, request, null, error);
         }
-        producerInstrumenter.end(context, request, null, null);
     }
 
     /**
@@ -170,7 +174,7 @@ final class JmsTelemetry {
             @Override
             public void onCompletion(Message sent) {
                 producerInstrumenter.end(context, request, null, null);
-                try (Scope ignored = parentContext.makeCurrent()) {
+                try (Scope _ = parentContext.makeCurrent()) {
                     completionListener.onCompletion(sent);
                 }
             }
@@ -178,16 +182,26 @@ final class JmsTelemetry {
             @Override
             public void onException(Message failed, Exception exception) {
                 producerInstrumenter.end(context, request, null, exception);
-                try (Scope ignored = parentContext.makeCurrent()) {
+                try (Scope _ = parentContext.makeCurrent()) {
                     completionListener.onException(failed, exception);
                 }
             }
         };
-        try (Scope ignored = context.makeCurrent()) {
+        Throwable error = null;
+        boolean sent = false;
+        Scope scope = context.makeCurrent();
+        try {
             send.send(tracingListener);
-        } catch (JMSException | RuntimeException | Error e) {
-            producerInstrumenter.end(context, request, null, e);
+            sent = true;
+        } catch (JMSException | RuntimeException e) {
+            error = e;
             throw e;
+        } finally {
+            scope.close();
+            if (!sent) {
+                // the completion listener is not notified when the send fails
+                producerInstrumenter.end(context, request, null, error);
+            }
         }
     }
 
@@ -198,7 +212,7 @@ final class JmsTelemetry {
      * @param message         The message
      * @param destinationName The name of the destination the message was received from
      */
-    void process(MessageListener listener, Message message, @Nullable String destinationName) {
+    void processMessage(MessageListener listener, Message message, @Nullable String destinationName) {
         JmsRequest request = JmsRequest.of(message, destinationName);
         // the parent is read from the message: the listener thread carries no trace of its own
         Context parentContext = Context.root();
@@ -211,13 +225,17 @@ final class JmsTelemetry {
         // hands off to a context-propagating executor or a reactive pipeline continues the trace.
         PropagatedContext propagatedContext = PropagatedContext.getOrEmpty()
             .plus(new OpenTelemetryPropagationContext(context));
-        try (Scope ignored = context.makeCurrent()) {
+        Throwable error = null;
+        Scope scope = context.makeCurrent();
+        try {
             propagatedContext.propagate(() -> listener.onMessage(message));
-        } catch (RuntimeException | Error e) {
-            consumerInstrumenter.end(context, request, null, e);
+        } catch (RuntimeException e) {
+            error = e;
             throw e;
+        } finally {
+            scope.close();
+            consumerInstrumenter.end(context, request, null, error);
         }
-        consumerInstrumenter.end(context, request, null, null);
     }
 
     /**

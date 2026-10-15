@@ -88,7 +88,7 @@ final class TracingMessageProducer implements MessageProducer {
     private Destination producerDestination() {
         try {
             return delegate.getDestination();
-        } catch (JMSException | RuntimeException e) {
+        } catch (JMSException | RuntimeException _) {
             return null;
         }
     }

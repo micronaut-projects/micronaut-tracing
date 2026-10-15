@@ -52,7 +52,7 @@ enum JmsMessagePropertyAccessor implements TextMapSetter<JmsRequest>, TextMapGet
         }
         try {
             carrier.message().setStringProperty(propertyName(key), value);
-        } catch (JMSException | RuntimeException e) {
+        } catch (JMSException | RuntimeException _) {
             // for example a read-only message being re-sent: the message is sent without the trace context
         }
     }
@@ -72,7 +72,7 @@ enum JmsMessagePropertyAccessor implements TextMapSetter<JmsRequest>, TextMapGet
                 }
             }
             return keys;
-        } catch (JMSException | RuntimeException e) {
+        } catch (JMSException | RuntimeException _) {
             return Collections.emptyList();
         }
     }
@@ -86,7 +86,7 @@ enum JmsMessagePropertyAccessor implements TextMapSetter<JmsRequest>, TextMapGet
         try {
             Object value = carrier.message().getObjectProperty(propertyName(key));
             return value == null ? null : value.toString();
-        } catch (JMSException | RuntimeException e) {
+        } catch (JMSException | RuntimeException _) {
             return null;
         }
     }

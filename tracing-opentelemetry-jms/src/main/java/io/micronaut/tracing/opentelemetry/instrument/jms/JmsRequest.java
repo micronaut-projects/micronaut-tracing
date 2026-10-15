@@ -71,7 +71,7 @@ record JmsRequest(Message message, @Nullable String destinationName, boolean tem
             if (destination instanceof Topic topic) {
                 return topic.getTopicName();
             }
-        } catch (JMSException | RuntimeException e) {
+        } catch (JMSException | RuntimeException _) {
             // the destination name is informational only
         }
         return null;

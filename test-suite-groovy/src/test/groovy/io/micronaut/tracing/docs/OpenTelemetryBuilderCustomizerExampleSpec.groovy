@@ -1,16 +1,13 @@
 package io.micronaut.tracing.docs
 
-import io.micronaut.context.annotation.Factory
 import io.micronaut.context.annotation.Property
-import io.micronaut.context.annotation.Requires
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
-import io.micronaut.tracing.opentelemetry.OpenTelemetryBuilderCustomizer
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.sdk.testing.exporter.InMemoryMetricReader
 import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import spock.lang.Specification
 
+// The InMemoryMetricReader is registered by micronaut-tracing-opentelemetry-test
 @Property(name = "spec.name", value = "OpenTelemetryBuilderCustomizerExampleSpec")
 @MicronautTest(startApplication = false)
 class OpenTelemetryBuilderCustomizerExampleSpec extends Specification {
@@ -36,24 +33,5 @@ class OpenTelemetryBuilderCustomizerExampleSpec extends Specification {
         metric != null
         metric.histogramData.points.first().boundaries == [1.0d, 5.0d, 10.0d]
         metric.histogramData.points.first().counts == [1L, 0L, 1L, 0L]
-    }
-
-    @Factory
-    @Requires(property = "spec.name", value = "OpenTelemetryBuilderCustomizerExampleSpec")
-    static class MetricReaderFactory {
-
-        @Singleton
-        InMemoryMetricReader metricReader() {
-            InMemoryMetricReader.create()
-        }
-
-        @Singleton
-        OpenTelemetryBuilderCustomizer metricReaderCustomizer(InMemoryMetricReader metricReader) {
-            return { builder ->
-                builder.addMeterProviderCustomizer { meterProviderBuilder, configProperties ->
-                    meterProviderBuilder.registerMetricReader(metricReader)
-                }
-            } as OpenTelemetryBuilderCustomizer
-        }
     }
 }

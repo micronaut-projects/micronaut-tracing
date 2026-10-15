@@ -61,7 +61,7 @@ public class TraceInspectorConfiguration {
      */
     public static final int DEFAULT_MAX_ATTRIBUTE_ARRAY_LENGTH = 128;
 
-    private boolean enabled;
+    private boolean inspectorEnabled;
     private int maxTraces = DEFAULT_MAX_TRACES;
     private int maxPendingTraces = DEFAULT_MAX_PENDING_TRACES;
     private int maxSpansPerTrace = DEFAULT_MAX_SPANS_PER_TRACE;
@@ -72,7 +72,7 @@ public class TraceInspectorConfiguration {
      * @return whether the trace inspector is enabled
      */
     public boolean isEnabled() {
-        return enabled;
+        return inspectorEnabled;
     }
 
     /**
@@ -82,7 +82,7 @@ public class TraceInspectorConfiguration {
      * @param enabled whether the trace inspector is enabled
      */
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        this.inspectorEnabled = enabled;
     }
 
     /**

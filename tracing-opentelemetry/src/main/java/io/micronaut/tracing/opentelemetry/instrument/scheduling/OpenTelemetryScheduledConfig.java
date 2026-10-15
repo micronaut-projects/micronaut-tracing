@@ -41,13 +41,13 @@ public class OpenTelemetryScheduledConfig {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
-    private boolean enabled = DEFAULT_ENABLED;
+    private boolean tracingEnabled = DEFAULT_ENABLED;
 
     /**
      * @return whether each run of a {@code @Scheduled} method by the scheduler is traced
      */
     public boolean isEnabled() {
-        return enabled;
+        return tracingEnabled;
     }
 
     /**
@@ -58,6 +58,6 @@ public class OpenTelemetryScheduledConfig {
      * @param enabled {@code false} to not trace the scheduled methods
      */
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        this.tracingEnabled = enabled;
     }
 }

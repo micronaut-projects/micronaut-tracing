@@ -13,13 +13,13 @@ class ChatServer:
 
     @OnOpen
     def on_open(self, topic: str, session: WebSocketSession) -> None:  # <1>
-        pass
+        session.sendSync("Joined " + topic)
 
     @OnMessage
     def on_message(self, topic: str, message: str, session: WebSocketSession) -> None:  # <2>
-        pass
+        session.sendSync(f"[{topic}] {message}")
 
     @OnClose
     def on_close(self, topic: str, session: WebSocketSession) -> None:  # <3>
-        pass
+        pass  # the session is closed: there is nothing left to send
 # end::clazz[]

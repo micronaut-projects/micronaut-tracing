@@ -5,6 +5,7 @@ import io.micronaut.context.annotation.Factory
 import io.micronaut.context.annotation.Requires
 import io.micronaut.scheduling.annotation.Scheduled
 import io.opentelemetry.api.trace.Span
+import io.opentelemetry.api.trace.SpanId
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.api.trace.Tracer
@@ -155,7 +156,34 @@ class ScheduledSpanSpec extends Specification {
             assert job.ticks.get() >= 3
             assert job.failures.get() >= 2
         }
+        !context.getBean(OpenTelemetryScheduledConfig).enabled
         exporter.finishedSpanItems.isEmpty()
+    }
+
+    void 'a nested invocation of a scheduled method within its run does not start another span'() {
+        given:
+        start()
+        def job = context.getBean(ReentrantScheduledJavaJob)
+
+        expect:
+        context.getBean(OpenTelemetryScheduledConfig).enabled
+        new PollingConditions(timeout: 10).eventually {
+            assert job.runs.get() >= 2
+        }
+
+        when:
+        def spans = spansNamed('ReentrantScheduledJavaJob.run')
+
+        then: 'the nested call of the same method and the call of another scheduled method run in the span of the run'
+        job.runSpanIds.containsAll(job.nestedSpanIds)
+        job.runSpanIds.containsAll(job.otherSpanIds)
+        !job.otherSpanIds.isEmpty()
+        !job.nestedSpanIds.isEmpty()
+        !job.runSpanIds.contains(SpanId.invalid)
+        // the nested calls did not start spans of their own
+        !spans.isEmpty()
+        job.runSpanIds.containsAll(spans*.spanId)
+        spansNamed('ReentrantScheduledJavaJob.other').isEmpty()
     }
 
     @Requires(property = 'spec.name', value = 'ScheduledSpanSpec')

@@ -16,12 +16,18 @@ import io.micronaut.websocket.annotation.ServerWebSocket
 class ChatServer {
 
     @OnOpen
-    void onOpen(String topic, WebSocketSession session) { } // <1>
+    void onOpen(String topic, WebSocketSession session) { // <1>
+        session.sendSync('Joined ' + topic)
+    }
 
     @OnMessage
-    void onMessage(String topic, String message, WebSocketSession session) { } // <2>
+    void onMessage(String topic, String message, WebSocketSession session) { // <2>
+        session.sendSync('[' + topic + '] ' + message)
+    }
 
     @OnClose
-    void onClose(String topic, WebSocketSession session) { } // <3>
+    void onClose(String topic, WebSocketSession session) { // <3>
+        // the session is closed: there is nothing left to send
+    }
 }
 // end::clazz[]

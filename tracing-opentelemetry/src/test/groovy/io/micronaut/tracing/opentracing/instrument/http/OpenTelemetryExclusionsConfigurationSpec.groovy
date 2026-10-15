@@ -35,4 +35,28 @@ class OpenTelemetryExclusionsConfigurationSpec extends Specification {
 
         desc = excluded ? 'excluded' : 'included'
     }
+
+    @Unroll
+    void 'combined patterns #patterns match #path as each pattern on its own'() {
+        given:
+        def config = new OpenTelemetryExclusionsConfiguration()
+        config.exclusions = patterns
+
+        expect:
+        config.exclusionTest().test(path) == patterns.any { path ==~ it }
+
+        where:
+        patterns                                  | path
+        ['/a', '/b|/c']                           | '/c'
+        ['/a', '/b|/c']                           | '/a/c'
+        ['(?i)/health', '/metrics']               | '/HEALTH'
+        ['(?i)/health', '/metrics']               | '/METRICS'
+        ['/(x)\\1', '/(y)']                       | '/xx'
+        ['/(x)\\1', '/(y)']                       | '/y'
+        ['/(?<n>a)', '/(?<n>b)']                  | '/b'
+        ['/\\Q*', '/z']                           | '/*'
+        ['/\\Q*', '/z']                           | '/z'
+        ['(?x) /a  # comment', '/b']              | '/a'
+        ['(?x) /a  # comment', '/b']              | '/b'
+    }
 }

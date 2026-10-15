@@ -129,7 +129,7 @@ public abstract sealed class AbstractOpenTracingFilter implements HttpFilter
             String reason = HttpStatus.getDefaultReason(code);
             if (booleanErrorTag) {
                 span.setTag(TAG_ERROR, true);
-                span.log(Map.of(Fields.EVENT, LOG_EVENT_ERROR, Fields.MESSAGE, reason != null ? reason : String.valueOf(code)));
+                span.log(Map.of(Fields.EVENT, LOG_EVENT_ERROR, Fields.MESSAGE, reason));
             } else {
                 span.setTag(TAG_ERROR, reason);
             }

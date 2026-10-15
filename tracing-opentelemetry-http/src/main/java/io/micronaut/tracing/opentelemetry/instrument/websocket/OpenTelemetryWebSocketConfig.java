@@ -41,13 +41,13 @@ public class OpenTelemetryWebSocketConfig {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
-    private boolean enabled = DEFAULT_ENABLED;
+    private boolean tracingEnabled = DEFAULT_ENABLED;
 
     /**
      * @return whether the invocations of the WebSocket handler methods are traced
      */
     public boolean isEnabled() {
-        return enabled;
+        return tracingEnabled;
     }
 
     /**
@@ -59,6 +59,6 @@ public class OpenTelemetryWebSocketConfig {
      * @param enabled {@code false} to not trace the WebSocket handler methods
      */
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        this.tracingEnabled = enabled;
     }
 }

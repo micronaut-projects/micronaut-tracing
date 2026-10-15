@@ -3,8 +3,10 @@ package io.micronaut.tracing.opentelemetry.instrument.websocket
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Requires
 import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.tracing.opentelemetry.annotation.WebSocketSpan
 import io.micronaut.tracing.opentelemetry.test.TestSpans
 import io.micronaut.websocket.WebSocketClient
+import io.micronaut.websocket.WebSocketPongMessage
 import io.micronaut.websocket.WebSocketSession
 import io.micronaut.websocket.annotation.ClientWebSocket
 import io.micronaut.websocket.annotation.OnClose
@@ -18,6 +20,7 @@ import io.opentelemetry.sdk.trace.data.SpanData
 import io.opentelemetry.semconv.CodeAttributes
 import io.opentelemetry.semconv.ExceptionAttributes
 import io.opentelemetry.api.trace.Span
+import jakarta.inject.Singleton
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import spock.lang.AutoCleanup
@@ -25,8 +28,11 @@ import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 import java.util.concurrent.BlockingQueue
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionStage
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 
 class WebSocketSpanSpec extends Specification {
 
@@ -92,6 +98,7 @@ class WebSocketSpanSpec extends Specification {
         SpanData clientMessage = span('MESSAGE /echo/{room}', CLIENT)
 
         then: 'the open span is a child of the upgrade request span'
+        context.getBean(OpenTelemetryWebSocketConfig).enabled
         open.kind == SpanKind.INTERNAL
         open.traceId == upgrade.traceId
         open.parentSpanId == upgrade.spanId
@@ -172,6 +179,7 @@ class WebSocketSpanSpec extends Specification {
 
         then:
         !context.containsBean(WebSocketSpanInterceptor)
+        !context.getBean(OpenTelemetryWebSocketConfig).enabled
         client.replies.poll(10, TimeUnit.SECONDS) == 'hello'
 
         when:
@@ -183,6 +191,117 @@ class WebSocketSpanSpec extends Specification {
         }
         spans.finishedSpans().every { it.instrumentationScopeInfo.name != 'io.micronaut.websocket' }
         spans.spansOfKind(SpanKind.SERVER).size() == 1
+    }
+
+    void 'the Flux and CompletionStage results of the handlers end the spans when they complete'() {
+        given:
+        start()
+
+        when:
+        EchoClient fluxClient = Flux.from(webSocketClient.connect(EchoClient, '/flux/lobby')).blockFirst()
+        fluxClient.send('hello')
+        EchoClient futureClient = Flux.from(webSocketClient.connect(EchoClient, '/future/lobby')).blockFirst()
+        futureClient.send('hello')
+
+        then:
+        fluxClient.replies.poll(10, TimeUnit.SECONDS) == 'hello'
+        futureClient.replies.poll(10, TimeUnit.SECONDS) == 'hello'
+
+        when:
+        SpanData flux = span('MESSAGE /flux/{room}', FluxServer.name)
+        SpanData future = span('MESSAGE /future/{room}', FutureServer.name)
+
+        then:
+        flux.status.statusCode == StatusCode.UNSET
+        flux.attributes.get(WebSocketSpanInterceptor.EVENT) == 'message'
+        flux.attributes.get(WebSocketSpanInterceptor.SESSION_ID)
+        future.status.statusCode == StatusCode.UNSET
+        future.attributes.get(WebSocketSpanInterceptor.EVENT) == 'message'
+
+        cleanup:
+        fluxClient?.close()
+        futureClient?.close()
+    }
+
+    void 'a reactive handler that throws or fails has the error status'() {
+        given:
+        start()
+
+        when:
+        EchoClient fluxClient = Flux.from(webSocketClient.connect(EchoClient, '/flux/lobby')).blockFirst()
+        fluxClient.send('fail')
+        EchoClient futureClient = Flux.from(webSocketClient.connect(EchoClient, '/future/lobby')).blockFirst()
+        futureClient.send('fail')
+
+        then: 'the handler returning a Flux threw before returning it'
+        SpanData flux = span('MESSAGE /flux/{room}', FluxServer.name)
+        flux.status.statusCode == StatusCode.ERROR
+        flux.events.any { it.name == 'exception' && it.attributes.get(ExceptionAttributes.EXCEPTION_MESSAGE) == 'flux boom' }
+
+        and: 'the CompletionStage returned by the handler failed'
+        SpanData future = span('MESSAGE /future/{room}', FutureServer.name)
+        future.status.statusCode == StatusCode.ERROR
+        future.events.any { it.name == 'exception' && it.attributes.get(ExceptionAttributes.EXCEPTION_MESSAGE) == 'future boom' }
+
+        cleanup:
+        fluxClient?.close()
+        futureClient?.close()
+    }
+
+    void 'a pong handler is traced with the pong event'() {
+        given:
+        start()
+
+        when: 'the server pings the client on open, the client replies with a pong'
+        EchoClient client = Flux.from(webSocketClient.connect(EchoClient, '/pong/lobby')).blockFirst()
+        SpanData pong = span('PONG /pong/{room}', PongServer.name)
+
+        then:
+        pong.attributes.get(WebSocketSpanInterceptor.EVENT) == 'pong'
+        pong.attributes.get(CodeAttributes.CODE_FUNCTION_NAME) == PongServer.name + '.onPong'
+        pong.attributes.get(WebSocketSpanInterceptor.SESSION_ID)
+        context.getBean(PongServer).pongs.get() >= 1
+
+        cleanup:
+        client?.close()
+    }
+
+    void 'the handlers of a server session whose upgrade request is not traced are root spans'() {
+        given:
+        start('otel.exclusions[0]': '/echo/.*')
+
+        when:
+        EchoClient client = connect()
+        client.send('hello')
+
+        then:
+        client.replies.poll(10, TimeUnit.SECONDS) == 'hello'
+
+        when:
+        SpanData open = span('OPEN /echo/{room}', SERVER)
+        SpanData message = span('MESSAGE /echo/{room}', SERVER)
+
+        then:
+        spans.spansOfKind(SpanKind.SERVER).isEmpty()
+        !open.parentSpanContext.valid
+        open.links.isEmpty()
+        !message.parentSpanContext.valid
+        message.links.isEmpty()
+
+        cleanup:
+        client?.close()
+    }
+
+    void 'a method bound to the interceptor that is not a WebSocket handler is not traced'() {
+        given:
+        start()
+
+        when:
+        String result = context.getBean(NotAHandler).call()
+
+        then:
+        result == 'called'
+        spans.finishedSpans().every { it.instrumentationScopeInfo.name != 'io.micronaut.websocket' }
     }
 
     @Requires(property = 'spec.name', value = SPEC_NAME)
@@ -225,6 +344,64 @@ class WebSocketSpanSpec extends Specification {
                 subscribedSpanId = Span.current().spanContext.spanId
                 Mono.from(session.send(message))
             }
+        }
+    }
+
+    @Requires(property = 'spec.name', value = SPEC_NAME)
+    @ServerWebSocket('/flux/{room}')
+    static class FluxServer {
+
+        @OnMessage
+        Flux<String> onMessage(String room, String message, WebSocketSession session) {
+            if (message == 'fail') {
+                throw new IllegalStateException('flux boom')
+            }
+            Flux.from(session.send(message))
+        }
+    }
+
+    @Requires(property = 'spec.name', value = SPEC_NAME)
+    @ServerWebSocket('/future/{room}')
+    static class FutureServer {
+
+        @OnMessage
+        CompletionStage<String> onMessage(String room, String message, WebSocketSession session) {
+            if (message == 'fail') {
+                return CompletableFuture.failedFuture(new IllegalStateException('future boom'))
+            }
+            session.sendAsync(message)
+        }
+    }
+
+    @Requires(property = 'spec.name', value = SPEC_NAME)
+    @ServerWebSocket('/pong/{room}')
+    static class PongServer {
+
+        final AtomicInteger pongs = new AtomicInteger()
+
+        @OnOpen
+        void onOpen(String room, WebSocketSession session) {
+            session.sendPingAsync('ping'.bytes)
+        }
+
+        @OnMessage
+        void onMessage(String room, String message, WebSocketSession session) {
+            session.sendSync(message)
+        }
+
+        @OnMessage
+        void onPong(WebSocketPongMessage pong, WebSocketSession session) {
+            pongs.incrementAndGet()
+        }
+    }
+
+    @Requires(property = 'spec.name', value = SPEC_NAME)
+    @Singleton
+    static class NotAHandler {
+
+        @WebSocketSpan
+        String call() {
+            'called'
         }
     }
 

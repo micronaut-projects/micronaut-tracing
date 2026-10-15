@@ -31,8 +31,28 @@ class OpenTelemetryMdcSpec extends Specification {
     @AutoCleanup('shutdownNow')
     ExecutorService executor = Executors.newSingleThreadExecutor()
 
+    // the correlations installed by application contexts of other specs that are still open
+    private List<MdcTraceCorrelation> otherCorrelations
+    private MdcTraceCorrelation otherCurrent
+
+    void setup() {
+        // the correlation is static: isolate the spec from the contexts other specs left open
+        synchronized (MdcTraceCorrelation) {
+            otherCorrelations = new ArrayList<>(MdcTraceCorrelation.INSTALLED)
+            otherCurrent = MdcTraceCorrelation.CURRENT.get()
+            MdcTraceCorrelation.INSTALLED.clear()
+            MdcTraceCorrelation.CURRENT.set(null)
+        }
+    }
+
     void cleanup() {
         MDC.clear()
+        context?.close()
+        synchronized (MdcTraceCorrelation) {
+            MdcTraceCorrelation.INSTALLED.clear()
+            MdcTraceCorrelation.INSTALLED.addAll(otherCorrelations)
+            MdcTraceCorrelation.CURRENT.set(otherCurrent)
+        }
     }
 
     private void start(Map<String, Object> properties = [:]) {

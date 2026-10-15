@@ -21,6 +21,7 @@ import io.micronaut.inject.ExecutableMethod;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 /**
@@ -44,7 +45,7 @@ public final class TracedMethodCache<V> {
     private static final Object PER_INVOCATION = new Object();
 
     private final Function<MethodInvocationContext<?, ?>, V> resolver;
-    private volatile Map<Object, Object> cache = new IdentityHashMap<>();
+    private final AtomicReference<Map<Object, Object>> cache = new AtomicReference<>(new IdentityHashMap<>());
 
     /**
      * @param resolver computes the value of a method from an invocation context: the first one, or each one
@@ -64,7 +65,7 @@ public final class TracedMethodCache<V> {
     @SuppressWarnings("unchecked")
     public V get(MethodInvocationContext<?, ?> context) {
         ExecutableMethod<?, ?> key = context.getExecutableMethod();
-        Object value = cache.get(key);
+        Object value = cache.get().get(key);
         if (value == null) {
             value = resolve(key, context);
         }
@@ -76,13 +77,13 @@ public final class TracedMethodCache<V> {
     }
 
     private synchronized Object resolve(ExecutableMethod<?, ?> key, MethodInvocationContext<?, ?> context) {
-        Map<Object, Object> current = cache;
+        Map<Object, Object> current = cache.get();
         Object value = current.get(key);
         if (value == null) {
             value = key.getAnnotationMetadata().hasEvaluatedExpressions() ? PER_INVOCATION : resolver.apply(context);
             Map<Object, Object> copy = new IdentityHashMap<>(current);
             copy.put(key, value);
-            cache = copy;
+            cache.set(copy);
         }
         return value;
     }

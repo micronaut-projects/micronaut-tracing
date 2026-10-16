@@ -46,6 +46,31 @@ class OpenTelemetryLog4jAppenderInstallerSpec extends Specification {
         readOpenTelemetry(appender) == context.getBean(OpenTelemetry)
     }
 
+    void 'closing a second application context restores the OpenTelemetry instance of the first'() {
+        given:
+        context = ApplicationContext.run('otel.register.global': false)
+        OpenTelemetry first = context.getBean(OpenTelemetry)
+        ApplicationContext second = ApplicationContext.run('otel.register.global': false)
+        OpenTelemetry secondOpenTelemetry = second.getBean(OpenTelemetry)
+
+        expect:
+        !first.is(secondOpenTelemetry)
+        readOpenTelemetry(appender).is(secondOpenTelemetry)
+
+        when:
+        second.close()
+
+        then:
+        readOpenTelemetry(appender).is(first)
+
+        when:
+        context.close()
+
+        then: 'the closed instances are no longer used'
+        !readOpenTelemetry(appender).is(first)
+        !readOpenTelemetry(appender).is(secondOpenTelemetry)
+    }
+
     void 'does not install OpenTelemetry on the log4j appender when micronaut otel is disabled'() {
         when:
         context = ApplicationContext.run('micronaut.otel.enabled': false)

@@ -22,12 +22,20 @@ import io.micronaut.core.util.StringUtils;
 import io.micronaut.tracing.opentelemetry.conf.OpenTelemetryConfigurationProperties;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.log4j.appender.v2_17.OpenTelemetryAppender;
+import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 import org.apache.logging.log4j.core.LoggerContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Installs the {@link OpenTelemetry} instance on the OpenTelemetry Log4j 2 appenders when the
  * OpenTelemetry Log4j appender library is present on the classpath.
+ *
+ * <p>The Log4j appenders are shared by every application context of the class loader. When several application
+ * contexts run, the appenders use the {@link OpenTelemetry} instance of the most recently started one that is
+ * still running, and they no longer emit to the instance of a closed application context.</p>
  *
  * @since 8.4.0
  */
@@ -37,7 +45,14 @@ import org.apache.logging.log4j.core.LoggerContext;
 @Requires(beans = OpenTelemetry.class)
 public final class OpenTelemetryLog4jAppenderInstaller implements ApplicationEventListener<StartupEvent> {
 
+    /**
+     * The instances installed by the running application contexts, in installation order. Guarded by the class
+     * lock.
+     */
+    private static final List<OpenTelemetry> INSTALLED = new ArrayList<>();
+
     private final OpenTelemetry openTelemetry;
+    private boolean installed;
 
     OpenTelemetryLog4jAppenderInstaller(OpenTelemetry openTelemetry) {
         this.openTelemetry = openTelemetry;
@@ -45,6 +60,27 @@ public final class OpenTelemetryLog4jAppenderInstaller implements ApplicationEve
 
     @Override
     public void onApplicationEvent(StartupEvent event) {
-        OpenTelemetryAppender.install(openTelemetry);
+        synchronized (OpenTelemetryLog4jAppenderInstaller.class) {
+            if (!installed) {
+                installed = true;
+                INSTALLED.add(openTelemetry);
+                OpenTelemetryAppender.install(openTelemetry);
+            }
+        }
+    }
+
+    /**
+     * Installs the instance of the most recently started application context still running on the appenders, or a
+     * no-op instance when there is none.
+     */
+    @PreDestroy
+    void close() {
+        synchronized (OpenTelemetryLog4jAppenderInstaller.class) {
+            if (installed) {
+                installed = false;
+                INSTALLED.remove(openTelemetry);
+                OpenTelemetryAppender.install(INSTALLED.isEmpty() ? OpenTelemetry.noop() : INSTALLED.get(INSTALLED.size() - 1));
+            }
+        }
     }
 }

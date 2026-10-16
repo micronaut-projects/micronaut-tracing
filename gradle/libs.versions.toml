@@ -106,6 +106,7 @@ opentelemetry-api-incubator = { module = 'io.opentelemetry:opentelemetry-api-inc
 opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk' }
 opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure' }
+opentelemetry-extension-trace-propagators = { module = 'io.opentelemetry:opentelemetry-extension-trace-propagators' }
 
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api' }
 opentelemetry-instrumentation-api-incubator = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator' }

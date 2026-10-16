@@ -47,6 +47,8 @@ import io.opentelemetry.semconv.CodeAttributes;
 import jakarta.inject.Singleton;
 
 import java.util.Arrays;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.CompletionStage;
 
 /**
  * Traces the runs of the {@code @Scheduled} methods: each invocation of a method by the scheduler is an
@@ -136,12 +138,21 @@ public final class ScheduledSpanInterceptor implements MethodInterceptor<Object,
             .plus(new OpenTelemetryPropagationContext(spanContext))
             .propagate()) {
             Object result = context.proceed();
-            instrumenter.end(spanContext, run, result, null);
+            if (result instanceof CompletionStage<?> stage) {
+                // e.g. a @Scheduled @Async method: the run ends when the stage completes, not when it is dispatched
+                stage.whenComplete((value, error) -> instrumenter.end(spanContext, run, value, unwrap(error)));
+            } else {
+                instrumenter.end(spanContext, run, result, null);
+            }
             return result;
         } catch (Throwable e) {
             instrumenter.end(spanContext, run, null, e);
             throw e;
         }
+    }
+
+    private static @Nullable Throwable unwrap(@Nullable Throwable error) {
+        return error instanceof CompletionException && error.getCause() != null ? error.getCause() : error;
     }
 
     private static boolean isInvocationOf(ExecutableMethod<?, ?> scheduled, MethodInvocationContext<Object, Object> context) {

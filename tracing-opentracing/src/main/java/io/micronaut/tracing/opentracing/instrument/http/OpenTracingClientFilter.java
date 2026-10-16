@@ -46,7 +46,10 @@ import static io.opentracing.tag.Tags.SPAN_KIND_CLIENT;
  *
  * @author graemerocher
  * @since 1.0
+ * @deprecated OpenTracing is archived. Use Micronaut Tracing OpenTelemetry HTTP instead. See the
+ * "Migrating from OpenTracing" section of the user guide.
  */
+@Deprecated(since = "8.4.0", forRemoval = true)
 @Internal
 @Filter(CLIENT_PATH)
 @Requires(beans = Tracer.class)

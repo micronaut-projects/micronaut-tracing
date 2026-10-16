@@ -21,6 +21,7 @@ import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 class ScheduledSpanSpec extends Specification {
@@ -94,6 +95,26 @@ class ScheduledSpanSpec extends Specification {
                 it.name == 'exception' && it.attributes.get(ExceptionAttributes.EXCEPTION_MESSAGE) == 'boom'
             }
         }
+    }
+
+    void 'the run of an asynchronous scheduled method ends when its stage completes'() {
+        given:
+        start()
+
+        expect:
+        new PollingConditions(timeout: 10).eventually {
+            assert spansNamed('AsyncScheduledJavaJob.run').size() == 1
+        }
+
+        when:
+        def span = spansNamed('AsyncScheduledJavaJob.run')[0]
+
+        then: 'the late failure of the stage is recorded, not a successful dispatch'
+        span.status.statusCode == StatusCode.ERROR
+        span.events.any {
+            it.name == 'exception' && it.attributes.get(ExceptionAttributes.EXCEPTION_MESSAGE) == 'late failure'
+        }
+        span.endEpochNanos - span.startEpochNanos >= TimeUnit.MILLISECONDS.toNanos(AsyncScheduledJavaJob.DELAY_MILLIS)
     }
 
     void 'each run of a Groovy scheduled method is traced, with its cron'() {

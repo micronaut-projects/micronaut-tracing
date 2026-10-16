@@ -183,24 +183,29 @@ class TraceInspectorSpec extends Specification {
         inspector.traces(TraceQuery.builder().errorsOnly(true).build())*.traceId() == [root.spanContext.traceId]
     }
 
-    void "array attribute values and names are bounded"() {
+    void "array attribute values, names and keys are bounded"() {
         given:
-        start('tracing.opentelemetry.inspector.max-attribute-array-length': 3)
+        String longName = "n" * 5000
+        start('tracing.opentelemetry.inspector.max-attribute-array-length': 3, 'otel.service.name': longName)
+        Tracer longScopeTracer = context.getBean(OpenTelemetry).getTracer(longName)
         List<String> texts = (1..1000).collect { "text-$it".toString() }
         List<Long> numbers = (1L..1000L).toList()
-        String longName = "n" * 5000
+        String longKey = "k" * 5000
 
         when:
-        Span root = tracer.spanBuilder(longName)
+        Span root = longScopeTracer.spanBuilder(longName)
             .setAttribute(AttributeKey.stringArrayKey("texts"), texts)
             .setAttribute(AttributeKey.longArrayKey("numbers"), numbers)
+            .setAttribute(longKey, "v")
             .startSpan()
         root.addEvent(longName, Attributes.of(AttributeKey.stringArrayKey("texts"), texts))
         root.end()
         InspectedSpan span = inspector.trace(root.spanContext.traceId).get().spans()[0]
 
         then:
-        span.attributes() == [texts: ["text-1", "text-2", "text-3"], numbers: [1L, 2L, 3L]]
+        span.attributes() == [texts: ["text-1", "text-2", "text-3"], numbers: [1L, 2L, 3L], ("k" * 1024): "v"]
+        span.instrumentationScope().length() == 1024
+        inspector.traces()[0].serviceName().length() == 1024
         span.events()[0].attributes() == [texts: ["text-1", "text-2", "text-3"]]
         span.name().length() == 1024
         span.events()[0].name().length() == 1024

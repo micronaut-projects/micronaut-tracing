@@ -87,6 +87,6 @@ The responses are serialized with Micronaut Serialization, so add a JSON impleme
 
 == Memory and performance
 
-Memory use is bounded: at most `max-traces` completed and `max-pending-traces` pending traces, each with at most `max-spans-per-trace` spans, with string attribute values of at most `max-attribute-length` characters, array attribute values of at most `max-attribute-array-length` elements, and span and event names of at most 1024 characters. The number of attributes, events and links per span is bounded by the OpenTelemetry SDK span limits (128 each by default). Each ended span is copied when it ends, under a single lock.
+Memory use is bounded: at most `max-traces` completed and `max-pending-traces` pending traces, each with at most `max-spans-per-trace` spans, with string attribute values of at most `max-attribute-length` characters, array attribute values of at most `max-attribute-array-length` elements, and span names, event names, attribute keys, instrumentation scope names and service names of at most 1024 characters. The number of attributes, events and links per span is bounded by the OpenTelemetry SDK span limits (128 each by default). Each ended span is copied when it ends, under a single lock.
 
 This overhead is acceptable during development but not in production, which is why the inspector is disabled outside the `dev` environment by default. Do not enable it in production, and do not expose the `traces` endpoint publicly.

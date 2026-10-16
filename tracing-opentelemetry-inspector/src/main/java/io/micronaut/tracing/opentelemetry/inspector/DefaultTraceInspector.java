@@ -42,7 +42,7 @@ import java.util.Optional;
  * {@link TraceInspectorConfiguration#getMaxSpansPerTrace()} spans (plus their first local root span), string
  * attribute values of at most {@link TraceInspectorConfiguration#getMaxAttributeLength()} characters, array
  * attribute values of at most {@link TraceInspectorConfiguration#getMaxAttributeArrayLength()} elements, and span
- * and event names of at most 1024 characters.
+ * and event names, attribute keys, instrumentation scope names and service names of at most 1024 characters.
  * The number of attributes, events and links per span is bounded by the OpenTelemetry SDK span limits.</p>
  *
  * @since 8.4.0
@@ -106,6 +106,9 @@ public final class DefaultTraceInspector implements TraceInspector {
         String traceId = spanData.getTraceId();
         InspectedSpan span = toInspectedSpan(spanData);
         String serviceName = spanData.getResource().getAttribute(SERVICE_NAME);
+        if (serviceName != null) {
+            serviceName = truncateName(serviceName);
+        }
         synchronized (lock) {
             TraceBuffer trace = completed.get(traceId);
             if (trace != null) {
@@ -202,7 +205,7 @@ public final class DefaultTraceInspector implements TraceInspector {
             spanData.getEndEpochNanos(),
             spanData.getStatus().getStatusCode().name(),
             description == null || description.isEmpty() ? null : truncate(description),
-            spanData.getInstrumentationScopeInfo().getName(),
+            truncateName(spanData.getInstrumentationScopeInfo().getName()),
             toMap(spanData.getAttributes()),
             Collections.unmodifiableList(events),
             Collections.unmodifiableList(links)
@@ -214,7 +217,7 @@ public final class DefaultTraceInspector implements TraceInspector {
             return Collections.emptyMap();
         }
         Map<String, Object> map = new LinkedHashMap<>(attributes.size() * 2);
-        attributes.forEach((key, value) -> map.put(key.getKey(), truncateValue(value)));
+        attributes.forEach((key, value) -> map.put(truncateName(key.getKey()), truncateValue(value)));
         return Collections.unmodifiableMap(map);
     }
 

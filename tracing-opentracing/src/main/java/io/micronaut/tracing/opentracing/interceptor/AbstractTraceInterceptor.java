@@ -17,15 +17,11 @@ package io.micronaut.tracing.opentracing.interceptor;
 
 import io.micronaut.aop.InterceptPhase;
 import io.micronaut.aop.MethodInterceptor;
-import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.convert.ConversionService;
-import io.micronaut.core.type.Argument;
 import io.micronaut.core.util.CollectionUtils;
-import io.micronaut.tracing.annotation.SpanTag;
-import io.micronaut.tracing.util.MethodNameFormatter;
+import io.micronaut.tracing.util.TracedMethod;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 
@@ -69,11 +65,18 @@ public abstract sealed class AbstractTraceInterceptor implements MethodIntercept
         return InterceptPhase.TRACE.getPosition();
     }
 
-    protected final void populateTags(MethodInvocationContext<Object, Object> context,
-                                      Span span) {
-        span.setTag(CLASS_TAG, context.getDeclaringType().getSimpleName());
-        span.setTag(METHOD_TAG, MethodNameFormatter.format(context.getMethodName()));
-        tagArguments(span, context);
+    /**
+     * Adds the class, method and {@code SpanTag} parameter tags to the span.
+     *
+     * @param span            the span
+     * @param className       the simple name of the declaring class
+     * @param tracedMethod    the span data of the method
+     * @param parameterValues the parameter values
+     */
+    protected final void populateTags(Span span, String className, TracedMethod tracedMethod, Object[] parameterValues) {
+        span.setTag(CLASS_TAG, className);
+        span.setTag(METHOD_TAG, tracedMethod.getMethodName());
+        tagArguments(span, tracedMethod, parameterValues);
     }
 
     /**
@@ -92,18 +95,20 @@ public abstract sealed class AbstractTraceInterceptor implements MethodIntercept
         span.log(fields);
     }
 
-    protected final void tagArguments(Span span, MethodInvocationContext<Object, Object> context) {
-        Argument<?>[] arguments = context.getArguments();
-        Object[] parameterValues = context.getParameterValues();
-        for (int i = 0; i < arguments.length; i++) {
-            Argument<?> argument = arguments[i];
-            AnnotationMetadata annotationMetadata = argument.getAnnotationMetadata();
-            if (annotationMetadata.hasAnnotation(SpanTag.class)) {
-                Object v = parameterValues[i];
-                if (v != null) {
-                    String tagName = annotationMetadata.stringValue(SpanTag.class).orElse(argument.getName());
-                    span.setTag(tagName, v.toString());
-                }
+    /**
+     * Adds the {@code SpanTag} parameters of the method as tags of the span.
+     *
+     * @param span            the span
+     * @param tracedMethod    the span data of the method
+     * @param parameterValues the parameter values
+     */
+    protected final void tagArguments(Span span, TracedMethod tracedMethod, Object[] parameterValues) {
+        int[] tagIndexes = tracedMethod.getTagIndexes();
+        String[] tagNames = tracedMethod.getTagNames();
+        for (int i = 0; i < tagIndexes.length; i++) {
+            Object value = parameterValues[tagIndexes[i]];
+            if (value != null) {
+                span.setTag(tagNames[i], value.toString());
             }
         }
     }

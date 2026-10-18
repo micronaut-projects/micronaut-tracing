@@ -25,8 +25,7 @@ dependencies {
     testImplementation mn.reactor
     testImplementation mn.micronaut.management
     testImplementation mn.micronaut.http.server.netty
-    testImplementation libs.opentelemetry.sdk
-    testImplementation libs.opentelemetry.sdk.testing
+    testImplementation projects.micronautTracingOpentelemetryTest
     testImplementation mnReactor.micronaut.reactor
     testImplementation mnTest.junit.platform.suite
     testImplementation mnSerde.micronaut.serde.jackson

@@ -71,6 +71,36 @@ class OpenTelemetryLog4jAppenderInstallerSpec extends Specification {
         !readOpenTelemetry(appender).is(secondOpenTelemetry)
     }
 
+    void 'application contexts sharing an OpenTelemetry instance are told apart when one closes'() {
+        given: 'A and C share the instance X, B uses Y'
+        OpenTelemetry x = Mock()
+        OpenTelemetry y = Mock()
+        def a = new OpenTelemetryLog4jAppenderInstaller(x)
+        def b = new OpenTelemetryLog4jAppenderInstaller(y)
+        def c = new OpenTelemetryLog4jAppenderInstaller(x)
+
+        when:
+        [a, b, c].each { it.onApplicationEvent(null) }
+
+        then:
+        readOpenTelemetry(appender).is(x)
+
+        when: 'C closes: B is the most recently started context still running'
+        c.close()
+
+        then:
+        readOpenTelemetry(appender).is(y)
+
+        when:
+        b.close()
+
+        then:
+        readOpenTelemetry(appender).is(x)
+
+        cleanup:
+        [a, b, c]*.close()
+    }
+
     void 'does not install OpenTelemetry on the log4j appender when micronaut otel is disabled'() {
         when:
         context = ApplicationContext.run('micronaut.otel.enabled': false)

@@ -46,10 +46,11 @@ import java.util.List;
 public final class OpenTelemetryLog4jAppenderInstaller implements ApplicationEventListener<StartupEvent> {
 
     /**
-     * The instances installed by the running application contexts, in installation order. Guarded by the class
-     * lock.
+     * The installers of the running application contexts, in installation order. Guarded by the class lock.
+     * Application contexts can share an {@link OpenTelemetry} instance (e.g. the global one), so the installers
+     * rather than their instances identify the registrations.
      */
-    private static final List<OpenTelemetry> INSTANCES = new ArrayList<>();
+    private static final List<OpenTelemetryLog4jAppenderInstaller> INSTANCES = new ArrayList<>();
 
     private final OpenTelemetry openTelemetry;
     private boolean installed;
@@ -63,7 +64,7 @@ public final class OpenTelemetryLog4jAppenderInstaller implements ApplicationEve
         synchronized (OpenTelemetryLog4jAppenderInstaller.class) {
             if (!installed) {
                 installed = true;
-                INSTANCES.add(openTelemetry);
+                INSTANCES.add(this);
                 OpenTelemetryAppender.install(openTelemetry);
             }
         }
@@ -78,8 +79,8 @@ public final class OpenTelemetryLog4jAppenderInstaller implements ApplicationEve
         synchronized (OpenTelemetryLog4jAppenderInstaller.class) {
             if (installed) {
                 installed = false;
-                INSTANCES.remove(openTelemetry);
-                OpenTelemetryAppender.install(INSTANCES.isEmpty() ? OpenTelemetry.noop() : INSTANCES.get(INSTANCES.size() - 1));
+                INSTANCES.removeIf(installer -> installer == this);
+                OpenTelemetryAppender.install(INSTANCES.isEmpty() ? OpenTelemetry.noop() : INSTANCES.get(INSTANCES.size() - 1).openTelemetry);
             }
         }
     }

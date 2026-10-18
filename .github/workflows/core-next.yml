@@ -85,8 +85,10 @@ jobs:
 
       - name: "🛠 Build with Gradle against micronaut-core from source"
         if: steps.stacked.outputs.run == 'true'
+        # japiCmp is skipped: the included Core build provides its classes, not the jars japiCmp loads, and the
+        # binary compatibility with the last release is checked by the regular Java CI build.
         run: |
-          ./gradlew --include-build ../micronaut-core check --no-daemon --continue
+          ./gradlew --include-build ../micronaut-core check -x japiCmp --no-daemon --continue
 
       - name: "📊 Publish Test Report"
         if: always() && steps.stacked.outputs.run == 'true'

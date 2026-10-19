@@ -25,6 +25,7 @@ import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.opentracing.OpenTracingPropagationContext;
+import io.micronaut.tracing.util.PropagatedContextPublisher;
 import io.micronaut.tracing.util.TracedMethod;
 import io.micronaut.tracing.util.TracedMethodCache;
 import io.opentracing.Span;
@@ -100,7 +101,9 @@ public final class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
         try {
             switch (interceptedMethod.resultType()) {
                 case PUBLISHER -> {
-                    Publisher<?> publisher = interceptedMethod.interceptResultAsPublisher();
+                    // the propagated context with the span of the method, current while it is invoked
+                    Publisher<?> publisher = PropagatedContextPublisher.of(interceptedMethod.interceptResultAsPublisher(),
+                        PropagatedContext.getOrEmpty());
                     // finish the span exactly once, on the terminal signal: completion, error or cancellation
                     if (method.single) {
                         return interceptedMethod.handleResult(

@@ -27,6 +27,7 @@ opentelemetry:
   r2dbc: R2DBC
   kafka: Kafka
   rabbitmq: RabbitMQ / AMQP
+  redis: Redis (Lettuce)
   scheduling: Scheduled Jobs
   ucp: Oracle UCP
   awsSdkInstrumentation: AWS SDK Instrumentation

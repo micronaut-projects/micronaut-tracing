@@ -1,10 +1,10 @@
 package io.micronaut.tracing.opentelemetry;
 
-import io.micronaut.core.annotation.NonNull;
 import io.opentelemetry.contrib.aws.resource.Ec2Resource;
 import io.opentelemetry.sdk.resources.Resource;
 
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.NonNull;
 
 @Singleton
 public class AwsResourceProvider implements ResourceProvider {

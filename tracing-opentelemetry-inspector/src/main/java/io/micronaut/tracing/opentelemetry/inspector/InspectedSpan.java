@@ -15,8 +15,8 @@
  */
 package io.micronaut.tracing.opentelemetry.inspector;
 
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.serde.annotation.Serdeable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;

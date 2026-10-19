@@ -20,8 +20,8 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.CollectionUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @since 4.0
@@ -31,7 +31,7 @@ public class TracingExclusionsConfiguration {
 
     public static final String PREFIX = "tracing";
 
-    private List<String> exclusions;
+    private @Nullable List<String> exclusions;
 
     /**
      * @return the URI patterns to exclude from the tracing

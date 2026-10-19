@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.BasicHttpAttributes;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -29,6 +28,7 @@ import io.micronaut.http.uri.UriMatchTemplate;
 import io.micronaut.web.router.RouteAttributes;
 import io.micronaut.web.router.UriRouteInfo;
 import io.opentelemetry.instrumentation.api.semconv.http.HttpServerAttributesGetter;
+import org.jspecify.annotations.Nullable;
 
 import static io.micronaut.http.HttpVersion.HTTP_1_0;
 import static io.micronaut.http.HttpVersion.HTTP_1_1;

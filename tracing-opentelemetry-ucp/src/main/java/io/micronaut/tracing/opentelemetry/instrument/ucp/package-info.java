@@ -23,8 +23,10 @@
 @Requires(property = OracleUcpTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @Requires(classes = OpenTelemetry.class)
 @Requires(classes = OracleUcpConfiguration.class)
+@NullMarked
 package io.micronaut.tracing.opentelemetry.instrument.ucp;
 
+import org.jspecify.annotations.NullMarked;
 import io.micronaut.configuration.jdbc.ucp.OracleUcpConfiguration;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;

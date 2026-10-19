@@ -22,8 +22,10 @@
 @Configuration
 @Requires(property = LettuceTelemetryConfiguration.PREFIX + ".enabled", notEquals = StringUtils.FALSE)
 @Requires(classes = {ClientResourcesMutator.class, LettuceTelemetry.class})
+@NullMarked
 package io.micronaut.tracing.opentelemetry.instrument.redis;
 
+import org.jspecify.annotations.NullMarked;
 import io.micronaut.configuration.lettuce.ClientResourcesMutator;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;

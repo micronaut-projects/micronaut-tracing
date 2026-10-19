@@ -17,7 +17,6 @@ package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.order.Ordered;
 import io.micronaut.core.propagation.MutablePropagatedContext;
 import io.micronaut.http.HttpHeaders;
@@ -39,6 +38,7 @@ import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+import org.jspecify.annotations.Nullable;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 

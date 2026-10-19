@@ -31,6 +31,7 @@ import io.micronaut.tracing.util.TracedMethodCache;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.Nullable;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -66,7 +67,7 @@ public final class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
     }
 
     @Override
-    public Object intercept(MethodInvocationContext<Object, Object> context) {
+    public @Nullable Object intercept(MethodInvocationContext<Object, Object> context) {
         NewSpanMethod method = methods.get(context);
         if (method.operationName == null) {
             return context.proceed();
@@ -176,7 +177,7 @@ public final class NewSpanTraceInterceptor extends AbstractTraceInterceptor {
      */
     private record NewSpanMethod(TracedMethod tracedMethod,
                                  String className,
-                                 String operationName,
+                                 @Nullable String operationName,
                                  boolean synchronous,
                                  boolean single) {
     }

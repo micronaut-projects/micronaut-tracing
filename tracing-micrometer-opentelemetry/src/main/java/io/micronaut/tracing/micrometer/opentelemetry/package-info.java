@@ -21,8 +21,10 @@
  */
 @Configuration
 @Requires(classes = {OtelTracer.class, OpenTelemetry.class})
+@NullMarked
 package io.micronaut.tracing.micrometer.opentelemetry;
 
+import org.jspecify.annotations.NullMarked;
 import io.micrometer.tracing.otel.bridge.OtelTracer;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;

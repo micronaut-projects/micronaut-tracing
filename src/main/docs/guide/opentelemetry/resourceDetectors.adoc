@@ -1,0 +1,82 @@
+The OpenTelemetry resource describes the process that produces the telemetry: the service name, the host, the container, the cloud provider and so on. Its attributes are attached to every exported span.
+
+Micronaut builds the SDK with OpenTelemetry autoconfigure, which loads every `io.opentelemetry.sdk.autoconfigure.spi.ResourceProvider` registered in `META-INF/services` (the Java `ServiceLoader`). To add a resource detector, add its dependency: no bean or code is needed. The detectors read their configuration through the Micronaut environment, so they can be configured in `application.yml` as well as with system properties and environment variables.
+
+== Host, operating system, process and container
+
+The `opentelemetry-resources` library of OpenTelemetry Java instrumentation detects the host (`host.name`, `host.arch`, `host.id`), the operating system, the process and the Java runtime, and the container id (`container.id`) when the application runs in a container:
+
+dependency:opentelemetry-resources[groupId=io.opentelemetry.instrumentation]
+
+Its version is managed by the OpenTelemetry instrumentation BOM that Micronaut Tracing imports.
+
+== Cloud providers
+
+[cols="1,2,3"]
+|===
+|Platform |Dependency |Detects
+
+|AWS
+|`io.opentelemetry.contrib:opentelemetry-aws-resources`
+|EC2, ECS, EKS, Elastic Beanstalk and Lambda. See also <<awsResourceDetectors, AWS Resource Detectors>>.
+
+|Google Cloud
+|`io.opentelemetry.contrib:opentelemetry-gcp-resources`
+|Compute Engine, GKE, Cloud Run, Cloud Functions and App Engine.
+|===
+
+The opentelemetry-java-contrib libraries are not managed by Micronaut Tracing, so declare their version. Use the release of opentelemetry-java-contrib built against the OpenTelemetry version used by Micronaut Tracing.
+
+== Kubernetes
+
+There is no generic Kubernetes detector in the OpenTelemetry Java SDK (the AWS and Google Cloud detectors set `k8s.cluster.name` on EKS and GKE). Either let an OpenTelemetry Collector add the Kubernetes attributes with its `k8sattributes` processor, or expose the pod metadata with the Kubernetes Downward API and pass it as resource attributes:
+
+[source,yaml]
+----
+env:
+  - name: K8S_POD_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  - name: K8S_NAMESPACE_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.namespace
+  - name: OTEL_RESOURCE_ATTRIBUTES
+    value: k8s.pod.name=$(K8S_POD_NAME),k8s.namespace.name=$(K8S_NAMESPACE_NAME)
+----
+
+== Enabling and disabling detectors
+
+All the detectors found on the classpath are used. To choose them, list their fully qualified class names in `otel.java.enabled.resource.providers` (only those are used) or in `otel.java.disabled.resource.providers` (all the others are used). To drop individual attributes, list their keys in `otel.resource.disabled.keys`:
+
+[configuration]
+----
+otel:
+  java:
+    disabled:
+      resource:
+        providers: io.opentelemetry.instrumentation.resources.ProcessResourceProvider
+  resource:
+    disabled:
+      keys: process.command_line
+----
+
+Static attributes are set with `otel.resource.attributes`, either as a `key=value` list or as nested configuration:
+
+[configuration]
+----
+otel:
+  resource:
+    attributes:
+      deployment.environment.name: production
+      service.namespace: orders
+----
+
+The service name defaults to `micronaut.application.name` unless `otel.service.name` or the `service.name` resource attribute is set.
+
+== Custom resources
+
+To compute resource attributes in your application, either register your own `ResourceProvider` in `META-INF/services/io.opentelemetry.sdk.autoconfigure.spi.ResourceProvider`, or provide a bean of type api:tracing.opentelemetry.ResourceProvider[]. The resource of the bean is merged last, so its attributes override those of the detectors.
+
+NOTE: The resource providers registered in `META-INF/services` are also loaded in a GraalVM native executable: native image includes the service providers found on the classpath at build time. Detectors that read files or call cloud metadata endpoints do so at run time.

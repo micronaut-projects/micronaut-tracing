@@ -14,7 +14,7 @@ dependency:exporter-auto[scope="implementation", groupId="com.google.cloud.opent
 - Zipkin exporter: `zipkin`
 dependency:opentelemetry-exporter-zipkin[scope="implementation", groupId="io.opentelemetry"]
 
-OpenTelemetry no longer publishes a Jaeger exporter. Jaeger accepts OTLP, so use the `otlp` exporter to send traces to Jaeger.
+OpenTelemetry no longer publishes a Jaeger exporter. Jaeger accepts OTLP, so use the `otlp` exporter to send traces to Jaeger. See <<otlpBackends, OTLP Backends>> for the OTLP settings of Jaeger, Grafana Tempo, Datadog, SkyWalking, Honeycomb and other backends.
 
 For Logback integration details, see the Logback section in this guide.
 

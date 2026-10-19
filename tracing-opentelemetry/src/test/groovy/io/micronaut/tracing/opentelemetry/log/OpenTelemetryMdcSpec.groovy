@@ -209,6 +209,32 @@ class OpenTelemetryMdcSpec extends Specification {
         MDC.get('tenant') == null
     }
 
+    void 'duplicate and colliding MDC keys are restored to their previous values'() {
+        given: 'a duplicate baggage key, and a baggage key named like the trace id key'
+        start('tracing.opentelemetry.logging.mdc.baggage-keys': ['tenant', 'tenant', 'trace_id'])
+        Context outer = Baggage.builder().put('tenant', 'acme').put('trace_id', 'b1').build().storeInContext(Context.root())
+        Context inner = Baggage.builder().put('tenant', 'globex').put('trace_id', 'b2').build().storeInContext(Context.root())
+        MDC.put('trace_id', 'previous')
+
+        when:
+        Scope outerScope = MdcTraceCorrelation.makeCurrent(outer)
+        Map<String, String> inOuter = [tenant: MDC.get('tenant'), trace_id: MDC.get('trace_id')]
+        Scope innerScope = MdcTraceCorrelation.makeCurrent(inner)
+        Map<String, String> inInner = [tenant: MDC.get('tenant'), trace_id: MDC.get('trace_id')]
+        innerScope.close()
+        Map<String, String> afterInner = [tenant: MDC.get('tenant'), trace_id: MDC.get('trace_id')]
+        outerScope.close()
+
+        then:
+        inOuter == [tenant: 'acme', trace_id: 'b1']
+        inInner == [tenant: 'globex', trace_id: 'b2']
+        afterInner == inOuter
+
+        and: 'the absent key is absent again and the preexisting value is back'
+        MDC.get('tenant') == null
+        MDC.get('trace_id') == 'previous'
+    }
+
     void 'the MDC keys are configurable'() {
         given:
         start(

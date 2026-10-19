@@ -28,6 +28,7 @@ opentelemetry:
   awsResourceDetectors: AWS Resource Detectors
   performance: Performance Tuning
   testing: Testing
+  inspector: Trace Inspector
   opentelemetryGuides: OpenTelemetry Guides
 tracingGuides: Micronaut Tracing Guides
 repository: Repository

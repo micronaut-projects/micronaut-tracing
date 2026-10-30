@@ -9,6 +9,9 @@ import io.micrometer.tracing.otel.bridge.OtelPropagator
 import io.micrometer.tracing.otel.bridge.OtelTracer
 import io.micrometer.tracing.propagation.Propagator
 import io.micronaut.context.ApplicationContext
+import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
+import io.opentelemetry.sdk.trace.SpanProcessor
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor
 import spock.lang.Specification
 
 class MicrometerOpenTelemetryTracingFactorySpec extends Specification {
@@ -28,6 +31,47 @@ class MicrometerOpenTelemetryTracingFactorySpec extends Specification {
         context.getBean(Propagator) instanceof OtelPropagator
         // the OpenTelemetry bridge reports only the remote fields as baggage fields
         context.getBean(Tracer).baggageFields == ['x-request-id']
+
+        cleanup:
+        context.close()
+    }
+
+    void 'test correlation fields are tagged and baggage is propagated by the opentelemetry propagators'() {
+        given:
+        InMemorySpanExporter exporter = InMemorySpanExporter.create()
+        ApplicationContext context = ApplicationContext.builder()
+                .properties(
+                        'micronaut.application.name': 'micrometer-otel-test',
+                        'tracing.micrometer.baggage.remote-fields': ['x-request-id'],
+                        'tracing.micrometer.baggage.correlation-fields': ['tenant']
+                )
+                .singletons((SpanProcessor) SimpleSpanProcessor.create(exporter))
+                .start()
+        Tracer tracer = context.getBean(Tracer)
+        Propagator propagator = context.getBean(Propagator)
+        Map<String, String> carrier = [:]
+
+        when:
+        def span = tracer.nextSpan().name('baggage').start()
+        try (def ignored = tracer.withSpan(span)) {
+            try (def ignoredRequestId = tracer.createBaggageInScope('x-request-id', 'request-1')) {
+                try (def ignoredTenant = tracer.createBaggageInScope('tenant', 'acme')) {
+                    propagator.inject(tracer.currentTraceContext().context(), carrier, { Map<String, String> c, String key, String value -> c.put(key, value) } as Propagator.Setter)
+                }
+            }
+        } finally {
+            span.end()
+        }
+        def spans = exporter.finishedSpanItems
+
+        then: 'the correlation field is a tag of the span and the remote field is propagated'
+        spans.size() == 1
+        spans[0].attributes.asMap().collectEntries { [(it.key.key): it.value] } == [tenant: 'acme']
+        carrier.traceparent
+        carrier.baggage.contains('x-request-id=request-1')
+
+        and: 'the default OpenTelemetry baggage propagator sends all baggage, the correlation field included'
+        carrier.baggage.contains('tenant=acme')
 
         cleanup:
         context.close()

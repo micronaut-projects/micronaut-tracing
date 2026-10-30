@@ -30,9 +30,12 @@ tracing:
 ----
 
 * `remote-fields` are baggage fields propagated to remote services together with the trace context.
-* `correlation-fields` are baggage fields kept local to the service and added as tags to the span that is current when the baggage is set. They are not propagated and are not added to the logging MDC.
+* `correlation-fields` are baggage fields added as tags to the span that is current when the baggage is set. They are not added to the logging MDC.
 
 A field listed in both is propagated and tagged.
+
+With the Brave bridge, correlation fields that are not also remote fields are local baggage and are not propagated.
+With the OpenTelemetry bridge, the configured OpenTelemetry propagators decide which baggage is propagated: the default `baggage` propagator (see <<propagators, propagators>>) sends all baggage, including the correlation fields.
 
 include::{includedir}configurationProperties/io.micronaut.tracing.micrometer.MicrometerTracingConfigurationProperties.adoc[]
 

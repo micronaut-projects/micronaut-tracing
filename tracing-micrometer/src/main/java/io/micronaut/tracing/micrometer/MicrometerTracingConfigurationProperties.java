@@ -19,6 +19,7 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.core.util.Toggleable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -74,7 +75,7 @@ public class MicrometerTracingConfigurationProperties implements Toggleable {
      *
      * @param baggage baggage configuration
      */
-    public void setBaggage(Baggage baggage) {
+    public void setBaggage(@Nullable Baggage baggage) {
         this.baggage = baggage == null ? new Baggage() : baggage;
     }
 
@@ -101,7 +102,7 @@ public class MicrometerTracingConfigurationProperties implements Toggleable {
          *
          * @param remoteFields baggage field names propagated to remote services
          */
-        public void setRemoteFields(List<String> remoteFields) {
+        public void setRemoteFields(@Nullable List<String> remoteFields) {
             this.remoteFields = remoteFields == null ? Collections.emptyList() : remoteFields;
         }
 
@@ -119,7 +120,7 @@ public class MicrometerTracingConfigurationProperties implements Toggleable {
          *
          * @param correlationFields baggage field names kept local to the service and added as span tags
          */
-        public void setCorrelationFields(List<String> correlationFields) {
+        public void setCorrelationFields(@Nullable List<String> correlationFields) {
             this.correlationFields = correlationFields == null ? Collections.emptyList() : correlationFields;
         }
     }

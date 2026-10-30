@@ -15,7 +15,7 @@
  */
 package io.micronaut.tracing.opentracing.instrument.http;
 
-import io.micronaut.core.annotation.NonNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Constants used to store {@code Span}s in instrumented request attributes.

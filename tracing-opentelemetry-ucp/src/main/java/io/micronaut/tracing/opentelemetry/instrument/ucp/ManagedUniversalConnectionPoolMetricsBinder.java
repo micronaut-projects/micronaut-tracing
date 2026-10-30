@@ -19,7 +19,6 @@ import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.jdbc.DataSourceResolver;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
@@ -27,6 +26,7 @@ import oracle.ucp.UniversalConnectionPool;
 import oracle.ucp.UniversalConnectionPoolException;
 import oracle.ucp.admin.UniversalConnectionPoolManager;
 import oracle.ucp.jdbc.PoolDataSource;
+import org.jspecify.annotations.Nullable;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;

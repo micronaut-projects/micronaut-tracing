@@ -26,6 +26,7 @@ import io.micronaut.http.client.LoadBalancer;
 import io.micronaut.http.client.LoadBalancerResolver;
 import io.micronaut.http.client.netty.DefaultHttpClient;
 import jakarta.inject.Provider;
+import org.jspecify.annotations.Nullable;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -65,14 +66,14 @@ public final class HttpClientSender extends Sender {
     private final URI endpoint;
     private final Provider<LoadBalancerResolver> loadBalancerResolver;
     private final HttpClientConfiguration clientConfiguration;
-    private HttpClient httpClient;
+    private @Nullable HttpClient httpClient;
 
     private HttpClientSender(Encoding encoding,
                              int messageMaxBytes,
                              boolean compressionEnabled,
                              HttpClientConfiguration clientConfiguration,
                              Provider<LoadBalancerResolver> loadBalancerResolver,
-                             String path) {
+                             @Nullable String path) {
         this.loadBalancerResolver = loadBalancerResolver;
         this.clientConfiguration = clientConfiguration;
         this.encoding = encoding;
@@ -171,7 +172,7 @@ public final class HttpClientSender extends Sender {
         }
 
         @Override
-        public Void execute() {
+        public @Nullable Void execute() {
             HttpResponse<Object> response = httpClient.toBlocking().exchange(prepareRequest());
             if (response.code() >= BAD_REQUEST.getCode()) {
                 throw new IllegalStateException("Response return invalid status code: " + response.getStatus());
@@ -257,7 +258,7 @@ public final class HttpClientSender extends Sender {
 
         private Encoding encoding = Encoding.JSON;
         private int messageMaxBytes = 5 * 1024;
-        private String path = DEFAULT_PATH;
+        private @Nullable String path = DEFAULT_PATH;
         private boolean compressionEnabled = true;
         private List<URI> servers = Collections.singletonList(URI.create(DEFAULT_SERVER_URL));
         private final HttpClientConfiguration clientConfiguration;
@@ -282,7 +283,7 @@ public final class HttpClientSender extends Sender {
          * @param encoding the encoding
          * @return this
          */
-        public Builder encoding(Encoding encoding) {
+        public Builder encoding(@Nullable Encoding encoding) {
             if (encoding != null) {
                 this.encoding = encoding;
             }
@@ -317,7 +318,7 @@ public final class HttpClientSender extends Sender {
          * @param endpoint the fully qualified URI of the Zipkin endpoint
          * @return this
          */
-        public Builder server(URI endpoint) {
+        public Builder server(@Nullable URI endpoint) {
             if (endpoint != null) {
                 servers = Collections.singletonList(endpoint);
             }
@@ -330,7 +331,7 @@ public final class HttpClientSender extends Sender {
          * @param endpoint the fully qualified URI of the Zipkin endpoint
          * @return this
          */
-        public Builder url(URI endpoint) {
+        public Builder url(@Nullable URI endpoint) {
             return server(endpoint);
         }
 
@@ -340,7 +341,7 @@ public final class HttpClientSender extends Sender {
          * @param urls the Zipkin server URLs
          * @return this
          */
-        public Builder urls(List<URI> urls) {
+        public Builder urls(@Nullable List<URI> urls) {
             if (CollectionUtils.isNotEmpty(urls)) {
                 servers = Collections.unmodifiableList(urls);
             }
@@ -353,7 +354,7 @@ public final class HttpClientSender extends Sender {
          * @param path the path of the Zipkin endpoint
          * @return this
          */
-        public Builder path(String path) {
+        public Builder path(@Nullable String path) {
             this.path = path;
             return this;
         }

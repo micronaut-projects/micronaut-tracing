@@ -16,7 +16,7 @@
 package io.micronaut.tracing.opentelemetry.instrument.http.server;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration of the OpenTelemetry HTTP server metrics ({@code http.server.request.duration}).
@@ -32,7 +32,7 @@ public class OpenTelemetryHttpServerMetricsConfig {
      */
     public static final String PREFIX = "tracing.opentelemetry.http.server.metrics";
 
-    private Boolean enabled;
+    private @Nullable Boolean enabled;
 
     /**
      * Whether the HTTP server metrics are recorded. When not set, they are recorded only when the

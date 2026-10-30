@@ -16,12 +16,12 @@
 package io.micronaut.tracing.opentelemetry.log;
 
 import io.micronaut.core.annotation.Internal;
-import io.micronaut.core.annotation.Nullable;
 import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanContext;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.MDC;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public final class MdcTraceCorrelation {
     /**
      * The active correlation, {@code null} when none is installed.
      */
-    private static final AtomicReference<MdcTraceCorrelation> CURRENT = new AtomicReference<>();
+    private static final AtomicReference<@Nullable MdcTraceCorrelation> CURRENT = new AtomicReference<>();
 
     private final String[] keys;
 

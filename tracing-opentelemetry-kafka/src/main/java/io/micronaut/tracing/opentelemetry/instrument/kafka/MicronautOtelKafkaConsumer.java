@@ -146,7 +146,7 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
         if (tracedRecords.isEmpty()) {
             return consumerRecords;
         }
-        return new TracingConsumerRecords(recordsByPartition, tracedRecords);
+        return new TracingConsumerRecords(recordsByPartition, consumerRecords.nextOffsets(), tracedRecords);
     }
 
     @Override
@@ -406,9 +406,11 @@ final class MicronautOtelKafkaConsumer<K, V> implements Consumer<K, V> {
 
         private final Set<ConsumerRecord<K, V>> tracedRecords;
 
-        @SuppressWarnings("deprecation")
-        private TracingConsumerRecords(Map<TopicPartition, List<ConsumerRecord<K, V>>> recordsByPartition, Set<ConsumerRecord<K, V>> tracedRecords) {
-            super(recordsByPartition);
+        private TracingConsumerRecords(Map<TopicPartition, List<ConsumerRecord<K, V>>> recordsByPartition,
+                                       Map<TopicPartition, OffsetAndMetadata> nextOffsets,
+                                       Set<ConsumerRecord<K, V>> tracedRecords) {
+            // the records keep the next offsets of the polled records: the deprecated constructor taints them
+            super(recordsByPartition, nextOffsets);
             this.tracedRecords = tracedRecords;
         }
 

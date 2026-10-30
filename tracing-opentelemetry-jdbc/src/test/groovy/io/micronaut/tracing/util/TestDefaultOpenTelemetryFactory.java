@@ -18,9 +18,6 @@ package io.micronaut.tracing.util;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Replaces;
-import io.micronaut.context.annotation.Requires;
-import io.micronaut.context.event.ApplicationEventPublisher;
-import io.micronaut.context.event.StartupEvent;
 import io.micronaut.tracing.opentelemetry.DefaultOpenTelemetryFactory;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
@@ -39,31 +36,24 @@ public class TestDefaultOpenTelemetryFactory {
     /**
      * The OpenTelemetry bean with default values.
      *
-     * @return the OpenTelemetry
+     * @param inMemorySpanExporter the in memory span exporter
+     * @param creations records every OpenTelemetry bean instantiation
+     * @return the OpenTelemetry bean with default values
      */
     @Singleton
     @Primary
-    @Requires(property = "test.open-telemetry.requires-startup-event-publisher", notEquals = "true")
-    OpenTelemetry defaultOpenTelemetry(InMemorySpanExporter inMemorySpanExporter) {
-        return createOpenTelemetry(inMemorySpanExporter);
-    }
-
-    @Singleton
-    @Primary
-    @Requires(property = "test.open-telemetry.requires-startup-event-publisher", value = "true")
-    OpenTelemetry defaultOpenTelemetryRequiringStartupEventPublisher(InMemorySpanExporter inMemorySpanExporter,
-                                                                     ApplicationEventPublisher<StartupEvent> ignored) {
-        return createOpenTelemetry(inMemorySpanExporter);
-    }
-
-    private static OpenTelemetry createOpenTelemetry(InMemorySpanExporter inMemorySpanExporter) {
+    OpenTelemetry defaultOpenTelemetry(InMemorySpanExporter inMemorySpanExporter, OpenTelemetryCreations creations) {
+        creations.record();
         return OpenTelemetrySdk.builder()
             .setTracerProvider(SdkTracerProvider.builder()
                 .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter))
-                .build()
-            ).build();
+                .build())
+            .build();
     }
 
+    /**
+     * @return the in memory span exporter
+     */
     @Singleton
     InMemorySpanExporter inMemorySpanExporter() {
         return InMemorySpanExporter.create();

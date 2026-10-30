@@ -7,6 +7,7 @@ import com.rabbitmq.client.Envelope
 import com.rabbitmq.client.RecoverableChannel
 import com.rabbitmq.client.RecoveryListener
 import io.micronaut.context.event.BeanCreatedEvent
+import io.micronaut.context.event.BeanPreDestroyEvent
 import io.micronaut.core.propagation.PropagatedContext
 import io.micronaut.rabbitmq.connect.ChannelPool
 import io.opentelemetry.api.OpenTelemetry
@@ -100,6 +101,24 @@ class TracingChannelPoolSpec extends Specification {
 
         expect:
         instrumentation.onCreated(event).is(pool)
+    }
+
+    void "channel pool instrumentation hands the wrapped pool back for disposal"() {
+        given: "micronaut-rabbitmq disposes its DefaultChannelPool bean through a @PreDestroy method of the concrete type"
+        def telemetry = new RabbitMQTelemetry(openTelemetry(InMemorySpanExporter.create()))
+        def delegatePool = Stub(ChannelPool)
+        def pool = new TracingChannelPool(delegatePool, telemetry)
+        def instrumentation = new RabbitMQChannelPoolTracingInstrumentation(telemetry)
+        def event = Stub(BeanPreDestroyEvent) {
+            getBean() >> pool
+        }
+        def unwrappedEvent = Stub(BeanPreDestroyEvent) {
+            getBean() >> delegatePool
+        }
+
+        expect:
+        instrumentation.onPreDestroy(event).is(delegatePool)
+        instrumentation.onPreDestroy(unwrappedEvent).is(delegatePool)
     }
 
     void "consumer wrapper delegates lifecycle callbacks"() {

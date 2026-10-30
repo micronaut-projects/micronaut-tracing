@@ -37,6 +37,13 @@ final class TracingChannelPool implements ChannelPool {
         this.telemetry = telemetry;
     }
 
+    /**
+     * @return The wrapped channel pool
+     */
+    ChannelPool getDelegate() {
+        return delegate;
+    }
+
     @Override
     public String getName() {
         return delegate.getName();

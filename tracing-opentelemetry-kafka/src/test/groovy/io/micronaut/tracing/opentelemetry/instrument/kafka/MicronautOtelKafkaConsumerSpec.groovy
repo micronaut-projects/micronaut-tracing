@@ -13,6 +13,7 @@ import org.apache.kafka.clients.consumer.ConsumerGroupMetadata
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
+import org.apache.kafka.clients.consumer.OffsetAndMetadata
 import org.apache.kafka.clients.consumer.SubscriptionPattern
 import org.apache.kafka.common.TopicPartition
 import spock.lang.Specification
@@ -357,7 +358,8 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         def partition = new TopicPartition("topic", 0)
         def firstRecord = new ConsumerRecord<String, String>("topic", 0, 0, "key", "first")
         def secondRecord = new ConsumerRecord<String, String>("topic", 0, 1, "key", "second")
-        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]])
+        def nextOffsets = [(partition): new OffsetAndMetadata(2)]
+        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]], nextOffsets)
         ContextKey<String> contextKey = ContextKey.named("test-kafka-context")
 
         configuration.getIncludedTopics() >> Collections.emptyList()
@@ -373,7 +375,8 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         def partitionIterator = tracedRecords.records(partition).iterator()
         def partitionRecord = partitionIterator.next()
 
-        then:
+        then: 'the traced records keep the next offsets of the polled records'
+        tracedRecords.nextOffsets() == nextOffsets
         partitionRecord == firstRecord
         Context.current().get(contextKey) == "active"
 
@@ -476,7 +479,7 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         def partition = new TopicPartition("topic", 0)
         def firstRecord = new ConsumerRecord<String, String>("topic", 0, 0, "key", "first")
         def secondRecord = new ConsumerRecord<String, String>("topic", 0, 1, "key", "second")
-        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]])
+        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]], [:])
         ContextKey<String> contextKey = ContextKey.named("test-kafka-index-context")
 
         configuration.getIncludedTopics() >> Collections.emptyList()
@@ -529,7 +532,7 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         def partition = new TopicPartition("topic", 0)
         def firstRecord = new ConsumerRecord<String, String>("topic", 0, 0, "key", "first")
         def secondRecord = new ConsumerRecord<String, String>("topic", 0, 1, "key", "second")
-        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]])
+        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]], [:])
         ContextKey<String> contextKey = ContextKey.named("test-kafka-repeated-index-context")
 
         configuration.getIncludedTopics() >> Collections.emptyList()
@@ -593,7 +596,7 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
         def partition = new TopicPartition("topic", 0)
         def record = new ConsumerRecord<String, String>("topic", 0, 0, "key", "value")
-        def records = new ConsumerRecords<String, String>([(partition): [record]])
+        def records = new ConsumerRecords<String, String>([(partition): [record]], [:])
         ContextKey<String> contextKey = ContextKey.named("test-kafka-scoped-value-context")
 
         configuration.getIncludedTopics() >> Collections.emptyList()
@@ -641,7 +644,7 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         def partition = new TopicPartition("topic", 0)
         def firstRecord = new ConsumerRecord<String, String>("topic", 0, 0, "key", "first")
         def secondRecord = new ConsumerRecord<String, String>("topic", 0, 1, "key", "second")
-        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]])
+        def records = new ConsumerRecords<String, String>([(partition): [firstRecord, secondRecord]], [:])
         ContextKey<String> contextKey = ContextKey.named("test-kafka-listener-failure-context")
         def observedContexts = []
 
@@ -697,7 +700,7 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
         def partition = new TopicPartition("topic", 0)
         def record = new ConsumerRecord<String, String>("topic", 0, 0, "key", "value")
-        def records = new ConsumerRecords<String, String>([(partition): [record]])
+        def records = new ConsumerRecords<String, String>([(partition): [record]], [:])
         ContextKey<String> contextKey = ContextKey.named("test-kafka-wakeup-context")
 
         configuration.getIncludedTopics() >> Collections.emptyList()
@@ -750,7 +753,7 @@ class MicronautOtelKafkaConsumerSpec extends Specification {
         )
         def micronautConsumer = new MicronautOtelKafkaConsumer(consumer, kafkaTelemetry)
         def partition = new TopicPartition("topic", 0)
-        def records = new ConsumerRecords<String, String>([(partition): [new ConsumerRecord<String, String>("topic", 0, 0, "key", "value")]])
+        def records = new ConsumerRecords<String, String>([(partition): [new ConsumerRecord<String, String>("topic", 0, 0, "key", "value")]], [:])
 
         configuration.getIncludedTopics() >> Collections.emptyList()
         configuration.getExcludedTopics() >> ["topic"]

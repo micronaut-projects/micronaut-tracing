@@ -18,6 +18,8 @@ package io.micronaut.tracing.opentelemetry.instrument.rabbitmq;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.BeanCreatedEvent;
 import io.micronaut.context.event.BeanCreatedEventListener;
+import io.micronaut.context.event.BeanPreDestroyEvent;
+import io.micronaut.context.event.BeanPreDestroyEventListener;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.rabbitmq.connect.ChannelPool;
 import jakarta.inject.Singleton;
@@ -29,7 +31,7 @@ import jakarta.inject.Singleton;
  */
 @Requires(property = RabbitMQTelemetryConfiguration.PREFIX + ".wrapper", notEquals = StringUtils.FALSE)
 @Singleton
-public class RabbitMQChannelPoolTracingInstrumentation implements BeanCreatedEventListener<ChannelPool> {
+public class RabbitMQChannelPoolTracingInstrumentation implements BeanCreatedEventListener<ChannelPool>, BeanPreDestroyEventListener<ChannelPool> {
 
     private final RabbitMQTelemetry rabbitMQTelemetry;
 
@@ -44,5 +46,22 @@ public class RabbitMQChannelPoolTracingInstrumentation implements BeanCreatedEve
             return bean;
         }
         return rabbitMQTelemetry.wrap(bean);
+    }
+
+    /**
+     * Hands the wrapped pool back for disposal: the channel pool bean of Micronaut RabbitMQ is the concrete
+     * {@code DefaultChannelPool} type, and its {@code @PreDestroy} method is invoked on the disposed bean
+     * cast to that type, which the tracing wrapper is not.
+     *
+     * @param event The bean pre-destroy event
+     * @return The channel pool to dispose
+     */
+    @Override
+    public ChannelPool onPreDestroy(BeanPreDestroyEvent<ChannelPool> event) {
+        ChannelPool bean = event.getBean();
+        if (bean instanceof TracingChannelPool tracingChannelPool) {
+            return tracingChannelPool.getDelegate();
+        }
+        return bean;
     }
 }

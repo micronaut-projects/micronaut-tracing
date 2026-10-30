@@ -8,10 +8,11 @@ If a custom server filter reads from or writes to the current OpenTelemetry span
 
 `@Order` values must be compile-time constants, so use `Ordered` when you want to refer to `ServerFilterPhase.TRACING.after()` directly:
 
-[source, java]
-----
-include::tracing-opentelemetry-http/src/test/java/io/micronaut/tracing/opentelemetry/instrument/http/OrderedTracingServerFilter.java[]
-----
+snippet::io.micronaut.tracing.docs.OrderedTracingServerFilter[project-base="test-suite", tags="imports,filter"]
+
+<1> The server span is already current in the request filter
+<2> The server span is still current in the response filter, it is finished after the response filters ran
+<3> Order the filter after the tracing phase
 
 == Filtering HTTP spans
 

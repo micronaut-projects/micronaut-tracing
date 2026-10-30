@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 original authors
+ * Copyright 2017-2026 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,18 +36,24 @@ public class TestDefaultOpenTelemetryFactory {
     /**
      * The OpenTelemetry bean with default values.
      *
-     * @return the OpenTelemetry
+     * @param inMemorySpanExporter the in memory span exporter
+     * @param creations records every OpenTelemetry bean instantiation
+     * @return the OpenTelemetry bean with default values
      */
     @Singleton
     @Primary
-    OpenTelemetry defaultOpenTelemetry(InMemorySpanExporter inMemorySpanExporter) {
+    OpenTelemetry defaultOpenTelemetry(InMemorySpanExporter inMemorySpanExporter, OpenTelemetryCreations creations) {
+        creations.record();
         return OpenTelemetrySdk.builder()
             .setTracerProvider(SdkTracerProvider.builder()
                 .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter))
-                .build()
-            ).build();
+                .build())
+            .build();
     }
 
+    /**
+     * @return the in memory span exporter
+     */
     @Singleton
     InMemorySpanExporter inMemorySpanExporter() {
         return InMemorySpanExporter.create();

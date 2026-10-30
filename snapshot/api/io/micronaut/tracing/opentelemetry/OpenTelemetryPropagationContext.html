@@ -86,7 +86,7 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Record Components:</dt>
-<dd><code><span id="param-context">context</span></code> - The context</dd>
+<dd><code><span id="param-context">context</span></code> - The OpenTelemetry context</dd>
 </dl>
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
@@ -94,12 +94,22 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="horizontal-scroll">
-<div class="type-signature"><span class="annotations">@Internal
-</span><span class="modifiers">public record </span><span class="element-name type-name-label">OpenTelemetryPropagationContext</span>(io.opentelemetry.context.Context&nbsp;context)
+<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">OpenTelemetryPropagationContext</span>(io.opentelemetry.context.Context&nbsp;context)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements io.micronaut.core.propagation.ThreadPropagatedContextElement&lt;io.opentelemetry.context.Scope&gt;</span></div>
-<div class="block">Open telemetry propagated context.</div>
+<div class="block">The element of Micronaut's <code>PropagatedContext</code> that carries an OpenTelemetry
+<code>Context</code>. While the propagated context is in scope, for example inside
+<code>PropagatedContext.propagate(java.util.function.Supplier)</code> or code wrapped with
+<code>PropagatedContext.wrap(Runnable)</code>, the OpenTelemetry context is current.
+
+<p>Integrations that make a span current for the code they call, such as messaging listeners, add the span's
+context as this element, so that it follows Micronaut's thread hops. Reactive code finds it with
+<a href="utils/OpenTelemetryReactorPropagation.html#currentContext(reactor.util.context.ContextView)"><code>OpenTelemetryReactorPropagation.currentContext(reactor.util.context.ContextView)</code></a>,
+which looks the element up by this type, so another <code>ThreadPropagatedContextElement</code> carrying the same
+context wouldn't be found there.</p></div>
 <dl class="notes">
+<dt>Since:</dt>
+<dd>8.4.0</dd>
 <dt>Author:</dt>
 <dd>Denis Stepanov</dd>
 </dl>

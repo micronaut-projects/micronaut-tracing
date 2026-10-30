@@ -26,7 +26,6 @@ import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
-import io.micronaut.tracing.opentracing.OpenTracingPropagationContext;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
@@ -87,22 +86,17 @@ public final class OpenTracingClientFilter extends AbstractOpenTracingFilter imp
         request.setAttribute(CURRENT_SPAN_CONTEXT, span.context());
         request.setAttribute(CURRENT_SPAN, span);
 
-        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
-            .plus(new OpenTracingPropagationContext(tracer, span))
-            .propagate()) {
-
-            tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders()));
-            return Mono.from(chain.proceed(request))
-                .doOnNext(httpResponse -> setResponseTags(request, httpResponse, span))
-                .doOnError(throwable -> {
-                    if (throwable instanceof HttpClientResponseException e) {
-                        HttpResponse<?> response = e.getResponse();
-                        setResponseTags(request, response, span);
-                    }
-                    setErrorTags(span, throwable);
-                })
-                .doOnTerminate(span::finish);
-
-        }
+        PropagatedContext propagatedContext = propagationContext(span);
+        tracer.inject(span.context(), HTTP_HEADERS, new HttpHeadersTextMap(request.getHeaders()));
+        return propagateOnSubscribe(propagatedContext, () -> Mono.<HttpResponse<?>>from(chain.proceed(request))
+            .doOnNext(httpResponse -> setResponseTags(request, httpResponse, span))
+            .doOnError(throwable -> {
+                if (throwable instanceof HttpClientResponseException e) {
+                    HttpResponse<?> response = e.getResponse();
+                    setResponseTags(request, response, span);
+                }
+                setErrorTags(span, throwable);
+            })
+            .doFinally(signalType -> span.finish()));
     }
 }

@@ -18,12 +18,14 @@ opentelemetry:
   propagators: OpenTelemetry Propagators
   idgenerator: ID Generator
   http: HTTP Server and Client
+  websocket: WebSocket
   mdc: Log Correlation (MDC)
   grpc: gRPC Server and Client
   jdbc: JDBC
   r2dbc: R2DBC
   kafka: Kafka
   rabbitmq: RabbitMQ / AMQP
+  scheduling: Scheduled Jobs
   ucp: Oracle UCP
   awsSdkInstrumentation: AWS SDK Instrumentation
   awsResourceDetectors: AWS Resource Detectors

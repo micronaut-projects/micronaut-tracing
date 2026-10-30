@@ -1,0 +1,33 @@
+package io.micronaut.tracing.docs
+
+import io.micronaut.context.annotation.Requires
+
+// tag::imports[]
+import io.micronaut.websocket.WebSocketSession
+import io.micronaut.websocket.annotation.OnClose
+import io.micronaut.websocket.annotation.OnMessage
+import io.micronaut.websocket.annotation.OnOpen
+import io.micronaut.websocket.annotation.ServerWebSocket
+// end::imports[]
+
+@Requires(property = "spec.name", value = "ChatServerSpec")
+// tag::clazz[]
+@ServerWebSocket("/chat/{topic}")
+class ChatServer {
+
+    @OnOpen
+    void onOpen(String topic, WebSocketSession session) { // <1>
+        session.sendSync('Joined ' + topic)
+    }
+
+    @OnMessage
+    void onMessage(String topic, String message, WebSocketSession session) { // <2>
+        session.sendSync('[' + topic + '] ' + message)
+    }
+
+    @OnClose
+    void onClose(String topic, WebSocketSession session) { // <3>
+        // the session is closed: there is nothing left to send
+    }
+}
+// end::clazz[]

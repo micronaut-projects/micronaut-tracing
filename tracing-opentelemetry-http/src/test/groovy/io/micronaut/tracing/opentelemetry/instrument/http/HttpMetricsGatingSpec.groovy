@@ -34,7 +34,7 @@ class HttpMetricsGatingSpec extends Specification {
 
     void "HTTP metrics listeners are not registered when metrics are not exported (otel.metrics.exporter=none)"() {
         given:
-        start(["test.metric-reader.enabled": false])
+        start(["tracing.opentelemetry.test.metrics.enabled": false])
 
         expect:
         metricsListeners("micronautHttpServerTelemetryInstrumenter").empty
@@ -70,7 +70,7 @@ class HttpMetricsGatingSpec extends Specification {
 
     void "HTTP metrics are enabled when otel.metrics.exporter is configured"() {
         given:
-        start(["test.metric-reader.enabled": false, "otel.metrics.exporter": TestMetricExporterProvider.NAME])
+        start(["tracing.opentelemetry.test.metrics.enabled": false, "otel.metrics.exporter": TestMetricExporterProvider.NAME])
 
         expect:
         metricsListeners("micronautHttpServerTelemetryInstrumenter")*.getClass() == [HttpServerMetrics]
@@ -80,7 +80,7 @@ class HttpMetricsGatingSpec extends Specification {
     void "HTTP metrics can be enabled explicitly"() {
         given:
         start([
-            "test.metric-reader.enabled"                       : false,
+            "tracing.opentelemetry.test.metrics.enabled"      : false,
             "tracing.opentelemetry.http.server.metrics.enabled": true
         ])
 
@@ -113,7 +113,7 @@ class HttpMetricsGatingSpec extends Specification {
     void "explicitly contributed OperationMetrics beans are applied when the default metrics are disabled"() {
         given:
         start([
-            "test.metric-reader.enabled"                       : false,
+            "tracing.opentelemetry.test.metrics.enabled"      : false,
             "tracing.opentelemetry.http.server.metrics.enabled": false,
             "custom.server.metrics"                            : true
         ])

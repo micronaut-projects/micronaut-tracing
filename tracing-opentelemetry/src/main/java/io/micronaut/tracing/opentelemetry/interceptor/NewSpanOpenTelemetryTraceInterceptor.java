@@ -26,6 +26,7 @@ import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.opentelemetry.OpenTelemetryPropagationContext;
+import io.micronaut.tracing.util.PropagatedContextPublisher;
 import io.micronaut.tracing.util.TracedMethod;
 import io.micronaut.tracing.util.TracedMethodCache;
 import io.opentelemetry.api.trace.Span;
@@ -91,15 +92,16 @@ public final class NewSpanOpenTelemetryTraceInterceptor extends AbstractOpenTele
         InterceptedMethod interceptedMethod = InterceptedMethod.of(context, conversionService);
         final Context newContext = instrumenter.start(currentContext, classAndMethod);
         SpanEnd spanEnd = new SpanEnd(instrumenter, newContext, classAndMethod);
-        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
-            .plus(new OpenTelemetryPropagationContext(newContext))
-            .propagate()) {
+        PropagatedContext spanPropagatedContext = PropagatedContext.getOrEmpty()
+            .plus(new OpenTelemetryPropagationContext(newContext));
+        try (PropagatedContext.Scope ignore = spanPropagatedContext.propagate()) {
 
             tagArguments(Span.fromContext(newContext), method.tracedMethod, context.getParameterValues());
 
             switch (interceptedMethod.resultType()) {
                 case PUBLISHER -> {
-                    Publisher<?> publisher = interceptedMethod.interceptResultAsPublisher();
+                    Publisher<?> publisher = PropagatedContextPublisher.of(interceptedMethod.interceptResultAsPublisher(),
+                        spanPropagatedContext);
                     // end the span exactly once, on the terminal signal: completion, error or cancellation
                     if (method.single) {
                         return interceptedMethod.handleResult(

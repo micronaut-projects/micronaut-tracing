@@ -9,4 +9,4 @@ dependency:micronaut-tracing-opentelemetry[scope="implementation", groupId="io.m
 
 The bridge creates Micrometer `Tracer`, `CurrentTraceContext`, `BaggageManager`, and `Propagator` beans from the existing OpenTelemetry beans.
 
-The Micrometer `Tracer` bean requires the OpenTelemetry `OtelCurrentTraceContext`. If you replace the `CurrentTraceContext` bean with a different implementation, the bridge does not create a `Tracer` bean.
+The Micrometer `Tracer`, `BaggageManager` and `Propagator` beans work with OpenTelemetry trace contexts and require the OpenTelemetry `OtelCurrentTraceContext`. If you replace the `CurrentTraceContext` bean with a different implementation, the bridge does not create these beans.

@@ -6,6 +6,7 @@ import io.micrometer.tracing.BaggageInScope
 import io.micrometer.tracing.BaggageManager
 import io.micrometer.tracing.CurrentTraceContext
 import io.micrometer.tracing.Span
+import io.micrometer.tracing.TraceContext
 import io.micrometer.tracing.Tracer
 import io.micrometer.tracing.brave.bridge.BraveBaggageManager
 import io.micrometer.tracing.brave.bridge.BraveCurrentTraceContext
@@ -16,7 +17,10 @@ import io.micronaut.context.ApplicationContext
 import spock.lang.Specification
 import zipkin2.reporter.Reporter
 
+import java.util.concurrent.Callable
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
 
 class MicrometerBraveTracingFactorySpec extends Specification {
 
@@ -96,6 +100,35 @@ class MicrometerBraveTracingFactorySpec extends Specification {
         context.close()
     }
 
+    void 'test bridge backs off when a non brave current trace context is supplied'() {
+        given: 'a user supplied current trace context that is not backed by Brave'
+        CurrentTraceContext userContext = new NonBraveCurrentTraceContext()
+        ApplicationContext context = ApplicationContext.builder()
+                .properties(
+                        'micronaut.application.name': 'micrometer-brave-test',
+                        'tracing.zipkin.enabled': true
+                )
+                .singletons(userContext)
+                .start()
+
+        expect: 'the user bean is the current trace context and no Brave context is created'
+        context.getBean(CurrentTraceContext).is(userContext)
+        !context.containsBean(BraveCurrentTraceContext)
+
+        and: 'the bridge tracer, which works with Brave trace contexts, backs off with the baggage manager and propagator'
+        !context.containsBean(Tracer)
+        !context.containsBean(BaggageManager)
+        !context.containsBean(BraveBaggageManager)
+        !context.containsBean(Propagator)
+        !context.containsBean(BravePropagator)
+
+        and: 'the user context is usable'
+        context.getBean(CurrentTraceContext).context().traceId() == NonBraveCurrentTraceContext.TRACE_ID
+
+        cleanup:
+        context.close()
+    }
+
     void 'test micrometer tracing beans are not created when disabled'() {
         given:
         ApplicationContext context = ApplicationContext.run(
@@ -120,5 +153,49 @@ class MicrometerBraveTracingFactorySpec extends Specification {
         void report(zipkin2.Span span) {
             spans.add(span)
         }
+    }
+
+    /**
+     * A Micrometer current trace context that is not backed by Brave: its trace contexts are
+     * plain {@link TraceContext} values, not {@code BraveTraceContext}s.
+     */
+    static class NonBraveCurrentTraceContext implements CurrentTraceContext {
+
+        static final String TRACE_ID = '4bf92f3577b34da6a3ce929d0e0e4736'
+
+        private final TraceContext current = new TraceContext() {
+            @Override
+            String traceId() { TRACE_ID }
+
+            @Override
+            String parentId() { null }
+
+            @Override
+            String spanId() { '00f067aa0ba902b7' }
+
+            @Override
+            Boolean sampled() { Boolean.TRUE }
+        }
+
+        @Override
+        TraceContext context() { current }
+
+        @Override
+        CurrentTraceContext.Scope newScope(TraceContext context) { CurrentTraceContext.Scope.NOOP }
+
+        @Override
+        CurrentTraceContext.Scope maybeScope(TraceContext context) { CurrentTraceContext.Scope.NOOP }
+
+        @Override
+        <C> Callable<C> wrap(Callable<C> task) { task }
+
+        @Override
+        Runnable wrap(Runnable task) { task }
+
+        @Override
+        Executor wrap(Executor delegate) { delegate }
+
+        @Override
+        ExecutorService wrap(ExecutorService delegate) { delegate }
     }
 }

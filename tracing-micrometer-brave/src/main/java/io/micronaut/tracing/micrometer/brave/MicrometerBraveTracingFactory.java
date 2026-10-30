@@ -39,7 +39,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Creates Micrometer Tracing bridge beans backed by Brave.
+ * Creates Micrometer Tracing bridge beans backed by Brave. The bridge tracer, baggage manager
+ * and propagator are only created when the Micrometer {@link CurrentTraceContext} is the
+ * {@link BraveCurrentTraceContext} created here; when another {@link CurrentTraceContext} bean
+ * is supplied the bridge backs off.
  *
  * @author Nemanja Mikic
  * @since 8.4.0
@@ -102,6 +105,7 @@ public class MicrometerBraveTracingFactory {
     @Bean(preDestroy = "close")
     @Singleton
     @Primary
+    @Requires(beans = BraveCurrentTraceContext.class)
     @Requires(missingBeans = BraveBaggageManager.class)
     BraveBaggageManager baggageManager(MicrometerTracingConfigurationProperties configuration) {
         MicrometerTracingConfigurationProperties.Baggage baggage = configuration.getBaggage();
@@ -110,17 +114,20 @@ public class MicrometerBraveTracingFactory {
     }
 
     /**
-     * Creates a Micrometer tracer backed by Brave.
+     * Creates a Micrometer tracer backed by Brave. The Brave bridge tracer works with Brave
+     * trace contexts, so it is only created when the current trace context bean is the Brave
+     * implementation.
      *
      * @param tracing Brave tracing instance
-     * @param currentTraceContext Micrometer current trace context
+     * @param currentTraceContext Brave Micrometer current trace context
      * @param baggageManager Micrometer baggage manager
      * @return Micrometer tracer
      */
     @Singleton
+    @Requires(beans = BraveCurrentTraceContext.class)
     @Requires(missingBeans = io.micrometer.tracing.Tracer.class)
     io.micrometer.tracing.Tracer micrometerTracer(Tracing tracing,
-                                                  CurrentTraceContext currentTraceContext,
+                                                  BraveCurrentTraceContext currentTraceContext,
                                                   BraveBaggageManager baggageManager) {
         return new BraveTracer(tracing.tracer(), currentTraceContext, baggageManager);
     }
@@ -132,6 +139,7 @@ public class MicrometerBraveTracingFactory {
      * @return Micrometer propagator
      */
     @Singleton
+    @Requires(beans = BraveCurrentTraceContext.class)
     @Requires(missingBeans = Propagator.class)
     Propagator propagator(Tracing tracing) {
         return new BravePropagator(tracing);

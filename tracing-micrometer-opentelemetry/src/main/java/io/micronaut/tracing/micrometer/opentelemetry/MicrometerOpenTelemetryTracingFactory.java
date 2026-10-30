@@ -29,7 +29,10 @@ import io.opentelemetry.api.OpenTelemetry;
 import jakarta.inject.Singleton;
 
 /**
- * Creates Micrometer Tracing bridge beans backed by OpenTelemetry.
+ * Creates Micrometer Tracing bridge beans backed by OpenTelemetry. The bridge beans that
+ * work with OpenTelemetry trace contexts (tracer, baggage manager and propagator) are only
+ * created when the Micrometer {@link CurrentTraceContext} is the {@link OtelCurrentTraceContext}
+ * created here; when another {@link CurrentTraceContext} bean is supplied the bridge backs off.
  *
  * @author Nemanja Mikic
  * @since 8.4.0
@@ -50,17 +53,20 @@ public class MicrometerOpenTelemetryTracingFactory {
     }
 
     /**
-     * Creates a Micrometer baggage manager.
+     * Creates a Micrometer baggage manager. The OpenTelemetry bridge baggage manager reads
+     * baggage through an {@link OtelCurrentTraceContext}, so like the tracer it is only
+     * created when the current trace context bean is the OpenTelemetry implementation.
      *
      * @param configuration Micrometer tracing configuration
-     * @param currentTraceContext Micrometer current trace context
+     * @param currentTraceContext OpenTelemetry Micrometer current trace context
      * @return Micrometer baggage manager
      */
     @Singleton
     @Primary
+    @Requires(beans = OtelCurrentTraceContext.class)
     @Requires(missingBeans = OtelBaggageManager.class)
     OtelBaggageManager baggageManager(MicrometerTracingConfigurationProperties configuration,
-                                      CurrentTraceContext currentTraceContext) {
+                                      OtelCurrentTraceContext currentTraceContext) {
         MicrometerTracingConfigurationProperties.Baggage baggage = configuration.getBaggage();
         // OtelBaggageManager(currentTraceContext, remoteFields, tagFields)
         return new OtelBaggageManager(currentTraceContext, baggage.getRemoteFields(), baggage.getCorrelationFields());
@@ -88,14 +94,16 @@ public class MicrometerOpenTelemetryTracingFactory {
     }
 
     /**
-     * Creates a Micrometer propagator backed by OpenTelemetry propagators.
+     * Creates a Micrometer propagator backed by OpenTelemetry propagators. The propagator
+     * extracts OpenTelemetry trace contexts, so like the tracer it is only created when the
+     * current trace context bean is the OpenTelemetry implementation.
      *
      * @param openTelemetry OpenTelemetry instance
      * @param tracer OpenTelemetry tracer
      * @return Micrometer propagator
      */
     @Singleton
-    @Requires(beans = {OpenTelemetry.class, io.opentelemetry.api.trace.Tracer.class})
+    @Requires(beans = {OpenTelemetry.class, io.opentelemetry.api.trace.Tracer.class, OtelCurrentTraceContext.class})
     @Requires(missingBeans = Propagator.class)
     Propagator propagator(OpenTelemetry openTelemetry, io.opentelemetry.api.trace.Tracer tracer) {
         return new OtelPropagator(openTelemetry.getPropagators(), tracer);

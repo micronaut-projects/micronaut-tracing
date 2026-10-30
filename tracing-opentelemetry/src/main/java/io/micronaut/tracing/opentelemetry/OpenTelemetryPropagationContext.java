@@ -16,6 +16,7 @@
 package io.micronaut.tracing.opentelemetry;
 
 import io.micronaut.core.propagation.ThreadPropagatedContextElement;
+import io.micronaut.tracing.opentelemetry.log.MdcTraceCorrelation;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 
@@ -39,7 +40,8 @@ public record OpenTelemetryPropagationContext(Context context) implements Thread
 
     @Override
     public Scope updateThreadContext() {
-        return context.makeCurrent();
+        // also copies the trace context into the MDC when the log correlation is enabled
+        return MdcTraceCorrelation.makeCurrent(context);
     }
 
     @Override

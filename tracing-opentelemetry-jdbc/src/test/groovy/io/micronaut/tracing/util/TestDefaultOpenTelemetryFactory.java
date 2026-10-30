@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 original authors
+ * Copyright 2017-2026 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,9 @@ package io.micronaut.tracing.util;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Replaces;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.event.ApplicationEventPublisher;
+import io.micronaut.context.event.StartupEvent;
 import io.micronaut.tracing.opentelemetry.DefaultOpenTelemetryFactory;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
@@ -40,7 +43,20 @@ public class TestDefaultOpenTelemetryFactory {
      */
     @Singleton
     @Primary
+    @Requires(property = "test.open-telemetry.requires-startup-event-publisher", notEquals = "true")
     OpenTelemetry defaultOpenTelemetry(InMemorySpanExporter inMemorySpanExporter) {
+        return createOpenTelemetry(inMemorySpanExporter);
+    }
+
+    @Singleton
+    @Primary
+    @Requires(property = "test.open-telemetry.requires-startup-event-publisher", value = "true")
+    OpenTelemetry defaultOpenTelemetryRequiringStartupEventPublisher(InMemorySpanExporter inMemorySpanExporter,
+                                                                     ApplicationEventPublisher<StartupEvent> ignored) {
+        return createOpenTelemetry(inMemorySpanExporter);
+    }
+
+    private static OpenTelemetry createOpenTelemetry(InMemorySpanExporter inMemorySpanExporter) {
         return OpenTelemetrySdk.builder()
             .setTracerProvider(SdkTracerProvider.builder()
                 .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter))

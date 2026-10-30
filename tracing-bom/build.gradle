@@ -55,5 +55,14 @@ micronautBom {
         ])
         dependencies.add("io.zipkin.brave:brave-instrumentation-benchmarks:6.3.1")
         dependencies.add("io.zipkin.reporter2:zipkin-reporter-bom:3.5.3")
+        bomAuthorizedGroupIds.put(
+                "io.micrometer:micrometer-tracing-bom",
+                [
+                        "io.micrometer"
+                ] as Set
+        )
+        // The 1.7.x Micrometer Tracing BOM does not import micrometer-bom (or list io.micrometer:docs),
+        // so only the BOM itself is suppressed. Re-check its POM when bumping the catalog version.
+        dependencies.add("io.micrometer:micrometer-tracing-bom:${libs.versions.managed.micrometer.tracing.get()}")
     }
 }

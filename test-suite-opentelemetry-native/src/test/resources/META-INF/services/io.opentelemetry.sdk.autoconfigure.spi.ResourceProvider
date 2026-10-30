@@ -1,0 +1,2 @@
+io.micronaut.tracing.nativetest.NativeTestResourceProvider
+io.micronaut.tracing.nativetest.DisabledResourceProvider

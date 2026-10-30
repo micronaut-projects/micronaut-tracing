@@ -1,0 +1,37 @@
+// Tests of the OpenTelemetry modules that also run as a native image: the convention adds the
+// nativeTest task, which the GraalVM CI workflow (graalvm-latest.yml) runs in its own matrix job.
+plugins {
+    id "io.micronaut.application"
+    id 'io.micronaut.build.internal.tracing-native-tests'
+}
+
+application {
+    mainClass.set("io.micronaut.tracing.nativetest.Application")
+}
+
+micronaut {
+    version libs.versions.micronaut.platform.get()
+    coreVersion.set(libs.versions.micronaut.asProvider().get())
+    testRuntime "junit5"
+    enableNativeImage false
+    processing {
+        incremental(true)
+        annotations("io.micronaut.tracing.nativetest.*")
+    }
+}
+
+dependencies {
+    testAnnotationProcessor projects.micronautTracingOpentelemetryAnnotation
+    testAnnotationProcessor mnSerde.micronaut.serde.processor
+
+    testImplementation projects.micronautTracingOpentelemetryHttp
+    testImplementation projects.micronautTracingOpentelemetryInspector
+    testImplementation projects.micronautTracingOpentelemetryTest
+    testImplementation mn.micronaut.http.client
+    testImplementation mn.micronaut.http.server.netty
+    testImplementation mn.micronaut.management
+    testImplementation mnSerde.micronaut.serde.jackson
+    // ConfigurablePropagatorProvider implementations loaded through the OpenTelemetry SPI
+    testImplementation libs.opentelemetry.extension.trace.propagators
+    testImplementation mnTest.junit.platform.suite
+}

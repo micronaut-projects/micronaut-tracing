@@ -182,6 +182,15 @@ class DefaultOpenTelemetryFactorySpec extends Specification {
         expect:
         configProperties(['otel.propagators': 'tracecontext,baggage']).getList('otel.propagators') == ['tracecontext', 'baggage']
         configProperties(['otel.propagators': ['baggage', 'tracecontext']]).getList('otel.propagators') == ['baggage', 'tracecontext']
+        configProperties(['otel.propagators': 'tracecontext, baggage, ']).getList('otel.propagators') == ['tracecontext', 'baggage']
+    }
+
+    void "list properties with whitespace are accepted by the OpenTelemetry SDK"() {
+        when:
+        context = ApplicationContext.run(['otel.propagators': 'tracecontext, baggage'])
+
+        then:
+        context.getBean(OpenTelemetry).propagators.textMapPropagator.fields().containsAll(['traceparent', 'baggage'])
     }
 
     void "exporters default to none"() {

@@ -114,7 +114,9 @@ final class EnvironmentConfigProperties implements ConfigProperties {
 
     @Override
     public List<String> getList(String name) {
+        // the OpenTelemetry string format allows whitespace around the entries, for example "tracecontext, baggage"
         return environment.getProperty(name, STRING_LIST)
+            .map(list -> list.stream().map(String::trim).filter(entry -> !entry.isEmpty()).toList())
             .filter(list -> !list.isEmpty())
             .orElseGet(() -> fallback.getList(name));
     }

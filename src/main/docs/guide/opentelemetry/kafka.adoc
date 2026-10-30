@@ -42,4 +42,4 @@ When `wrapper` is enabled, a `process` span is started for each consumer record 
 
 Each record's `process` span ends when the next record is iterated, or when the consumer is used again (for example for `poll` or `commitSync`). For record-at-a-time listeners this means the listener method runs within the context of the record it receives.
 
-IMPORTANT: For batch listeners (`@KafkaListener(batch = true)`) the records are iterated before the listener method is invoked, so the context that is current while the batch method runs is the one of the *last* record in the batch. If you need per-record trace context in a batch listener, extract it from each record's headers yourself.
+IMPORTANT: For batch listeners (`@KafkaListener(batch = true)`) Micronaut Kafka iterates all the polled records before the listener method is invoked, which starts and ends a `process` span for each record. No record context is current while the batch method runs. If you need per-record trace context in a batch listener, extract it from each record's headers yourself.

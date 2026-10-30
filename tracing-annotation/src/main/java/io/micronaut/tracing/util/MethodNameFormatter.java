@@ -24,7 +24,12 @@ import io.micronaut.core.annotation.Internal;
 public final class MethodNameFormatter {
 
     private static final String DEFAULT_METHOD_SUFFIX = "$default";
-    private static final int MINIMUM_MANGLING_SUFFIX_LENGTH = 7;
+    /**
+     * The Kotlin compiler mangles the names of methods with inline class parameters with a hash of the
+     * signature: the first 5 bytes of its MD5 digest, URL-safe base64 encoded without padding, which is
+     * always 7 characters.
+     */
+    private static final int MANGLING_HASH_LENGTH = 7;
 
     private MethodNameFormatter() {
     }
@@ -39,28 +44,20 @@ public final class MethodNameFormatter {
         String name = methodName.endsWith(DEFAULT_METHOD_SUFFIX)
             ? methodName.substring(0, methodName.length() - DEFAULT_METHOD_SUFFIX.length())
             : methodName;
-        int manglingSeparator = name.indexOf('-');
-        if (manglingSeparator > 0 && isKotlinManglingSuffix(name, manglingSeparator + 1)) {
+        int manglingSeparator = name.length() - MANGLING_HASH_LENGTH - 1;
+        if (manglingSeparator > 0 && name.charAt(manglingSeparator) == '-' && isKotlinManglingHash(name, manglingSeparator + 1)) {
             return name.substring(0, manglingSeparator);
         }
         return methodName;
     }
 
-    private static boolean isKotlinManglingSuffix(String name, int suffixStart) {
-        if (name.length() - suffixStart < MINIMUM_MANGLING_SUFFIX_LENGTH) {
-            return false;
-        }
-        boolean containsHashMarker = false;
-        for (int i = suffixStart; i < name.length(); i++) {
-            char c = name.charAt(i);
-            if (!isUrlSafeBase64Character(c)) {
+    private static boolean isKotlinManglingHash(String name, int hashStart) {
+        for (int i = hashStart; i < name.length(); i++) {
+            if (!isUrlSafeBase64Character(name.charAt(i))) {
                 return false;
             }
-            if (c != '-' && (c < 'a' || c > 'z')) {
-                containsHashMarker = true;
-            }
         }
-        return containsHashMarker;
+        return true;
     }
 
     private static boolean isUrlSafeBase64Character(char c) {

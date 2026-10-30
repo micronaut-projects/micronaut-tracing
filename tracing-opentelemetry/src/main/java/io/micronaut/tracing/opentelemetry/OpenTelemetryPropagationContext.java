@@ -15,18 +15,26 @@
  */
 package io.micronaut.tracing.opentelemetry;
 
-import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.propagation.ThreadPropagatedContextElement;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 
 /**
- * Open telemetry propagated context.
+ * The element of Micronaut's {@link io.micronaut.core.propagation.PropagatedContext} that carries an OpenTelemetry
+ * {@link Context}. While the propagated context is in scope, for example inside
+ * {@link io.micronaut.core.propagation.PropagatedContext#propagate(java.util.function.Supplier)} or code wrapped with
+ * {@link io.micronaut.core.propagation.PropagatedContext#wrap(Runnable)}, the OpenTelemetry context is current.
  *
- * @param context The context
+ * <p>Integrations that make a span current for the code they call, such as messaging listeners, add the span's
+ * context as this element, so that it follows Micronaut's thread hops. Reactive code finds it with
+ * {@link io.micronaut.tracing.opentelemetry.utils.OpenTelemetryReactorPropagation#currentContext(reactor.util.context.ContextView)},
+ * which looks the element up by this type, so another {@link ThreadPropagatedContextElement} carrying the same
+ * context wouldn't be found there.</p>
+ *
+ * @param context The OpenTelemetry context
  * @author Denis Stepanov
+ * @since 8.4.0
  */
-@Internal
 public record OpenTelemetryPropagationContext(Context context) implements ThreadPropagatedContextElement<Scope> {
 
     @Override

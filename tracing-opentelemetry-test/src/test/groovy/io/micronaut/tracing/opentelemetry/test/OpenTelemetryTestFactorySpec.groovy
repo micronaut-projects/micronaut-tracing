@@ -123,7 +123,7 @@ class OpenTelemetryTestFactorySpec extends Specification {
 
         then:
         context.getBean(InMemoryMetricReader).collectAllMetrics().empty
-        context.getBeansOfType(OpenTelemetryBuilderCustomizer).size() == 1
+        testCustomizers(context).size() == 1
     }
 
     void "the test support can be disabled"() {
@@ -134,7 +134,15 @@ class OpenTelemetryTestFactorySpec extends Specification {
         !context.containsBean(TestSpans)
         !context.containsBean(InMemorySpanExporter)
         !context.containsBean(InMemoryMetricReader)
-        context.getBeansOfType(OpenTelemetryBuilderCustomizer).empty
+        testCustomizers(context).empty
         context.getBean(OpenTelemetry).getTracer("test").spanBuilder("span").startSpan().spanContext.valid
+    }
+
+    // other modules register customizers too (e.g. the sampler customizer of tracing-opentelemetry),
+    // so only count the ones of the test support
+    private static Collection<OpenTelemetryBuilderCustomizer> testCustomizers(ApplicationContext context) {
+        context.getBeansOfType(OpenTelemetryBuilderCustomizer).findAll {
+            it.getClass().name.startsWith(OpenTelemetryTestFactory.package.name + '.')
+        }
     }
 }

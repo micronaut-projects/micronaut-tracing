@@ -6,6 +6,7 @@ micronaut-docs = '3.0.0'
 managed-brave-instrumentation = '6.3.1'
 managed-opentelemetry = '1.67.0'
 managed-opentelemetry-alpha = '1.67.0-alpha'
+managed-opentelemetry-exporter-zipkin = '1.64.0'
 managed-opentelemetry-instrumentation = '2.30.0'
 managed-opentelemetry-instrumentation-alpha = '2.30.0-alpha'
 managed-opentelemetry-instrumentation-kafka-common = '2.13.3-alpha'
@@ -93,7 +94,7 @@ opentelemetry-api-incubator = { module = 'io.opentelemetry:opentelemetry-api-inc
 opentelemetry-sdk = { module = 'io.opentelemetry:opentelemetry-sdk' }
 opentelemetry-sdk-testing = { module = 'io.opentelemetry:opentelemetry-sdk-testing' }
 opentelemetry-autoconfigure = { module = 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure' }
-opentelemetry-exporter-zipkin = { module = 'io.opentelemetry:opentelemetry-exporter-zipkin', version.ref = 'managed-opentelemetry' }
+opentelemetry-exporter-zipkin = { module = 'io.opentelemetry:opentelemetry-exporter-zipkin', version.ref = 'managed-opentelemetry-exporter-zipkin' }
 
 opentelemetry-instrumentation-api = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api' }
 opentelemetry-instrumentation-api-incubator = { module = 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator' }

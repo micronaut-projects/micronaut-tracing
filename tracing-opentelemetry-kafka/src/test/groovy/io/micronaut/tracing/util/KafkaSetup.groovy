@@ -21,7 +21,7 @@ class KafkaSetup {
         if (kafkaContainer == null) {
             kafkaContainer = new KafkaContainer(DockerImageName.parse("apache/kafka:latest"))
             kafkaContainer.start()
-            createTopics(["my-stream"])
+            createTopics(["my-stream", "my-async-stream"])
         }
 
         return [

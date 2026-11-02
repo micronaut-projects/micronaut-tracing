@@ -4,23 +4,33 @@ import io.micronaut.configuration.kafka.annotation.KafkaClient
 import io.micronaut.configuration.kafka.annotation.KafkaListener
 import io.micronaut.configuration.kafka.annotation.OffsetReset
 import io.micronaut.configuration.kafka.annotation.Topic
-import io.micronaut.context.ApplicationContext
-import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.scheduling.annotation.Async
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import io.micronaut.test.support.TestPropertyProvider
+import io.micronaut.tracing.annotation.NewSpan
 import io.micronaut.tracing.util.KafkaSetup
+import io.opentelemetry.api.trace.Span
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter
 import jakarta.inject.Inject
-import org.testcontainers.kafka.KafkaContainer
+import jakarta.inject.Singleton
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
+
+import java.nio.charset.StandardCharsets
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicReference
 
 @MicronautTest
 class KafkaTelemetryIntegrationSpec extends Specification implements TestPropertyProvider {
 
     @Inject TestKafkaClient testKafkaClient
     @Inject TestKafkaListener kafkaListener
+    @Inject TestTracingService testTracingService
     @Inject InMemorySpanExporter exporter
+    @Inject AsyncTestKafkaListener asyncKafkaListener
+    @Inject AsyncTraceRecorder asyncTraceRecorder
 
     @Override
     Map<String, String> getProperties() {
@@ -31,33 +41,108 @@ class KafkaTelemetryIntegrationSpec extends Specification implements TestPropert
     void "test kafka stream application"() {
         given:
         PollingConditions conditions = new PollingConditions(timeout: 30)
+        String message = "Test message ${System.nanoTime()}"
 
         when:
-        testKafkaClient.publishText("Test message")
+        testTracingService.publishText(message)
 
         then:
         conditions.eventually {
-            kafkaListener.text.contains("Test message")
+            kafkaListener.text.contains(message)
+            kafkaListener.propagatedTraceId.get() == testTracingService.traceId
+            kafkaListener.traceId.get() == testTracingService.traceId
+            kafkaListener.traceparent.get()
             exporter.finishedSpanItems.name.any { it.contains("publish") }
         }
     }
 
+    void "test @Async method called from kafka listener continues the listener trace"() {
+        given:
+        PollingConditions conditions = new PollingConditions(timeout: 30)
+        String message = "Async message ${System.nanoTime()}"
+
+        when:
+        testKafkaClient.publishAsyncText(message)
+
+        then:
+        conditions.eventually {
+            asyncKafkaListener.listenerTraceIds.containsKey(message)
+            asyncTraceRecorder.asyncTraceIds.containsKey(message)
+        }
+        String listenerTraceId = asyncKafkaListener.listenerTraceIds.get(message)
+        listenerTraceId
+        listenerTraceId != '00000000000000000000000000000000'
+        asyncTraceRecorder.asyncThreads.get(message) != asyncKafkaListener.listenerThreads.get(message)
+        asyncTraceRecorder.asyncTraceIds.get(message) == listenerTraceId
+    }
 
     @KafkaClient
     static interface TestKafkaClient {
 
         @Topic("my-stream")
         void publishText(String s);
+
+        @Topic("my-async-stream")
+        void publishAsyncText(String s);
+    }
+
+    @KafkaListener(groupId = "async-listener", offsetReset = OffsetReset.EARLIEST)
+    static class AsyncTestKafkaListener {
+
+        final Map<String, String> listenerTraceIds = new ConcurrentHashMap<>()
+        final Map<String, String> listenerThreads = new ConcurrentHashMap<>()
+
+        @Inject AsyncTraceRecorder asyncTraceRecorder
+
+        @Topic("my-async-stream")
+        void receive(ConsumerRecord<?, String> record) {
+            listenerTraceIds.put(record.value(), Span.current().spanContext.traceId)
+            listenerThreads.put(record.value(), Thread.currentThread().name)
+            asyncTraceRecorder.record(record.value())
+        }
+    }
+
+    @Singleton
+    static class AsyncTraceRecorder {
+
+        final Map<String, String> asyncTraceIds = new ConcurrentHashMap<>()
+        final Map<String, String> asyncThreads = new ConcurrentHashMap<>()
+
+        @Async
+        void record(String message) {
+            asyncThreads.put(message, Thread.currentThread().name)
+            asyncTraceIds.put(message, Span.current().spanContext.traceId)
+        }
     }
 
     @KafkaListener(offsetReset = OffsetReset.EARLIEST)
     static class TestKafkaListener {
 
-        private final List<String> text = new ArrayList<>()
+        private final List<String> text = new CopyOnWriteArrayList<>()
+        private final AtomicReference<String> traceId = new AtomicReference<>()
+        private final AtomicReference<String> traceparent = new AtomicReference<>()
+        private final AtomicReference<String> propagatedTraceId = new AtomicReference<>()
 
         @Topic("my-stream")
-        void updateAnalytics(String s) {
-            text.add(s)
+        void updateAnalytics(ConsumerRecord<?, String> record) {
+            text.add(record.value())
+            traceId.set(Span.current().spanContext.traceId)
+            String traceparentHeader = record.headers().lastHeader("traceparent") != null ? new String(record.headers().lastHeader("traceparent").value(), StandardCharsets.UTF_8) : null
+            traceparent.set(traceparentHeader)
+            String[] traceparentParts = traceparentHeader?.split('-')
+            propagatedTraceId.set(traceparentParts?.length == 4 ? traceparentParts[1] : null)
+        }
+    }
+
+    static class TestTracingService {
+
+        @Inject TestKafkaClient testKafkaClient
+        String traceId
+
+        @NewSpan("publish")
+        void publishText(String message) {
+            traceId = Span.current().spanContext.traceId
+            testKafkaClient.publishText(message)
         }
     }
 

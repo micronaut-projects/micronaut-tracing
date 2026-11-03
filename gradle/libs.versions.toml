@@ -1,12 +1,12 @@
 [versions]
-micronaut = "5.2.16"
-micronaut-platform = "5.2.2"
+micronaut = "5.2.20"
+micronaut-platform = "5.2.3"
 micronaut-docs = '3.0.0'
 
 managed-brave-instrumentation = '6.3.1'
-managed-opentelemetry = '1.64.0'
+managed-opentelemetry = '1.67.0'
 managed-opentelemetry-alpha = '1.64.0-alpha'
-managed-opentelemetry-instrumentation = '2.30.0'
+managed-opentelemetry-instrumentation = '2.33.0'
 managed-opentelemetry-instrumentation-alpha = '2.30.0-alpha'
 managed-opentelemetry-instrumentation-kafka-common = '2.13.3-alpha'
 managed-opentelemetry-contrib-aws-xray = '1.61.0'
@@ -24,20 +24,20 @@ managed-opentracing = '0.33.0'
 managed-opentracing-grpc = '0.2.3'
 managed-brave-opentracing = '1.0.1'
 javax-annotation = '1.3.2'
-grpc = '1.85.0'
+grpc = '1.85.1'
 protobuf = '3.25.9'
-gson = '2.14.0'
+gson = '2.15.0'
 okio = '3.18.2'
 thrift = '0.25.0'
 httpclient5 = '5.6.5'
 httpcore5 = '5.4.4'
 
 micronaut-aws = "5.1.1"
-micronaut-data = "5.2.3"
+micronaut-data = "5.2.4"
 micronaut-grpc = "5.2.0"
 micronaut-reactor = "4.3.0"
 micronaut-rxjava3 = "4.1.0"
-micronaut-serde = "3.2.4"
+micronaut-serde = "3.2.6"
 micronaut-sql = "7.2.0"
 micronaut-kafka = "6.2.0"
 micronaut-gradle-plugin = "5.0.2"

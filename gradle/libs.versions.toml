@@ -66,7 +66,7 @@ brave-instrumentation-http = { module = 'io.zipkin.brave:brave-instrumentation-h
 brave-opentracing = { module = 'io.opentracing.brave:brave-opentracing', version.ref = 'managed-brave-opentracing' }
 grpc-protobuf = { module = 'io.grpc:grpc-protobuf', version.ref = 'grpc' }
 grpc-stub = { module = 'io.grpc:grpc-stub', version.ref = 'grpc' }
-gson = '2.15.0'
+gson = { module = 'com.google.code.gson:gson', version.ref = 'gson' }
 okio = { module = 'com.squareup.okio:okio', version.ref = 'okio' }
 thrift = { module = 'org.apache.thrift:libthrift', version.ref = 'thrift' }
 httpclient5 = { module = 'org.apache.httpcomponents.client5:httpclient5', version.ref = 'httpclient5' }

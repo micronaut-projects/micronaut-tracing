@@ -4,7 +4,7 @@ plugins {
 }
 ossIndexAudit {
     excludeCoordinates = [
-        "org.lz4:lz4-java:1.8.0", // CVE-2025-12183
+        "org.lz4:lz4-java:1.8.1", // CVE-2025-12183
         "org.lz4:lz4-java:1.8.1" // CVE-2025-12183
     ]
 }

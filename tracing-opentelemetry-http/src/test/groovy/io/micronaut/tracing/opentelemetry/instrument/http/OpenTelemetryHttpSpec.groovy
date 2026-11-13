@@ -5,9 +5,11 @@ import io.micronaut.context.ApplicationContext
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.core.annotation.Nullable
 import io.micronaut.core.async.annotation.SingleResult
+import io.micronaut.core.order.Ordered
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
+import io.micronaut.http.MutableHttpResponse
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -15,6 +17,9 @@ import io.micronaut.http.annotation.Header
 import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.QueryValue
+import io.micronaut.http.annotation.RequestFilter
+import io.micronaut.http.annotation.ResponseFilter
+import io.micronaut.http.annotation.ServerFilter
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
@@ -50,6 +55,8 @@ import spock.util.concurrent.PollingConditions
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import io.micronaut.scheduling.TaskExecutors
+
+import static io.micronaut.http.filter.ServerFilterPhase.TRACING
 
 @Slf4j("LOG")
 class OpenTelemetryHttpSpec extends Specification {
@@ -439,6 +446,94 @@ class OpenTelemetryHttpSpec extends Specification {
         exporter.reset()
     }
 
+    void 'response filters can record to the current server span'() {
+        def internalSpanCount = 0
+        def serverSpanCount = 1
+        def clientSpanCount = 0
+
+        when:
+        HttpResponse<String> response = reactorHttpClient.toBlocking().exchange('/filters/recording', String)
+
+        then:
+        response.body() == 'ok'
+        response.header('X-Request-Filter-Recording') == 'true'
+        response.header('X-Response-Filter-Recording') == 'true'
+
+        and:
+        conditions.eventually {
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey('request-filter')) == 'recorded')
+            exporter.finishedSpanItems.attributes.stream().anyMatch(x -> x.get(AttributeKey.stringKey('response-filter')) == 'recorded')
+            hasHttpSemanticAttributes(HttpStatus.OK)
+        }
+
+        cleanup:
+        exporter.reset()
+    }
+
+    void 'response filter with throwable can record to the current server span after controller throws'() {
+        def internalSpanCount = 0
+        def serverSpanCount = 1
+        def clientSpanCount = 0
+
+        when:
+        reactorHttpClient.toBlocking().exchange('/filters/throwing', String)
+
+        then:
+        def e = thrown(HttpClientResponseException)
+        e.status == HttpStatus.INTERNAL_SERVER_ERROR
+        e.response.header('X-Request-Filter-Recording') == 'true'
+        e.response.header('X-Response-Filter-Recording') == 'true'
+        e.response.header('X-Response-Filter-Throwable') == 'false'
+
+        and:
+        conditions.eventually {
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            def serverSpans = exporter.finishedSpanItems.findAll { it.kind == SpanKind.SERVER }
+            serverSpans.size() == 1
+            def serverSpan = serverSpans[0]
+            serverSpan.status.statusCode == StatusCode.ERROR
+            serverSpan.events.any { it.name == 'exception' }
+            serverSpan.attributes.get(AttributeKey.stringKey('response-filter')) == 'recorded'
+            serverSpan.attributes.get(AttributeKey.stringKey('response-filter-throwable')) == 'none'
+            hasHttpSemanticAttributes(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+
+        cleanup:
+        exporter.reset()
+    }
+
+    void 'response filter can record to the current server span for error responses'() {
+        def internalSpanCount = 0
+        def serverSpanCount = 1
+        def clientSpanCount = 0
+
+        when:
+        reactorHttpClient.toBlocking().exchange('/filters/bad-request', String)
+
+        then:
+        def e = thrown(HttpClientResponseException)
+        e.status == HttpStatus.BAD_REQUEST
+        e.response.header('X-Request-Filter-Recording') == 'true'
+        e.response.header('X-Response-Filter-Recording') == 'true'
+        e.response.header('X-Response-Filter-Throwable') == 'false'
+
+        and:
+        conditions.eventually {
+            hasSpans(internalSpanCount, serverSpanCount, clientSpanCount)
+            def serverSpans = exporter.finishedSpanItems.findAll { it.kind == SpanKind.SERVER }
+            serverSpans.size() == 1
+            def serverSpan = serverSpans[0]
+            serverSpan.status.statusCode == StatusCode.ERROR
+            serverSpan.attributes.get(AttributeKey.stringKey('response-filter')) == 'recorded'
+            serverSpan.attributes.get(AttributeKey.stringKey('response-filter-throwable')) == 'none'
+            hasHttpSemanticAttributes(HttpStatus.BAD_REQUEST)
+        }
+
+        cleanup:
+        exporter.reset()
+    }
+
     void 'test consecutive sibling client calls'() {
         def internalSpanCount = 0
         def serverSpanCount = 3
@@ -490,6 +585,48 @@ class OpenTelemetryHttpSpec extends Specification {
         Mono<String> quadrupleWords(@QueryValue String input) {
             downstreamClient.doubleWords(input)
                     .flatMap { resp -> downstreamClient.doubleWords(resp) }
+        }
+    }
+
+    @Controller('/filters')
+    static class FilterSpanController {
+
+        @Get('/recording')
+        String recording() {
+            'ok'
+        }
+
+        @Get('/throwing')
+        String throwing() {
+            throw new RuntimeException('filter failure')
+        }
+
+        @Get('/bad-request')
+        MutableHttpResponse<String> badRequest() {
+            HttpResponse.badRequest('bad request')
+        }
+    }
+
+    @ServerFilter('/filters/**')
+    static class FilterSpanServerFilter implements Ordered {
+        @RequestFilter
+        void traceRequest(HttpRequest<?> request) {
+            request.setAttribute('request-filter-recording', Boolean.toString(Span.current().isRecording()))
+            Span.current().setAttribute('request-filter', 'recorded')
+        }
+
+        @ResponseFilter
+        void traceResponse(HttpRequest<?> request, MutableHttpResponse<?> response, @Nullable Throwable throwable) {
+            response.headers.add('X-Request-Filter-Recording', request.getAttribute('request-filter-recording', String).orElse('missing'))
+            response.headers.add('X-Response-Filter-Recording', Boolean.toString(Span.current().isRecording()))
+            response.headers.add('X-Response-Filter-Throwable', Boolean.toString(throwable != null))
+            Span.current().setAttribute('response-filter', 'recorded')
+            Span.current().setAttribute('response-filter-throwable', throwable == null ? 'none' : throwable.class.simpleName)
+        }
+
+        @Override
+        int getOrder() {
+            TRACING.after()
         }
     }
 

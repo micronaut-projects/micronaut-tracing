@@ -84,18 +84,16 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
 
         request.setAttribute(APPLIED, true);
 
-        Context parentContext = Context.current();
+        Context parentContext = parentContext();
         if (!instrumenter.shouldStart(parentContext, request)) {
             return chain.proceed(request);
         }
 
         Context context = instrumenter.start(parentContext, request);
-
-        try (PropagatedContext.Scope ignore = PropagatedContext.getOrEmpty()
-            .plus(new OpenTelemetryPropagationContext(context))
-            .propagate()) {
-
-            var propagatedContext = PropagatedContext.get();
+        PropagatedContext propagatedContext = PropagatedContext.getOrEmpty()
+            .plus(new OpenTelemetryPropagationContext(context));
+        return propagatedContext.propagate(() -> {
+            PropagatedContext currentContext = PropagatedContext.get();
             return Mono.from(chain.proceed(request))
                 .doOnNext(mutableHttpResponse -> mutableHttpResponse.getAttribute(HttpAttributes.EXCEPTION, Exception.class)
                     .ifPresentOrElse(
@@ -107,8 +105,25 @@ public final class OpenTelemetryServerFilter extends AbstractOpenTelemetryFilter
                             }
                         }))
                 .doOnError(throwable -> onError(request, context, null, throwable))
-                .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, propagatedContext));
-        }
+                .contextWrite(ctx -> ReactorPropagation.addPropagatedContext(ctx, currentContext));
+        });
+    }
+
+    /**
+     * Resolves the parent context of the server span. Only a context propagated by Micronaut is trusted.
+     * The thread-local {@link Context#current()} is deliberately ignored: a server request starts on an
+     * event-loop thread, and a scope opened with {@code Span.makeCurrent()} by a previous request and closed
+     * on another thread (e.g. after a Reactor boundary) leaves that request's context, including its server
+     * span, current on the event-loop thread. Using it would suppress or wrongly parent the next server span
+     * (see issue #475). A remote parent is still extracted from the request headers by the instrumenter.
+     *
+     * @return the parent context
+     */
+    private static Context parentContext() {
+        return PropagatedContext.getOrEmpty()
+            .find(OpenTelemetryPropagationContext.class)
+            .map(OpenTelemetryPropagationContext::context)
+            .orElseGet(Context::root);
     }
 
     private void onError(HttpRequest<?> request, Context context,

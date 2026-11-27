@@ -50,13 +50,9 @@ class OpenTracingServerFilterSpec extends Specification {
         request.getAttribute(TraceRequestAttributes.CURRENT_SPAN, Span).orElseThrow().is(createdSpan)
     }
 
-    void 'falls back to active span when request has no tracing headers'() {
+    void 'starts a root span when request has no tracing headers'() {
         given:
-        SpanContext activeSpanContext = Stub()
         SpanContext createdSpanContext = Stub()
-        Span currentSpan = Stub() {
-            context() >> activeSpanContext
-        }
         Scope scope = Mock()
         Span createdSpan = Mock() {
             2 * context() >> createdSpanContext
@@ -64,8 +60,8 @@ class OpenTracingServerFilterSpec extends Specification {
         Tracer.SpanBuilder spanBuilder = Mock()
         Tracer tracer = Mock() {
             1 * extract(HTTP_HEADERS, _) >> null
-            1 * activeSpan() >> currentSpan
             1 * buildSpan('GET /traced/hello') >> spanBuilder
+            0 * activeSpan()
         }
         OpenTracingServerFilter filter = newFilter(tracer)
         HttpRequest<?> request = HttpRequest.GET('/traced/hello')
@@ -74,7 +70,8 @@ class OpenTracingServerFilterSpec extends Specification {
         Mono.from(filter.doFilter(request, okChain())).block()
 
         then:
-        1 * spanBuilder.asChildOf(activeSpanContext) >> spanBuilder
+        0 * spanBuilder.asChildOf(_)
+        1 * spanBuilder.ignoreActiveSpan() >> spanBuilder
         1 * spanBuilder.withTag('http.method', 'GET') >> spanBuilder
         1 * spanBuilder.withTag('http.path', '/traced/hello') >> spanBuilder
         1 * spanBuilder.start() >> createdSpan
